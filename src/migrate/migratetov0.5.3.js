@@ -76,11 +76,11 @@ async function updatevotes() {
     const o = [];
     c.forEach((n) => {
       if (n?.up) {
-        n["U"] = n.up;
+        n.U = n.up;
         delete n.up;
       }
       if (n?.down) {
-        n["D"] = n.down;
+        n.D = n.down;
         delete n.down;
       }
       o.push(n);

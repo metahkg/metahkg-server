@@ -1,4 +1,3 @@
-
 /*
  * To deploy this service you must have an aws account
  * Create a s3 bucket in a region you want
@@ -31,7 +30,7 @@ const s3 = new AWS.S3({ apiVersion: "2006-03-01" });
  * The path would be /avatars/<user-id>
  */
 async function uploadtos3(filename: string) {
-  const uploadParams:{
+  const uploadParams: {
     Bucket: string;
     Key: string;
     Body: string | fs.ReadStream;

@@ -24,7 +24,7 @@ router.get("/api/search", async (req, res) => {
   try {
     await client.connect();
     const summary = client.db("metahkg-threads").collection("summary");
-    const sort:any = {
+    const sort: any = {
       0: {},
       1: { createdAt: -1 },
       2: { lastModified: -1 },

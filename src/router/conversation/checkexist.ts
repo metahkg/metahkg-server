@@ -30,7 +30,7 @@ router.post("/api/check", body_parser.json(), async (req, res) => {
       res.send({ error: "Not found." });
       return;
     }
-    res.send({ response : "ok" });
+    res.send({ response: "ok" });
   } finally {
     await client.close();
   }

@@ -37,7 +37,7 @@ router.get("/api/history/:id", async (req, res) => {
       res.send({ error: "User not found." });
       return;
     }
-    const sort:any = {
+    const sort: any = {
       0: { createdAt: -1 },
       1: { lastModified: -1 },
     }[Number(req.query.sort ?? 0)];

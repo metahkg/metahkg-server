@@ -49,7 +49,7 @@ router.post("/api/verify", body_parser.json(), async (req, res) => {
       ((
         await users
           .find()
-          .project({id: 1, _id: 0})
+          .project({ id: 1, _id: 0 })
           .sort({ id: -1 })
           .limit(1)
           .toArray()

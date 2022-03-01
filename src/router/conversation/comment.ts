@@ -9,7 +9,7 @@ import { mongouri, timediff } from "../../common";
 import { JSDOM } from "jsdom";
 import isInteger from "is-sn-integer";
 import createDOMPurify from "dompurify";
-const jsdomwindow:any = new JSDOM("").window;
+const jsdomwindow: any = new JSDOM("").window;
 const DOMPurify = createDOMPurify(jsdomwindow);
 router.post("/api/comment", body_parser.json(), async (req, res) => {
   const client = new MongoClient(mongouri);
@@ -17,7 +17,9 @@ router.post("/api/comment", body_parser.json(), async (req, res) => {
     !req.body.id ||
     !req.body.comment ||
     Object.keys(req.body)?.length > 2 ||
-    !(typeof req.body.id === "number" && typeof req.body.comment === "string") ||
+    !(
+      typeof req.body.id === "number" && typeof req.body.comment === "string"
+    ) ||
     !isInteger(req.body.id)
   ) {
     res.status(400);
@@ -68,7 +70,7 @@ router.post("/api/comment", body_parser.json(), async (req, res) => {
       { id: req.body.id },
       { $inc: { c: 1 }, $currentDate: { lastModified: true } }
     );
-    if (!((await users.findOne({ id: req.body.id }))?.[user.id])) {
+    if (!(await users.findOne({ id: req.body.id }))?.[user.id]) {
       await users.updateOne(
         { id: req.body.id },
         { $set: { [user.id]: { sex: user.sex, name: user.user } } }
