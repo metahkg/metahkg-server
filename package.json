@@ -1,0 +1,67 @@
+{
+  "name": "metahkg",
+  "version": "0.5.3rc4",
+  "author": "wcyat",
+  "license": "MPL-2.0",
+  "keywords": [
+    "forum",
+    "react"
+  ],
+  "dependencies": {
+    "aws-sdk": "^2.1083.0",
+    "axios": "^0.26.0",
+    "bcrypt": "^5.0.1",
+    "body-parser": "^1.19.2",
+    "cookie-parser": "^1.4.6",
+    "dompurify": "^2.3.6",
+    "dotenv": "^16.0.0",
+    "email-validator": "^2.0.4",
+    "express": "^4.17.3",
+    "hcaptcha": "^0.1.1",
+    "is-sn-integer": "^0.2.0",
+    "jsdom": "^19.0.0",
+    "mailgun-js": "^0.22.0",
+    "mongodb": "^4.4.0",
+    "multer": "^1.4.4",
+    "random": "^3.0.6",
+    "sharp": "^0.30.1",
+    "wcyat-rg": "^1.0.1"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/cookie-parser": "^1.4.2",
+    "@types/dompurify": "^2.3.3",
+    "@types/express": "^4.17.13",
+    "@types/jsdom": "^16.2.14",
+    "@types/mailgun-js": "^0.22.12",
+    "@types/multer": "^1.4.7",
+    "@types/node": "^17.0.21",
+    "@types/sharp": "^0.29.5",
+    "prettier": "^2.5.1",
+    "typescript": "^4.5.5"
+  },
+  "scripts": {
+    "start": "node start.js && node dist/server.js",
+    "start:api": "yarn run start",
+    "build": "npx tsc",
+    "deploy": "yarn run build && yarn run start"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
