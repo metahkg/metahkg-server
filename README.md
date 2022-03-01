@@ -1,5 +1,6 @@
-# metahkg
-This is the Metahkg backend. For frontend, please refer to [metahkg/metahkg-web](https://gitlab.com/metahkg/metahkg-web).
+# Metahkg server
+
+This is the Metahkg backend api. For frontend, please refer to [metahkg/metahkg-web](https://gitlab.com/metahkg/metahkg-web).
 
 stable: [metahkg.wcyat.me](https://metahkg.wcyat.me)
 
@@ -9,13 +10,13 @@ dev build (probably daily): [metahkg.wcyat.engineer](https://metahkg.wcyat.engin
 [![Nodejs](https://badges.aleen42.com/src/node.svg)](https://nodejs.org)
 [![Typescript](https://badges.aleen42.com/src/typescript.svg)](https://www.typescriptlang.org/)
 
-[![Gitlab](https://badges.aleen42.com/src/gitlab.svg)](https://github.com/metahkg/metahkg)
-[![Github](https://badges.aleen42.com/src/github.svg)](https://github.com/metahkg/metahkg)
-[![GitHub license](https://img.shields.io/github/license/metahkg/metahkg)](https://github.com/metahkg/metahkg/blob/master/LICENSE)
+[![Gitlab](https://badges.aleen42.com/src/gitlab.svg)](https://github.com/metahkg/metahkg-server)
+[![Github](https://badges.aleen42.com/src/github.svg)](https://github.com/metahkg/metahkg-server)
+[![GitHub license](https://img.shields.io/github/license/metahkg/metahkg-server)](https://github.com/metahkg/metahkg-server/blob/master/LICENSE)
 
-[![DeepSource](https://deepsource.io/gh/metahkg/metahkg.svg/?label=active+issues&show_trend=true&token=y8Kga9A4TI3oImWWtY39BNUl)](https://deepsource.io/gh/metahkg/metahkg/?ref=repository-badge)
-[![DeepSource](https://deepsource.io/gh/metahkg/metahkg.svg/?label=resolved+issues&show_trend=true&token=y8Kga9A4TI3oImWWtY39BNUl)](https://deepsource.io/gh/metahkg/metahkg/?ref=repository-badge)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/5fde18c69f8e4039ae55a8670db090fb)](https://www.codacy.com/gl/metahkg/metahkg/dashboard?utm_source=gitlab.com&utm_medium=referral&utm_content=metahkg/metahkg&utm_campaign=Badge_Grade)
+[![DeepSource](https://deepsource.io/gh/metahkg/metahkg-server.svg/?label=active+issues&show_trend=true&token=U57K3_mzxKK3THb0RtJifA_R)](https://deepsource.io/gh/metahkg/metahkg-server/?ref=repository-badge)
+[![DeepSource](https://deepsource.io/gh/metahkg/metahkg-server.svg/?label=resolved+issues&show_trend=true&token=U57K3_mzxKK3THb0RtJifA_R)](https://deepsource.io/gh/metahkg/metahkg-server/?ref=repository-badge)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/7a8bdd4a758c4338abe5d1d5d497a5d4)](https://www.codacy.com/gl/metahkg/metahkg-server/dashboard?utm_source=gitlab.com&amp;utm_medium=referral&amp;utm_content=metahkg/metahkg-server&amp;utm_campaign=Badge_Grade)
 
 ## About
 
