@@ -25,7 +25,7 @@ router.get("/api/getvotes", async (req, res) => {
       { id: user.id },
       { projection: { [id]: 1, _id: 0 } }
     );
-    res.send(uservotes?.[id] || { none: "none" });
+    res.send(uservotes?.[id] || [null]);
   } finally {
     await client.close();
   }

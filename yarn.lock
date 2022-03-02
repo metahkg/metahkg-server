@@ -1979,6 +1979,11 @@ symbol-tree@^3.2.4:
   resolved "https://registry.yarnpkg.com/symbol-tree/-/symbol-tree-3.2.4.tgz#430637d248ba77e078883951fb9aa0eed7c63fa2"
   integrity sha512-9QNk5KwDF+Bvz+PyObkmSYjI5ksVUYtjW7AU22r2NKcfLJcXp96hkDWU3+XndOsUb+AQ9QhfzfCT2O+CNWT5Tw==
 
+system-commands@^1.1.7:
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/system-commands/-/system-commands-1.1.7.tgz#f100c0d7da5d489d065b43625fc9fef1c38b38f2"
+  integrity sha512-PfswB3P+qrSZcm7nIOJzKMe0qMp7wGVM7B+UYBkaduS6z2n+iM2sk4kw3G4+zY1aRI32+ZgKTUUAlhc3YSneJA==
+
 tar-fs@^2.0.0, tar-fs@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/tar-fs/-/tar-fs-2.1.1.tgz#489a15ab85f1f0befabb370b7de4f9eb5cbe8784"
