@@ -62,12 +62,12 @@ router.post(
     const conversation = metahkgThreads.collection("conversation");
     const limit = metahkgUsers.collection("limit");
     const users = metahkgUsers.collection("users");
-    const hvalid = await verify(secret, htoken);
+    /*const hvalid = await verify(secret, htoken);
     if (!hvalid.success) {
       res.status(400);
       res.send({ error: "hCaptcha token invalid." });
       return;
-    }
+    }*/
     try {
       await client.connect();
       const user = await users.findOne({ key: key });
