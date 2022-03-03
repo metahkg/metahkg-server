@@ -48,12 +48,12 @@ async function valid(req: any, res: any) {
     res.send({ error: "Bad request." });
     return false;
   }
-  const hvalid = await verify(secret, req.body.htoken);
+  /*const hvalid = await verify(secret, req.body.htoken);
   if (!hvalid.success) {
     res.status(400);
     res.send({ error: "hCaptcha token invalid." });
     return false;
-  }
+  }*/
   return true;
 }
 async function exceptions(req: any, res: any, client: MongoClient) {
