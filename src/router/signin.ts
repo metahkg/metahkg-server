@@ -6,7 +6,8 @@
 }
 */
 //sets a cookie "key" if success
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 const router = express.Router();
 import body_parser from "body-parser";

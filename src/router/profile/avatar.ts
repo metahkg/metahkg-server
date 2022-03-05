@@ -1,16 +1,17 @@
 
-/*
+/**
  * To deploy this service you must have an aws account
  * Create a s3 bucket in a region you want
  */
+import dotenv from "dotenv";
 import express from "express";
 import multer from "multer"; //handle image uploads
 import AWS from "aws-sdk";
 import fs from "fs";
 import { MongoClient } from "mongodb";
 import { mongouri } from "../../common";
-require("dotenv").config();
 import sharp from "sharp"; //reshape images to circle
+dotenv.config();
 const router = express.Router();
 const upload = multer({ dest: "uploads/" });
 /*
@@ -18,7 +19,7 @@ const upload = multer({ dest: "uploads/" });
  */
 const region = process.env.awsRegion || "ap-northeast-1";
 const bucket = process.env.s3Bucket || "metahkg";
-/*
+/**
  * aws credentials are fetched from a
  * profile "s3" set in ~/.aws/credentials
  */
@@ -26,7 +27,7 @@ const credentials = new AWS.SharedIniFileCredentials({ profile: "s3" });
 AWS.config.credentials = credentials;
 AWS.config.update({ region: region });
 const s3 = new AWS.S3({ apiVersion: "2006-03-01" });
-/*
+/**
  * Upload an avatar to s3
  * The path would be /avatars/<user-id>
  */
@@ -59,7 +60,7 @@ async function uploadtos3(filename: string) {
   //using promise to await
   await s3.upload(uploadParams).promise();
 }
-/*
+/**
  * Compress the image to a 200px * 200px circle
  * Output is <original-filename>.png
  */
@@ -83,7 +84,7 @@ async function compress(filename: string) {
   //remove the original
   fs.rm(filename, () => {});
 }
-/*
+/**
  * Image is saved to uploads/ upon uploading
  * only jpg, svg, png and jpeg are allowed
  * Image is renamed to <user-id>.<png/svg/jpg/jpeg>
@@ -96,7 +97,7 @@ router.post("/api/avatar", upload.single("avatar"), async (req, res) => {
     res.send({ error: "Bad request." });
     return;
   }
-  if (req.file?.size > 250000) {
+  if (req.file?.size > 100000) {
     res.status(422);
     res.send({ error: "file too large." });
     fs.rm(req.file?.path, () => {});

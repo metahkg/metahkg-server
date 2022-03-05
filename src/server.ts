@@ -1,10 +1,11 @@
-require("dotenv").config();
+import dotenv from "dotenv";
 import express from "express";
 import cookieParser from "cookie-parser";
 import { autodecrement } from "./router/menu/autodecrement";
 import router from "./router";
+dotenv.config();
 const app = express();
-/*
+/**
  * Decrease count by one in collection "hottest" every 2 hours
  */
 setInterval(() => {

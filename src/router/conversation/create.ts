@@ -87,7 +87,7 @@ router.post(
         res.send({ error: "Category not found." });
         return;
       }
-      const newcid =
+      const newtid =
         ((
           await summary
             .find()
@@ -97,26 +97,42 @@ router.post(
             .toArray()
         )[0]?.id || (await conversation.countDocuments())) + 1;
       const date = new Date();
-      const slink = `https://l.wcyat.me/${
-        (
-          await axios.post("https://api-us.wcyat.me/create", {
-            url: `https://${domain}/thread/${newcid}?page=1`,
-          })
-        ).data.id
-      }`;
+      let slink: string, cslink: string;
+      try {
+        slink = `https://l.wcyat.me/${
+          (
+            await axios.post("https://api-us.wcyat.me/create", {
+              url: `https://${domain}/thread/${newtid}?page=1`,
+            })
+          ).data.id
+        }`;
+        cslink = `https://l.wcyat.me/${
+          (
+            await axios.post("https://api-us.wcyat.me/create", {
+              url: `https://${domain}/thread/${newtid}?c=1`,
+            })
+          ).data.id
+        }`;
+      } catch {}
       await conversation.insertOne({
-        id: newcid,
+        id: newtid,
         conversation: [
-          { id: 1, user: user.id, comment: req.body.icomment, createdAt: date },
+          {
+            id: 1,
+            user: user.id,
+            slink: cslink,
+            comment: req.body.icomment,
+            createdAt: date,
+          },
         ],
         lastModified: date,
       });
       await cachedusers.insertOne({
-        id: newcid,
+        id: newtid,
         [user.id]: { name: user.user, sex: user.sex },
       });
       const s = {
-        id: newcid,
+        id: newtid,
         op: user.user,
         sex: user.sex,
         c: 1,
@@ -137,7 +153,7 @@ router.post(
         createdAt: date,
       });
       await limit.insertOne({ id: user.id, createdAt: date, type: "create" });
-      res.send({ id: newcid });
+      res.send({ id: newtid });
     } finally {
       await client.close();
     }

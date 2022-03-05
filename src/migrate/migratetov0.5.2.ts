@@ -1,6 +1,6 @@
-const { mongouri } = require("../common");
-const { MongoClient } = require("mongodb");
-const isInteger = require("is-sn-integer");
+import { mongouri } from "../common";
+import { MongoClient } from "mongodb";
+import isInteger from "is-sn-integer";
 (async () => {
   const client = new MongoClient(mongouri);
   await client.connect();

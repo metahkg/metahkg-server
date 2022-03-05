@@ -55,3 +55,7 @@ node server/migrate/migratetov0.5.2.js
 - minor improvements
 - forbid the use of emails as a username
 - check password strength
+
+## v0.5.5rc2
+
+- neccessary changes for metahkg-web v0.5.5rc2

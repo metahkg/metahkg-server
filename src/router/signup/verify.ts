@@ -6,12 +6,13 @@
   }
 */
 //if successfully verified, sets a cookie "key" of user's key which is randomly generated
-require("dotenv").config();
+import dotenv from "dotenv";
 import express from "express";
 import { MongoClient } from "mongodb";
 import body_parser from "body-parser";
 import { mongouri } from "../../common";
 import { generate } from "wcyat-rg";
+dotenv.config();
 const router = express.Router();
 router.post("/api/verify", body_parser.json(), async (req, res) => {
   const client = new MongoClient(mongouri);

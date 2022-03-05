@@ -9,7 +9,7 @@ const router = express.Router();
 import { MongoClient } from "mongodb";
 import { mongouri } from "../../common";
 import isInteger from "is-sn-integer";
-/*
+/**
  * type:
  *  0: users
  *  1: details
