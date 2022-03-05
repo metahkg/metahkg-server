@@ -1,4 +1,5 @@
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
 export const mongouri = process.env.DB_URI || "mongodb://localhost"; //mongo connection string
 export const secret = process.env.hcaptchasecret; //hcaptcha secret used to cerify hcaptcha tokens
 /*

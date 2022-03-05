@@ -9,7 +9,7 @@
   sex: string
 }
 */
-require("dotenv").config();
+import dotenv from "dotenv";
 import express from "express";
 import { MongoClient } from "mongodb";
 import body_parser from "body-parser";
@@ -19,6 +19,7 @@ import { verify } from "hcaptcha";
 import random from "random";
 import bcrypt from "bcrypt";
 import mailgun from "mailgun-js";
+dotenv.config();
 const mg = mailgun({
   apiKey: process.env.mailgun_key,
   domain: "metahkg.wcyat.me",
