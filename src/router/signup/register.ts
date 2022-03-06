@@ -53,7 +53,7 @@ async function valid(req: any, res: any) {
     res.status(400);
     res.send({error: "recaptcha token invalid."});
     return false;
-  }*/
+  }
   return true;
 }
 async function exceptions(req: any, res: any, client: MongoClient) {

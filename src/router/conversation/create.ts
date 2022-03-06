@@ -66,7 +66,7 @@ router.post(
       res.status(400);
       res.send({error: "recaptcha token invalid."});
       return;
-    }*/
+    }
     try {
       await client.connect();
       const user = await users.findOne({ key: key });
