@@ -5,7 +5,7 @@
   user (username): string,
   pwd (password, sha256 hashed): string,
   email: string,
-  htoken (hcaptcha token): string,
+  rtoken (recaptcha token): string,
   sex: string
 }
 */
@@ -15,7 +15,7 @@ import { MongoClient } from "mongodb";
 import body_parser from "body-parser";
 import { mongouri, secret } from "../../common";
 import EmailValidator from "email-validator";
-import { verify } from "hcaptcha";
+import { verify } from "../lib/recaptcha";
 import random from "random";
 import bcrypt from "bcrypt";
 import mailgun from "mailgun-js";
@@ -29,7 +29,7 @@ async function valid(req: any, res: any) {
   if (
     !req.body.user ||
     !req.body.pwd ||
-    !req.body.htoken ||
+    !req.body.rtoken ||
     !req.body.email ||
     !req.body.sex ||
     req.body.user?.split(" ")[1] ||
@@ -38,7 +38,7 @@ async function valid(req: any, res: any) {
       typeof req.body.user === "string" &&
       typeof req.body.pwd === "string" &&
       typeof req.body.email === "string" &&
-      typeof req.body.htoken === "string" &&
+      typeof req.body.rtoken === "string" &&
       (req.body.sex === "M" || req.body.sex === "F")
     ) ||
     Object.keys(req.body).length > 5 ||
@@ -49,17 +49,15 @@ async function valid(req: any, res: any) {
     res.send({ error: "Bad request." });
     return false;
   }
-  /*const hvalid = await verify(secret, req.body.htoken);
-  if (!hvalid.success) {
+  if (!(await verify(secret, req.body.rtoken))) {
     res.status(400);
-    res.send({ error: "hCaptcha token invalid." });
+    res.send({error: "recaptcha token invalid."});
     return false;
   }*/
   return true;
 }
 async function exceptions(req: any, res: any, client: MongoClient) {
   const banned = client.db("metahkg-users").collection("banned");
-  console.log(req.ip);
   if (await banned.findOne({ ip: req.ip })) {
     res.status(403);
     res.send({ error: "You are banned from creating accounts." });

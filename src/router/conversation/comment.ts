@@ -2,11 +2,12 @@ import express from "express";
 const router = express.Router();
 import body_parser from "body-parser";
 import { MongoClient } from "mongodb";
-import { domain, mongouri, timediff } from "../../common";
+import { domain, mongouri, secret, timediff } from "../../common";
 import { JSDOM } from "jsdom";
 import isInteger from "is-sn-integer";
 import createDOMPurify from "dompurify";
 import axios from "axios";
+import { verify } from "../lib/recaptcha";
 const jsdomwindow: any = new JSDOM("").window;
 const DOMPurify = createDOMPurify(jsdomwindow);
 /** add a comment
@@ -18,14 +19,20 @@ router.post("/api/comment", body_parser.json(), async (req, res) => {
   if (
     !req.body.id ||
     !req.body.comment ||
-    Object.keys(req.body)?.length > 2 ||
+    !req.body.rtoken ||
+    Object.keys(req.body)?.length > 3 ||
     !(
       typeof req.body.id === "number" && typeof req.body.comment === "string"
     ) ||
     !isInteger(req.body.id)
   ) {
     res.status(400);
-    res.send({ error: "Bad request" });
+    res.send({ error: "Bad request." });
+    return;
+  }
+  if (!(await verify(secret, req.body.rtoken))) {
+    res.status(400);
+    res.send({error: "recaptcha token invalid."});
     return;
   }
   await client.connect();

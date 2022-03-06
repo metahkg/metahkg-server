@@ -6,7 +6,7 @@ if (
     process.env.mailgun_key &&
     process.env.domain &&
     process.env.port &&
-    process.env.hcaptchasecret &&
+    process.env.recaptchasecret &&
     process.env.s3Bucket &&
     process.env.awsRegion
   )

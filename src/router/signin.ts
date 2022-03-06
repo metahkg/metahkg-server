@@ -23,7 +23,7 @@ router.post("/api/signin", body_parser.json(), async (req, res) => {
     !(typeof req.body.user === "string" && typeof req.body.pwd === "string")
   ) {
     res.status(400);
-    res.send({ error: "Bad request" });
+    res.send({ error: "Bad request." });
     return;
   }
   await client.connect();
@@ -39,7 +39,7 @@ router.post("/api/signin", body_parser.json(), async (req, res) => {
   const correct = await bcrypt.compare(req.body.pwd, data.pwd);
   if (!correct) {
     res.status(401);
-    res.send({ error: "Password incorrect" });
+    res.send({ error: "Password incorrect." });
     return;
   }
   res.cookie("key", data.key, {

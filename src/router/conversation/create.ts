@@ -2,7 +2,7 @@
 /*Syntax: POST /api/create 
 {
   icomment (initial comment) : string,
-  htoken (hcaptcha token) : string,
+  rtoken (recaptcha token) : string,
   title : string,
   category : number
 }*/
@@ -12,7 +12,7 @@ const router = express.Router();
 import body_parser from "body-parser";
 import { MongoClient } from "mongodb";
 import { mongouri, secret, domain, allequal } from "../../common";
-import { verify } from "hcaptcha";
+import { verify } from "../lib/recaptcha";
 import axios from "axios";
 router.post(
   "/api/create",
@@ -21,7 +21,7 @@ router.post(
     req: {
       body: {
         icomment: string;
-        htoken: string;
+        rtoken: string;
         title: string;
         category: number;
       };
@@ -33,7 +33,7 @@ router.post(
   ) => {
     if (
       !req.body.icomment ||
-      !req.body.htoken ||
+      !req.body.rtoken ||
       !req.body.title ||
       !req.body.category ||
       Object.keys(req.body)?.length > 4 ||
@@ -41,7 +41,7 @@ router.post(
         allequal([
           typeof req.body.icomment,
           typeof req.body.title,
-          typeof req.body.htoken,
+          typeof req.body.rtoken,
           "string",
         ]) && typeof req.body.category === "number"
       )
@@ -51,7 +51,7 @@ router.post(
       return;
     }
     const client = new MongoClient(mongouri);
-    const { icomment, htoken, title, category } = req.body;
+    const { icomment, rtoken, title, category } = req.body;
     const key = String(req.cookies.key);
     const metahkgThreads = client.db("metahkg-threads");
     const metahkgUsers = client.db("metahkg-users");
@@ -62,10 +62,9 @@ router.post(
     const conversation = metahkgThreads.collection("conversation");
     const limit = metahkgUsers.collection("limit");
     const users = metahkgUsers.collection("users");
-    /*const hvalid = await verify(secret, htoken);
-    if (!hvalid.success) {
+    if (!(await verify(secret, req.body.rtoken))) {
       res.status(400);
-      res.send({ error: "hCaptcha token invalid." });
+      res.send({error: "recaptcha token invalid."});
       return;
     }*/
     try {

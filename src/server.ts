@@ -14,13 +14,12 @@ setInterval(() => {
   }, 7200 * 1000);
 }, 7200 * 1000);
 app.disable("x-powered-by");
-/*
+/**
  * Get client ip from cloudflare
  */
 app.set("trust proxy", true);
-/*
+/**
 * Set content security policy
-* js.hcaptcha.com: hcaptcha
 * sa.wcyat.engineer, analytics.wcyat.me, 
   static.cloudflareinsights.com: analytics
 * cdnjs.cloudflare.com: deliver axios
@@ -29,7 +28,7 @@ app.set("trust proxy", true);
 app.use(function (req, res, next) {
   res.setHeader(
     "Content-Security-Policy",
-    "script-src 'self' https://js.hcaptcha.com https://sa.wcyat.engineer https://analytics.wcyat.me https://static.cloudflareinsights.com https://cdnjs.cloudflare.com"
+    "script-src 'self' https://www.gstatic.com/recaptcha/ https://www.google.com/recaptcha/ https://sa.wcyat.engineer https://analytics.wcyat.me https://static.cloudflareinsights.com https://cdnjs.cloudflare.com"
   );
   return next();
 });
