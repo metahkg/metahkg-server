@@ -64,7 +64,7 @@ router.post(
     const users = metahkgUsers.collection("users");
     if (!(await verify(secret, req.body.rtoken))) {
       res.status(400);
-      res.send({error: "recaptcha token invalid."});
+      res.send({ error: "recaptcha token invalid." });
       return;
     }
     try {
