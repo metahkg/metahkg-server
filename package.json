@@ -17,7 +17,6 @@
     "dotenv": "^16.0.0",
     "email-validator": "^2.0.4",
     "express": "^4.17.3",
-    "hcaptcha": "^0.1.1",
     "is-sn-integer": "^0.2.0",
     "jsdom": "^19.0.0",
     "mailgun-js": "^0.22.0",

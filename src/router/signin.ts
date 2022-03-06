@@ -39,7 +39,7 @@ router.post("/api/signin", body_parser.json(), async (req, res) => {
   const correct = await bcrypt.compare(req.body.pwd, data.pwd);
   if (!correct) {
     res.status(401);
-    res.send({ error: "Password incorrect" });
+    res.send({ error: "Password incorrect." });
     return;
   }
   res.cookie("key", data.key, {

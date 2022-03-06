@@ -69,8 +69,8 @@ if [ $reply = "y" ]; then
   echo "domain=$reply" >>.env.save
   read -p "Port (that metahkg will run on): " reply
   echo "port=$reply" >>.env.save
-  read -p "hCaptcha secret: " reply
-  echo "hcaptchasecret=$reply" >>.env.save
+  read -p "recaptcha secret: " reply
+  echo "recaptchasecret=$reply" >>.env.save
   read -p "AWS Region: " reply
   echo "awsRegion=$reply" >>.env.save
   read -p "s3 Bucket name: " reply
