@@ -23,7 +23,7 @@ router.post("/api/signin", body_parser.json(), async (req, res) => {
     !(typeof req.body.user === "string" && typeof req.body.pwd === "string")
   ) {
     res.status(400);
-    res.send({ error: "Bad request" });
+    res.send({ error: "Bad request." });
     return;
   }
   await client.connect();

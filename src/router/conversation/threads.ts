@@ -37,7 +37,7 @@ router.get("/api/thread/:id", async (req, res) => {
         (!start && (end > page * 25 || end < (page - 1) * 25 + 1))))
   ) {
     res.status(400);
-    res.send({ error: "Bad request" });
+    res.send({ error: "Bad request." });
     return;
   }
   const client = new MongoClient(mongouri);

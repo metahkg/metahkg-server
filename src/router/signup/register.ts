@@ -58,7 +58,6 @@ async function valid(req: any, res: any) {
 }
 async function exceptions(req: any, res: any, client: MongoClient) {
   const banned = client.db("metahkg-users").collection("banned");
-  console.log(req.ip);
   if (await banned.findOne({ ip: req.ip })) {
     res.status(403);
     res.send({ error: "You are banned from creating accounts." });

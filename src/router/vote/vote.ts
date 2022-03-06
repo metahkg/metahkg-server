@@ -20,7 +20,7 @@ router.post("/api/vote", body_parser.json(), async (req, res) => {
     )
   ) {
     res.status(400);
-    res.send({ error: "Bad request" });
+    res.send({ error: "Bad request." });
     return;
   }
   const client = new MongoClient(mongouri);
