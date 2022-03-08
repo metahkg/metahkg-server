@@ -49,6 +49,6 @@ router.post("/api/signin", body_parser.json(), async (req, res) => {
     path: "/",
     expires: new Date("2038-01-19T04:14:07.000Z"),
   });
-  res.send({ key: data.key, id: data.id, user: data.user });
+  res.send({ id: data.id, user: data.user });
 });
 export default router;

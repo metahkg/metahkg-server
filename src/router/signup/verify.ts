@@ -46,6 +46,12 @@ router.post("/api/verify", body_parser.json(), async (req, res) => {
       include: { numbers: true, upper: true, lower: true, special: false },
       digits: 30,
     });
+    while (await users.countDocuments({key:data.key})) {
+      data.key = generate({
+        include: { numbers: true, upper: true, lower: true, special: false },
+        digits: 30,
+      });
+    }
     data.id =
       ((
         await users
@@ -63,7 +69,7 @@ router.post("/api/verify", body_parser.json(), async (req, res) => {
       path: "/",
       expires: new Date("2038-01-19T04:14:07.000Z"),
     });
-    res.send({ id: data.id, key: data.key });
+    res.send({ id: data.id });
     await verification.deleteOne({ email: req.body.email });
   }
 });
