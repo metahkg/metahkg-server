@@ -12,6 +12,7 @@ import { MongoClient } from "mongodb";
 import body_parser from "body-parser";
 import { mongouri } from "../../common";
 import { generate } from "wcyat-rg";
+import EmailValidator from "email-validator";
 dotenv.config();
 const router = express.Router();
 router.post("/api/verify", body_parser.json(), async (req, res) => {
@@ -20,13 +21,18 @@ router.post("/api/verify", body_parser.json(), async (req, res) => {
     !req.body.email ||
     !req.body.code ||
     !(
-      typeof req.body.email === "string" && typeof req.body.code === "number"
+      typeof req.body.email === "string" && typeof req.body.code === "string"
     ) ||
-    Object.keys(req.body)?.length > 2 ||
-    req.body.code?.toString().length !== 6
+    !EmailValidator.validate(req.body.email) ||
+    Object.keys(req.body)?.length > 2
   ) {
     res.status(400);
     res.send({ error: "Bad request." });
+    return;
+  }
+  if (req.body.code?.length !== 30) {
+    res.status(400);
+    res.send({error: "Code must be of 30 digits."});
     return;
   }
   await client.connect();
@@ -44,23 +50,23 @@ router.post("/api/verify", body_parser.json(), async (req, res) => {
     delete data.code;
     data.key = generate({
       include: { numbers: true, upper: true, lower: true, special: false },
-      digits: 30,
+      digits: 40,
     });
-    while (await users.countDocuments({key:data.key})) {
+    while (await users.countDocuments({ key: data.key })) {
       data.key = generate({
         include: { numbers: true, upper: true, lower: true, special: false },
-        digits: 30,
+        digits: 40,
       });
     }
     data.id =
-      ((
+      (
         await users
           .find()
-          .project({id: 1, _id: 0})
+          .project({ id: 1, _id: 0 })
           .sort({ id: -1 })
           .limit(1)
           .toArray()
-      )[0]?.id || (await users.countDocuments({}))) + 1;
+      )[0]?.id || 1;
     await users.insertOne(data);
     res.cookie("key", data.key, {
       domain: process.env.domain,
@@ -69,7 +75,7 @@ router.post("/api/verify", body_parser.json(), async (req, res) => {
       path: "/",
       expires: new Date("2038-01-19T04:14:07.000Z"),
     });
-    res.send({ id: data.id });
+    res.send({ id: data.id, user: data.user, success: true });
     await verification.deleteOne({ email: req.body.email });
   }
 });

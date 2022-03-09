@@ -1,6 +1,6 @@
 import { MongoClient } from "mongodb";
 import { mongouri } from "../../common";
-/*
+/**
 * Decrease collection "hottest" documents count by 1
   for sorting popularity
 */

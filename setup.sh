@@ -65,6 +65,8 @@ if [ $reply = "y" ]; then
   echo "DB_URI=$reply" >.env.save
   read -p "Mailgun api key: " reply
   echo "mailgun_key=$reply" >>.env.save
+  read -p "Mailgun domain: " reply
+  echo "mailgun_domain=$reply" >>.env.save
   read -p "Domain: " reply
   echo "domain=$reply" >>.env.save
   read -p "Port (that metahkg will run on): " reply

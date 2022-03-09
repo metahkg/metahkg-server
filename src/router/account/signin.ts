@@ -12,7 +12,7 @@ import express from "express";
 const router = express.Router();
 import body_parser from "body-parser";
 import { MongoClient } from "mongodb";
-import { mongouri } from "../common";
+import { mongouri } from "../../common";
 import bcrypt from "bcrypt";
 router.post("/api/signin", body_parser.json(), async (req, res) => {
   const client = new MongoClient(mongouri);
@@ -28,12 +28,20 @@ router.post("/api/signin", body_parser.json(), async (req, res) => {
   }
   await client.connect();
   const users = client.db("metahkg-users").collection("users");
+  const verification = client.db("metahkg-users").collection("verification");
   const data =
     (await users.findOne({ user: req.body.user })) ||
     (await users.findOne({ email: req.body.user }));
   if (!data) {
+    const vdata =
+      (await verification.findOne({ user: req.body.user })) ||
+      (await verification.findOne({ email: req.body.user }));
+    if (vdata && (await bcrypt.compare(req.body.pwd, vdata.pwd))) {
+      res.send({ unverified: true });
+      return;
+    }
     res.status(400);
-    res.send({ error: "User not found" });
+    res.send({ error: "User not found." });
     return;
   }
   const correct = await bcrypt.compare(req.body.pwd, data.pwd);
