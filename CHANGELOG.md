@@ -59,3 +59,7 @@ node server/migrate/migratetov0.5.2.js
 ## v0.5.5rc2
 
 - neccessary changes for metahkg-web v0.5.5rc2
+
+## v0.5.6rc1
+
+- no longer redirects the users after avatar upload

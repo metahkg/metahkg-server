@@ -152,8 +152,7 @@ router.post("/api/avatar", upload.single("avatar"), async (req, res) => {
       fs.rm(`uploads/${newfilename}`, () => {});
       return;
     }
-    //redirect user back to /profile/self
-    res.redirect("/profile/self");
+    res.send({ success: true, url: `https://${bucket}.s3.amazonaws.com/avatars/${user.id}` });
     //remove the file locally
     fs.rm(`uploads/${newfilename}`, () => {});
   } finally {
