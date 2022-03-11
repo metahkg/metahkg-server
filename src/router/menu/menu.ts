@@ -17,8 +17,7 @@ router.get("/api/menu/:category", async (req, res) => {
       !req.params.category?.startsWith("bytid")) ||
     (req.params.category?.startsWith("bytid") &&
       !isInteger(req.params.category?.replace("bytid", ""))) ||
-    (req.query.sort &&
-    ![0, 1].includes(Number(req.query.sort))) ||
+    (req.query.sort && ![0, 1].includes(Number(req.query.sort))) ||
     (req.query.page && !isInteger(Number(req.query.page)))
   ) {
     res.status(400);

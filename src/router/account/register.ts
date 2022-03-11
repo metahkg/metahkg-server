@@ -25,6 +25,12 @@ const mg = mailgun({
   domain: "metahkg.wcyat.me",
 });
 const router = express.Router();
+/**
+ * It checks if the request body is valid
+ * @param {any} req - the request object
+ * @param {any} res - the response object
+ * @returns a boolean.
+ */
 async function valid(req: any, res: any) {
   if (
     !req.body.user ||
@@ -56,6 +62,13 @@ async function valid(req: any, res: any) {
   }
   return true;
 }
+/**
+ * If the user is banned, return a 403. If the user or email already exists, return a 409
+ * @param {any} req - the request object
+ * @param {any} res - The response object.
+ * @param {MongoClient} client - MongoClient
+ * @returns a boolean.
+ */
 async function exceptions(req: any, res: any, client: MongoClient) {
   const banned = client.db("metahkg-users").collection("banned");
   if (await banned.findOne({ ip: req.ip })) {

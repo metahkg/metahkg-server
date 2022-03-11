@@ -70,7 +70,6 @@ router.get("/api/thread/:id", async (req, res) => {
                 _id: 0,
                 sex: 0,
                 vote: 0,
-                catname: 0,
                 lastModified: 0,
                 createdAt: 0,
               },

@@ -68,3 +68,7 @@ node server/migrate/migratetov0.5.2.js
 
 - support account verification in one week
 - support resend verification email
+
+## v0.5.6rc3
+
+- support fetching an array of threads info

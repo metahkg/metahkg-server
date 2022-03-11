@@ -139,7 +139,6 @@ router.post(
         slink: slink,
         title: req.body.title,
         category: category.id,
-        catname: category.name,
         lastModified: date,
         createdAt: date,
       };
