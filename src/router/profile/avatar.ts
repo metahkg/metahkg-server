@@ -1,4 +1,3 @@
-
 /**
  * To deploy this service you must have an aws account
  * Create a s3 bucket in a region you want
@@ -32,7 +31,7 @@ const s3 = new AWS.S3({ apiVersion: "2006-03-01" });
  * The path would be /avatars/<user-id>
  */
 async function uploadtos3(filename: string) {
-  const uploadParams:{
+  const uploadParams: {
     Bucket: string;
     Key: string;
     Body: string | fs.ReadStream;
@@ -152,7 +151,10 @@ router.post("/api/avatar", upload.single("avatar"), async (req, res) => {
       fs.rm(`uploads/${newfilename}`, () => {});
       return;
     }
-    res.send({ success: true, url: `https://${bucket}.s3.amazonaws.com/avatars/${user.id}` });
+    res.send({
+      success: true,
+      url: `https://${bucket}.s3.amazonaws.com/avatars/${user.id}`,
+    });
     //remove the file locally
     fs.rm(`uploads/${newfilename}`, () => {});
   } finally {
