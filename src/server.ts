@@ -3,16 +3,16 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import { autodecrement } from "./router/menu/autodecrement";
 import router from "./router";
+import changecode from "./router/account/changecode";
 dotenv.config();
 const app = express();
 /**
  * Decrease count by one in collection "hottest" every 2 hours
  */
 setInterval(() => {
-  setTimeout(() => {
-    autodecrement();
-  }, 7200 * 1000);
+  setTimeout(autodecrement, 7200 * 1000);
 }, 7200 * 1000);
+setInterval(changecode, 3600 * 1000);
 app.disable("x-powered-by");
 /**
  * Get client ip from cloudflare
@@ -33,7 +33,7 @@ app.use(function (req, res, next) {
   return next();
 });
 app.use(cookieParser());
-/*
+/**
 * If there's a path specified in router
   for the request, the request is responded
   by the api

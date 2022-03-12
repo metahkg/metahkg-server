@@ -13,18 +13,24 @@ import dotenv from "dotenv";
 import express from "express";
 import { MongoClient } from "mongodb";
 import body_parser from "body-parser";
-import { mongouri, secret } from "../../common";
+import { domain, mongouri, secret } from "../../common";
 import EmailValidator from "email-validator";
 import { verify } from "../lib/recaptcha";
-import random from "random";
 import bcrypt from "bcrypt";
 import mailgun from "mailgun-js";
+import { generate } from "wcyat-rg";
 dotenv.config();
 const mg = mailgun({
   apiKey: process.env.mailgun_key,
   domain: "metahkg.wcyat.me",
 });
 const router = express.Router();
+/**
+ * It checks if the request body is valid
+ * @param {any} req - the request object
+ * @param {any} res - the response object
+ * @returns a boolean.
+ */
 async function valid(req: any, res: any) {
   if (
     !req.body.user ||
@@ -51,11 +57,18 @@ async function valid(req: any, res: any) {
   }
   if (!(await verify(secret, req.body.rtoken))) {
     res.status(400);
-    res.send({error: "recaptcha token invalid."});
+    res.send({ error: "recaptcha token invalid." });
     return false;
   }
   return true;
 }
+/**
+ * If the user is banned, return a 403. If the user or email already exists, return a 409
+ * @param {any} req - the request object
+ * @param {any} res - The response object.
+ * @param {MongoClient} client - MongoClient
+ * @returns a boolean.
+ */
 async function exceptions(req: any, res: any, client: MongoClient) {
   const banned = client.db("metahkg-users").collection("banned");
   if (await banned.findOne({ ip: req.ip })) {
@@ -84,25 +97,30 @@ async function exceptions(req: any, res: any, client: MongoClient) {
   return true;
 }
 router.post("/api/register", body_parser.json(), async (req, res) => {
-  if (!(await valid(req, res))) {
-    return;
-  }
+  if (!(await valid(req, res))) return;
   const client = new MongoClient(mongouri);
   await client.connect();
   if (!(await exceptions(req, res, client))) {
     return;
   }
   const verification = client.db("metahkg-users").collection("verification");
-  const code = random.int(100000, 999999);
+  const code = generate({
+    include: { numbers: true, upper: true, lower: true, special: false },
+    digits: 30,
+  });
   const verify = {
     from: "Metahkg support <support@metahkg.wcyat.me>",
     to: req.body.email,
-    subject: "Metahkg verification code",
-    text: `Your verification code is ${code}.`,
+    subject: "Metahkg - verify your email",
+    text: `Verify your email with the following link:
+https://${domain}/verify?code=${encodeURIComponent(
+      code
+    )}&email=${encodeURIComponent(req.body.email)}
+
+Alternatively, use this code at https://${domain}/verify : 
+${code}`,
   };
-  await mg.messages().send(verify, function (error, body) {
-    console.log(body);
-  });
+  await mg.messages().send(verify);
   const hashed = await bcrypt.hash(req.body.pwd, 10);
   await verification.insertOne({
     createdAt: new Date(),
