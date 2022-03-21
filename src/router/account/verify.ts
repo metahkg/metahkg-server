@@ -13,6 +13,7 @@ import body_parser from "body-parser";
 import { mongouri } from "../../common";
 import { generate } from "wcyat-rg";
 import EmailValidator from "email-validator";
+import hash from "hash.js";
 dotenv.config();
 const router = express.Router();
 router.post("/api/verify", body_parser.json(), async (req, res) => {
@@ -32,7 +33,7 @@ router.post("/api/verify", body_parser.json(), async (req, res) => {
   }
   if (req.body.code?.length !== 30) {
     res.status(400);
-    res.send({error: "Code must be of 30 digits."});
+    res.send({ error: "Code must be of 30 digits." });
     return;
   }
   await client.connect();
@@ -67,6 +68,7 @@ router.post("/api/verify", body_parser.json(), async (req, res) => {
           .limit(1)
           .toArray()
       )[0]?.id || 1;
+    data.email = hash.sha256().update(data.email).digest("hex");
     await users.insertOne(data);
     res.cookie("key", data.key, {
       domain: process.env.domain,
