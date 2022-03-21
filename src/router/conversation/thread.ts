@@ -1,4 +1,4 @@
-/*
+/**
  * get conversation
  * Syntax: GET /api/thread/<thread id>/<"conversation"/"users">
  * conversation: main conversation content
@@ -6,8 +6,7 @@
  */
 import express from "express";
 const router = express.Router();
-import { MongoClient } from "mongodb";
-import { mongouri } from "../../common";
+import { client } from "../../common";
 import isInteger from "is-sn-integer";
 /**
  * type:
@@ -40,10 +39,7 @@ router.get("/api/thread/:id", async (req, res) => {
     res.send({ error: "Bad request." });
     return;
   }
-  const client = new MongoClient(mongouri);
-  await client.connect();
   const metahkgThreads = client.db("metahkg-threads");
-  try {
     if (type === 0) {
       //not using !type to avoid confusion
       const users = metahkgThreads.collection("users");
@@ -114,8 +110,5 @@ router.get("/api/thread/:id", async (req, res) => {
       return;
     }
     res.send(result?.conversation || result);
-  } finally {
-    await client.close();
-  }
 });
 export default router;

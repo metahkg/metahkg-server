@@ -11,11 +11,9 @@ dotenv.config();
 import express from "express";
 const router = express.Router();
 import body_parser from "body-parser";
-import { MongoClient } from "mongodb";
-import { mongouri } from "../../common";
+import { client } from "../../common";
 import bcrypt from "bcrypt";
 router.post("/api/signin", body_parser.json(), async (req, res) => {
-  const client = new MongoClient(mongouri);
   if (
     !req.body.user ||
     !req.body.pwd ||
@@ -26,7 +24,6 @@ router.post("/api/signin", body_parser.json(), async (req, res) => {
     res.send({ error: "Bad request." });
     return;
   }
-  await client.connect();
   const users = client.db("metahkg-users").collection("users");
   const verification = client.db("metahkg-users").collection("verification");
   const data =

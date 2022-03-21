@@ -1,6 +1,5 @@
 import express from "express";
-import { MongoClient } from "mongodb";
-import { mongouri } from "../common";
+import { client } from "../common";
 import isInteger from "is-sn-integer";
 const router = express.Router();
 /**
@@ -20,11 +19,8 @@ router.get("/api/search", async (req, res) => {
     res.send({ error: "Bad request." });
     return;
   }
-  const client = new MongoClient(mongouri);
   const page = Number(req.query.page) || 1;
   const q = decodeURIComponent(String(req.query.q));
-  try {
-    await client.connect();
     const summary = client.db("metahkg-threads").collection("summary");
     const sort: any = {
       0: {},
@@ -43,8 +39,6 @@ router.get("/api/search", async (req, res) => {
       .project({ _id: 0 })
       .toArray();
     res.send(data.length ? data : [null]);
-  } finally {
-    await client.close();
-  }
+  
 });
 export default router;

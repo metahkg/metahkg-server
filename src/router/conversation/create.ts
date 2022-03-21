@@ -10,8 +10,7 @@
 import express from "express";
 const router = express.Router();
 import body_parser from "body-parser";
-import { MongoClient } from "mongodb";
-import { mongouri, secret, domain, allequal } from "../../common";
+import { secret, domain, allequal, client } from "../../common";
 import { verify } from "../lib/recaptcha";
 import axios from "axios";
 router.post(
@@ -50,8 +49,6 @@ router.post(
       res.send({ error: "Bad request." });
       return;
     }
-    const client = new MongoClient(mongouri);
-    const { icomment, rtoken, title, category } = req.body;
     const key = String(req.cookies.key);
     const metahkgThreads = client.db("metahkg-threads");
     const metahkgUsers = client.db("metahkg-users");
@@ -67,8 +64,6 @@ router.post(
       res.send({error: "recaptcha token invalid."});
       return;
     }
-    try {
-      await client.connect();
       const user = await users.findOne({ key: key });
       if (!user) {
         res.status(400);
@@ -152,9 +147,7 @@ router.post(
       });
       await limit.insertOne({ id: user.id, createdAt: date, type: "create" });
       res.send({ id: newtid });
-    } finally {
-      await client.close();
-    }
+    
   }
 );
 export default router;

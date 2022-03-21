@@ -8,16 +8,14 @@
 //if successfully verified, sets a cookie "key" of user's key which is randomly generated
 import dotenv from "dotenv";
 import express from "express";
-import { MongoClient } from "mongodb";
 import body_parser from "body-parser";
-import { mongouri } from "../../common";
+import { client } from "../../common";
 import { generate } from "wcyat-rg";
 import EmailValidator from "email-validator";
 import hash from "hash.js";
 dotenv.config();
 const router = express.Router();
 router.post("/api/verify", body_parser.json(), async (req, res) => {
-  const client = new MongoClient(mongouri);
   if (
     !req.body.email ||
     !req.body.code ||
@@ -36,7 +34,6 @@ router.post("/api/verify", body_parser.json(), async (req, res) => {
     res.send({ error: "Code must be of 30 digits." });
     return;
   }
-  await client.connect();
   const verification = client.db("metahkg-users").collection("verification");
   const users = client.db("metahkg-users").collection("users");
   const data = await verification.findOne({ email: req.body.email });

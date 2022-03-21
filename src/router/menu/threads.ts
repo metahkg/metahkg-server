@@ -1,7 +1,6 @@
 import { Router } from "express";
 import isInteger from "is-sn-integer";
-import { MongoClient } from "mongodb";
-import { mongouri } from "../../common";
+import { client } from "../../common";
 const router = Router();
 router.get("/api/threads", async (req, res) => {
   let threads = decodeURIComponent(String(req.query.threads));
@@ -23,8 +22,6 @@ router.get("/api/threads", async (req, res) => {
     res.send({ error: "Bad request." });
     return;
   }
-  const client = new MongoClient(mongouri);
-  await client.connect();
   const metahkgThreads = client.db("metahkg-threads");
   const summary = metahkgThreads.collection("summary");
   const r = await summary

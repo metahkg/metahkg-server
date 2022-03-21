@@ -13,7 +13,7 @@ import dotenv from "dotenv";
 import express from "express";
 import { MongoClient } from "mongodb";
 import body_parser from "body-parser";
-import { domain, mongouri, secret } from "../../common";
+import { client, domain, secret } from "../../common";
 import EmailValidator from "email-validator";
 import { verify } from "../lib/recaptcha";
 import bcrypt from "bcrypt";
@@ -98,8 +98,6 @@ async function exceptions(req: any, res: any, client: MongoClient) {
 }
 router.post("/api/register", body_parser.json(), async (req, res) => {
   if (!(await valid(req, res))) return;
-  const client = new MongoClient(mongouri);
-  await client.connect();
   if (!(await exceptions(req, res, client))) {
     return;
   }

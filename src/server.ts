@@ -4,7 +4,9 @@ import cookieParser from "cookie-parser";
 import { autodecrement } from "./router/menu/autodecrement";
 import router from "./router";
 import changecode from "./router/account/changecode";
+import { client } from "./common";
 dotenv.config();
+client.connect();
 const app = express();
 /**
  * Decrease count by one in collection "hottest" every 2 hours
@@ -49,7 +51,7 @@ app.use(async (req, res, next) => {
   return next();
 });
 
-/*
+/**
  * The port can be modified in .env
  */
 app.listen(Number(process.env.port) || 3200, () => {

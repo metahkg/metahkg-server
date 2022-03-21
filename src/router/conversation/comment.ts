@@ -1,8 +1,7 @@
 import express from "express";
 const router = express.Router();
 import body_parser from "body-parser";
-import { MongoClient } from "mongodb";
-import { domain, mongouri, secret, timediff } from "../../common";
+import { client, domain, secret, timediff } from "../../common";
 import { JSDOM } from "jsdom";
 import isInteger from "is-sn-integer";
 import createDOMPurify from "dompurify";
@@ -15,7 +14,6 @@ const DOMPurify = createDOMPurify(jsdomwindow);
  * client must have a cookie "key"
  */
 router.post("/api/comment", body_parser.json(), async (req, res) => {
-  const client = new MongoClient(mongouri);
   if (
     !req.body.id ||
     !req.body.comment ||
@@ -35,8 +33,6 @@ router.post("/api/comment", body_parser.json(), async (req, res) => {
     res.send({error: "recaptcha token invalid."});
     return;
   }
-  await client.connect();
-  try {
     const conversation = client
       .db("metahkg-threads")
       .collection("conversation");
@@ -122,8 +118,6 @@ router.post("/api/comment", body_parser.json(), async (req, res) => {
       await hottest.insertOne(o);
     }
     res.send({ id: newid });
-  } finally {
-    await client.close();
-  }
+  
 });
 export default router;
