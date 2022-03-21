@@ -5,6 +5,7 @@ import { autodecrement } from "./router/menu/autodecrement";
 import router from "./router";
 import changecode from "./router/account/changecode";
 import { client } from "./common";
+import cors from "cors";
 dotenv.config();
 client.connect();
 const app = express();
@@ -34,6 +35,7 @@ app.use(function (req, res, next) {
   );
   return next();
 });
+process.env.production === "dev" && app.use(cors());
 app.use(cookieParser());
 /**
 * If there's a path specified in router
