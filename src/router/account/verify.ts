@@ -64,7 +64,7 @@ router.post("/api/verify", body_parser.json(), async (req, res) => {
           .sort({ id: -1 })
           .limit(1)
           .toArray()
-      )[0]?.id || 1;
+      )[0]?.id + 1 || 1;
     data.email = hash.sha256().update(data.email).digest("hex");
     await users.insertOne(data);
     res.cookie("key", data.key, {
