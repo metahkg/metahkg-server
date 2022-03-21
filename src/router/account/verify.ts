@@ -32,7 +32,7 @@ router.post("/api/verify", body_parser.json(), async (req, res) => {
   }
   if (req.body.code?.length !== 30) {
     res.status(400);
-    res.send({error: "Code must be of 30 digits."});
+    res.send({ error: "Code must be of 30 digits." });
     return;
   }
   await client.connect();
