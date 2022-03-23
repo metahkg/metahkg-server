@@ -32,7 +32,7 @@ router.post("/api/verify", body_parser.json(), async (req, res) => {
   }
   if (req.body.code?.length !== 30) {
     res.status(400);
-    res.send({error: "Code must be of 30 digits."});
+    res.send({ error: "Code must be of 30 digits." });
     return;
   }
   await client.connect();
@@ -73,7 +73,7 @@ router.post("/api/verify", body_parser.json(), async (req, res) => {
       httpOnly: true,
       path: "/",
       expires: new Date("2038-01-19T04:14:07.000Z"),
-      sameSite: true
+      sameSite: true,
     });
     res.send({ id: data.id, user: data.user, success: true });
     await verification.deleteOne({ email: req.body.email });

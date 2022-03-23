@@ -55,7 +55,7 @@ router.post("/api/signin", body_parser.json(), async (req, res) => {
     httpOnly: true,
     path: "/",
     expires: new Date("2038-01-19T04:14:07.000Z"),
-    sameSite: true
+    sameSite: true,
   });
   res.send({ id: data.id, user: data.user });
 });
