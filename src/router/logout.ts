@@ -8,7 +8,6 @@ router.get("/api/logout", (req, res) => {
   res.cookie("key", "none", {
     expires: new Date(Date.now() + 1),
     httpOnly: true,
-    domain: process.env.domain,
   });
   res
     .status(200)

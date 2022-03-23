@@ -14,7 +14,6 @@ router.get("/api/loggedin", async (req, res) => {
     res.cookie("key", "none", {
       expires: new Date(Date.now() + 1),
       httpOnly: true,
-      domain: process.env.domain,
     });
     res.send({ loggedin: false });
     return;
