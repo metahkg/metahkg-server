@@ -71,7 +71,7 @@ router.post("/api/vote", body_parser.json(), async (req, res) => {
     { id: user.id },
     { $set: { [`${req.body.id}.${req.body.cid}`]: req.body.vote } }
   );
-  if (!thread.conversation[index]?.[req.body.vote]) {
+  if (!thread.conversation[0]?.[req.body.vote]) {
     await conversation.updateOne(
       { id: req.body.id },
       { $set: { [`conversation.${index}.${req.body.vote}`]: 0 } }
