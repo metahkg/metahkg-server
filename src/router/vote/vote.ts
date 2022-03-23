@@ -92,7 +92,7 @@ router.post("/api/vote", body_parser.json(), async (req, res) => {
         { $inc: { vote: req.body.vote === "U" ? 1 : -1 } }
       );
     }
-    res.send({response : "ok"});
+    res.send({ response: "ok" });
   } finally {
     await client.close();
   }
