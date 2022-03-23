@@ -9,7 +9,7 @@ import bodyParser from "body-parser";
 dotenv.config();
 const mg = mailgun({
   apiKey: process.env.mailgun_key,
-  domain: process.env.mailgun_domain || "metahkg.wcyat.me",
+  domain: process.env.mailgun_domain || "metahkg.org",
 });
 const router = Router();
 router.post("/api/resend", bodyParser.json(), async (req, res) => {
@@ -51,7 +51,7 @@ router.post("/api/resend", bodyParser.json(), async (req, res) => {
   }
   const verifymsg = {
     from: `Metahkg support <support@${
-      process.env.mailgun_domain || "metahkg.wcyat.me"
+      process.env.mailgun_domain || "metahkg.org"
     }>`,
     to: req.body.email,
     subject: "Metahkg - verify your email",

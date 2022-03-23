@@ -22,7 +22,7 @@ import { generate } from "wcyat-rg";
 dotenv.config();
 const mg = mailgun({
   apiKey: process.env.mailgun_key,
-  domain: "metahkg.wcyat.me",
+  domain: "metahkg.org",
 });
 const router = express.Router();
 /**
@@ -109,7 +109,7 @@ router.post("/api/register", body_parser.json(), async (req, res) => {
     digits: 30,
   });
   const verify = {
-    from: "Metahkg support <support@metahkg.wcyat.me>",
+    from: "Metahkg support <support@metahkg.org>",
     to: req.body.email,
     subject: "Metahkg - verify your email",
     text: `Verify your email with the following link:

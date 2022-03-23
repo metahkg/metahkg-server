@@ -2,9 +2,9 @@
 
 This is the Metahkg backend api. For frontend, please refer to [metahkg/metahkg-web](https://gitlab.com/metahkg/metahkg-web).
 
-stable: [metahkg.wcyat.me](https://metahkg.wcyat.me)
+stable: [metahkg.org](https://metahkg.org)
 
-dev build (probably daily): [metahkg.wcyat.engineer](https://metahkg.wcyat.engineer)
+dev build (probably daily): [dev.metahkg.org](https://dev.metahkg.org)
 
 [![React](https://badges.aleen42.com/src/react.svg)](http://reactjs.org/)
 [![Nodejs](https://badges.aleen42.com/src/node.svg)](https://nodejs.org)
