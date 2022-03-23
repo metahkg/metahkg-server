@@ -16,7 +16,7 @@ dev build (probably daily): [dev.metahkg.org](https://dev.metahkg.org)
 
 [![DeepSource](https://deepsource.io/gh/metahkg/metahkg-server.svg/?label=active+issues&show_trend=true&token=U57K3_mzxKK3THb0RtJifA_R)](https://deepsource.io/gh/metahkg/metahkg-server/?ref=repository-badge)
 [![DeepSource](https://deepsource.io/gh/metahkg/metahkg-server.svg/?label=resolved+issues&show_trend=true&token=U57K3_mzxKK3THb0RtJifA_R)](https://deepsource.io/gh/metahkg/metahkg-server/?ref=repository-badge)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/7a8bdd4a758c4338abe5d1d5d497a5d4)](https://www.codacy.com/gl/metahkg/metahkg-server/dashboard?utm_source=gitlab.com&amp;utm_medium=referral&amp;utm_content=metahkg/metahkg-server&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/7a8bdd4a758c4338abe5d1d5d497a5d4)](https://www.codacy.com/gl/metahkg/metahkg-server/dashboard?utm_source=gitlab.com&utm_medium=referral&utm_content=metahkg/metahkg-server&utm_campaign=Badge_Grade)
 
 ## About
 
