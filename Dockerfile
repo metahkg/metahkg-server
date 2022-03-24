@@ -6,8 +6,9 @@ RUN yarn add typescript
 
 COPY package.json ./
 COPY yarn.lock ./
-COPY src src
 COPY tsconfig.json ./
+
+COPY . ./
 
 RUN yarn install
 RUN yarn build
@@ -23,4 +24,4 @@ COPY --from=build /usr/src/app/dist ./dist
 
 RUN yarn install
 
-CMD yarn start
+CMD yarn dev
