@@ -28,7 +28,9 @@ router.post("/api/signin", body_parser.json(), async (req, res) => {
   const verification = client.db("metahkg-users").collection("verification");
   const data =
     (await users.findOne({ user: req.body.user })) ||
-    (await users.findOne({ email: req.body.user }));
+    (await users.findOne({
+      email: hash.sha256().update(req.body.user).digest("hex"),
+    }));
   if (!data) {
     const vdata =
       (await verification.findOne({ user: req.body.user })) ||

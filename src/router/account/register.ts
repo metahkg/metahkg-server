@@ -22,7 +22,7 @@ import { generate } from "wcyat-rg";
 dotenv.config();
 const mg = mailgun({
   apiKey: process.env.mailgun_key,
-  domain: "metahkg.org",
+  domain: process.env.mailgun_domain || "metahkg.org",
 });
 const router = express.Router();
 /**
@@ -129,6 +129,7 @@ ${code}`,
     pwd: hashed,
     user: req.body.user,
     sex: req.body.sex,
+    type: "register"
   });
   res.send({ response: "ok" });
 });

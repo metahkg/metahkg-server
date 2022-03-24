@@ -36,7 +36,10 @@ router.post("/api/verify", body_parser.json(), async (req, res) => {
   }
   const verification = client.db("metahkg-users").collection("verification");
   const users = client.db("metahkg-users").collection("users");
-  const data = await verification.findOne({ email: req.body.email });
+  const data = await verification.findOne({
+    type: "register",
+    email: req.body.email,
+  });
   if (!data) {
     res.status(404);
     res.send({ error: "Not found. Your code night have expired." });
@@ -72,7 +75,7 @@ router.post("/api/verify", body_parser.json(), async (req, res) => {
       httpOnly: true,
       path: "/",
       expires: new Date("2038-01-19T04:14:07.000Z"),
-      sameSite: true
+      sameSite: true,
     });
     res.send({ id: data.id, user: data.user, success: true });
     await verification.deleteOne({ email: req.body.email });
