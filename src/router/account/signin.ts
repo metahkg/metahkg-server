@@ -13,6 +13,7 @@ const router = express.Router();
 import body_parser from "body-parser";
 import { client } from "../../common";
 import bcrypt from "bcrypt";
+import hash from "hash.js";
 router.post("/api/signin", body_parser.json(), async (req, res) => {
   if (
     !req.body.user ||
