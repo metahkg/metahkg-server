@@ -34,8 +34,7 @@ router.post("/api/resend", bodyParser.json(), async (req, res) => {
   if (!vuser) {
     res.status(404);
     res.send({
-      error:
-        "Email not found.",
+      error: "Email not found.",
     });
     return;
   }

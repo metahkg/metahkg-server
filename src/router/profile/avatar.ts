@@ -1,4 +1,3 @@
-
 /**
  * To deploy this service you must have an aws account
  * Create a s3 bucket in a region you want
@@ -31,7 +30,7 @@ const s3 = new AWS.S3({ apiVersion: "2006-03-01" });
  * The path would be /avatars/<user-id>
  */
 async function uploadtos3(filename: string) {
-  const uploadParams:{
+  const uploadParams: {
     Bucket: string;
     Key: string;
     Body: string | fs.ReadStream;
@@ -114,43 +113,41 @@ router.post("/api/avatar", upload.single("avatar"), async (req, res) => {
     fs.rm(req.file?.path, () => {});
     return;
   }
-    const users = client.db("metahkg-users").collection("users");
-    //search for the user using cookie "key"
-    const user = await users.findOne({ key: req.cookies.key });
-    //send 404 if no such user
-    if (!user) {
-      res.status(400);
-      res.send({ error: "User not found." });
-      fs.rm(`uploads/${req.file.originalname}`, () => {});
-      return;
-    }
-    //rename file to <user-id>.<extension>
-    let newfilename = `${user.id}.${req.file.originalname.split(".").pop()}`;
-    fs.rename(
-      `uploads/${req.file.filename}`,
-      `uploads/${newfilename}`,
-      () => {}
-    );
-    //compress the file
-    try {
-      await compress(`uploads/${newfilename}`);
-      newfilename += ".png";
-      //upload file to s3
-      await uploadtos3(`uploads/${newfilename}`);
-      const url = `https://${bucket}.s3.amazonaws.com/avatars/${user.id}`;
-      //save avatar url to db
-      await users.updateOne({ id: user.id }, { $set: { avatar: url } });
-    } catch {
-      res.status(422);
-      res.send({
-        error: "Could not complete the request. Please check your file.",
-      });
-      fs.rm(`uploads/${newfilename}`, () => {});
-      return;
-    }
-    res.send({ success: true, url: `https://${bucket}.s3.amazonaws.com/avatars/${user.id}` });
-    //remove the file locally
+  const users = client.db("metahkg-users").collection("users");
+  //search for the user using cookie "key"
+  const user = await users.findOne({ key: req.cookies.key });
+  //send 404 if no such user
+  if (!user) {
+    res.status(400);
+    res.send({ error: "User not found." });
+    fs.rm(`uploads/${req.file.originalname}`, () => {});
+    return;
+  }
+  //rename file to <user-id>.<extension>
+  let newfilename = `${user.id}.${req.file.originalname.split(".").pop()}`;
+  fs.rename(`uploads/${req.file.filename}`, `uploads/${newfilename}`, () => {});
+  //compress the file
+  try {
+    await compress(`uploads/${newfilename}`);
+    newfilename += ".png";
+    //upload file to s3
+    await uploadtos3(`uploads/${newfilename}`);
+    const url = `https://${bucket}.s3.amazonaws.com/avatars/${user.id}`;
+    //save avatar url to db
+    await users.updateOne({ id: user.id }, { $set: { avatar: url } });
+  } catch {
+    res.status(422);
+    res.send({
+      error: "Could not complete the request. Please check your file.",
+    });
     fs.rm(`uploads/${newfilename}`, () => {});
-  
+    return;
+  }
+  res.send({
+    success: true,
+    url: `https://${bucket}.s3.amazonaws.com/avatars/${user.id}`,
+  });
+  //remove the file locally
+  fs.rm(`uploads/${newfilename}`, () => {});
 });
 export default router;

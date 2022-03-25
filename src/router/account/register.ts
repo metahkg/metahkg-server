@@ -129,7 +129,7 @@ ${code}`,
     pwd: hashed,
     user: req.body.user,
     sex: req.body.sex,
-    type: "register"
+    type: "register",
   });
   res.send({ response: "ok" });
 });

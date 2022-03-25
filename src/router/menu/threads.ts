@@ -34,7 +34,7 @@ router.get("/api/threads", async (req, res) => {
     .toArray();
   let result: any[] = [];
   threads.forEach((tid) => {
-    const index = r.findIndex(i => i.id === tid);
+    const index = r.findIndex((i) => i.id === tid);
     index !== -1 && result.push(r[index]);
   });
   !result.length && result.push(null);

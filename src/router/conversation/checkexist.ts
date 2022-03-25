@@ -16,16 +16,16 @@ router.post("/api/check", body_parser.json(), async (req, res) => {
     res.send({ error: "Bad request." });
     return;
   }
-    if (
-      !(await client
-        .db("metahkg-threads")
-        .collection("conversation")
-        .findOne({ id: req.body.id }))
-    ) {
-      res.status(404);
-      res.send({ error: "Not found." });
-      return;
-    }
-    res.send({ response : "ok" });
+  if (
+    !(await client
+      .db("metahkg-threads")
+      .collection("conversation")
+      .findOne({ id: req.body.id }))
+  ) {
+    res.status(404);
+    res.send({ error: "Not found." });
+    return;
+  }
+  res.send({ response: "ok" });
 });
 export default router;
