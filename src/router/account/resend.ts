@@ -1,9 +1,8 @@
 import dotenv from "dotenv";
 import { Router } from "express";
 import EmailValidator from "email-validator";
-import { allequal, secret, mongouri, domain } from "../../common";
+import { allequal, secret, domain, client } from "../../common";
 import { verify } from "../lib/recaptcha";
-import { MongoClient } from "mongodb";
 import mailgun from "mailgun-js";
 import bodyParser from "body-parser";
 dotenv.config();
@@ -28,8 +27,6 @@ router.post("/api/resend", bodyParser.json(), async (req, res) => {
     res.send({ error: "recaptcha token invalid." });
     return;
   }
-  const client = new MongoClient(mongouri);
-  await client.connect();
   const metahkgUsers = client.db("metahkg-users");
   const limit = metahkgUsers.collection("limit");
   const verification = metahkgUsers.collection("verification");

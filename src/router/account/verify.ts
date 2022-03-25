@@ -8,15 +8,14 @@
 //if successfully verified, sets a cookie "key" of user's key which is randomly generated
 import dotenv from "dotenv";
 import express from "express";
-import { MongoClient } from "mongodb";
 import body_parser from "body-parser";
-import { mongouri } from "../../common";
+import { client } from "../../common";
 import { generate } from "wcyat-rg";
 import EmailValidator from "email-validator";
+import hash from "hash.js";
 dotenv.config();
 const router = express.Router();
 router.post("/api/verify", body_parser.json(), async (req, res) => {
-  const client = new MongoClient(mongouri);
   if (
     !req.body.email ||
     !req.body.code ||
@@ -32,13 +31,15 @@ router.post("/api/verify", body_parser.json(), async (req, res) => {
   }
   if (req.body.code?.length !== 30) {
     res.status(400);
-    res.send({error: "Code must be of 30 digits."});
+    res.send({ error: "Code must be of 30 digits." });
     return;
   }
-  await client.connect();
   const verification = client.db("metahkg-users").collection("verification");
   const users = client.db("metahkg-users").collection("users");
-  const data = await verification.findOne({ email: req.body.email });
+  const data = await verification.findOne({
+    type: "register",
+    email: req.body.email,
+  });
   if (!data) {
     res.status(404);
     res.send({ error: "Not found. Your code night have expired." });
@@ -67,13 +68,14 @@ router.post("/api/verify", body_parser.json(), async (req, res) => {
           .limit(1)
           .toArray()
       )[0]?.id + 1 || 1;
+    data.email = hash.sha256().update(data.email).digest("hex");
     await users.insertOne(data);
     res.cookie("key", data.key, {
       secure: true,
       httpOnly: true,
       path: "/",
       expires: new Date("2038-01-19T04:14:07.000Z"),
-      sameSite: true
+      sameSite: true,
     });
     res.send({ id: data.id, user: data.user, success: true });
     await verification.deleteOne({ email: req.body.email });

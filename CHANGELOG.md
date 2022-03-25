@@ -72,3 +72,7 @@ node server/migrate/migratetov0.5.2.js
 ## v0.5.6rc3
 
 - support fetching an array of threads info
+
+## v0.5.7rc1
+
+- use one main connection for mongodb to reduce load time

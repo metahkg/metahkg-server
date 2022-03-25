@@ -1,7 +1,6 @@
 import express from "express";
 import isInteger from "is-sn-integer";
-import { MongoClient } from "mongodb";
-import { mongouri } from "../../common";
+import { client } from "../../common";
 const router = express.Router();
 router.get("/api/profile/:id", async (req, res) => {
   if (!isInteger(req.params.id) && req.params.id !== "self") {
@@ -9,9 +8,6 @@ router.get("/api/profile/:id", async (req, res) => {
     res.send({ error: "Bad request." });
     return;
   }
-  const client = new MongoClient(mongouri);
-  try {
-    await client.connect();
     const users = client.db("metahkg-users").collection("users");
     const summary = client.db("metahkg-threads").collection("summary");
     const user = (
@@ -44,8 +40,6 @@ router.get("/api/profile/:id", async (req, res) => {
     !req.query.nameonly &&
       (user.count = await summary.countDocuments({ op: user.user }));
     res.send(user);
-  } finally {
-    await client.close();
-  }
+  
 });
 export default router;

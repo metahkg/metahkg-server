@@ -8,8 +8,7 @@ import express from "express";
 import multer from "multer"; //handle image uploads
 import AWS from "aws-sdk";
 import fs from "fs";
-import { MongoClient } from "mongodb";
-import { mongouri } from "../../common";
+import { client } from "../../common";
 import sharp from "sharp"; //reshape images to circle
 dotenv.config();
 const router = express.Router();
@@ -103,7 +102,6 @@ router.post("/api/avatar", upload.single("avatar"), async (req, res) => {
     fs.rm(req.file?.path, () => {});
     return;
   }
-  const client = new MongoClient(mongouri);
   if (
     //check if file type is not aupported
     !["jpg", "svg", "png", "jpeg"].includes(
@@ -116,8 +114,6 @@ router.post("/api/avatar", upload.single("avatar"), async (req, res) => {
     fs.rm(req.file?.path, () => {});
     return;
   }
-  try {
-    await client.connect();
     const users = client.db("metahkg-users").collection("users");
     //search for the user using cookie "key"
     const user = await users.findOne({ key: req.cookies.key });
@@ -155,8 +151,6 @@ router.post("/api/avatar", upload.single("avatar"), async (req, res) => {
     res.send({ success: true, url: `https://${bucket}.s3.amazonaws.com/avatars/${user.id}` });
     //remove the file locally
     fs.rm(`uploads/${newfilename}`, () => {});
-  } finally {
-    await client.close();
-  }
+  
 });
 export default router;

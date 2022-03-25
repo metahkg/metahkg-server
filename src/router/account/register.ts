@@ -13,7 +13,7 @@ import dotenv from "dotenv";
 import express from "express";
 import { MongoClient } from "mongodb";
 import body_parser from "body-parser";
-import { domain, mongouri, secret } from "../../common";
+import { client, domain, secret } from "../../common";
 import EmailValidator from "email-validator";
 import { verify } from "../lib/recaptcha";
 import bcrypt from "bcrypt";
@@ -22,7 +22,7 @@ import { generate } from "wcyat-rg";
 dotenv.config();
 const mg = mailgun({
   apiKey: process.env.mailgun_key,
-  domain: "metahkg.org",
+  domain: process.env.mailgun_domain || "metahkg.org",
 });
 const router = express.Router();
 /**
@@ -98,8 +98,6 @@ async function exceptions(req: any, res: any, client: MongoClient) {
 }
 router.post("/api/register", body_parser.json(), async (req, res) => {
   if (!(await valid(req, res))) return;
-  const client = new MongoClient(mongouri);
-  await client.connect();
   if (!(await exceptions(req, res, client))) {
     return;
   }
@@ -109,7 +107,9 @@ router.post("/api/register", body_parser.json(), async (req, res) => {
     digits: 30,
   });
   const verify = {
-    from: "Metahkg support <support@metahkg.org>",
+    from: `Metahkg support <support@${
+      process.env.mailgun_domain || "metahkg.org"
+    }>`,
     to: req.body.email,
     subject: "Metahkg - verify your email",
     text: `Verify your email with the following link:
@@ -129,6 +129,7 @@ ${code}`,
     pwd: hashed,
     user: req.body.user,
     sex: req.body.sex,
+    type: "register"
   });
   res.send({ response: "ok" });
 });

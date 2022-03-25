@@ -4,10 +4,8 @@ import express from "express";
 const router = express.Router();
 import body_parser from "body-parser";
 import isInteger from "is-sn-integer";
-import { MongoClient } from "mongodb";
-import { mongouri } from "../../common";
+import { client } from "../../common";
 router.post("/api/check", body_parser.json(), async (req, res) => {
-  const client = new MongoClient(mongouri);
   if (
     !req.body.id ||
     Object.keys(req.body)?.length > 1 ||
@@ -18,8 +16,6 @@ router.post("/api/check", body_parser.json(), async (req, res) => {
     res.send({ error: "Bad request." });
     return;
   }
-  try {
-    await client.connect();
     if (
       !(await client
         .db("metahkg-threads")
@@ -31,8 +27,5 @@ router.post("/api/check", body_parser.json(), async (req, res) => {
       return;
     }
     res.send({ response : "ok" });
-  } finally {
-    await client.close();
-  }
 });
 export default router;

@@ -1,9 +1,6 @@
-import { MongoClient } from "mongodb";
 import { generate } from "wcyat-rg";
-import { mongouri, timediff } from "../../common";
+import { client, timediff } from "../../common";
 export default async function changecode() {
-  const client = new MongoClient(mongouri);
-  await client.connect();
   const verification = client.db("metahkg-users").collection("verification");
   await verification.find().forEach((item) => {
     (async () => {
