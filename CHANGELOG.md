@@ -76,3 +76,7 @@ node server/migrate/migratetov0.5.2.js
 ## v0.5.7rc1
 
 - use one main connection for mongodb to reduce load time
+
+## v0.5.8rc2
+
+- support images
