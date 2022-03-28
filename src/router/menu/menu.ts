@@ -3,8 +3,9 @@
 // Syntax: GET /api/menu/<category id>?sort=<0 | 1>&page=<number>
 import express from "express";
 import isInteger from "is-sn-integer";
-import { MongoClient } from "mongodb";
-import { client, mongouri } from "../../common";
+import { client } from "../../common";
+import { hiddencats as gethiddencats } from "../lib/hiddencats";
+import { signedin } from "../lib/signedin";
 const router = express.Router();
 /**
  * sort:
@@ -29,6 +30,7 @@ router.get("/api/menu/:category", async (req, res) => {
   let category = Number(req.params.category);
   const summary = client.db("metahkg-threads").collection("summary");
   const hottest = client.db("metahkg-threads").collection("hottest");
+  const hiddencats = await gethiddencats();
   if (req.params.category.startsWith("bytid")) {
     const s = await summary.findOne({
       id: Number(req.params.category.replace("bytid", "")),
@@ -40,6 +42,11 @@ router.get("/api/menu/:category", async (req, res) => {
     }
     category = s.category;
   }
+  if (!(await signedin(req.cookies.key)) && hiddencats.includes(category)) {
+    res.status(401);
+    res.send({ error: "Permission denied." });
+    return;
+  }
   if (
     !(await client
       .db("metahkg-threads")
@@ -50,15 +57,19 @@ router.get("/api/menu/:category", async (req, res) => {
     res.send({ error: "Not found." });
     return;
   }
+  let find =
+    category === 1
+      ? { category: { $nin: hiddencats } }
+      : { category: category };
   const data = sort
     ? await hottest
-        .find(category === 1 ? {} : { category: category })
+        .find(find)
         .sort({ c: -1, lastModified: -1 })
         .skip(25 * (page - 1))
         .limit(25)
         .toArray()
     : await summary
-        .find(category === 1 ? {} : { category: category })
+        .find(find)
         .sort({ lastModified: -1 })
         .skip(25 * (page - 1))
         .limit(25)
