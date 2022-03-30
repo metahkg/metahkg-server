@@ -1,6 +1,6 @@
 {
   "name": "metahkg",
-  "version": "0.5.8rc1",
+  "version": "0.5.8rc2",
   "author": "wcyat",
   "homepage": "https://metahkg.org",
   "repository": "https://github.com/metahkg/metahkg-server",
@@ -10,6 +10,9 @@
     "react"
   ],
   "dependencies": {
+    "@sinclair/typebox": "^0.23.4",
+    "ajv": "^8.11.0",
+    "ajv-formats": "^2.1.1",
     "aws-sdk": "^2.1083.0",
     "axios": "^0.26.0",
     "bcrypt": "^5.0.1",

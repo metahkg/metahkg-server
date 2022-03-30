@@ -8,27 +8,25 @@ import { exit } from "process";
     .db("metahkg-conversation")
     .collection("conversation");
   const summary = client.db("metahkg-conversation").collection("summary");
-  conversation
-    .find()
-    .forEach((i) => {
-      (async () => {
-        await summary.updateOne(
-          { id: i.id },
-          {
-            $set: { slink: (await conversation.findOne({ _id: i._id })).slink },
-          }
-        );
-        await conversation.replaceOne(
-          { _id: i._id },
-          {
-            conversation: objtoarr(i.conversation),
-            lastModified: i.lastModified,
-            _id: i._id,
-            id: i.id,
-          }
-        );
-      })().then(() => {
-        exit(0);
-      });
-    })
+  conversation.find().forEach((i) => {
+    (async () => {
+      await summary.updateOne(
+        { id: i.id },
+        {
+          $set: { slink: (await conversation.findOne({ _id: i._id })).slink },
+        }
+      );
+      await conversation.replaceOne(
+        { _id: i._id },
+        {
+          conversation: objtoarr(i.conversation),
+          lastModified: i.lastModified,
+          _id: i._id,
+          id: i.id,
+        }
+      );
+    })().then(() => {
+      exit(0);
+    });
+  });
 })();

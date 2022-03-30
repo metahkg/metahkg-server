@@ -9,7 +9,7 @@ const router = express.Router();
 import { client } from "../../common";
 import isInteger from "is-sn-integer";
 import { hiddencats } from "../lib/hiddencats";
-import { signedin } from "../lib/signedin";
+import { signedin } from "../lib/users";
 /**
  * type:
  *  0: users

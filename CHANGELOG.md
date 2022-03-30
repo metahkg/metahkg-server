@@ -77,6 +77,11 @@ node server/migrate/migratetov0.5.2.js
 
 - use one main connection for mongodb to reduce load time
 
-## v0.5.8rc2
+## v0.5.8rc1
 
 - support images
+
+## v0.5.8rc2
+
+- change username / sex
+- hidden categories

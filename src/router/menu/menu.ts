@@ -5,7 +5,7 @@ import express from "express";
 import isInteger from "is-sn-integer";
 import { client } from "../../common";
 import { hiddencats as gethiddencats } from "../lib/hiddencats";
-import { signedin } from "../lib/signedin";
+import { signedin } from "../lib/users";
 const router = express.Router();
 /**
  * sort:

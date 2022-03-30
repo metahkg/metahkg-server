@@ -8,9 +8,9 @@ async function updateconversation() {
   const conversation = client.db("metahkg-threads").collection("conversation");
   conversation.find().forEach((i) => {
     const c = i.conversation;
-    const o:any = [];
+    const o: any = [];
     let last = 0;
-    c.forEach((t:any) => {
+    c.forEach((t: any) => {
       if (t.id > last + 1) {
         for (let n = last + 1; n < t.id; n++) {
           o.push({
@@ -73,8 +73,8 @@ async function updatevotes() {
   const uservotes = metahkgusers.collection("votes");
   conversation.find().forEach((i) => {
     const c = i.conversation;
-    const o:any = [];
-    c.forEach((n:any) => {
+    const o: any = [];
+    c.forEach((n: any) => {
       if (n?.up) {
         n["U"] = n.up;
         delete n.up;
@@ -90,7 +90,7 @@ async function updatevotes() {
   uservotes.find().forEach((i) => {
     Object.entries(i).forEach(async (n) => {
       if (isInteger(n[0])) {
-        const o:any = {};
+        const o: any = {};
         Object.entries(n[1]).forEach((v) => {
           if (v[1] === "up") {
             v[1] = "U";
