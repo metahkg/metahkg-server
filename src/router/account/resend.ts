@@ -34,8 +34,7 @@ router.post("/api/resend", bodyParser.json(), async (req, res) => {
   if (!vuser) {
     res.status(404);
     res.send({
-      error:
-        "Email not found.",
+      error: "Email not found.",
     });
     return;
   }
@@ -61,7 +60,11 @@ Alternatively, use this code at https://${domain}/verify :
 ${vuser.code}`,
   };
   await mg.messages().send(verifymsg);
-  await limit.insertOne({ type: "resend", email: req.body.email });
+  await limit.insertOne({
+    type: "resend",
+    email: req.body.email,
+    createdAt: new Date(),
+  });
   res.send({ success: true });
 });
 export default router;
