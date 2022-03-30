@@ -5,6 +5,8 @@ import { allequal, secret, domain, client } from "../../common";
 import { verify } from "../lib/recaptcha";
 import mailgun from "mailgun-js";
 import bodyParser from "body-parser";
+import { Type } from "@sinclair/typebox";
+import { ajv } from "../lib/ajv";
 dotenv.config();
 const mg = mailgun({
   apiKey: process.env.mailgun_key,
@@ -12,12 +14,11 @@ const mg = mailgun({
 });
 const router = Router();
 router.post("/api/resend", bodyParser.json(), async (req, res) => {
-  if (
-    !req.body.email ||
-    !req.body.rtoken ||
-    !allequal([typeof req.body.email, typeof req.body.rtoken, "string"]) ||
-    !EmailValidator.validate(req.body.email)
-  ) {
+  const schema = Type.Object(
+    { email: Type.String({ format: "email" }), rtoken: Type.String() },
+    { additionalProperties: false }
+  );
+  if (!ajv.validate(schema, req.body)) {
     res.status(400);
     res.send({ error: "Bad request." });
     return;

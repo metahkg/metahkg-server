@@ -13,18 +13,19 @@ import { client } from "../../common";
 import { generate } from "wcyat-rg";
 import EmailValidator from "email-validator";
 import hash from "hash.js";
+import { Type } from "@sinclair/typebox";
+import { ajv } from "../lib/ajv";
 dotenv.config();
 const router = express.Router();
 router.post("/api/verify", body_parser.json(), async (req, res) => {
-  if (
-    !req.body.email ||
-    !req.body.code ||
-    !(
-      typeof req.body.email === "string" && typeof req.body.code === "string"
-    ) ||
-    !EmailValidator.validate(req.body.email) ||
-    Object.keys(req.body)?.length > 2
-  ) {
+  const schema = Type.Object(
+    {
+      email: Type.String({ format: "email" }),
+      code: Type.String(),
+    },
+    { additionalProperties: false }
+  );
+  if (!ajv.validate(schema, req.body)) {
     res.status(400);
     res.send({ error: "Bad request." });
     return;

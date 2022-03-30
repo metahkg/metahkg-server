@@ -10,6 +10,8 @@ import { client } from "../../common";
 import isInteger from "is-sn-integer";
 import { hiddencats } from "../lib/hiddencats";
 import { signedin } from "../lib/users";
+import { Type } from "@sinclair/typebox";
+import { ajv } from "../lib/ajv";
 /**
  * type:
  *  0: users
@@ -23,18 +25,29 @@ router.get("/api/thread/:id", async (req, res) => {
   const page = Number(req.query.page) || 1;
   const start = Number(req.query.start);
   const end = Number(req.query.end);
+  const schema = Type.Object(
+    {
+      id: Type.Integer(),
+      page: Type.Integer({ minimum: 1 }),
+      type: Type.Union([Type.Literal(0), Type.Literal(1), Type.Literal(2)]),
+      start: Type.Optional(Type.Integer()),
+      end: Type.Optional(Type.Integer()),
+    },
+    { additionalProperties: false }
+  );
   if (
-    !isInteger(id) ||
-    ![0, 1, 2].includes(type) ||
-    !isInteger(page) ||
-    page < 1 ||
+    !ajv.validate(schema, {
+      id: id,
+      page: page,
+      type: type,
+      start: start,
+      end: end,
+    }) ||
     (start &&
-      (!isInteger(start) ||
-        start > end ||
+      (start > end ||
         (!end && (start < (page - 1) * 25 + 1 || start > page * 25)))) ||
     (end &&
-      (!isInteger(end) ||
-        end < start ||
+      (end < start ||
         (!start && (end > page * 25 || end < (page - 1) * 25 + 1))))
   ) {
     res.status(400);

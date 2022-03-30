@@ -16,6 +16,8 @@ import axios from "axios";
 import findimages from "../lib/findimages";
 import createDOMPurify from "dompurify";
 import { JSDOM } from "jsdom";
+import { Type } from "@sinclair/typebox";
+import { ajv } from "../lib/ajv";
 const jsdomwindow: any = new JSDOM("").window;
 const DOMPurify = createDOMPurify(jsdomwindow);
 router.post(
@@ -30,26 +32,21 @@ router.post(
         category: number;
       };
       cookies: {
-        key: string;
+        key?: string;
       };
     },
     res
   ) => {
-    if (
-      !req.body.icomment ||
-      !req.body.rtoken ||
-      !req.body.title ||
-      !req.body.category ||
-      Object.keys(req.body)?.length > 4 ||
-      !(
-        allequal([
-          typeof req.body.icomment,
-          typeof req.body.title,
-          typeof req.body.rtoken,
-          "string",
-        ]) && typeof req.body.category === "number"
-      )
-    ) {
+    const schema = Type.Object(
+      {
+        icomment: Type.String(),
+        rtoken: Type.String(),
+        title: Type.String(),
+        category: Type.Integer(),
+      },
+      { additionalProperties: false }
+    );
+    if (!ajv.validate(schema, req.body)) {
       res.status(400);
       res.send({ error: "Bad request." });
       return;

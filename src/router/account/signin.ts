@@ -14,13 +14,17 @@ import body_parser from "body-parser";
 import { client } from "../../common";
 import bcrypt from "bcrypt";
 import hash from "hash.js";
+import { Type } from "@sinclair/typebox";
+import { ajv } from "../lib/ajv";
 router.post("/api/signin", body_parser.json(), async (req, res) => {
-  if (
-    !req.body.user ||
-    !req.body.pwd ||
-    Object.keys(req.body)?.length > 2 ||
-    !(typeof req.body.user === "string" && typeof req.body.pwd === "string")
-  ) {
+  const schema = Type.Object(
+    {
+      user: Type.String({ maxLength: 15 }),
+      pwd: Type.String(),
+    },
+    { additionalProperties: false }
+  );
+  if (!ajv.validate(schema, req.body)) {
     res.status(400);
     res.send({ error: "Bad request." });
     return;

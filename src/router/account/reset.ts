@@ -4,13 +4,21 @@ import bodyParser from "body-parser";
 import hash from "hash.js";
 import mailgun from "mailgun-js";
 import { generate } from "wcyat-rg";
+import { Type } from "@sinclair/typebox";
+import { ajv } from "../lib/ajv";
 const mg = mailgun({
   apiKey: process.env.mailgun_key,
   domain: process.env.mailgun_domain || "metahkg.org",
 });
 const router = Router();
 router.post("/api/account/resetpwd", bodyParser.json(), async (req, res) => {
-  if (!req.body.email || typeof req.body.email !== "string") {
+  const schema = Type.Object(
+    {
+      email: Type.String({ format: "email" }),
+    },
+    { additionalProperties: false }
+  );
+  if (!ajv.validate(schema, req.body)) {
     res.status(400);
     res.send({ error: "Bad request." });
     return;

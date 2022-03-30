@@ -19,6 +19,8 @@ import { verify } from "../lib/recaptcha";
 import bcrypt from "bcrypt";
 import mailgun from "mailgun-js";
 import { generate } from "wcyat-rg";
+import { Type } from "@sinclair/typebox";
+import { ajv } from "../lib/ajv";
 dotenv.config();
 const mg = mailgun({
   apiKey: process.env.mailgun_key,
@@ -32,23 +34,19 @@ const router = express.Router();
  * @returns a boolean.
  */
 async function valid(req: any, res: any) {
+  const schema = Type.Object(
+    {
+      user: Type.String({ maxLength: 15 }),
+      pwd: Type.String({ minLength: 8 }),
+      email: Type.String({ format: "email" }),
+      rtoken: Type.String(),
+      sex: Type.Union([Type.Literal("M"), Type.Literal("F")]),
+    },
+    { additionalProperties: false }
+  );
   if (
-    !req.body.user ||
-    !req.body.pwd ||
-    !req.body.rtoken ||
-    !req.body.email ||
-    !req.body.sex ||
+    !ajv.validate(schema, req.body) ||
     req.body.user?.split(" ")[1] ||
-    req.body.user?.length > 15 ||
-    !(
-      typeof req.body.user === "string" &&
-      typeof req.body.pwd === "string" &&
-      typeof req.body.email === "string" &&
-      typeof req.body.rtoken === "string" &&
-      (req.body.sex === "M" || req.body.sex === "F")
-    ) ||
-    Object.keys(req.body).length > 5 ||
-    !EmailValidator.validate(req.body.email) ||
     EmailValidator.validate(req.body.user)
   ) {
     res.status(400);

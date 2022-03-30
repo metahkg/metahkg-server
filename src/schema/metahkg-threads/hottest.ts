@@ -8,7 +8,7 @@ export interface hottest {
   createdAt: string;
   /** date string, updated on comment */
   lastModified: string;
-  /** initially 1 upon thread creation. Automatically decrease by 1 
+  /** initially 1 upon thread creation. Automatically decrease by 1
    * upon each 2 hours. Increased by 1 upon each comment.
    * used to sort hottest */
   c: number;

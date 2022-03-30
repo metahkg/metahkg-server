@@ -2,27 +2,23 @@ import body_parser from "body-parser";
 import express from "express";
 import { client } from "../../common";
 import isInteger from "is-sn-integer";
+import { Type } from "@sinclair/typebox";
+import { ajv } from "../lib/ajv";
 const router = express.Router();
 router.post("/api/vote", body_parser.json(), async (req, res) => {
-  if (
-    !req.body.id ||
-    !req.body.cid ||
-    !req.body.vote ||
-    Object.keys(req.body)?.length > 3 ||
-    !(
-      typeof req.body.cid === "number" &&
-      typeof req.body.id === "number" &&
-      isInteger(req.body.cid) &&
-      req.body.cid > 0 &&
-      req.body.id > 0 &&
-      ["U", "D"].includes(req.body.vote)
-    )
-  ) {
+  const schema = Type.Object(
+    {
+      id: Type.Integer({ minimum: 1 }),
+      cid: Type.Integer({ minimum: 1 }),
+      vote: Type.Union([Type.Literal("U"), Type.Literal("D")]),
+    },
+    { additionalProperties: false }
+  );
+  if (!ajv.validate(schema, req.body)) {
     res.status(400);
     res.send({ error: "Bad request." });
     return;
   }
-
   const conversation = client.db("metahkg-threads").collection("conversation");
   const summary = client.db("metahkg-threads").collection("summary");
   const users = client.db("metahkg-users").collection("users");

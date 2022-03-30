@@ -8,6 +8,8 @@ import createDOMPurify from "dompurify";
 import axios from "axios";
 import { verify } from "../lib/recaptcha";
 import findimages from "../lib/findimages";
+import { Type } from "@sinclair/typebox";
+import { ajv } from "../lib/ajv";
 const jsdomwindow: any = new JSDOM("").window;
 const DOMPurify = createDOMPurify(jsdomwindow);
 /** add a comment
@@ -15,16 +17,15 @@ const DOMPurify = createDOMPurify(jsdomwindow);
  * client must have a cookie "key"
  */
 router.post("/api/comment", body_parser.json(), async (req, res) => {
-  if (
-    !req.body.id ||
-    !req.body.comment ||
-    !req.body.rtoken ||
-    Object.keys(req.body)?.length > 3 ||
-    !(
-      typeof req.body.id === "number" && typeof req.body.comment === "string"
-    ) ||
-    !isInteger(req.body.id)
-  ) {
+  const schema = Type.Object(
+    {
+      id: Type.Integer(),
+      comment: Type.String(),
+      rtoken: Type.String(),
+    },
+    { additionalProperties: false }
+  );
+  if (!ajv.validate(schema, req.body)) {
     res.status(400);
     res.send({ error: "Bad request." });
     return;
