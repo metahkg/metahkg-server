@@ -40,8 +40,8 @@ router.get("/api/thread/:id", async (req, res) => {
       id: id,
       page: page,
       type: type,
-      start: start,
-      end: end,
+      start: start || undefined,
+      end: end || undefined,
     }) ||
     (start &&
       (start > end ||
