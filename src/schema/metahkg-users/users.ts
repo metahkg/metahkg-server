@@ -15,4 +15,6 @@ export interface user {
     sex: "M" | "F";
     /** access key */
     key: string;
+    /** is admin */
+    admin?: boolean;
 }
