@@ -57,6 +57,10 @@ router.post("/api/account/resetpwd", bodyParser.json(), async (req, res) => {
     code: code,
     email: user.email,
   });
-  await limit.insertOne({ type: "reset", email: user.email });
+  await limit.insertOne({
+    type: "reset",
+    email: user.email,
+    createdAt: new Date(),
+  });
   res.send({ response: "ok" });
 });

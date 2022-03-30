@@ -1,0 +1,14 @@
+{
+    "_id": ObjectId("61e8388b3ece6d1d94a20e13"), // mongodb object id
+    "id": 1, //user id (number)
+    "8": { // 8 is the thread id
+        // 1 is the comment id
+        "1": "U", //vote ("U" | "D")
+        // 5 is the comment id
+        "5": "D" //vote ("U" | "D")
+    },
+    "41": { //41 is the thread id
+        // 30 is the comment id
+        "30": "D" //vote ("U" | "D")
+    }
+}

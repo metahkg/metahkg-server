@@ -60,7 +60,11 @@ Alternatively, use this code at https://${domain}/verify :
 ${vuser.code}`,
   };
   await mg.messages().send(verifymsg);
-  await limit.insertOne({ type: "resend", email: req.body.email });
+  await limit.insertOne({
+    type: "resend",
+    email: req.body.email,
+    createdAt: new Date(),
+  });
   res.send({ success: true });
 });
 export default router;
