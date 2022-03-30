@@ -29,7 +29,10 @@ router.post(
     }
     const users = client.db("metahkg-users").collection("users");
     const summary = client.db("metahkg-threads").collection("summary");
-    req.body.user && await summary.updateMany({op: user.user}, {$set: {user: req.body.user}});
+    await summary.updateMany(
+      { op: user.user },
+      { $set: { op: req.body.user, sex: req.body.sex } }
+    );
     await users.updateOne({ key: req.cookies.key }, { $set: req.body });
     res.send({ response: "ok" });
   }
