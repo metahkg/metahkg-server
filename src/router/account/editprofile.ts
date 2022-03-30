@@ -2,7 +2,7 @@ import { Router } from "express";
 import body_parser from "body-parser";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../lib/ajv";
-import { signedin } from "../lib/users";
+import { getuser, signedin } from "../lib/users";
 import { error400 } from "../lib/errors/400";
 import { error404 } from "../lib/errors/404";
 import { client } from "../../common";
@@ -22,11 +22,14 @@ router.post(
       error400(res);
       return;
     }
-    if (!(await signedin(req.cookies.key))) {
+    const user = await getuser(req.cookies.key);
+    if (!user) {
       error404(res);
       return;
     }
     const users = client.db("metahkg-users").collection("users");
+    const summary = client.db("metahkg-threads").collection("summary");
+    req.body.user && await summary.updateMany({op: user.user}, {$set: {user: req.body.user}});
     await users.updateOne({ key: req.cookies.key }, { $set: req.body });
     res.send({ response: "ok" });
   }
