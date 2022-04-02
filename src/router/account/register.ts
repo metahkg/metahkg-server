@@ -27,6 +27,12 @@ const mg = mailgun({
   domain: process.env.mailgun_domain || "metahkg.org",
 });
 const router = express.Router();
+const signupmode =
+  {
+    normal: "normal",
+    none: "none",
+    invite: "invite",
+  }[process.env.signup] || "normal";
 /**
  * It checks if the request body is valid
  * @param {any} req - the request object
@@ -41,13 +47,20 @@ async function valid(req: any, res: any) {
       email: Type.String({ format: "email" }),
       rtoken: Type.String(),
       sex: Type.Union([Type.Literal("M"), Type.Literal("F")]),
+      invitecode: Type.Optional(Type.String()),
     },
     { additionalProperties: false }
   );
+  if (signupmode === "none") {
+    res.status(429);
+    res.send({ error: "No signup allowed." });
+    return false;
+  }
   if (
     !ajv.validate(schema, req.body) ||
     req.body.user?.split(" ")[1] ||
-    EmailValidator.validate(req.body.user)
+    EmailValidator.validate(req.body.user) ||
+    (signupmode === "invite" && !req.body.invitecode)
   ) {
     res.status(400);
     res.send({ error: "Bad request." });
