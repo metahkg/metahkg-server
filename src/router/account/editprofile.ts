@@ -36,7 +36,6 @@ router.post(
       return;
     }
     const users = client.db("metahkg-users").collection("users");
-    const limit = client.db("metahkg-users").collection("limit");
     const summary = client.db("metahkg-threads").collection("summary");
     const threadusers = client.db("metahkg-threads").collection("users");
     await summary.updateMany(
