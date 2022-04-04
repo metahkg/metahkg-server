@@ -4,7 +4,6 @@ import multer from "multer"; //handle image uploads
 import fs from "fs";
 import { client } from "../../common";
 import sharp from "sharp"; //reshape images to circle
-import { move } from "fs-extra";
 dotenv.config();
 const router = express.Router();
 const upload = multer({ dest: "uploads/" });
@@ -16,7 +15,7 @@ async function compress(filename: string) {
   const width = 200;
   const r = width / 2;
   const circleShape = Buffer.from(
-    //avg circle
+    //svg circle
     `<svg><circle cx="${r}" cy="${r}" r="${r}" /></svg>`
   );
   //use sharp to resize
@@ -29,8 +28,6 @@ async function compress(filename: string) {
       },
     ])
     .toFile(filename.replace(filename.split(".").pop(), "png"));
-  //remove the original
-  fs.rm(filename, () => {});
 }
 /**
  * Image is saved to uploads/ upon uploading
@@ -68,7 +65,7 @@ router.post("/api/avatar", upload.single("avatar"), async (req, res) => {
   if (!user) {
     res.status(400);
     res.send({ error: "User not found." });
-    fs.rm(`uploads/${req.file.originalname}`, () => {});
+    fs.rm(`${process.env.root}/uploads/${req.file.originalname}`, () => {});
     return;
   }
   //rename file to <user-id>.<extension>
@@ -77,26 +74,26 @@ router.post("/api/avatar", upload.single("avatar"), async (req, res) => {
   fs.mkdir("images/processing/avatars", { recursive: true }, () => {});
   fs.mkdir("images/avatars", { recursive: true }, () => {});
   //move file to processing folder
-  move(
-    `uploads/${req.file.filename}`,
+  fs.writeFileSync(
     `images/processing/avatars/${newfilename}`,
-    () => {}
+    fs.readFileSync(req.file?.path)
   );
-  //compress the file
   try {
+    //compress the file
     await compress(`images/processing/avatars/${newfilename}`);
     fs.rm(`images/avatars/${compressedfilename}`, () => {});
-    move(
-      `images/processing/avatars/${compressedfilename}`,
+    fs.writeFileSync(
       `images/avatars/${compressedfilename}`,
-      () => {}
+      fs.readFileSync(`images/processing/avatars/${compressedfilename}`)
     );
+    fs.rm(`images/processing/avatars/${newfilename}`, () => {});
+    fs.rm(`images/processing/avatars/${compressedfilename}`, () => {});
   } catch {
     res.status(422);
     res.send({
       error: "Could not complete the request. Please check your file.",
     });
-    fs.rm(`images/processing/${newfilename}`, () => {});
+    fs.rm(`images/processing/avatars/${newfilename}`, () => {});
     return;
   }
   res.send({ response: "ok" });

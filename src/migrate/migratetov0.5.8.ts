@@ -58,5 +58,5 @@ async function avatars() {
     })();
   });
 }
-//images();
+images();
 avatars();
