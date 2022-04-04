@@ -37,12 +37,6 @@ app.use(function (req, res, next) {
 });
 process.env.production === "dev" && app.use(cors());
 app.use(cookieParser());
-/**
-* If there's a path specified in router
-  for the request, the request is responded
-  by the api
-* Otherwise the React app would be served
-*/
 app.use(router);
 app.use(async (req, res, next) => {
   if (req.path.startsWith("/api")) {

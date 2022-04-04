@@ -24,7 +24,6 @@ router.get("/api/profile/:id", async (req, res) => {
               id: 1,
               user: 1,
               createdAt: 1,
-              avatar: 1,
               sex: 1,
               admin: 1,
               _id: 0,
