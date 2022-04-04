@@ -1,7 +1,3 @@
-/**
- * To deploy this service you must have an aws account
- * Create a s3 bucket in a region you want
- */
 import dotenv from "dotenv";
 import express from "express";
 import multer from "multer"; //handle image uploads
@@ -40,8 +36,6 @@ async function compress(filename: string) {
  * Image is saved to uploads/ upon uploading
  * only jpg, svg, png and jpeg are allowed
  * Image is renamed to <user-id>.<png/svg/jpg/jpeg>
- *  Then compressed and uploaded to s3
- * Image is delted locally after the process
  */
 router.post("/api/avatar", upload.single("avatar"), async (req, res) => {
   if (!req.file?.size) {

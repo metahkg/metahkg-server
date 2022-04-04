@@ -7,9 +7,7 @@ if (
     process.env.mailgun_key &&
     process.env.domain &&
     process.env.port &&
-    process.env.recaptchasecret &&
-    process.env.s3Bucket &&
-    process.env.awsRegion
+    process.env.recaptchasecret
   )
 ) {
   console.error(

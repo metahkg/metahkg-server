@@ -6,7 +6,6 @@
 - mongodb (either locally or remotely)
 - mailgun key (for sending emails, obviously)
 - recaptcha site key and secret pair (for anti-spamming)
-- a publicily accessible s3 bucket
 
 ## Set up
 
