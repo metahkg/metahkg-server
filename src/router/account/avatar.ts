@@ -38,7 +38,6 @@ async function compress(filename: string, id: number) {
  * Image is renamed to <user-id>.<png/svg/jpg/jpeg>
  */
 router.post("/api/avatar", upload.single("avatar"), async (req, res) => {
-  console.log(req.file)
   if (!req.file?.size) {
     res.status(400);
     res.send({ error: "Bad request." });
@@ -75,7 +74,6 @@ router.post("/api/avatar", upload.single("avatar"), async (req, res) => {
   }
   //rename file to <user-id>.<extension>
   const newfilename = `${user.id}.${req.file.originalname.split(".").pop()}`;
-  const compressedfilename = `${user.id}.png`;
   fs.mkdirSync("images/processing/avatars", { recursive: true });
   fs.mkdirSync("images/avatars", { recursive: true });
   //move file to processing folder
