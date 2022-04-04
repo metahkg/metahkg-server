@@ -22,8 +22,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-uploads/
-images/
+/uploads/
+/images/
 
 # vscode
 .vscode/
