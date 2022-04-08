@@ -61,7 +61,7 @@ async function valid(req: any, res: any) {
   }
   if (
     !ajv.validate(schema, req.body) ||
-    !req.body.user?.match(/\S{1,15}/) ||
+    !req.body.user?.match(/\S{1,15}/i) ||
     EmailValidator.validate(req.body.user)
   ) {
     res.status(400);
