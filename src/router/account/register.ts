@@ -126,11 +126,11 @@ router.post("/api/users/register", body_parser.json(), async (req, res) => {
     to: req.body.email,
     subject: "Metahkg - verify your email",
     text: `Verify your email with the following link:
-https://${domain}/verify?code=${encodeURIComponent(
+https://${domain}/users/verify?code=${encodeURIComponent(
       code
     )}&email=${encodeURIComponent(req.body.email)}
 
-Alternatively, use this code at https://${domain}/verify : 
+Alternatively, use this code at https://${domain}/users/verify : 
 ${code}`,
   };
   await mg.messages().send(verify);

@@ -53,7 +53,7 @@ router.post("/api/users/resend", bodyParser.json(), async (req, res) => {
     to: req.body.email,
     subject: "Metahkg - verify your email",
     text: `Verify your email with the following link:
-https://${domain}/verify?code=${encodeURIComponent(
+https://${domain}/users/verify?code=${encodeURIComponent(
       vuser.code
     )}&email=${encodeURIComponent(req.body.email)}
 

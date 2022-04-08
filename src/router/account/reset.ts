@@ -52,7 +52,7 @@ router.post("/api/users/reset", bodyParser.json(), async (req, res) => {
     to: req.body.email,
     subject: "Metahkg - Reset Password",
     text: `Reset your password with the following link:
-    https://${domain}/reset?code=${encodeURIComponent(
+    https://${domain}/users/reset?code=${encodeURIComponent(
       code
     )}&email=${encodeURIComponent(req.body.email)}
     
