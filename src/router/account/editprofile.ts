@@ -8,7 +8,7 @@ import { error404 } from "../lib/errors/404";
 import { client } from "../../common";
 const router = Router();
 router.post(
-  "/api/account/editprofile",
+  "/api/users/editprofile",
   body_parser.json(),
   async (req: {
     body: {

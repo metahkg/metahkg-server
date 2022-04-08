@@ -17,7 +17,7 @@ import { Type } from "@sinclair/typebox";
 import { ajv } from "../lib/ajv";
 dotenv.config();
 const router = express.Router();
-router.post("/api/verify", body_parser.json(), async (req, res) => {
+router.post("/api/users/verify", body_parser.json(), async (req, res) => {
   const schema = Type.Object(
     {
       email: Type.String({ format: "email" }),

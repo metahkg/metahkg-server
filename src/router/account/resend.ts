@@ -13,7 +13,7 @@ const mg = mailgun({
   domain: process.env.mailgun_domain || "metahkg.org",
 });
 const router = Router();
-router.post("/api/resend", bodyParser.json(), async (req, res) => {
+router.post("/api/users/resend", bodyParser.json(), async (req, res) => {
   const schema = Type.Object(
     { email: Type.String({ format: "email" }), rtoken: Type.String() },
     { additionalProperties: false }

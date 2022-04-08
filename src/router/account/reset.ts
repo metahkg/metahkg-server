@@ -11,7 +11,7 @@ const mg = mailgun({
   domain: process.env.mailgun_domain || "metahkg.org",
 });
 const router = Router();
-router.post("/api/account/resetpwd", bodyParser.json(), async (req, res) => {
+router.post("/api/users/reset", bodyParser.json(), async (req, res) => {
   const schema = Type.Object(
     {
       email: Type.String({ format: "email" }),

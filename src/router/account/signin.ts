@@ -16,7 +16,7 @@ import bcrypt from "bcrypt";
 import hash from "hash.js";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../lib/ajv";
-router.post("/api/signin", body_parser.json(), async (req, res) => {
+router.post("/api/users/signin", body_parser.json(), async (req, res) => {
   const schema = Type.Object(
     {
       user: Type.String({ maxLength: 15 }),

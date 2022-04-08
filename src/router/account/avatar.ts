@@ -37,7 +37,7 @@ async function compress(filename: string, id: number) {
  * only jpg, svg, png and jpeg are allowed
  * Image is renamed to <user-id>.<png/svg/jpg/jpeg>
  */
-router.post("/api/avatar", upload.single("avatar"), async (req, res) => {
+router.post("/api/users/avatar", upload.single("avatar"), async (req, res) => {
   if (!req.file?.size) {
     res.status(400);
     res.send({ error: "Bad request." });

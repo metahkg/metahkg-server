@@ -27,7 +27,7 @@ const mg = mailgun({
   domain: process.env.mailgun_domain || "metahkg.org",
 });
 const router = express.Router();
-const signupmode =
+const signupMode =
   {
     normal: "normal",
     none: "none",
@@ -47,20 +47,19 @@ async function valid(req: any, res: any) {
       email: Type.String({ format: "email" }),
       rtoken: Type.String(),
       sex: Type.Union([Type.Literal("M"), Type.Literal("F")]),
-      invitecode: Type.Optional(Type.String()),
+      invitecode: signupMode === "invite" && Type.String(),
     },
     { additionalProperties: false }
   );
-  if (signupmode === "none") {
+  if (signupMode === "none") {
     res.status(429);
     res.send({ error: "No signup allowed." });
     return false;
   }
   if (
     !ajv.validate(schema, req.body) ||
-    req.body.user?.split(" ")[1] ||
-    EmailValidator.validate(req.body.user) ||
-    (signupmode === "invite" && !req.body.invitecode)
+    !req.body.user?.match(/\S{1,15}/) ||
+    EmailValidator.validate(req.body.user)
   ) {
     res.status(400);
     res.send({ error: "Bad request." });
@@ -91,15 +90,15 @@ async function exceptions(req: any, res: any, client: MongoClient) {
   const verification = client.db("metahkg-users").collection("verification");
   const users = client.db("metahkg-users").collection("users");
   if (
-    (await users.countDocuments({ user: req.body.user })) ||
-    (await verification.countDocuments({ user: req.body.user }))
+    (await users.findOne({ user: req.body.user })) ||
+    (await verification.findOne({ user: req.body.user }))
   ) {
     res.status(409);
     res.send({ error: "Username exists." });
     return false;
   } else if (
-    (await users.countDocuments({ email: req.body.email })) ||
-    (await verification.countDocuments({ email: req.body.email }))
+    (await users.findOne({ email: req.body.email })) ||
+    (await verification.findOne({ email: req.body.email }))
   ) {
     res.status(409);
     res.send({ error: "Email exists." });
@@ -107,7 +106,7 @@ async function exceptions(req: any, res: any, client: MongoClient) {
   }
   return true;
 }
-router.post("/api/register", body_parser.json(), async (req, res) => {
+router.post("/api/users/register", body_parser.json(), async (req, res) => {
   if (!(await valid(req, res))) return;
   if (!(await exceptions(req, res, client))) {
     return;
