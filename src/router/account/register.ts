@@ -58,6 +58,16 @@ async function valid(req: any, res: any) {
     res.status(429);
     res.send({ error: "No signup allowed." });
     return false;
+  } else if (
+    signupMode === "invite" &&
+    !(await client
+      .db("metahkg-users")
+      .collection("invite")
+      .findOne({ code: req.body.invitecode }))
+  ) {
+    res.status(409);
+    res.send({ error: "Invalid invite code." });
+    return false;
   }
   if (
     !ajv.validate(schema, req.body) ||
@@ -111,9 +121,7 @@ async function exceptions(req: any, res: any, client: MongoClient) {
 }
 router.post("/api/users/register", body_parser.json(), async (req, res) => {
   if (!(await valid(req, res))) return;
-  if (!(await exceptions(req, res, client))) {
-    return;
-  }
+  if (!(await exceptions(req, res, client))) return;
   const verification = client.db("metahkg-users").collection("verification");
   const code = generate({
     include: { numbers: true, upper: true, lower: true, special: false },
