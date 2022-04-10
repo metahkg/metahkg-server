@@ -6,6 +6,7 @@ import resend from "./account/resend";
 import editprofile from "./account/editprofile";
 import avatar from "./account/avatar";
 import logout from "./account/logout";
+
 const router = express.Router();
 router.use(register);
 router.use(signin);
