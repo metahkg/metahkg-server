@@ -24,4 +24,4 @@ COPY --from=build /usr/src/app/dist ./dist
 
 RUN yarn install
 
-CMD yarn start
+CMD node dist/server.js
