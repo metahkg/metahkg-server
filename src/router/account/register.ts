@@ -50,7 +50,7 @@ async function valid(req: any, res: any) {
       invitecode:
         signupMode === "invite"
           ? Type.String()
-          : Type.Optional(Type.Number({ minimum: 0, maximum: 0 })),
+          : Type.Optional(Type.Undefined()),
     },
     { additionalProperties: false }
   );

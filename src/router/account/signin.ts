@@ -19,7 +19,7 @@ import { ajv } from "../lib/ajv";
 router.post("/api/users/signin", body_parser.json(), async (req, res) => {
   const schema = Type.Object(
     {
-      user: Type.String({ maxLength: 15 }),
+      user: Type.String(),
       pwd: Type.String(),
     },
     { additionalProperties: false }
