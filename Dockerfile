@@ -24,4 +24,4 @@ COPY --from=build /usr/src/app/dist ./dist
 
 RUN yarn install
 
-CMD node dist/server.js
+CMD touch .env && yarn run start

@@ -1,4 +1,4 @@
-import {parse} from "node-html-parser";
+import { parse } from "node-html-parser";
 import validUrl from "valid-url";
 
 export default function findimages(comment: string) {

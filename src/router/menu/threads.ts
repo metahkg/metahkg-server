@@ -1,6 +1,6 @@
-import {Router} from "express";
+import { Router } from "express";
 import isInteger from "is-sn-integer";
-import {client} from "../../common";
+import { db } from "../../common";
 
 const router = Router();
 router.get("/api/threads", async (req, res) => {
@@ -10,7 +10,7 @@ router.get("/api/threads", async (req, res) => {
         if (!Array.isArray(threads)) throw new Error("Not an array.");
     } catch {
         res.status(400);
-        res.send({error: "Bad request."});
+        res.send({ error: "Bad request." });
         return;
     }
     if (
@@ -20,18 +20,17 @@ router.get("/api/threads", async (req, res) => {
         threads.length > 25
     ) {
         res.status(400);
-        res.send({error: "Bad request."});
+        res.send({ error: "Bad request." });
         return;
     }
-    const metahkgThreads = client.db("metahkg-threads");
-    const summary = metahkgThreads.collection("summary");
+    const summary = db.collection("summary");
     const r = await summary
         .find({
             $where: function () {
                 return threads.includes(this.id);
             },
         })
-        .project({_id: 0})
+        .project({ _id: 0 })
         .toArray();
     let result: any[] = [];
     threads.forEach((tid) => {

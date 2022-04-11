@@ -2,13 +2,13 @@ import dotenv from "dotenv";
 import express from "express";
 import multer from "multer"; //handle image uploads
 import fs from "fs";
-import {client} from "../../common";
+import { db } from "../../common";
 import sharp from "sharp"; //reshape images to circle
-import type {user} from "../../schema/metahkg-users/users";
+import type { user } from "../../schema/users";
 
 dotenv.config();
 const router = express.Router();
-const upload = multer({dest: "uploads/"});
+const upload = multer({ dest: "uploads/" });
 
 /**
  * Compress the image to a 200px * 200px circle
@@ -21,8 +21,7 @@ async function compress(filename: string, id: number) {
         //svg circle
         `<svg><circle cx="${r}" cy="${r}" r="${r}" /></svg>`
     );
-    fs.rm(`images/avatars/${id}.png`, () => {
-    });
+    fs.rm(`images/avatars/${id}.png`, () => {});
     //use sharp to resize
     await sharp(filename)
         .resize(width, width)
@@ -33,7 +32,7 @@ async function compress(filename: string, id: number) {
             },
         ])
         .toFile(`images/avatars/${id}.png`)
-        .catch(err => console.log(err));
+        .catch((err) => console.log(err));
 }
 
 /**
@@ -44,45 +43,41 @@ async function compress(filename: string, id: number) {
 router.post("/api/users/avatar", upload.single("avatar"), async (req, res) => {
     if (!req.file?.size) {
         res.status(400);
-        res.send({error: "Bad request."});
+        res.send({ error: "Bad request." });
         return;
     }
     if (req.file?.size > 100000) {
         res.status(422);
-        res.send({error: "file too large."});
-        fs.rm(req.file?.path, () => {
-        });
+        res.send({ error: "file too large." });
+        fs.rm(req.file?.path, () => {});
         return;
     }
     if (
         //check if file type is not aupported
-        !["jpg", "svg", "png", "jpeg", "jfif"].includes(
-            req.file?.originalname.split(".").pop()
-        )
+        !["jpg", "svg", "png", "jpeg", "jfif"].includes(req.file?.originalname.split(".").pop())
     ) {
         res.status(400);
-        res.send({error: "File type not supported."});
+        res.send({ error: "File type not supported." });
         //remove the file
-        fs.rm(req.file?.path, () => {
-        });
+        fs.rm(req.file?.path, () => {});
         return;
     }
-    const users = client.db("metahkg-users").collection("users");
+
+    const users = db.collection("users");
     //search for the user using cookie "key"
     // @ts-ignore
-    const user: user = await users.findOne({key: req.cookies.key});
+    const user: user = await users.findOne({ key: req.cookies.key });
     //send 404 if no such user
     if (!user) {
         res.status(400);
-        res.send({error: "User not found."});
-        fs.rm(`${process.env.root}/uploads/${req.file?.filename}`, () => {
-        });
+        res.send({ error: "User not found." });
+        fs.rm(`${process.env.root}/uploads/${req.file?.filename}`, () => {});
         return;
     }
     //rename file to <user-id>.<extension>
     const newfilename = `${user.id}.${req.file.originalname.split(".").pop()}`;
-    fs.mkdirSync("images/processing/avatars", {recursive: true});
-    fs.mkdirSync("images/avatars", {recursive: true});
+    fs.mkdirSync("images/processing/avatars", { recursive: true });
+    fs.mkdirSync("images/avatars", { recursive: true });
     //move file to processing folder
     fs.renameSync(req.file?.path, `images/processing/avatars/${newfilename}`);
     try {
@@ -94,10 +89,9 @@ router.post("/api/users/avatar", upload.single("avatar"), async (req, res) => {
         res.send({
             error: "Could not complete the request. Please check your file.",
         });
-        fs.rm(`images/processing/avatars/${newfilename}`, () => {
-        });
+        fs.rm(`images/processing/avatars/${newfilename}`, () => {});
         return;
     }
-    res.send({response: "ok"});
+    res.send({ response: "ok" });
 });
 export default router;

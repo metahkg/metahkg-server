@@ -1,13 +1,13 @@
-import {generate} from "wcyat-rg";
-import {client, timediff} from "../../common";
+import { generate } from "wcyat-rg";
+import { db, timediff } from "../../common";
 
 export default async function changecode() {
-    const verification = client.db("metahkg-users").collection("verification");
+    const verification = db.collection("verification");
     await verification.find().forEach((item) => {
         (async () => {
             if (timediff(item.lastModified || item.createdAt) > 86400) {
                 await verification.updateOne(
-                    {_id: item._id},
+                    { _id: item._id },
                     {
                         $set: {
                             code: generate({

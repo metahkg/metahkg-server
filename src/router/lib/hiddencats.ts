@@ -1,8 +1,5 @@
-import {client} from "../../common";
-
+import { db } from "../../common";
 export async function hiddencats() {
-    const category = client.db("metahkg-threads").collection("category");
-    return (await category.find({hidden: true}).toArray()).map(
-        (item) => item.id
-    );
+    const category = db.collection("category");
+    return (await category.find({ hidden: true }).toArray()).map((item) => item.id);
 }

@@ -11,8 +11,6 @@ router.get("/api/users/logout", (req, res) => {
         expires: new Date(Date.now() + 1),
         httpOnly: true,
     });
-    res
-        .status(200)
-        .json({success: true, message: "User logged out successfully"});
+    res.status(200).json({ success: true, message: "User logged out successfully" });
 });
 export default router;

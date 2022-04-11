@@ -1,19 +1,18 @@
-import {Router} from "express";
+import { Router } from "express";
 import isInteger from "is-sn-integer";
-import {client} from "../../common";
-
+import { db } from "../../common";
 const router = Router();
 router.get("/api/images/:id", async (req, res) => {
     if (!isInteger(req.params.id)) {
         res.status(400);
-        res.send({error: "Bad request."});
+        res.send({ error: "Bad request." });
         return;
     }
     const id = Number(req.params.id);
     const cid = Number(req.query.c);
-    const images = client.db("metahkg-threads").collection("images");
+    const images = db.collection("images");
     const result = await images.findOne(
-        {id: id},
+        { id: id },
         {
             projection: {
                 _id: 0,
