@@ -17,11 +17,7 @@ router.get("/api/category/:id", body_parser.json(), async (req, res) => {
     const categories = client.db("metahkg-threads").collection("category");
     if (req.params.id === "all") {
         const c = await categories.find({}).toArray();
-        const o: any = {};
-        for (const i of c) {
-            o[i.id] = i.name;
-        }
-        res.send(o);
+        res.send(c.map((category) => ({ id: category.id, name: category.name, hidden: category.hidden })));
         return;
     }
     if (req.params.id?.startsWith("bytid")) {
