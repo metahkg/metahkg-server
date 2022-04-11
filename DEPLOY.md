@@ -23,9 +23,23 @@ metahkg-threads> db.hottest.createIndex({ "createdAt": 1 }, { expireAfterSeconds
 metahkg-threads> db.summary.createIndex({ "op": "text", "title": "text" }) //for text search
 metahkg-threads> use metahkg-users
 metahkg-users> db.limit.createIndex({ "createdAt": 1 }, { expireAfterSeconds: 86400 })
-metahkg-users> db.verification.createIndex({ "createdAt": 1 }, { expireAfterSeconds: 300 })
+metahkg-users> db.verification.createIndex({ "createdAt": 1 }, { expireAfterSeconds: 604800 })
 metahkg-users> exit
 ```
+
+To use authentication:
+
+```bash
+$ mongosh
+test> use admin
+admin> db.createUser({ user: "<username>", pwd: "<password>", roles: [ "root", "userAdminAnyDatabase" ])
+admin> use metahkg-threads
+metahkg-threads> db.createUser({ user: "<username>", pwd: "<password>", roles: [ { role: "readWrite", db: "metahkg-threads" } ] })
+metahkg-threads> use metahkg-users
+metahkg-users> db.createUser({ user: "<username>", pwd: "<password>", roles: [ { role: "readWrite", db: "metahkg-users" } ] })
+```
+
+and then use `mongod --auth --bind_ip_all`
 
 ### Environmental variables
 
@@ -45,4 +59,4 @@ yarn run start
 
 You must need a domain. If you don't have one and deploys it locally only,
 use metahkg.test.wcyat.me which points to localhost. Config nginx to do this
-(proxy_pass http://localhost:(the port you choose in .env)).
+(proxy_pass <http://localhost:(the> port you choose in .env)).
