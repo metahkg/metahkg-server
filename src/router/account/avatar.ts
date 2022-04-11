@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 import express from "express";
 import multer from "multer"; //handle image uploads
 import fs from "fs";
+import { move } from "fs-extra";
 import { db } from "../../common";
 import sharp from "sharp"; //reshape images to circle
 import type { user } from "../../schema/users";
@@ -21,8 +22,9 @@ async function compress(filename: string, id: number) {
         //svg circle
         `<svg><circle cx="${r}" cy="${r}" r="${r}" /></svg>`
     );
-    fs.rm(`images/avatars/${id}.png`, () => {});
+    fs.rmSync(`images/avatars/${id}.png`);
     //use sharp to resize
+    fs.mkdirSync(`tmp/avatars`, { recursive: true });
     await sharp(filename)
         .resize(width, width)
         .composite([
@@ -31,8 +33,9 @@ async function compress(filename: string, id: number) {
                 blend: "dest-in",
             },
         ])
-        .toFile(`images/avatars/${id}.png`)
+        .toFile(`${process.env.root}/tmp/avatars/${id}.png`)
         .catch((err) => console.log(err));
+    await move(`${process.env.root}/tmp/avatars/${id}.png`, `${process.env.root}/images/avatars/${id}.png`, { overwrite: true });
 }
 
 /**
@@ -79,7 +82,7 @@ router.post("/api/users/avatar", upload.single("avatar"), async (req, res) => {
     fs.mkdirSync("images/processing/avatars", { recursive: true });
     fs.mkdirSync("images/avatars", { recursive: true });
     //move file to processing folder
-    fs.renameSync(req.file?.path, `images/processing/avatars/${newfilename}`);
+    await move(`${process.env.root}/${req.file?.path}`, `${process.env.root}/images/processing/avatars/${newfilename}`, { overwrite: true });
     try {
         //compress the file
         await compress(`images/processing/avatars/${newfilename}`, user.id);
