@@ -1,12 +1,22 @@
 {
-    "_id": ObjectId("61dd853519bcb059ea361bf2"), // mongodb object id
-    "id": 1, // thread id (number)
-    "1": { // 1 is the user id
-        "sex": "M", // sex ("M" | "F")
-        "name": "wcyat" // user name
-    },
-    "9": { // 9 is the user id
-        "sex": "F", // sex ("M" | "F") 
-        "name": "test" // user name
-    }
+  "_id": ObjectId(
+  "61dd853519bcb059ea361bf2"
+  ),
+  // mongodb object id
+  "id": 1,
+  // thread id (number)
+  "1": {
+    // 1 is the user id
+    "sex": "M",
+    // sex ("M" | "F")
+    "name": "wcyat"
+    // user name
+  },
+  "9": {
+    // 9 is the user id
+    "sex": "F",
+    // sex ("M" | "F")
+    "name": "test"
+    // user name
+  }
 }
