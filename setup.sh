@@ -73,10 +73,6 @@ if [ $reply = "y" ]; then
   echo "port=$reply" >>.env.save
   read -p "recaptcha secret: " reply
   echo "recaptchasecret=$reply" >>.env.save
-  read -p "AWS Region: " reply
-  echo "awsRegion=$reply" >>.env.save
-  read -p "s3 Bucket name: " reply
-  echo "s3Bucket=$reply" >>.env.save
   {
     test -f .env &&
       echo ".env found. Saving configuration to .env.save"

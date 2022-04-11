@@ -20,8 +20,9 @@ WORKDIR /usr/src/app
 COPY ./package.json .
 COPY ./yarn.lock .
 COPY ./start.js .
+ADD ./static ./static
 COPY --from=build /usr/src/app/dist ./dist
 
 RUN yarn install
 
-CMD yarn start
+CMD touch .env && yarn run start

@@ -1,9 +1,10 @@
 import express from "express";
 import history from "./profile/history";
 import profile from "./profile/profile";
-import avatar from "./profile/avatar";
+import getavatars from "./profile/getavatars";
+
 const router = express.Router();
 router.use(history);
 router.use(profile);
-router.use(avatar);
+router.use(getavatars);
 export default router;

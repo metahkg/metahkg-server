@@ -6,4 +6,4 @@ export type user = {
     user: string;
     sex: "M" | "F";
     key: string;
-}
+};

@@ -1,9 +1,9 @@
-import { client } from "../../common";
+import { db } from "../../common";
 /**
-* Decrease collection "hottest" documents count by 1
-  for sorting popularity
-*/
+ * Decrease collection "viral" documents count by 1
+ for sorting popularity
+ */
 export async function autodecrement() {
-  const hottest = client.db("metahkg-threads").collection("hottest");
-  await hottest.updateMany({}, { $inc: { c: -1 } });
+    const viral = db.collection("viral");
+    await viral.updateMany({}, { $inc: { c: -1 } });
 }
