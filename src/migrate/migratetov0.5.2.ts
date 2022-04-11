@@ -1,4 +1,4 @@
-import {MongoClient} from "mongodb";
+import { MongoClient } from "mongodb";
 import isInteger from "is-sn-integer";
 import dotenv from "dotenv";
 dotenv.config();
@@ -12,33 +12,24 @@ const mongouri = process.env.DB_URI;
     const verification = client.db("metahkg-users").collection("verification");
     summary.find().forEach((i) => {
         if (typeof i.sex !== "boolean") {
-            summary.updateOne({_id: i._id}, {$set: {sex: i.sex === "male"}});
+            summary.updateOne({ _id: i._id }, { $set: { sex: i.sex === "male" } });
         }
     });
     users.find().forEach((i) => {
         Object.entries(i).forEach((i1) => {
             if (isInteger(i1[0]) && typeof i1[1].sex !== "boolean") {
-                users.updateOne(
-                    {_id: i._id},
-                    {$set: {[`${i1[0]}.sex`]: i1[1].sex === "male"}}
-                );
+                users.updateOne({ _id: i._id }, { $set: { [`${i1[0]}.sex`]: i1[1].sex === "male" } });
             }
         });
     });
     metahkgusers.find().forEach((i) => {
         if (typeof i.sex !== "boolean") {
-            metahkgusers.updateOne(
-                {_id: i._id},
-                {$set: {sex: i.sex === "male"}}
-            );
+            metahkgusers.updateOne({ _id: i._id }, { $set: { sex: i.sex === "male" } });
         }
     });
     verification.find().forEach((i) => {
         if (typeof i.sex !== "boolean") {
-            verification.updateOne(
-                {_id: i._id},
-                {$set: {sex: i.sex === "male"}}
-            );
+            verification.updateOne({ _id: i._id }, { $set: { sex: i.sex === "male" } });
         }
     });
 })();

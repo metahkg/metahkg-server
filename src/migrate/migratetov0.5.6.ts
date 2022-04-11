@@ -1,4 +1,4 @@
-import {MongoClient} from "mongodb";
+import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
 dotenv.config();
 const mongouri = process.env.DB_URI;
@@ -7,10 +7,7 @@ async function vindex() {
     await client.connect();
     const verification = client.db("metahkg-users").collection("verification");
     verification.dropIndex("createdAt_1");
-    verification.createIndex(
-        {createdAt: 1},
-        {expireAfterSeconds: 3600 * 24 * 7}
-    );
+    verification.createIndex({ createdAt: 1 }, { expireAfterSeconds: 3600 * 24 * 7 });
 }
 
 async function rmcatname() {
@@ -20,7 +17,7 @@ async function rmcatname() {
     summary.find().forEach((item) => {
         (async () => {
             if (item.catname) {
-                summary.updateOne({_id: item._id}, {$unset: {catname: true}});
+                summary.updateOne({ _id: item._id }, { $unset: { catname: true } });
             }
         })();
     });

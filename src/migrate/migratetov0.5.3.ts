@@ -1,5 +1,5 @@
 import isInteger from "is-sn-integer";
-import {MongoClient} from "mongodb";
+import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
 dotenv.config();
 const mongouri = process.env.DB_URI;
@@ -24,7 +24,7 @@ async function updateconversation() {
             o.push(t);
             last++;
         });
-        conversation.updateOne({_id: i._id}, {$set: {conversation: o}});
+        conversation.updateOne({ _id: i._id }, { $set: { conversation: o } });
     });
 }
 
@@ -39,30 +39,24 @@ async function updatesex() {
     const verification = metahkgusers.collection("verification");
     summary.find().forEach((i) => {
         if (typeof i.sex === "boolean") {
-            summary.updateOne({_id: i._id}, {$set: {sex: i.sex ? "M" : "F"}});
+            summary.updateOne({ _id: i._id }, { $set: { sex: i.sex ? "M" : "F" } });
         }
     });
     threadusers.find().forEach((i) => {
         Object.entries(i).forEach((i1) => {
             if (isInteger(i1[0]) && typeof i1[1].sex === "boolean") {
-                threadusers.updateOne(
-                    {_id: i._id},
-                    {$set: {[`${i1[0]}.sex`]: i1[1].sex ? "M" : "F"}}
-                );
+                threadusers.updateOne({ _id: i._id }, { $set: { [`${i1[0]}.sex`]: i1[1].sex ? "M" : "F" } });
             }
         });
     });
     users.find().forEach((i) => {
         if (typeof i.sex === "boolean") {
-            users.updateOne({_id: i._id}, {$set: {sex: i.sex ? "M" : "F"}});
+            users.updateOne({ _id: i._id }, { $set: { sex: i.sex ? "M" : "F" } });
         }
     });
     verification.find().forEach((i) => {
         if (typeof i.sex === "boolean") {
-            verification.updateOne(
-                {_id: i._id},
-                {$set: {sex: i.sex ? "M" : "F"}}
-            );
+            verification.updateOne({ _id: i._id }, { $set: { sex: i.sex ? "M" : "F" } });
         }
     });
 }
@@ -88,7 +82,7 @@ async function updatevotes() {
             }
             o.push(n);
         });
-        conversation.updateOne({_id: i._id}, {$set: {conversation: o}});
+        conversation.updateOne({ _id: i._id }, { $set: { conversation: o } });
     });
     uservotes.find().forEach((i) => {
         Object.entries(i).forEach(async (n) => {
@@ -103,7 +97,7 @@ async function updatevotes() {
                     }
                     o[v[0]] = v[1];
                 });
-                await uservotes.updateOne({_id: i._id}, {$set: {[n[0]]: o}});
+                await uservotes.updateOne({ _id: i._id }, { $set: { [n[0]]: o } });
             }
         });
     });

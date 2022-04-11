@@ -22,4 +22,3 @@ async function main() {
 }
 
 main();
-

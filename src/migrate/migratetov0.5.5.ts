@@ -1,5 +1,5 @@
-import {MongoClient} from "mongodb";
-import {domain} from "../common";
+import { MongoClient } from "mongodb";
+import { domain } from "../common";
 import axios from "axios";
 import dotenv from "dotenv";
 dotenv.config();
@@ -21,10 +21,7 @@ const mongouri = process.env.DB_URI;
                             ).data.id
                         }`;
                         i.conversation[c.id - 1].slink = slink;
-                        await conversation.updateOne(
-                            {_id: i._id},
-                            {$set: {conversation: i.conversation}}
-                        );
+                        await conversation.updateOne({ _id: i._id }, { $set: { conversation: i.conversation } });
                     }
                 })();
             });
