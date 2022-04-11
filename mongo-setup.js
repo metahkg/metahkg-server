@@ -12,7 +12,7 @@ async function setup() {
     } else {
         await system(`mongoimport -d=metahkg --uri=${mongouri} templates/server/category.json`);
     }
-    await db.collection("hottest").createIndex({ "createdAt": 1 }, { expireAfterSeconds: 172800 });
+    await db.collection("viral").createIndex({ "createdAt": 1 }, { expireAfterSeconds: 172800 });
     await db.collection("summary").createIndex({ "op": "text", "title": "text" }); //text search
     await db.collection("limit").createIndex({ "createdAt": 1 }, { expireAfterSeconds: 86400 });
     await db.collection("verification").createIndex({ "createdAt": 1 }, { expireAfterSeconds: 300 });
