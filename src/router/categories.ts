@@ -16,8 +16,7 @@ router.get("/api/category/:id", body_parser.json(), async (req, res) => {
 
     const categories = db.collection("category");
     if (req.params.id === "all") {
-        const c = await categories.find({}).toArray();
-        res.send(c.map((category) => ({ id: category.id, name: category.name, hidden: category.hidden })));
+        res.send(await categories.find().project({ _id: 0 }).sort({ id: 1 }).toArray());
         return;
     }
     if (req.params.id?.startsWith("bytid")) {
