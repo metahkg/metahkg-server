@@ -2,10 +2,10 @@
 
 ## Prerequisites
 
-- x86_64 debian linux (only tested on ubuntu)
-- mongodb (either locally or remotely)
-- mailgun key (for sending emails, obviously)
-- recaptcha site key and secret pair (for anti-spamming)
+-   x86_64 debian linux (only tested on ubuntu)
+-   mongodb (either locally or remotely)
+-   mailgun key (for sending emails, obviously)
+-   recaptcha site key and secret pair (for anti-spamming)
 
 ## Set up
 
