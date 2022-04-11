@@ -6,18 +6,12 @@ import express from "express";
 const router = express.Router();
 import body_parser from "body-parser";
 import isInteger from "is-sn-integer";
-import {client} from "../common";
+import { client } from "../common";
 
 router.get("/api/category/:id", body_parser.json(), async (req, res) => {
-    if (
-        (req.params.id !== "all" &&
-            !isInteger(req.params.id) &&
-            !req.params.id?.startsWith("bytid")) ||
-        (req.params.id?.startsWith("bytid") &&
-            !isInteger(req.params.id?.replace("bytid", "")))
-    ) {
+    if ((req.params.id !== "all" && !isInteger(req.params.id) && !req.params.id?.startsWith("bytid")) || (req.params.id?.startsWith("bytid") && !isInteger(req.params.id?.replace("bytid", "")))) {
         res.status(400);
-        res.send({error: "Bad request."});
+        res.send({ error: "Bad request." });
         return;
     }
     const categories = client.db("metahkg-threads").collection("category");
@@ -35,21 +29,22 @@ router.get("/api/category/:id", body_parser.json(), async (req, res) => {
         const s = await summary.findOne({
             id: Number(req.params.id?.replace("bytid", "")),
         });
-        const c = await categories.findOne({id: s?.category});
+        const c = await categories.findOne({ id: s?.category });
         if (!c) {
             res.status(404);
-            res.send({error: "Not found."});
+            res.send({ error: "Not found." });
             return;
         }
-        res.send({id: c.id, name: c.name});
+        res.send({ id: c.id, name: c.name });
         return;
     }
-    const c = await categories.findOne({id: Number(req.params.id)});
+    const c = await categories.findOne({ id: Number(req.params.id) });
     if (!c) {
         res.status(404);
-        res.send({error: "Not found."});
+        res.send({ error: "Not found." });
         return;
     }
-    res.send({id: c.id, name: c.name});
+    res.send({ id: c.id, name: c.name, hidden: c.hidden });
 });
 export default router;
+
