@@ -1,7 +1,9 @@
-import { mongouri, objtoarr } from "../common";
+import { objtoarr } from "../common";
 import { MongoClient } from "mongodb";
 import { exit } from "process";
-
+import dotenv from "dotenv";
+dotenv.config();
+const mongouri = process.env.DB_URI;
 (async () => {
     const client = new MongoClient(mongouri);
     await client.connect();

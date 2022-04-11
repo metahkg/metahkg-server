@@ -1,7 +1,9 @@
 import {MongoClient} from "mongodb";
-import {domain, mongouri} from "../common";
+import {domain} from "../common";
 import axios from "axios";
-
+import dotenv from "dotenv";
+dotenv.config();
+const mongouri = process.env.DB_URI;
 (async function () {
     const client = new MongoClient(mongouri);
     await client.connect();

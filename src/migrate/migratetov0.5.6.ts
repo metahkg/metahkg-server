@@ -1,6 +1,7 @@
 import {MongoClient} from "mongodb";
-import {mongouri} from "../common";
-
+import dotenv from "dotenv";
+dotenv.config();
+const mongouri = process.env.DB_URI;
 async function vindex() {
     const client = new MongoClient(mongouri);
     await client.connect();

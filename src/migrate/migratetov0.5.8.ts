@@ -1,9 +1,10 @@
 import { MongoClient } from "mongodb";
 import findimages from "../router/lib/findimages";
-import { mongouri } from "../common";
 import axios from "axios";
 import fs from "fs";
-
+import dotenv from "dotenv";
+dotenv.config();
+const mongouri = process.env.DB_URI;
 async function images() {
     const client = new MongoClient(mongouri);
     await client.connect();
