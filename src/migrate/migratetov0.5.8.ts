@@ -100,6 +100,6 @@ async function onedb() {
     await db.collection("verification").createIndex({ createdAt: 1 }, { expireAfterSeconds: 300 });
 }
 
-//images();
-//avatars();
+images();
+avatars();
 onedb();
