@@ -4,14 +4,13 @@ const router = express.Router();
 import body_parser from "body-parser";
 import {
     conversationCl,
-    db,
     domain,
     imagesCl,
     limitCl,
     secret,
     summaryCl,
+    threadusersCl,
     timediff,
-    usersCl,
     viralCl,
 } from "../../common";
 import { JSDOM } from "jsdom";
@@ -85,8 +84,8 @@ router.post("/api/comment", body_parser.json(), async (req, res) => {
             $currentDate: { lastModified: true },
         }
     );
-    if (!(await usersCl.findOne({ id: req.body.id }))?.[user.id]) {
-        await usersCl.updateOne(
+    if (!(await threadusersCl.findOne({ id: req.body.id }))?.[user.id]) {
+        await threadusersCl.updateOne(
             { id: req.body.id },
             { $set: { [user.id]: { sex: user.sex, name: user.user } } }
         );
