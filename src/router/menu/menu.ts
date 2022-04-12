@@ -25,7 +25,7 @@ router.get("/api/menu/:category", async (req, res) => {
         },
         { additionalProperties: false }
     );
-    
+
     if (!ajv.validate(schema, { category: category, page: page, sort: sort }))
         return res.status(400).send({ error: "Bad request." });
 

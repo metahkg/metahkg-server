@@ -37,7 +37,7 @@ router.post("/api/users/signin", body_parser.json(), async (req, res) => {
         (await users.findOne({
             email: hash.sha256().update(req.body.user).digest("hex"),
         }));
-    
+
     if (!user) {
         const verifyUser =
             (await verification.findOne({ user: req.body.user })) ||

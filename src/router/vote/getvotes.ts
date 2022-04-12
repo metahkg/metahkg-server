@@ -14,9 +14,8 @@ router.get("/api/getvotes", async (req, res) => {
 
     const user = verifyUser(req.headers.authorization);
 
-    if (!user)
-        return res.status(400).send({ error: "User not found" });
-        
+    if (!user) return res.status(400).send({ error: "User not found" });
+
     const uservotes = await votesCl.findOne(
         { id: user.id },
         { projection: { [id]: 1, _id: 0 } }
