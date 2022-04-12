@@ -42,7 +42,7 @@ router.get("/api/history/:id", async (req, res) => {
         .limit(25)
         .project({ _id: 0 })
         .toArray();
-        
+
     if (!history.length) return res.send([null]);
     res.send(history);
 });

@@ -74,7 +74,7 @@ router.get("/api/thread/:id", async (req, res) => {
         return;
     }
     if (
-        !(verifyUser(req.headers.authorization)) &&
+        !verifyUser(req.headers.authorization) &&
         (await hiddencats()).includes(threadsummary.category)
     ) {
         res.status(401);

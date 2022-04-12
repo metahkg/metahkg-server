@@ -2,7 +2,18 @@ import express from "express";
 
 const router = express.Router();
 import body_parser from "body-parser";
-import { conversationCl, db, domain, imagesCl, limitCl, secret, summaryCl, timediff, usersCl, viralCl } from "../../common";
+import {
+    conversationCl,
+    db,
+    domain,
+    imagesCl,
+    limitCl,
+    secret,
+    summaryCl,
+    timediff,
+    usersCl,
+    viralCl,
+} from "../../common";
 import { JSDOM } from "jsdom";
 import createDOMPurify from "dompurify";
 import axios from "axios";
@@ -34,7 +45,7 @@ router.post("/api/comment", body_parser.json(), async (req, res) => {
         return res.status(400).send({ error: "recaptcha token invalid." });
 
     const user = verifyUser(req.headers.authorization);
-    
+
     const comment = DOMPurify.sanitize(req.body.comment);
     if (!user || !(await conversationCl.findOne({ id: req.body.id })))
         return res.status(404).send({ error: "Not found." });

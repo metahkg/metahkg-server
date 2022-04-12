@@ -22,8 +22,7 @@ router.post("/api/vote", body_parser.json(), async (req, res) => {
 
     const user = verifyUser(req.headers.authorization);
 
-    if (!user)
-        return res.status(400).send({ error: "User not found." });
+    if (!user) return res.status(400).send({ error: "User not found." });
 
     const thread = await conversationCl.findOne(
         { id: req.body.id },
@@ -46,12 +45,11 @@ router.post("/api/vote", body_parser.json(), async (req, res) => {
         }
     );
 
-    if (!thread)
-        return res.status(404).send({ error: "Thread not found." });
+    if (!thread) return res.status(404).send({ error: "Thread not found." });
 
     const index = req.body.cid - 1;
     const uservotes = await votesCl.findOne({ id: user.id });
-    
+
     if (!uservotes) {
         await votesCl.insertOne({ id: user.id });
     } else if (uservotes?.[req.body.id]?.[req.body.cid]) {
