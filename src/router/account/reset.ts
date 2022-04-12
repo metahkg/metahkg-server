@@ -5,7 +5,7 @@ import hash from "hash.js";
 import mailgun from "mailgun-js";
 import { generate } from "wcyat-rg";
 import { Type } from "@sinclair/typebox";
-import { ajv } from "../lib/ajv";
+import { ajv } from "../../lib/ajv";
 
 const mg = mailgun({
     apiKey: process.env.mailgun_key,
@@ -48,7 +48,9 @@ router.post("/api/users/reset", bodyParser.json(), async (req, res) => {
         to: req.body.email,
         subject: "Metahkg - Reset Password",
         text: `Reset your password with the following link:
-    https://${domain}/users/reset?code=${encodeURIComponent(code)}&email=${encodeURIComponent(req.body.email)}
+    https://${domain}/users/reset?code=${encodeURIComponent(
+            code
+        )}&email=${encodeURIComponent(req.body.email)}
     
     Alternatively, use this code at https://${domain}/reset : 
     ${code}`,

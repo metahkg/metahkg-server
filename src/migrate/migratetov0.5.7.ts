@@ -11,7 +11,10 @@ async function main() {
     const verification = client.db("metahkg-users").collection("verification");
     await users.find().forEach((item) => {
         if (EmailValidator.validate(item.email)) {
-            users.updateOne({ _id: item._id }, { $set: { email: hash.sha256().update(item.email).digest("hex") } });
+            users.updateOne(
+                { _id: item._id },
+                { $set: { email: hash.sha256().update(item.email).digest("hex") } }
+            );
         }
     });
     await verification.find().forEach((item) => {

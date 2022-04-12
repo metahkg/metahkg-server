@@ -5,19 +5,18 @@
   pwd (password): string
 }
 */
-//sets a cookie "key" if success
 import dotenv from "dotenv";
-
-dotenv.config();
 import express from "express";
-
 const router = express.Router();
 import body_parser from "body-parser";
 import { db } from "../../common";
 import bcrypt from "bcrypt";
 import hash from "hash.js";
 import { Type } from "@sinclair/typebox";
-import { ajv } from "../lib/ajv";
+import { ajv } from "../../lib/ajv";
+import { createToken } from "../auth/createtoken";
+
+dotenv.config();
 
 router.post("/api/users/signin", body_parser.json(), async (req, res) => {
     const schema = Type.Object(
@@ -27,41 +26,35 @@ router.post("/api/users/signin", body_parser.json(), async (req, res) => {
         },
         { additionalProperties: false }
     );
-    if (!ajv.validate(schema, req.body)) {
-        res.status(400);
-        res.send({ error: "Bad request." });
-        return;
-    }
+    if (!ajv.validate(schema, req.body))
+        return res.status(400).send({ error: "Bad request." });
+
     const users = db.collection("users");
     const verification = db.collection("verification");
-    const data =
+
+    const user =
         (await users.findOne({ user: req.body.user })) ||
         (await users.findOne({
             email: hash.sha256().update(req.body.user).digest("hex"),
         }));
-    if (!data) {
-        const vdata = (await verification.findOne({ user: req.body.user })) || (await verification.findOne({ email: req.body.user }));
-        if (vdata && (await bcrypt.compare(req.body.pwd, vdata.pwd))) {
-            res.send({ unverified: true });
-            return;
+    
+    if (!user) {
+        const verifyUser =
+            (await verification.findOne({ user: req.body.user })) ||
+            (await verification.findOne({ email: req.body.user }));
+        if (verifyUser && (await bcrypt.compare(req.body.pwd, verifyUser.pwd))) {
+            return res.send({ unverified: true });
         }
-        res.status(400);
-        res.send({ error: "User not found." });
-        return;
+        return res.status(400).send({ error: "User not found." });
     }
-    const correct = await bcrypt.compare(req.body.pwd, data.pwd);
-    if (!correct) {
-        res.status(401);
-        res.send({ error: "Password incorrect." });
-        return;
-    }
-    res.cookie("key", data.key, {
-        secure: true,
-        httpOnly: true,
-        path: "/",
-        expires: new Date("2038-01-19T04:14:07.000Z"),
-        sameSite: true,
+
+    const pwdMatch = await bcrypt.compare(req.body.pwd, user.pwd);
+    if (!pwdMatch) return res.status(401).send({ error: "Password incorrect." });
+
+    res.send({
+        id: user.id,
+        user: user.user,
+        token: createToken(user.id, user.user, user.sex, user.role),
     });
-    res.send({ id: data.id, user: data.user });
 });
 export default router;

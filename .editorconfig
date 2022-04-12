@@ -4,7 +4,7 @@ end_of_line = crlf
 indent_size = 4
 indent_style = space
 insert_final_newline = true
-max_line_length = 120
+max_line_length = 20
 tab_width = 4
 trim_trailing_whitespace = true
 ij_continuation_indent_size = 8
@@ -16,8 +16,8 @@ ij_visual_guides = none
 ij_wrap_on_typing = false
 
 []
-max_line_length = 2147483647
-ij_csv_wrap_long_lines = false
+max_line_length = 90
+ij_csv_wrap_long_lines = true
 
 [*.css]
 ij_css_align_closing_brace_with_properties = false

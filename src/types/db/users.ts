@@ -13,8 +13,8 @@ export interface user {
     user: string;
     /** user sex */
     sex: "M" | "F";
-    /** access key */
-    key: string;
-    /** is admin */
-    admin?: boolean;
+    /** role */
+    role: "admin" | "user";
 }
+
+export type userRole = "admin" | "user";

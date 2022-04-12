@@ -14,12 +14,12 @@ import express from "express";
 import body_parser from "body-parser";
 import { client, domain, secret, db } from "../../common";
 import EmailValidator from "email-validator";
-import { verify } from "../lib/recaptcha";
+import { verify } from "../../lib/recaptcha";
 import bcrypt from "bcrypt";
 import mailgun from "mailgun-js";
 import { generate } from "wcyat-rg";
 import { Type } from "@sinclair/typebox";
-import { ajv } from "../lib/ajv";
+import { ajv } from "../../lib/ajv";
 
 dotenv.config();
 const mg = mailgun({
@@ -48,7 +48,8 @@ async function valid(req: any, res: any) {
             email: Type.String({ format: "email" }),
             rtoken: Type.String(),
             sex: Type.Union([Type.Literal("M"), Type.Literal("F")]),
-            invitecode: signupMode === "invite" ? Type.String() : Type.Optional(Type.Undefined()),
+            invitecode:
+                signupMode === "invite" ? Type.String() : Type.Optional(Type.Undefined()),
         },
         { additionalProperties: false }
     );
@@ -56,12 +57,19 @@ async function valid(req: any, res: any) {
         res.status(429);
         res.send({ error: "No signup allowed." });
         return false;
-    } else if (signupMode === "invite" && !(await db.collection("invite").findOne({ code: req.body.invitecode }))) {
+    } else if (
+        signupMode === "invite" &&
+        !(await db.collection("invite").findOne({ code: req.body.invitecode }))
+    ) {
         res.status(409);
         res.send({ error: "Invalid invite code." });
         return false;
     }
-    if (!ajv.validate(schema, req.body) || !req.body.user?.match(/\S{1,15}/i) || EmailValidator.validate(req.body.user)) {
+    if (
+        !ajv.validate(schema, req.body) ||
+        !req.body.user?.match(/\S{1,15}/i) ||
+        EmailValidator.validate(req.body.user)
+    ) {
         res.status(400);
         res.send({ error: "Bad request." });
         return false;
@@ -90,11 +98,17 @@ async function exceptions(req: any, res: any) {
     }
     const verification = db.collection("verification");
     const users = db.collection("users");
-    if ((await users.findOne({ user: req.body.user })) || (await verification.findOne({ user: req.body.user }))) {
+    if (
+        (await users.findOne({ user: req.body.user })) ||
+        (await verification.findOne({ user: req.body.user }))
+    ) {
         res.status(409);
         res.send({ error: "Username exists." });
         return false;
-    } else if ((await users.findOne({ email: req.body.email })) || (await verification.findOne({ email: req.body.email }))) {
+    } else if (
+        (await users.findOne({ email: req.body.email })) ||
+        (await verification.findOne({ email: req.body.email }))
+    ) {
         res.status(409);
         res.send({ error: "Email exists." });
         return false;
@@ -116,7 +130,9 @@ router.post("/api/users/register", body_parser.json(), async (req, res) => {
         to: req.body.email,
         subject: "Metahkg - verify your email",
         text: `Verify your email with the following link:
-https://${domain}/users/verify?code=${encodeURIComponent(code)}&email=${encodeURIComponent(req.body.email)}
+https://${domain}/users/verify?code=${encodeURIComponent(
+            code
+        )}&email=${encodeURIComponent(req.body.email)}
 
 Alternatively, use this code at https://${domain}/users/verify : 
 ${code}`,

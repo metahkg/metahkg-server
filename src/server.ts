@@ -30,7 +30,10 @@ app.set("trust proxy", true);
  for usage in the browser console
  */
 app.use(function (req, res, next) {
-    res.setHeader("Content-Security-Policy", "script-src 'self' https://www.gstatic.com/recaptcha/ https://www.google.com/recaptcha/ https://sa.metahkg.org https://static.cloudflareinsights.com https://cdnjs.cloudflare.com");
+    res.setHeader(
+        "Content-Security-Policy",
+        "script-src 'self' https://www.gstatic.com/recaptcha/ https://www.google.com/recaptcha/ https://sa.metahkg.org https://static.cloudflareinsights.com https://cdnjs.cloudflare.com"
+    );
     return next();
 });
 process.env.production === "dev" && app.use(cors());

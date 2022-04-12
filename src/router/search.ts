@@ -10,7 +10,12 @@ const router = express.Router();
  * 2: by last modification time
  */
 router.get("/api/search", async (req, res) => {
-    if (!req.query.q || (req.query.sort && ![0, 1, 2].includes(Number(req.query.sort))) || (req.query.page && !isInteger(String(req.query.page))) || (req.query.mode && ![0, 1].includes(Number(req.query.mode)))) {
+    if (
+        !req.query.q ||
+        (req.query.sort && ![0, 1, 2].includes(Number(req.query.sort))) ||
+        (req.query.page && !isInteger(String(req.query.page))) ||
+        (req.query.mode && ![0, 1].includes(Number(req.query.mode)))
+    ) {
         res.status(400);
         res.send({ error: "Bad request." });
         return;

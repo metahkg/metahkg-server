@@ -6,7 +6,7 @@ const router = express.Router();
 import body_parser from "body-parser";
 import { db } from "../../common";
 import { Type } from "@sinclair/typebox";
-import { ajv } from "../lib/ajv";
+import { ajv } from "../../lib/ajv";
 
 router.post("/api/check", body_parser.json(), async (req, res) => {
     const schema = Type.Object(

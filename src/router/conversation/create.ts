@@ -12,33 +12,21 @@ import express from "express";
 const router = express.Router();
 import body_parser from "body-parser";
 import { secret, domain, db } from "../../common";
-import { verify } from "../lib/recaptcha";
+import { verify } from "../../lib/recaptcha";
 import axios from "axios";
-import findimages from "../lib/findimages";
+import findimages from "../../lib/findimages";
 import createDOMPurify from "dompurify";
 import { JSDOM } from "jsdom";
 import { Type } from "@sinclair/typebox";
-import { ajv } from "../lib/ajv";
+import { ajv } from "../../lib/ajv";
+import verifyUser from "../auth/verify";
 
 const jsdomwindow: any = new JSDOM("").window;
 const DOMPurify = createDOMPurify(jsdomwindow);
 router.post(
     "/api/create",
     body_parser.json(),
-    async (
-        req: {
-            body: {
-                icomment: string;
-                rtoken: string;
-                title: string;
-                category: number;
-            };
-            cookies: {
-                key?: string;
-            };
-        },
-        res
-    ) => {
+    async (req,res) => {
         const schema = Type.Object(
             {
                 icomment: Type.String(),
@@ -68,24 +56,26 @@ router.post(
             res.send({ error: "recaptcha token invalid." });
             return;
         }
-        const user = await users.findOne({ key: key });
-        if (!user) {
-            res.status(400);
-            res.send({ error: "User not found." });
-            return;
-        }
-        if ((await limit.countDocuments({ id: user.id, type: "create" })) >= 10) {
-            res.status(429);
-            res.send({ error: "You cannot create more than 10 topics a day." });
-            return;
-        }
+        const user = verifyUser(req.headers.authorization);
+        if (!user)
+            return res.status(400).send({ error: "User not found." });
+        if ((await limit.countDocuments({ id: user.id, type: "create" })) >= 10)
+            return res.status(429).send({ error: "You cannot create more than 10 topics a day." });
         const category = await categories.findOne({ id: req.body.category });
         if (!category) {
             res.status(404);
             res.send({ error: "Category not found." });
             return;
         }
-        const newtid = ((await summary.find().sort({ id: -1 }).limit(1).project({ id: 1, _id: 0 }).toArray())[0]?.id || (await conversation.countDocuments())) + 1;
+        const newtid =
+            ((
+                await summary
+                    .find()
+                    .sort({ id: -1 })
+                    .limit(1)
+                    .project({ id: 1, _id: 0 })
+                    .toArray()
+            )[0]?.id || (await conversation.countDocuments())) + 1;
         const date = new Date();
         let slink: string, cslink: string;
         try {

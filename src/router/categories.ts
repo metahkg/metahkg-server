@@ -8,7 +8,13 @@ import body_parser from "body-parser";
 import isInteger from "is-sn-integer";
 
 router.get("/api/category/:id", body_parser.json(), async (req, res) => {
-    if ((req.params.id !== "all" && !isInteger(req.params.id) && !req.params.id?.startsWith("bytid")) || (req.params.id?.startsWith("bytid") && !isInteger(req.params.id?.replace("bytid", "")))) {
+    if (
+        (req.params.id !== "all" &&
+            !isInteger(req.params.id) &&
+            !req.params.id?.startsWith("bytid")) ||
+        (req.params.id?.startsWith("bytid") &&
+            !isInteger(req.params.id?.replace("bytid", "")))
+    ) {
         res.status(400);
         res.send({ error: "Bad request." });
         return;

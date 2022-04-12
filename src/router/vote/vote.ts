@@ -1,10 +1,12 @@
 import body_parser from "body-parser";
 import express from "express";
-import { db } from "../../common";
+import { conversationCl, db, summaryCl, votesCl } from "../../common";
 import { Type } from "@sinclair/typebox";
-import { ajv } from "../lib/ajv";
+import { ajv } from "../../lib/ajv";
+import verifyUser from "../auth/verify";
 
 const router = express.Router();
+
 router.post("/api/vote", body_parser.json(), async (req, res) => {
     const schema = Type.Object(
         {
@@ -14,23 +16,16 @@ router.post("/api/vote", body_parser.json(), async (req, res) => {
         },
         { additionalProperties: false }
     );
-    if (!ajv.validate(schema, req.body)) {
-        res.status(400);
-        res.send({ error: "Bad request." });
-        return;
-    }
 
-    const conversation = db.collection("conversation");
-    const summary = db.collection("summary");
-    const users = db.collection("users");
-    const votes = db.collection("votes");
-    const user = await users.findOne({ key: req.cookies.key });
-    if (!user) {
-        res.status(400);
-        res.send({ error: "User not found." });
-        return;
-    }
-    const thread = await conversation.findOne(
+    if (!ajv.validate(schema, req.body))
+        return res.status(400).send({ error: "Bad request." });
+
+    const user = verifyUser(req.headers.authorization);
+
+    if (!user)
+        return res.status(400).send({ error: "User not found." });
+
+    const thread = await conversationCl.findOne(
         { id: req.body.id },
         {
             projection: {
@@ -50,28 +45,44 @@ router.post("/api/vote", body_parser.json(), async (req, res) => {
             },
         }
     );
-    if (!thread) {
-        res.status(404);
-        res.send({ error: "Thread not found." });
-        return;
-    }
+
+    if (!thread)
+        return res.status(404).send({ error: "Thread not found." });
+
     const index = req.body.cid - 1;
-    const uservotes = await votes.findOne({ id: user.id });
+    const uservotes = await votesCl.findOne({ id: user.id });
+    
     if (!uservotes) {
-        await votes.insertOne({ id: user.id });
+        await votesCl.insertOne({ id: user.id });
     } else if (uservotes?.[req.body.id]?.[req.body.cid]) {
-        res.status(403);
-        res.send({ error: "You have already voted." });
-        return;
+        return res.status(403).send({ error: "You have already voted." });
     }
-    await votes.updateOne({ id: user.id }, { $set: { [`${req.body.id}.${req.body.cid}`]: req.body.vote } });
+
+    await votesCl.updateOne(
+        { id: user.id },
+        { $set: { [`${req.body.id}.${req.body.cid}`]: req.body.vote } }
+    );
+
     if (!thread.conversation[0]?.[req.body.vote]) {
-        await conversation.updateOne({ id: req.body.id }, { $set: { [`conversation.${index}.${req.body.vote}`]: 0 } });
+        await conversationCl.updateOne(
+            { id: req.body.id },
+            { $set: { [`conversation.${index}.${req.body.vote}`]: 0 } }
+        );
     }
-    await conversation.updateOne({ id: req.body.id }, { $inc: { [`conversation.${index}.${req.body.vote}`]: 1 } });
+
+    await conversationCl.updateOne(
+        { id: req.body.id },
+        { $inc: { [`conversation.${index}.${req.body.vote}`]: 1 } }
+    );
+
     if (req.body.cid === 1) {
-        await summary.updateOne({ id: req.body.id }, { $inc: { vote: req.body.vote === "U" ? 1 : -1 } });
+        await summaryCl.updateOne(
+            { id: req.body.id },
+            { $inc: { vote: req.body.vote === "U" ? 1 : -1 } }
+        );
     }
+
     res.send({ response: "ok" });
 });
+
 export default router;

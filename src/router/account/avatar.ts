@@ -3,9 +3,8 @@ import express from "express";
 import multer from "multer"; //handle image uploads
 import fs from "fs";
 import { move } from "fs-extra";
-import { db } from "../../common";
 import sharp from "sharp"; //reshape images to circle
-import type { user } from "../../schema/users";
+import verifyUser from "../auth/verify";
 
 dotenv.config();
 const router = express.Router();
@@ -35,7 +34,11 @@ async function compress(filename: string, id: number) {
         ])
         .toFile(`${process.env.root}/tmp/avatars/${id}.png`)
         .catch((err) => console.log(err));
-    await move(`${process.env.root}/tmp/avatars/${id}.png`, `${process.env.root}/images/avatars/${id}.png`, { overwrite: true });
+    await move(
+        `${process.env.root}/tmp/avatars/${id}.png`,
+        `${process.env.root}/images/avatars/${id}.png`,
+        { overwrite: true }
+    );
 }
 
 /**
@@ -44,45 +47,37 @@ async function compress(filename: string, id: number) {
  * Image is renamed to <user-id>.<png/svg/jpg/jpeg>
  */
 router.post("/api/users/avatar", upload.single("avatar"), async (req, res) => {
-    if (!req.file?.size) {
-        res.status(400);
-        res.send({ error: "Bad request." });
-        return;
-    }
-    if (req.file?.size > 100000) {
-        res.status(422);
-        res.send({ error: "file too large." });
+    if (!req.file?.size) return res.status(400).send({ error: "Bad request." });
+    if (req.file?.size > 150000) {
         fs.rm(req.file?.path, () => {});
-        return;
+        return res.status(422).send({ error: "file too large." });
     }
     if (
         //check if file type is not aupported
-        !["jpg", "svg", "png", "jpeg", "jfif"].includes(req.file?.originalname.split(".").pop())
+        !["jpg", "svg", "png", "jpeg", "jfif"].includes(
+            req.file?.originalname.split(".").pop()
+        )
     ) {
-        res.status(400);
-        res.send({ error: "File type not supported." });
         //remove the file
         fs.rm(req.file?.path, () => {});
-        return;
+        return res.status(400).send({ error: "File type not supported." });
     }
-
-    const users = db.collection("users");
-    //search for the user using cookie "key"
-    // @ts-ignore
-    const user: user = await users.findOne({ key: req.cookies.key });
+    const user = verifyUser(req.headers.authorization);
     //send 404 if no such user
     if (!user) {
-        res.status(400);
-        res.send({ error: "User not found." });
         fs.rm(`${process.env.root}/uploads/${req.file?.filename}`, () => {});
-        return;
+        return res.status(400).send({ error: "User not found." });
     }
     //rename file to <user-id>.<extension>
     const newfilename = `${user.id}.${req.file.originalname.split(".").pop()}`;
     fs.mkdirSync("images/processing/avatars", { recursive: true });
     fs.mkdirSync("images/avatars", { recursive: true });
     //move file to processing folder
-    await move(`${process.env.root}/${req.file?.path}`, `${process.env.root}/images/processing/avatars/${newfilename}`, { overwrite: true });
+    await move(
+        `${process.env.root}/${req.file?.path}`,
+        `${process.env.root}/images/processing/avatars/${newfilename}`,
+        { overwrite: true }
+    );
     try {
         //compress the file
         await compress(`images/processing/avatars/${newfilename}`, user.id);
