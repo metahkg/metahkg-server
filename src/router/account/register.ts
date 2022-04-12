@@ -48,7 +48,7 @@ async function valid(req: any, res: any) {
             email: Type.String({ format: "email" }),
             rtoken: Type.String(),
             sex: Type.Union([Type.Literal("M"), Type.Literal("F")]),
-            invitecode: signupMode === "invite" ? Type.String() : Type.Optional(Type.Undefined()),
+            invitecode: Type.Optional(Type.String()),
         },
         { additionalProperties: false }
     );
