@@ -16,7 +16,7 @@ router.post("/api/users/editprofile", body_parser.json(), async (req, res) => {
     );
     if (!ajv.validate(schema, req.body) || !Object.keys(req.body).length)
         return res.status(400).send({ error: "Bad request." });
-        
+
     const user = verifyUser(req.headers.authorization);
     if (!user) return res.status(404).send({ error: "User not found." });
 

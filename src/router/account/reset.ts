@@ -25,17 +25,18 @@ router.post("/api/users/reset", bodyParser.json(), async (req, res) => {
     const hashedemail = hash.sha256().update(req.body.email).digest("hex");
 
     const userData = await usersCl.findOne({ email: hashedemail });
-    if (!userData)
-        return res.status(404).send({ error: "User not found." });
+    if (!userData) return res.status(404).send({ error: "User not found." });
 
     if ((await limitCl.countDocuments({ type: "reset", email: hashedemail })) >= 2)
-        return res.status(429).send({ error: "You can only request reset password 2 times a day." });
+        return res
+            .status(429)
+            .send({ error: "You can only request reset password 2 times a day." });
 
     const verificationCode = generate({
         include: { numbers: true, upper: true, lower: true, special: false },
         digits: 30,
     });
-    
+
     const reset = {
         from: `Metahkg support <support@${process.env.mailgun_domain || "metahkg.org"}>`,
         to: req.body.email,
