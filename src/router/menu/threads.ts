@@ -1,6 +1,6 @@
 import { Router } from "express";
 import isInteger from "is-sn-integer";
-import { db } from "../../common";
+import { db, summaryCl } from "../../common";
 
 const router = Router();
 router.get("/api/threads", async (req, res) => {
@@ -23,8 +23,8 @@ router.get("/api/threads", async (req, res) => {
         res.send({ error: "Bad request." });
         return;
     }
-    const summary = db.collection("summary");
-    const r = await summary
+
+    const r = await summaryCl
         .find({
             $where: function () {
                 return threads.includes(this.id);

@@ -10,15 +10,15 @@
 }
 */
 import dotenv from "dotenv";
-import express from "express";
+import express, { Response } from "express";
 import body_parser from "body-parser";
-import { client, domain, secret, db } from "../../common";
+import { domain, secret, db, usersCl, verificationCl } from "../../common";
 import EmailValidator from "email-validator";
 import { verify } from "../../lib/recaptcha";
 import bcrypt from "bcrypt";
 import mailgun from "mailgun-js";
 import { generate } from "wcyat-rg";
-import { Type } from "@sinclair/typebox";
+import { Static, Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 
 dotenv.config();
@@ -40,113 +40,108 @@ const signupMode =
  * @param {any} res - the response object
  * @returns a boolean.
  */
-async function valid(req: any, res: any) {
-    const schema = Type.Object(
-        {
-            user: Type.String({ maxLength: 15 }),
-            pwd: Type.String({ minLength: 8 }),
-            email: Type.String({ format: "email" }),
-            rtoken: Type.String(),
-            sex: Type.Union([Type.Literal("M"), Type.Literal("F")]),
-            invitecode: Type.Optional(Type.String()),
-        },
-        { additionalProperties: false }
-    );
+const schema = Type.Object(
+    {
+        name: Type.String({ maxLength: 15 }),
+        pwd: Type.String({ minLength: 8 }),
+        email: Type.String({ format: "email" }),
+        rtoken: Type.String(),
+        sex: Type.Union([Type.Literal("M"), Type.Literal("F")]),
+        invitecode: Type.Optional(Type.String()),
+    },
+    { additionalProperties: false }
+);
+async function valid(req: { body: Static<typeof schema> }, res: Response) {
     if (signupMode === "none") {
-        res.status(429);
-        res.send({ error: "No signup allowed." });
+        res.status(429).send({ error: "No signup allowed." });
         return false;
-    } else if (
+    }
+
+    // WARNING: frontend not implemented !!!
+    if (
         signupMode === "invite" &&
         !(await db.collection("invite").findOne({ code: req.body.invitecode }))
     ) {
-        res.status(409);
-        res.send({ error: "Invalid invite code." });
+        res.status(409).send({ error: "Invalid invite code." });
         return false;
     }
+
     if (
         !ajv.validate(schema, req.body) ||
-        !req.body.user?.match(/\S{1,15}/i) ||
-        EmailValidator.validate(req.body.user)
+        !req.body.name?.match(/\S{1,15}/i) ||
+        EmailValidator.validate(req.body.name)
     ) {
-        res.status(400);
-        res.send({ error: "Bad request." });
+        res.status(400).send({ error: "Bad request." });
         return false;
     }
     if (!(await verify(secret, req.body.rtoken))) {
-        res.status(400);
-        res.send({ error: "recaptcha token invalid." });
+        res.status(400).send({ error: "recaptcha token invalid." });
         return false;
     }
     return true;
 }
 
 /**
- * If the user is banned, return a 403. If the user or email already exists, return a 409
  * @param {any} req - the request object
  * @param {any} res - The response object.
  * @returns a boolean.
  */
-async function exceptions(req: any, res: any) {
-    const banned = db.collection("banned");
-    if (await banned.findOne({ ip: req.ip })) {
-        res.status(403);
-        res.send({ error: "You are banned from creating accounts." });
-        console.log(`Banned ${req.ip}`);
+async function exceptions(req: { body: Static<typeof schema> }, res: Response) {
+    if (
+        (await usersCl.findOne({ user: req.body.name })) ||
+        (await verificationCl.findOne({ user: req.body.name }))
+    ) {
+        res.status(409).send({ error: "Username exists." });
         return false;
     }
-    const verification = db.collection("verification");
-    const users = db.collection("users");
     if (
-        (await users.findOne({ user: req.body.user })) ||
-        (await verification.findOne({ user: req.body.user }))
+        (await usersCl.findOne({ email: req.body.email })) ||
+        (await verificationCl.findOne({ email: req.body.email }))
     ) {
-        res.status(409);
-        res.send({ error: "Username exists." });
-        return false;
-    } else if (
-        (await users.findOne({ email: req.body.email })) ||
-        (await verification.findOne({ email: req.body.email }))
-    ) {
-        res.status(409);
-        res.send({ error: "Email exists." });
+        res.status(409).send({ error: "Email exists." });
         return false;
     }
     return true;
 }
 
-router.post("/api/users/register", body_parser.json(), async (req, res) => {
-    if (!(await valid(req, res))) return;
-    if (!(await exceptions(req, res))) return;
+router.post(
+    "/api/users/register",
+    body_parser.json(),
+    async (req: { body: Static<typeof schema> }, res) => {
+        if (!(await valid(req, res))) return;
+        if (!(await exceptions(req, res))) return;
 
-    const verification = db.collection("verification");
-    const code = generate({
-        include: { numbers: true, upper: true, lower: true, special: false },
-        digits: 30,
-    });
-    const verify = {
-        from: `Metahkg support <support@${process.env.mailgun_domain || "metahkg.org"}>`,
-        to: req.body.email,
-        subject: "Metahkg - verify your email",
-        text: `Verify your email with the following link:
+        const verification = db.collection("verification");
+        const code = generate({
+            include: { numbers: true, upper: true, lower: true, special: false },
+            digits: 30,
+        });
+        const verify = {
+            from: `Metahkg support <support@${
+                process.env.mailgun_domain || "metahkg.org"
+            }>`,
+            to: req.body.email,
+            subject: "Metahkg - verify your email",
+            text: `Verify your email with the following link:
 https://${domain}/users/verify?code=${encodeURIComponent(
-            code
-        )}&email=${encodeURIComponent(req.body.email)}
+                code
+            )}&email=${encodeURIComponent(req.body.email)}
 
 Alternatively, use this code at https://${domain}/users/verify : 
 ${code}`,
-    };
-    await mg.messages().send(verify);
-    const hashed = await bcrypt.hash(req.body.pwd, 10);
-    await verification.insertOne({
-        createdAt: new Date(),
-        code: code,
-        email: req.body.email,
-        pwd: hashed,
-        user: req.body.user,
-        sex: req.body.sex,
-        type: "register",
-    });
-    res.send({ response: "ok" });
-});
+        };
+        await mg.messages().send(verify);
+        const hashed = await bcrypt.hash(req.body.pwd, 10);
+        await verification.insertOne({
+            createdAt: new Date(),
+            code: code,
+            email: req.body.email,
+            pwd: hashed,
+            name: req.body.name,
+            sex: req.body.sex,
+            type: "register",
+        });
+        res.send({ response: "ok" });
+    }
+);
 export default router;

@@ -1,12 +1,18 @@
+import type { userSexType } from "user";
+import type { userRole } from "./users";
+
 export interface summary {
     /** mongodb object id */
     _id: string;
     /** thread id */
     id: number;
     /** original poster */
-    op: string;
-    /** original poster sex */
-    sex: "M" | "F";
+    op: {
+        id: number;
+        name: string;
+        sex: userSexType;
+        role: userRole;
+    };
     /** number of comments */
     c: number;
     /** upvote - downvote  */
@@ -22,3 +28,10 @@ export interface summary {
     /** shortened link */
     slink: string;
 }
+
+export type summaryOp = {
+    id: number;
+    name: string;
+    sex: userSexType;
+    role: userRole;
+};

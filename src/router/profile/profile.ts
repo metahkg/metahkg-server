@@ -17,10 +17,10 @@ router.get("/api/profile/:id", async (req, res) => {
         },
         {
             projection: req.query.nameonly
-                ? { user: 1, _id: 0 }
+                ? { name: 1, _id: 0 }
                 : {
                       id: 1,
-                      user: 1,
+                      name: 1,
                       createdAt: 1,
                       sex: 1,
                       role: 1,
@@ -33,7 +33,7 @@ router.get("/api/profile/:id", async (req, res) => {
 
     if (!req.query.nameonly) {
         requestedUser.count = await summaryCl.countDocuments({
-            op: requestedUser.user,
+            "op.id": requestedUser.id,
         });
     }
 

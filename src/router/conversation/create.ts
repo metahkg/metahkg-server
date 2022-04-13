@@ -11,7 +11,16 @@ import express from "express";
 
 const router = express.Router();
 import body_parser from "body-parser";
-import { secret, domain, db } from "../../common";
+import {
+    secret,
+    domain,
+    limitCl,
+    categoryCl,
+    summaryCl,
+    conversationCl,
+    viralCl,
+    imagesCl,
+} from "../../common";
 import { verify } from "../../lib/recaptcha";
 import axios from "axios";
 import findimages from "../../lib/findimages";
@@ -23,6 +32,7 @@ import verifyUser from "../auth/verify";
 
 const jsdomwindow: any = new JSDOM("").window;
 const DOMPurify = createDOMPurify(jsdomwindow);
+
 router.post("/api/create", body_parser.json(), async (req, res) => {
     const schema = Type.Object(
         {
@@ -33,58 +43,47 @@ router.post("/api/create", body_parser.json(), async (req, res) => {
         },
         { additionalProperties: false }
     );
-    if (!ajv.validate(schema, req.body)) {
-        res.status(400);
-        res.send({ error: "Bad request." });
-        return;
-    }
-    const key = String(req.cookies.key);
+    if (!ajv.validate(schema, req.body))
+        return res.status(400).send({ error: "Bad request." });
+
     const icomment = DOMPurify.sanitize(req.body.icomment);
-    const threadusers = db.collection("threadusers");
-    const categories = db.collection("category");
-    const summary = db.collection("summary");
-    const viral = db.collection("viral");
-    const conversation = db.collection("conversation");
-    const images = db.collection("images");
-    const limit = db.collection("limit");
-    const users = db.collection("users");
-    if (!(await verify(secret, req.body.rtoken))) {
-        res.status(400);
-        res.send({ error: "recaptcha token invalid." });
-        return;
-    }
+
+    if (!(await verify(secret, req.body.rtoken)))
+        return res.status(400).send({ error: "recaptcha token invalid." });
+
     const user = verifyUser(req.headers.authorization);
     if (!user) return res.status(400).send({ error: "User not found." });
-    if ((await limit.countDocuments({ id: user.id, type: "create" })) >= 10)
+
+    if ((await limitCl.countDocuments({ id: user.id, type: "create" })) >= 10)
         return res
             .status(429)
             .send({ error: "You cannot create more than 10 topics a day." });
-    const category = await categories.findOne({ id: req.body.category });
-    if (!category) {
-        res.status(404);
-        res.send({ error: "Category not found." });
-        return;
-    }
+
+    const category = await categoryCl.findOne({ id: req.body.category });
+    if (!category) return res.status(404).send({ error: "Category not found." });
+
     const newtid =
-        ((
-            await summary
+        (
+            await summaryCl
                 .find()
                 .sort({ id: -1 })
                 .limit(1)
                 .project({ id: 1, _id: 0 })
                 .toArray()
-        )[0]?.id || (await conversation.countDocuments())) + 1;
+        )[0]?.id + 1 || 1;
+
     const date = new Date();
-    let slink: string, cslink: string;
+
+    let threadSlink: string, commentSlink: string;
     try {
-        slink = `https://l.wcyat.me/${
+        threadSlink = `https://l.wcyat.me/${
             (
                 await axios.post("https://api-us.wcyat.me/create", {
                     url: `https://${domain}/thread/${newtid}?page=1`,
                 })
             ).data.id
         }`;
-        cslink = `https://l.wcyat.me/${
+        commentSlink = `https://l.wcyat.me/${
             (
                 await axios.post("https://api-us.wcyat.me/create", {
                     url: `https://${domain}/thread/${newtid}?c=1`,
@@ -92,49 +91,56 @@ router.post("/api/create", body_parser.json(), async (req, res) => {
             ).data.id
         }`;
     } catch {}
-    await conversation.insertOne({
+
+    await conversationCl.insertOne({
         id: newtid,
         conversation: [
             {
                 id: 1,
                 user: user.id,
-                slink: cslink,
+                slink: commentSlink,
                 comment: icomment,
                 createdAt: date,
             },
         ],
         lastModified: date,
     });
-    await threadusers.insertOne({
+
+    const summaryData = {
         id: newtid,
-        [user.id]: { name: user.user, sex: user.sex },
-    });
-    const s = {
-        id: newtid,
-        op: user.user,
+        op: {
+            id: user.id,
+            name: user.name,
+            sex: user.sex,
+            role: user.role,
+        },
         sex: user.sex,
         c: 1,
         vote: 0,
-        slink: slink,
+        slink: threadSlink,
         title: req.body.title,
         category: category.id,
         lastModified: date,
         createdAt: date,
     };
-    await summary.insertOne(s);
-    await viral.insertOne({
-        id: s.id,
+
+    await summaryCl.insertOne(summaryData);
+    await viralCl.insertOne({
+        id: summaryData.id,
         c: 1,
-        category: s.category,
+        category: summaryData.category,
         lastModified: date,
         createdAt: date,
     });
-    const cimages: { image: string; cid: number }[] = [];
+
+    const imagesData: { image: string; cid: number }[] = [];
     findimages(icomment).forEach((item) => {
-        cimages.push({ image: item, cid: 1 });
+        imagesData.push({ image: item, cid: 1 });
     });
-    await images.insertOne({ id: newtid, images: cimages });
-    await limit.insertOne({ id: user.id, createdAt: date, type: "create" });
+
+    await imagesCl.insertOne({ id: newtid, images: imagesData });
+    await limitCl.insertOne({ id: user.id, createdAt: date, type: "create" });
+
     res.send({ id: newtid });
 });
 export default router;

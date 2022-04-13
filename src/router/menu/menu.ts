@@ -2,7 +2,7 @@
 // note: category 1 returns all categories
 // Syntax: GET /api/menu/<category id>?sort=<0 | 1>&page=<number>
 import express from "express";
-import { categoryCl, db, summaryCl, viralCl } from "../../common";
+import { categoryCl, summaryCl, viralCl } from "../../common";
 import { hiddencats as gethiddencats } from "../../lib/hiddencats";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
@@ -34,11 +34,9 @@ router.get("/api/menu/:category", async (req, res) => {
         const s = await summaryCl.findOne({
             id: Number(req.params.category.replace("bytid", "")),
         });
-        if (!s || !s.category) {
-            res.status(404);
-            res.send({ error: "Not found." });
-            return;
-        }
+        if (!s || !s.category)
+            return res.status(404).send({ error: "Not found." });
+
         category = s.category;
     }
 

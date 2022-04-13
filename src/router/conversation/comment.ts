@@ -9,7 +9,6 @@ import {
     limitCl,
     secret,
     summaryCl,
-    threadusersCl,
     timediff,
     viralCl,
 } from "../../common";
@@ -84,50 +83,45 @@ router.post("/api/comment", body_parser.json(), async (req, res) => {
             $currentDate: { lastModified: true },
         }
     );
-    if (!(await threadusersCl.findOne({ id: req.body.id }))?.[user.id]) {
-        await threadusersCl.updateOne(
-            { id: req.body.id },
-            { $set: { [user.id]: { sex: user.sex, name: user.user } } }
-        );
-    }
-    const cimages = findimages(comment);
-    if (cimages.length) {
-        const timages: { image: string; cid: number }[] = (
+
+    const imagesInComment = findimages(comment);
+    if (imagesInComment.length) {
+        const imagesData: { image: string; cid: number }[] = (
             await imagesCl.findOne({
                 id: req.body.id,
             })
         ).images;
-        cimages.forEach((item) => {
-            if (timages.findIndex((i) => i.image === item) === -1) {
-                timages.push({ image: item, cid: newid });
-            }
+
+        imagesInComment.forEach((item) => {
+            if (imagesData.findIndex((i) => i.image === item) === -1)
+                imagesData.push({ image: item, cid: newid });
         });
-        await imagesCl.updateOne({ id: req.body.id }, { $set: { images: timages } });
+
+        await imagesCl.updateOne({ id: req.body.id }, { $set: { images: imagesData } });
     }
-    const h = await viralCl.findOne({ id: req.body.id });
-    if (h) {
+    const viralData = await viralCl.findOne({ id: req.body.id });
+    if (viralData) {
         await viralCl.updateOne(
             { id: req.body.id },
             {
                 $inc: { c: 1 },
                 $currentDate:
-                    timediff(h.createdAt) > 86400
+                    timediff(viralData.createdAt) > 86400
                         ? { lastModified: true, createdAt: true }
                         : { lastModified: true },
             }
         );
     } else {
-        const s = await summaryCl.findOne({
+        const summaryData = await summaryCl.findOne({
             id: req.body.id,
         });
-        const o = {
+        await viralCl.insertOne({
             lastModified: new Date(),
             createdAt: new Date(),
-            id: s.id,
+            id: summaryData.id,
             c: 1,
-            category: s.category,
-        };
-        await viralCl.insertOne(o);
+            category: summaryData.category,
+        });
     }
     res.send({ id: newid });
 });

@@ -7,7 +7,7 @@
 import express from "express";
 
 const router = express.Router();
-import { db } from "../../common";
+import { categoryCl, conversationCl, summaryCl, usersCl } from "../../common";
 import { hiddencats } from "../../lib/hiddencats";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
@@ -22,7 +22,6 @@ import verifyUser from "../auth/verify";
  */
 router.get("/api/thread/:id", async (req, res) => {
     const id = Number(req.params.id);
-    const type = Number(req.query.type ?? 1);
     const page = Number(req.query.page) || 1;
     const start = Number(req.query.start);
     const end = Number(req.query.end);
@@ -30,7 +29,6 @@ router.get("/api/thread/:id", async (req, res) => {
         {
             id: Type.Integer(),
             page: Type.Integer({ minimum: 1 }),
-            type: Type.Union([Type.Literal(0), Type.Literal(1), Type.Literal(2)]),
             start: Type.Optional(Type.Integer()),
             end: Type.Optional(Type.Integer()),
         },
@@ -40,7 +38,6 @@ router.get("/api/thread/:id", async (req, res) => {
         !ajv.validate(schema, {
             id: id,
             page: page,
-            type: type,
             start: start || undefined,
             end: end || undefined,
         }) ||
@@ -50,89 +47,79 @@ router.get("/api/thread/:id", async (req, res) => {
         (end &&
             (end < start || (!start && (end > page * 25 || end < (page - 1) * 25 + 1))))
     ) {
-        res.status(400);
-        res.send({ error: "Bad request." });
-        return;
+        return res.status(400).send({ error: "Bad request." });
     }
-    const conversation = db.collection("conversation");
-    const summary = db.collection("summary");
-    const threadsummary = await summary.findOne(
+    const summaryData = await summaryCl.findOne(
         { id: Number(req.params.id) },
         {
             projection: {
                 _id: 0,
-                sex: 0,
-                vote: 0,
-                lastModified: 0,
-                createdAt: 0,
             },
         }
     );
-    if (!threadsummary) {
-        res.status(404);
-        res.send({ error: "Not Found" });
-        return;
-    }
+
+    if (!summaryData) return res.status(404).send({ error: "Not Found" });
+
     if (
         !verifyUser(req.headers.authorization) &&
-        (await hiddencats()).includes(threadsummary.category)
-    ) {
-        res.status(401);
-        res.send({ error: "Permission denied." });
-        return;
-    }
-    if (type === 0) {
-        //not using !type to avoid confusion
-        const users = db.collection("threadusers");
-        const result = await users.findOne(
-            { id: Number(req.params.id) },
-            { projection: { _id: 0 } }
-        );
-        if (!result) {
-            res.status(404);
-            res.send({ error: "Not found" });
-            return;
+        (await hiddencats()).includes(summaryData.category)
+    )
+        return res.status(401).send({ error: "Permission denied." });
+
+    const conversationData = await conversationCl.findOne(
+        { id: Number(req.params.id) },
+        {
+            projection: {
+                _id: 0,
+                conversation: {
+                    $filter: {
+                        input: "$conversation",
+                        cond: {
+                            $and: [
+                                {
+                                    $gte: [
+                                        "$$this.id",
+                                        Number(req.query.start) || (page - 1) * 25 + 1,
+                                    ],
+                                },
+                                {
+                                    $lte: [
+                                        "$$this.id",
+                                        Number(req.query.end) || page * 25,
+                                    ],
+                                },
+                            ],
+                        },
+                    },
+                },
+            },
         }
-        res.send(result);
-        return;
+    );
+
+    const thread = Object.assign(conversationData, summaryData);
+
+    thread.category = await categoryCl.findOne(
+        { id: thread.category },
+        { projection: { _id: 0 } }
+    );
+
+    for (let i = 0; i < thread?.conversation?.length; i++) {
+        thread.conversation[i].user = await usersCl.findOne(
+            {
+                id: thread.conversation[i].user,
+            },
+            {
+                projection: {
+                    _id: 0,
+                    name: 1,
+                    id: 1,
+                    role: 1,
+                    sex: 1,
+                },
+            }
+        );
     }
-    const result =
-        type === 1
-            ? threadsummary
-            : await conversation.findOne(
-                  { id: Number(req.params.id) },
-                  {
-                      projection: {
-                          _id: 0,
-                          conversation: {
-                              $filter: {
-                                  input: "$conversation",
-                                  cond: {
-                                      $and: [
-                                          {
-                                              $gte: [
-                                                  "$$this.id",
-                                                  Number(req.query.start) ||
-                                                      (page - 1) * 25 + 1,
-                                              ],
-                                          },
-                                          {
-                                              $lte: [
-                                                  "$$this.id",
-                                                  Number(req.query.end) || page * 25,
-                                              ],
-                                          },
-                                      ],
-                                  },
-                              },
-                          },
-                      },
-                  }
-              );
-    if (result?.conversation && !result?.conversation?.length) {
-        res.send([null]);
-        return;
-    }
-    res.send(result?.conversation || result);
+
+    res.send(thread);
 });
 export default router;

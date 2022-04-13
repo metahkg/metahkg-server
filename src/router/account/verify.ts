@@ -5,72 +5,73 @@
     code (verification code sent to user's email address): string
   }
 */
-//if successfully verified, sets a cookie "key" of user's key which is randomly generated
 import dotenv from "dotenv";
 import express from "express";
 import body_parser from "body-parser";
-import { db } from "../../common";
+import { db, usersCl, verificationCl } from "../../common";
 import hash from "hash.js";
-import { Type } from "@sinclair/typebox";
+import { Static, Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 import { createToken } from "../auth/createtoken";
 
 dotenv.config();
 const router = express.Router();
 
-router.post("/api/users/verify", body_parser.json(), async (req, res) => {
-    const schema = Type.Object(
-        {
-            email: Type.String({ format: "email" }),
-            code: Type.String(),
-        },
-        { additionalProperties: false }
-    );
-    if (!ajv.validate(schema, req.body))
-        return res.status(400).send({ error: "Bad request." });
+const schema = Type.Object(
+    {
+        email: Type.String({ format: "email" }),
+        code: Type.String(),
+    },
+    { additionalProperties: false }
+);
 
-    if (req.body.code?.length !== 30)
-        return res.status(400).send({ error: "Code must be of 30 digits." });
+router.post(
+    "/api/users/verify",
+    body_parser.json(),
+    async (req: { body: Static<typeof schema> }, res) => {
+        if (!ajv.validate(schema, req.body))
+            return res.status(400).send({ error: "Bad request." });
 
-    const verification = db.collection("verification");
-    const users = db.collection("users");
+        if (req.body.code?.length !== 30)
+            return res.status(400).send({ error: "Code must be of 30 digits." });
 
-    const data = await verification.findOne({
-        type: "register",
-        email: req.body.email,
-    });
+        const verificationData = await verificationCl.findOne({
+            type: "register",
+            email: req.body.email,
+        });
 
-    if (!data)
-        return res
-            .status(404)
-            .send({ error: "Not found. Your code night have expired." });
+        if (!verificationData)
+            return res
+                .status(404)
+                .send({ error: "Not found. Your code night have expired." });
 
-    if (data.code !== req.body.code)
-        return res.status(401).send({ error: "Code incorrect" });
+        if (verificationData.code !== req.body.code)
+            return res.status(401).send({ error: "Code incorrect" });
 
-    const newUserId =
-        (await users.find().sort({ id: -1 }).limit(1).toArray())[0]?.id + 1 || 1;
-    const newUser: {
-        user: string;
-        id: number;
-        email: string;
-        role: "user" | "admin";
-        createdAt: Date;
-        sex: "M" | "F";
-    } = {
-        user: data.user,
-        id: newUserId,
-        email: hash.sha256().update(data.email).digest("hex"),
-        role: "user",
-        createdAt: new Date(),
-        sex: data.sex,
-    };
+        const newUserId =
+            (await usersCl.find().sort({ id: -1 }).limit(1).toArray())[0]?.id + 1 || 1;
+        const newUser: {
+            name: string;
+            id: number;
+            email: string;
+            role: "user" | "admin";
+            createdAt: Date;
+            sex: "M" | "F";
+        } = {
+            name: verificationData.name,
+            id: newUserId,
+            email: hash.sha256().update(verificationData.email).digest("hex"),
+            role: "user",
+            createdAt: new Date(),
+            sex: verificationData.sex,
+        };
 
-    const token = createToken(newUser.id, newUser.user, newUser.sex, newUser.role);
-    await users.insertOne(newUser);
+        const token = createToken(newUser.id, newUser.name, newUser.sex, newUser.role);
+        await usersCl.insertOne(newUser);
 
-    res.send({ id: data.id, user: data.user, token: token });
-    await verification.deleteOne({ email: req.body.email });
-});
+        res.send({ id: verificationData.id, name: verificationData.name, token: token });
+        await verificationCl.deleteOne({ email: req.body.email });
+    }
+);
 
 export default router;

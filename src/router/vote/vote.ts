@@ -1,6 +1,6 @@
 import body_parser from "body-parser";
 import express from "express";
-import { conversationCl, db, summaryCl, votesCl } from "../../common";
+import { conversationCl, summaryCl, votesCl } from "../../common";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 import verifyUser from "../auth/verify";

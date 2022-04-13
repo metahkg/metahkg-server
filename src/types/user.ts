@@ -3,7 +3,7 @@ export type user = {
     createdAt: Date;
     email: string;
     pwd: string;
-    user: string;
+    name: string;
     sex: "M" | "F";
 };
 

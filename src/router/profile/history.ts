@@ -18,9 +18,7 @@ router.get("/api/history/:id", async (req, res) => {
         (req.query.page &&
             (!isInteger(Number(req.query.page)) || Number(req.query.page) < 1))
     ) {
-        res.status(400);
-        res.send({ error: "Bad request." });
-        return;
+        return res.status(400).send({ error: "Bad request." });
     }
     const page = Number(req.query.page) || 1;
     const user =
@@ -36,7 +34,7 @@ router.get("/api/history/:id", async (req, res) => {
     }[Number(req.query.sort ?? 0)];
 
     const history = await summaryCl
-        .find({ op: user.user })
+        .find({ "op.id": user.id })
         .sort(sort)
         .skip(25 * (page - 1))
         .limit(25)

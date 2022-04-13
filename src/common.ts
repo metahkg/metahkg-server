@@ -83,5 +83,4 @@ export const viralCl = db.collection("viral");
 export const imagesCl = db.collection("images");
 export const verificationCl = db.collection("verification");
 export const categoryCl = db.collection("category");
-export const threadusersCl = db.collection("threadusers");
 export const votesCl = db.collection("votes");

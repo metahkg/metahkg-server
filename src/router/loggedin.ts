@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { db } from "../common";
 import { createToken } from "./auth/createtoken";
 import verifyUser from "./auth/verify";
 
@@ -11,8 +10,8 @@ router.get("/api/loggedin", async (req, res) => {
     res.send({
         loggedin: true,
         id: user.id,
-        user: user.user,
-        token: createToken(user.id, user.user, user.sex, user.role),
+        name: user.name,
+        token: createToken(user.id, user.name, user.sex, user.role),
     });
 });
 export default router;

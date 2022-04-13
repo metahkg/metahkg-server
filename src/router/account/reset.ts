@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { db, domain } from "../../common";
+import { db, domain, limitCl, usersCl, verificationCl } from "../../common";
 import bodyParser from "body-parser";
 import hash from "hash.js";
 import mailgun from "mailgun-js";
@@ -19,51 +19,44 @@ router.post("/api/users/reset", bodyParser.json(), async (req, res) => {
         },
         { additionalProperties: false }
     );
-    if (!ajv.validate(schema, req.body)) {
-        res.status(400);
-        res.send({ error: "Bad request." });
-        return;
-    }
-    const users = db.collection("users");
-    const verification = db.collection("verification");
-    const limit = db.collection("limit");
+    if (!ajv.validate(schema, req.body))
+        return res.status(400).send({ error: "Bad request." });
+
     const hashedemail = hash.sha256().update(req.body.email).digest("hex");
-    const user = await users.findOne({ email: hashedemail });
-    if (!user) {
-        res.status(404);
-        res.send({ error: "User not found." });
-        return;
-    }
-    if ((await limit.countDocuments({ type: "reset", email: hashedemail })) >= 2) {
-        res.status(429);
-        res.send({ error: "You can only request reset password 2 times a day." });
-        return;
-    }
-    const code = generate({
+
+    const userData = await usersCl.findOne({ email: hashedemail });
+    if (!userData)
+        return res.status(404).send({ error: "User not found." });
+
+    if ((await limitCl.countDocuments({ type: "reset", email: hashedemail })) >= 2)
+        return res.status(429).send({ error: "You can only request reset password 2 times a day." });
+
+    const verificationCode = generate({
         include: { numbers: true, upper: true, lower: true, special: false },
         digits: 30,
     });
+    
     const reset = {
         from: `Metahkg support <support@${process.env.mailgun_domain || "metahkg.org"}>`,
         to: req.body.email,
         subject: "Metahkg - Reset Password",
         text: `Reset your password with the following link:
     https://${domain}/users/reset?code=${encodeURIComponent(
-            code
+            verificationCode
         )}&email=${encodeURIComponent(req.body.email)}
     
     Alternatively, use this code at https://${domain}/reset : 
-    ${code}`,
+    ${verificationCode}`,
     };
     await mg.messages().send(reset);
-    await verification.insertOne({
+    await verificationCl.insertOne({
         type: "reset",
-        code: code,
-        email: user.email,
+        code: verificationCode,
+        email: userData.email,
     });
-    await limit.insertOne({
+    await limitCl.insertOne({
         type: "reset",
-        email: user.email,
+        email: userData.email,
         createdAt: new Date(),
     });
     res.send({ response: "ok" });

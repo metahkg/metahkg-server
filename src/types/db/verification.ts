@@ -13,7 +13,7 @@ export type verification =
           /** user password (hashed with bcrypt) */
           pwd: string;
           /** user name */
-          user: string;
+          name: string;
           /** user sex */
           sex: "M" | "F";
       }
