@@ -31,12 +31,13 @@ router.get("/api/profile/:id", async (req, res) => {
 
     if (!requestedUser) return res.status(400).send({ error: "User not found" });
 
-    !req.query.nameonly &&
-        (requestedUser.count = await summaryCl.countDocuments({
+    if (!req.query.nameonly) {
+        requestedUser.count = await summaryCl.countDocuments({
             op: requestedUser.user,
-        }));
+        });
+    }
 
-    res.send(user);
+    res.send(requestedUser);
 });
 
 export default router;
