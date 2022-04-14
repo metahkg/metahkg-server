@@ -16,7 +16,7 @@ const router = express.Router();
 router.get("/api/menu/:category", async (req, res) => {
     const sort = Number(req.query.sort || 0);
     const page = Number(req.query.page) || 1;
-    let category = Number(req.params.category);
+    let category = Number(req.params.category) || req.params.category;
     const schema = Type.Object(
         {
             category: Type.Union([Type.Integer(), Type.RegEx(/bytid[1-9][0-9]+/i)]),
