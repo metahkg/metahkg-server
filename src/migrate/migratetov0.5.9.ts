@@ -47,7 +47,7 @@ async function rc2() {
                     {
                         $set: {
                             op: await usersCl.findOne(
-                                { id: item.op },
+                                { name: item.op },
                                 {
                                     projection: {
                                         _id: 0,
