@@ -34,8 +34,7 @@ router.get("/api/menu/:category", async (req, res) => {
         const s = await summaryCl.findOne({
             id: Number(req.params.category.replace("bytid", "")),
         });
-        if (!s || !s.category)
-            return res.status(404).send({ error: "Not found." });
+        if (!s || !s.category) return res.status(404).send({ error: "Not found." });
 
         category = s.category;
     }
