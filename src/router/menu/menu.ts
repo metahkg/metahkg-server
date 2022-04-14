@@ -6,7 +6,7 @@ import { categoryCl, summaryCl, viralCl } from "../../common";
 import { hiddencats as gethiddencats } from "../../lib/hiddencats";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
-import verifyUser from "../auth/verify";
+import verifyUser from "../../lib/auth/verify";
 const router = express.Router();
 /**
  * sort:

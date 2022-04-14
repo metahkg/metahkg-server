@@ -1,7 +1,7 @@
 import express from "express";
 import isInteger from "is-sn-integer";
 import { summaryCl, usersCl } from "../../common";
-import verifyUser from "../auth/verify";
+import verifyUser from "../../lib/auth/verify";
 
 const router = express.Router();
 

@@ -3,11 +3,11 @@ import express from "express";
 import { conversationCl, summaryCl, votesCl } from "../../common";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
-import verifyUser from "../auth/verify";
+import verifyUser from "../../lib/auth/verify";
 
 const router = express.Router();
 
-router.post("/api/vote", body_parser.json(), async (req, res) => {
+router.post("/api/posts/vote", body_parser.json(), async (req, res) => {
     const schema = Type.Object(
         {
             id: Type.Integer({ minimum: 1 }),

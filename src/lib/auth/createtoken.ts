@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { jwtTokenType } from "jwt/user";
+import { jwtTokenType } from "../../types/jwt/user";
 import { userRole } from "../../types/db/users";
 export function createToken(id: number, name: string, sex: "M" | "F", role: userRole) {
     const jsonData: jwtTokenType = {

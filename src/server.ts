@@ -3,7 +3,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import { autodecrement } from "./router/menu/autodecrement";
 import router from "./router";
-import changecode from "./router/account/changecode";
+import changecode from "./router/users/changecode";
 import { client } from "./common";
 import cors from "cors";
 

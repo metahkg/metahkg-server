@@ -11,7 +11,7 @@ import { categoryCl, conversationCl, summaryCl, usersCl } from "../../common";
 import { hiddencats } from "../../lib/hiddencats";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
-import verifyUser from "../auth/verify";
+import verifyUser from "../../lib/auth/verify";
 
 /**
  * type:

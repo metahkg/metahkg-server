@@ -12,7 +12,7 @@ import { db, usersCl, verificationCl } from "../../common";
 import hash from "hash.js";
 import { Static, Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
-import { createToken } from "../auth/createtoken";
+import { createToken } from "../../lib/auth/createtoken";
 
 dotenv.config();
 const router = express.Router();

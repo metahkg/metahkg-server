@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { createToken } from "./auth/createtoken";
-import verifyUser from "./auth/verify";
+import { createToken } from "../../lib/auth/createtoken";
+import verifyUser from "../../lib/auth/verify";
 
 const router = Router();
-router.get("/api/loggedin", async (req, res) => {
+router.get("/api/users/loggedin", async (req, res) => {
     if (!req.cookies.key) return res.send({ loggedin: false });
     const user = verifyUser(req.headers.authorization);
     if (!user) return res.send({ loggedin: false });

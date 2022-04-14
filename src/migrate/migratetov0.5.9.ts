@@ -1,5 +1,7 @@
 import dotenv from "dotenv";
 import { MongoClient } from "mongodb";
+import { exit } from "process";
+import { generate } from "wcyat-rg";
 dotenv.config();
 async function rc1() {
     const client = new MongoClient(process.env.DB_URI);
@@ -80,5 +82,71 @@ async function rc2() {
     });
 }
 
+async function slinks() {
+    if (!process.env.DB_URI || !process.env.LINKS_DOMAIN || !process.env.domain) {
+        console.error("Please set DB_URI, LINKS_DOMAIN, domain in .env!!!");
+        exit(1);
+    }
+    const LINKS_DOMAIN = process.env.LINKS_DOMAIN;
+    const domain = process.env.domain;
+    const client = new MongoClient(process.env.DB_URI);
+    await client.connect();
+    const db = client.db("metahkg");
+    const linksCl = db.collection("links");
+    const conversationCl = db.collection("conversation");
+    const summaryCl = db.collection("summary");
+    await summaryCl.find().forEach((item) => {
+        if (!item.slink.startsWith(`https://${LINKS_DOMAIN}`)) {
+            summaryCl.updateOne(
+                { _id: item._id },
+                { $set: { slink: `https://${LINKS_DOMAIN}/${item.id}` } }
+            );
+        }
+    });
+    await conversationCl.find().forEach((item) => {
+        item.conversation.forEach(
+            (comment: { slink: string; id: number }, index: number) => {
+                (async () => {
+                    if (!comment?.slink?.startsWith(`https://${LINKS_DOMAIN}`)) {
+                        let slinkId = generate({
+                            include: {
+                                numbers: true,
+                                upper: true,
+                                lower: true,
+                                special: false,
+                            },
+                            digits: 7,
+                        });
+                        while (await linksCl.findOne({ id: slinkId })) {
+                            slinkId = generate({
+                                include: {
+                                    numbers: true,
+                                    upper: true,
+                                    lower: true,
+                                    special: false,
+                                },
+                                digits: 7,
+                            });
+                        }
+                        await linksCl.insertOne({
+                            id: slinkId,
+                            url: `/thread/${item.id}?c=${comment.id}`,
+                        });
+                        await conversationCl.updateOne(
+                            { _id: item._id },
+                            {
+                                $set: {
+                                    [`conversation.${index}.slink`]: `https://${LINKS_DOMAIN}/${slinkId}`,
+                                },
+                            }
+                        );
+                    }
+                })();
+            }
+        );
+    });
+}
+
 //rc1();
-rc2();
+//rc2();
+slinks();

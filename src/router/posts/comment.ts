@@ -3,23 +3,24 @@ import express from "express";
 const router = express.Router();
 import body_parser from "body-parser";
 import {
-    conversationCl,
     domain,
+    conversationCl,
     imagesCl,
-    limitCl,
+    linksCl,
     secret,
     summaryCl,
     timediff,
     viralCl,
+    LINKS_DOMAIN,
 } from "../../common";
 import { JSDOM } from "jsdom";
 import createDOMPurify from "dompurify";
-import axios from "axios";
 import { verify } from "../../lib/recaptcha";
 import findimages from "../../lib/findimages";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
-import verifyUser from "../auth/verify";
+import verifyUser from "../../lib/auth/verify";
+import { generate } from "wcyat-rg";
 
 const jsdomwindow: any = new JSDOM("").window;
 const DOMPurify = createDOMPurify(jsdomwindow);
@@ -27,7 +28,7 @@ const DOMPurify = createDOMPurify(jsdomwindow);
  * Syntax: POST /api/comment {id (thread id) : number, comment : string}
  * client must have a cookie "key"
  */
-router.post("/api/comment", body_parser.json(), async (req, res) => {
+router.post("/api/posts/comment", body_parser.json(), async (req, res) => {
     const schema = Type.Object(
         {
             id: Type.Integer(),
@@ -48,36 +49,37 @@ router.post("/api/comment", body_parser.json(), async (req, res) => {
     if (!user || !(await conversationCl.findOne({ id: req.body.id })))
         return res.status(404).send({ error: "Not found." });
 
-    if ((await limitCl.countDocuments({ id: user.id, type: "comment" })) >= 300)
-        return res
-            .status(429)
-            .send({ error: "You cannot add more than 300 comments a day." });
-
-    const newid = (await summaryCl.findOne({ id: req.body.id })).c + 1;
+    const newCommentId = (await summaryCl.findOne({ id: req.body.id })).c + 1;
     await summaryCl.updateOne(
         { id: req.body.id },
         { $inc: { c: 1 }, $currentDate: { lastModified: true } }
     );
-    let slink: string;
-    try {
-        slink = `https://l.wcyat.me/${
-            (
-                await axios.post("https://api-us.wcyat.me/create", {
-                    url: `https://${domain}/thread/${req.body.id}?c=${newid}`,
-                })
-            ).data.id
-        }`;
-    } catch {}
+    let slinkId = generate({
+        include: { numbers: true, lower: true, upper: true, special: false },
+        digits: 7,
+    });
+    while (await linksCl.findOne({ id: slinkId })) {
+        slinkId = generate({
+            include: { numbers: true, lower: true, upper: true, special: false },
+            digits: 7,
+        });
+    }
+    
+    await linksCl.insertOne({
+        id: slinkId,
+        url: `/thread/${req.body.id}?c=${newCommentId}`,
+    });
+
     await conversationCl.updateOne(
         { id: req.body.id },
         {
             $push: {
                 conversation: {
-                    id: newid,
+                    id: newCommentId,
                     user: user.id,
                     comment: comment,
                     createdAt: new Date(),
-                    slink: slink,
+                    slink: `https://${LINKS_DOMAIN}/${slinkId}`,
                 },
             },
             $currentDate: { lastModified: true },
@@ -94,7 +96,7 @@ router.post("/api/comment", body_parser.json(), async (req, res) => {
 
         imagesInComment.forEach((item) => {
             if (imagesData.findIndex((i) => i.image === item) === -1)
-                imagesData.push({ image: item, cid: newid });
+                imagesData.push({ image: item, cid: newCommentId });
         });
 
         await imagesCl.updateOne({ id: req.body.id }, { $set: { images: imagesData } });
@@ -123,6 +125,6 @@ router.post("/api/comment", body_parser.json(), async (req, res) => {
             category: summaryData.category,
         });
     }
-    res.send({ id: newid });
+    res.send({ id: newCommentId });
 });
 export default router;

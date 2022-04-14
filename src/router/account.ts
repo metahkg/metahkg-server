@@ -1,10 +1,10 @@
 import express from "express";
-import register from "./account/register";
-import signin from "./account/signin";
-import verify from "./account/verify";
-import resend from "./account/resend";
-import editprofile from "./account/editprofile";
-import avatar from "./account/avatar";
+import register from "./users/register";
+import signin from "./users/signin";
+import verify from "./users/verify";
+import resend from "./users/resend";
+import editprofile from "./users/editprofile";
+import avatar from "./users/avatar";
 
 const router = express.Router();
 router.use(register);

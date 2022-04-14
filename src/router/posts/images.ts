@@ -2,7 +2,7 @@ import { Router } from "express";
 import isInteger from "is-sn-integer";
 import { db } from "../../common";
 const router = Router();
-router.get("/api/images/:id", async (req, res) => {
+router.get("/api/posts/images/:id", async (req, res) => {
     if (!isInteger(req.params.id)) {
         res.status(400);
         res.send({ error: "Bad request." });

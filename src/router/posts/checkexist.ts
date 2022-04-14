@@ -8,7 +8,7 @@ import { db } from "../../common";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 
-router.post("/api/check", body_parser.json(), async (req, res) => {
+router.post("/api/posts/check", body_parser.json(), async (req, res) => {
     const schema = Type.Object(
         {
             id: Type.Integer(),

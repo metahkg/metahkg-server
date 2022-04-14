@@ -4,7 +4,7 @@ import multer from "multer"; //handle image uploads
 import fs from "fs";
 import { move } from "fs-extra";
 import sharp from "sharp"; //reshape images to circle
-import verifyUser from "../auth/verify";
+import verifyUser from "../../lib/auth/verify";
 
 dotenv.config();
 const router = express.Router();

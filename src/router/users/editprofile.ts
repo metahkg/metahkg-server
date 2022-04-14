@@ -3,8 +3,8 @@ import body_parser from "body-parser";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 import { usersCl } from "../../common";
-import verifyUser from "../auth/verify";
-import { createToken } from "../auth/createtoken";
+import verifyUser from "../../lib/auth/verify";
+import { createToken } from "../../lib/auth/createtoken";
 const router = Router();
 router.post("/api/users/editprofile", body_parser.json(), async (req, res) => {
     const schema = Type.Object(

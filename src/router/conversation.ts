@@ -1,9 +1,9 @@
 import express from "express";
-import threads from "./conversation/thread";
-import comment from "./conversation/comment";
-import create from "./conversation/create";
-import checkexist from "./conversation/checkexist";
-import images from "./conversation/images";
+import threads from "./posts/thread";
+import comment from "./posts/comment";
+import create from "./posts/create";
+import checkexist from "./posts/checkexist";
+import images from "./posts/images";
 
 const router = express.Router();
 router.use(threads);

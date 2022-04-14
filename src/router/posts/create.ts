@@ -20,20 +20,22 @@ import {
     conversationCl,
     viralCl,
     imagesCl,
+    LINKS_DOMAIN,
+    linksCl,
 } from "../../common";
 import { verify } from "../../lib/recaptcha";
-import axios from "axios";
 import findimages from "../../lib/findimages";
 import createDOMPurify from "dompurify";
 import { JSDOM } from "jsdom";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
-import verifyUser from "../auth/verify";
+import verifyUser from "../../lib/auth/verify";
+import { generate } from "wcyat-rg";
 
 const jsdomwindow: any = new JSDOM("").window;
 const DOMPurify = createDOMPurify(jsdomwindow);
 
-router.post("/api/create", body_parser.json(), async (req, res) => {
+router.post("/api/posts/create", body_parser.json(), async (req, res) => {
     const schema = Type.Object(
         {
             icomment: Type.String(),
@@ -62,7 +64,7 @@ router.post("/api/create", body_parser.json(), async (req, res) => {
     const category = await categoryCl.findOne({ id: req.body.category });
     if (!category) return res.status(404).send({ error: "Category not found." });
 
-    const newtid =
+    const newThreadId =
         (
             await summaryCl
                 .find()
@@ -74,31 +76,30 @@ router.post("/api/create", body_parser.json(), async (req, res) => {
 
     const date = new Date();
 
-    let threadSlink: string, commentSlink: string;
-    try {
-        threadSlink = `https://l.wcyat.me/${
-            (
-                await axios.post("https://api-us.wcyat.me/create", {
-                    url: `https://${domain}/thread/${newtid}?page=1`,
-                })
-            ).data.id
-        }`;
-        commentSlink = `https://l.wcyat.me/${
-            (
-                await axios.post("https://api-us.wcyat.me/create", {
-                    url: `https://${domain}/thread/${newtid}?c=1`,
-                })
-            ).data.id
-        }`;
-    } catch {}
+    let commentSlinkId = generate({
+        include: { numbers: true, upper: true, lower: true, special: false },
+        digits: 7,
+    });
+
+    while (await linksCl.findOne({ id: commentSlinkId })) {
+        commentSlinkId = generate({
+            include: { numbers: true, upper: true, lower: true, special: false },
+            digits: 7,
+        });
+    }
+
+    await linksCl.insertOne({
+        id: commentSlinkId,
+        url: `/thread/${newThreadId}?c=1`,
+    });
 
     await conversationCl.insertOne({
-        id: newtid,
+        id: newThreadId,
         conversation: [
             {
                 id: 1,
                 user: user.id,
-                slink: commentSlink,
+                slink: `https://${LINKS_DOMAIN}/${commentSlinkId}`,
                 comment: icomment,
                 createdAt: date,
             },
@@ -107,7 +108,7 @@ router.post("/api/create", body_parser.json(), async (req, res) => {
     });
 
     const summaryData = {
-        id: newtid,
+        id: newThreadId,
         op: {
             id: user.id,
             name: user.name,
@@ -117,7 +118,7 @@ router.post("/api/create", body_parser.json(), async (req, res) => {
         sex: user.sex,
         c: 1,
         vote: 0,
-        slink: threadSlink,
+        slink: `https://${LINKS_DOMAIN}/${newThreadId}`,
         title: req.body.title,
         category: category.id,
         lastModified: date,
@@ -138,9 +139,9 @@ router.post("/api/create", body_parser.json(), async (req, res) => {
         imagesData.push({ image: item, cid: 1 });
     });
 
-    await imagesCl.insertOne({ id: newtid, images: imagesData });
+    await imagesCl.insertOne({ id: newThreadId, images: imagesData });
     await limitCl.insertOne({ id: user.id, createdAt: date, type: "create" });
 
-    res.send({ id: newtid });
+    res.send({ id: newThreadId });
 });
 export default router;
