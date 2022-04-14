@@ -83,8 +83,8 @@ router.post("/api/comment", body_parser.json(), async (req, res) => {
             $currentDate: { lastModified: true },
         }
     );
-    if (!(await users.findOne({ id: req.body.id }))?.[user.id]) {
-        await users.updateOne({ id: req.body.id }, { $set: { [user.id]: { sex: user.sex, name: user.user } } });
+    if (!(await threadusers.findOne({ id: req.body.id }))?.[user.id]) {
+        await threadusers.updateOne({ id: req.body.id }, { $set: { [user.id]: { sex: user.sex, name: user.user } } });
     }
     const cimages = findimages(comment);
     if (cimages.length) {
