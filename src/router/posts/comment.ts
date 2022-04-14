@@ -64,7 +64,7 @@ router.post("/api/posts/comment", body_parser.json(), async (req, res) => {
             digits: 7,
         });
     }
-    
+
     await linksCl.insertOne({
         id: slinkId,
         url: `/thread/${req.body.id}?c=${newCommentId}`,

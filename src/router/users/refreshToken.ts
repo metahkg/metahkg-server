@@ -18,4 +18,3 @@ router.use((req, res, next) => {
 });
 
 export default router;
-
