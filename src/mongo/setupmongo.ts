@@ -11,4 +11,3 @@ export async function setup() {
         await verificationCl.createIndex({ createdAt: 1 }, { expireAfterSeconds: 300 });
     }
 }
-
