@@ -7,7 +7,7 @@
 import express from "express";
 
 const router = express.Router();
-import { categoryCl, conversationCl, summaryCl, usersCl } from "../../common";
+import { conversationCl, summaryCl, usersCl } from "../../common";
 import { hiddencats } from "../../lib/hiddencats";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
@@ -97,11 +97,6 @@ router.get("/api/thread/:id", async (req, res) => {
     );
 
     const thread = Object.assign(conversationData, summaryData);
-
-    thread.category = await categoryCl.findOne(
-        { id: thread.category },
-        { projection: { _id: 0 } }
-    );
 
     for (let i = 0; i < thread?.conversation?.length; i++) {
         thread.conversation[i].user = await usersCl.findOne(
