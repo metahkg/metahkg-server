@@ -5,9 +5,8 @@ import { autodecrement } from "./router/menu/autodecrement";
 import router from "./router";
 import changecode from "./router/users/changecode";
 import { client } from "./common";
-import cors from "cors";
 import { setup } from "./mongo/setupmongo";
-
+import morgan from "morgan";
 dotenv.config();
 const app = express();
 /**
@@ -36,7 +35,7 @@ app.use(function (req, res, next) {
     );
     return next();
 });
-process.env.production === "dev" && app.use(cors());
+app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(router);
 app.use(async (req, res, next) => {
