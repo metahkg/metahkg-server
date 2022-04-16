@@ -6,9 +6,9 @@ import router from "./router";
 import changecode from "./router/users/changecode";
 import { client } from "./common";
 import cors from "cors";
+import { setup } from "./mongo/setupmongo";
 
 dotenv.config();
-client.connect();
 const app = express();
 /**
  * Decrease count by one in collection "viral" every 2 hours
@@ -48,9 +48,13 @@ app.use(async (req, res, next) => {
     return next();
 });
 
-/**
- * The port can be modified in .env
- */
-app.listen(Number(process.env.port) || 3200, () => {
-    console.log(`listening at port ${process.env.port || 3200}`);
-});
+(async () => {
+    await client.connect();
+    await setup();
+    /**
+     * The port can be modified in .env
+     */
+    app.listen(Number(process.env.port) || 3200, () => {
+        console.log(`listening at port ${process.env.port || 3200}`);
+    });
+})();
