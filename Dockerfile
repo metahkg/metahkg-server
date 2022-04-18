@@ -1,4 +1,4 @@
-FROM node:17 AS build
+FROM node:latest AS build
 
 WORKDIR /usr/src/app
 
@@ -13,7 +13,7 @@ COPY . ./
 RUN yarn install
 RUN yarn build
 
-FROM node:17
+FROM node:latest
 
 WORKDIR /usr/src/app
 
