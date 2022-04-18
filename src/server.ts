@@ -35,7 +35,7 @@ app.use(function (req, res, next) {
     );
     return next();
 });
-app.use(morgan('dev'));
+app.use(morgan("dev"));
 app.use(cookieParser());
 app.use(router);
 app.use(async (req, res, next) => {
