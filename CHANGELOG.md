@@ -85,3 +85,11 @@ node server/migrate/migratetov0.5.2.js
 
 - change username / sex
 - hidden categories
+
+## v0.5.9rc1
+
+- implement jwt (jsonwebtoken)
+
+## v0.5.9rc2
+
+- simplify thread request

@@ -18,7 +18,10 @@ const mongouri = process.env.DB_URI;
     users.find().forEach((i) => {
         Object.entries(i).forEach((i1) => {
             if (isInteger(i1[0]) && typeof i1[1].sex !== "boolean") {
-                users.updateOne({ _id: i._id }, { $set: { [`${i1[0]}.sex`]: i1[1].sex === "male" } });
+                users.updateOne(
+                    { _id: i._id },
+                    { $set: { [`${i1[0]}.sex`]: i1[1].sex === "male" } }
+                );
             }
         });
     });

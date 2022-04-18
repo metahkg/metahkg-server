@@ -1,5 +1,5 @@
 import express from "express";
-import { db } from "../common";
+import { summaryCl } from "../common";
 import isInteger from "is-sn-integer";
 
 const router = express.Router();
@@ -10,7 +10,12 @@ const router = express.Router();
  * 2: by last modification time
  */
 router.get("/api/search", async (req, res) => {
-    if (!req.query.q || (req.query.sort && ![0, 1, 2].includes(Number(req.query.sort))) || (req.query.page && !isInteger(String(req.query.page))) || (req.query.mode && ![0, 1].includes(Number(req.query.mode)))) {
+    if (
+        !req.query.q ||
+        (req.query.sort && ![0, 1, 2].includes(Number(req.query.sort))) ||
+        (req.query.page && !isInteger(String(req.query.page))) ||
+        (req.query.mode && ![0, 1].includes(Number(req.query.mode)))
+    ) {
         res.status(400);
         res.send({ error: "Bad request." });
         return;
@@ -18,7 +23,6 @@ router.get("/api/search", async (req, res) => {
     const page = Number(req.query.page) || 1;
     const q = decodeURIComponent(String(req.query.q));
 
-    const summary = db.collection("summary");
     const sort: any = {
         0: {},
         1: { createdAt: -1 },
@@ -26,9 +30,9 @@ router.get("/api/search", async (req, res) => {
     }[Number(req.query.sort ?? 0)];
     const find: any = {
         0: { title: new RegExp(q, "i") },
-        1: { op: new RegExp(q, "i") },
+        1: { "op.name": new RegExp(q, "i") },
     }[Number(req.query.mode ?? 0)];
-    const data = await summary
+    const data = await summaryCl
         .find(find)
         .sort(sort)
         .skip(25 * (page - 1))

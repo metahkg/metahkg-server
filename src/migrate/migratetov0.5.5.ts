@@ -21,7 +21,10 @@ const mongouri = process.env.DB_URI;
                             ).data.id
                         }`;
                         i.conversation[c.id - 1].slink = slink;
-                        await conversation.updateOne({ _id: i._id }, { $set: { conversation: i.conversation } });
+                        await conversation.updateOne(
+                            { _id: i._id },
+                            { $set: { conversation: i.conversation } }
+                        );
                     }
                 })();
             });

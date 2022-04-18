@@ -3,6 +3,7 @@ import { MongoClient } from "mongodb";
 
 dotenv.config();
 export const mongouri = process.env.DB_URI || "mongodb://localhost"; //mongo connection string
+export const LINKS_DOMAIN = process.env.LINKS_DOMAIN;
 export const client = new MongoClient(mongouri);
 export const secret = process.env.recaptchasecret; //recaptcha secret used to cerify recaptcha tokens
 /**
@@ -62,7 +63,9 @@ export function objtoarr(obj: any): any[] {
     return arr;
 }
 
-export const domain = process.env.domain.startsWith(".") ? process.env.domain?.replace(".", "") : process.env.domain;
+export const domain = process.env.domain.startsWith(".")
+    ? process.env.domain?.replace(".", "")
+    : process.env.domain;
 
 export function allequal(arr: any[]) {
     const first = arr[0];
@@ -72,3 +75,14 @@ export function allequal(arr: any[]) {
     return true;
 }
 export const db = client.db("metahkg");
+
+export const conversationCl = db.collection("conversation");
+export const summaryCl = db.collection("summary");
+export const usersCl = db.collection("users");
+export const limitCl = db.collection("limit");
+export const viralCl = db.collection("viral");
+export const imagesCl = db.collection("images");
+export const verificationCl = db.collection("verification");
+export const categoryCl = db.collection("category");
+export const votesCl = db.collection("votes");
+export const linksCl = db.collection("links");

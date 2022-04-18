@@ -2,12 +2,11 @@
 // note: category 1 returns all categories
 // Syntax: GET /api/menu/<category id>?sort=<0 | 1>&page=<number>
 import express from "express";
-import isInteger from "is-sn-integer";
-import { db } from "../../common";
-import { hiddencats as gethiddencats } from "../lib/hiddencats";
-import { signedin } from "../lib/users";
+import { categoryCl, summaryCl, viralCl } from "../../common";
+import { hiddencats as gethiddencats } from "../../lib/hiddencats";
 import { Type } from "@sinclair/typebox";
-import { ajv } from "../lib/ajv";
+import { ajv } from "../../lib/ajv";
+import verifyUser from "../../lib/auth/verify";
 const router = express.Router();
 /**
  * sort:
@@ -26,44 +25,37 @@ router.get("/api/menu/:category", async (req, res) => {
         },
         { additionalProperties: false }
     );
-    if (!ajv.validate(schema, { category: category, page: page, sort: sort })) {
-        res.status(400);
-        res.send({ error: "Bad request." });
-        return;
-    }
-    const summary = db.collection("summary");
-    const viral = db.collection("viral");
+
+    if (!ajv.validate(schema, { category: category, page: page, sort: sort }))
+        return res.status(400).send({ error: "Bad request." });
+
     const hiddencats = await gethiddencats();
     if (req.params.category.startsWith("bytid")) {
-        const s = await summary.findOne({
+        const s = await summaryCl.findOne({
             id: Number(req.params.category.replace("bytid", "")),
         });
-        if (!s || !s.category) {
-            res.status(404);
-            res.send({ error: "Not found." });
-            return;
-        }
+        if (!s || !s.category) return res.status(404).send({ error: "Not found." });
+
         category = s.category;
     }
-    if (!(await signedin(req.cookies.key)) && hiddencats.includes(category)) {
-        res.status(401);
-        res.send({ error: "Permission denied." });
-        return;
-    }
-    if (!(await db.collection("category").findOne({ id: category }))) {
-        res.status(404);
-        res.send({ error: "Not found." });
-        return;
-    }
-    let find = category === 1 ? { category: { $nin: hiddencats } } : { category: category };
+
+    if (!verifyUser(req.headers.authorization) && hiddencats.includes(category))
+        return res.status(401).send({ error: "Permission denied." });
+
+    if (!(await categoryCl.findOne({ id: category })))
+        return res.status(404).send({ error: "Not found." });
+
+    let find =
+        category === 1 ? { category: { $nin: hiddencats } } : { category: category };
+
     const data = sort
-        ? await viral
+        ? await viralCl
               .find(find)
               .sort({ c: -1, lastModified: -1 })
               .skip(25 * (page - 1))
               .limit(25)
               .toArray()
-        : await summary
+        : await summaryCl
               .find(find)
               .sort({ lastModified: -1 })
               .skip(25 * (page - 1))
@@ -72,7 +64,10 @@ router.get("/api/menu/:category", async (req, res) => {
               .toArray();
     if (sort) {
         for (let index = 0; index < data.length; index++) {
-            data[index] = await summary.findOne({ id: data[index].id }, { projection: { _id: 0 } });
+            data[index] = await summaryCl.findOne(
+                { id: data[index].id },
+                { projection: { _id: 0 } }
+            );
         }
     }
     res.send(data.length ? data : [null]);

@@ -1,6 +1,7 @@
 import express from "express";
 import isInteger from "is-sn-integer";
-import { db } from "../../common";
+import { summaryCl, usersCl } from "../../common";
+import verifyUser from "../../lib/auth/verify";
 const router = express.Router();
 /**
  * get summary of threads created by a user
@@ -11,36 +12,36 @@ const router = express.Router();
  * 1: by last modification time
  */
 router.get("/api/history/:id", async (req, res) => {
-    if ((!isInteger(req.params.id) && req.params.id !== "self") || (req.query.sort && ![0, 1].includes(Number(req.query.sort))) || (req.query.page && (!isInteger(Number(req.query.page)) || Number(req.query.page) < 1))) {
-        res.status(400);
-        res.send({ error: "Bad request." });
-        return;
+    if (
+        (!isInteger(req.params.id) && req.params.id !== "self") ||
+        (req.query.sort && ![0, 1].includes(Number(req.query.sort))) ||
+        (req.query.page &&
+            (!isInteger(Number(req.query.page)) || Number(req.query.page) < 1))
+    ) {
+        return res.status(400).send({ error: "Bad request." });
     }
     const page = Number(req.query.page) || 1;
-    const users = db.collection("users");
-    const summary = db.collection("summary");
-    const key = req.cookies.key;
-    const user = await users.findOne(req.params.id === "self" ? { key: key } : { id: Number(req.params.id) });
-    if (!user) {
-        res.status(400);
-        res.send({ error: "User not found." });
-        return;
-    }
+    const user =
+        req.params.id === "self"
+            ? verifyUser(req.headers.authorization)
+            : await usersCl.findOne({ id: Number(req.params.id) });
+
+    if (!user) return res.status(400).send({ error: "User not found." });
+
     const sort: any = {
         0: { createdAt: -1 },
         1: { lastModified: -1 },
     }[Number(req.query.sort ?? 0)];
-    const history = await summary
-        .find({ op: user.user })
+
+    const history = await summaryCl
+        .find({ "op.id": user.id })
         .sort(sort)
         .skip(25 * (page - 1))
         .limit(25)
         .project({ _id: 0 })
         .toArray();
-    if (!history.length) {
-        res.send([null]);
-        return;
-    }
+
+    if (!history.length) return res.send([null]);
     res.send(history);
 });
 export default router;

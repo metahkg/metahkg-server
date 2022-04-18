@@ -7,7 +7,9 @@ if (
     process.env.mailgun_key &&
     process.env.domain &&
     process.env.port &&
-    process.env.recaptchasecret
+    process.env.recaptchasecret &&
+    process.env.jwtKey &&
+    process.env.LINKS_DOMAIN
   )
 ) {
   console.error(
