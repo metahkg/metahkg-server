@@ -1,4 +1,4 @@
-[
+export const categories = [
   {
     "id": 1,
     "name": "Chit-chat"
