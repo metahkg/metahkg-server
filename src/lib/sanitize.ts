@@ -87,16 +87,19 @@ export default function sanitize(html: string) {
                 width: [/^\d+$/],
                 height: [/^\d+$/],
                 float: [/^(left|center|right)$/],
+                display: [/^block$/],
             },
             i: {
                 width: [/^\d+$/],
                 height: [/^\d+$/],
                 float: [/^(left|center|right)$/],
+                display: [/^block$/],
             },
             video: {
                 width: [/^\d+$/],
                 height: [/^\d+$/],
                 float: [/^(left|center|right)$/],
+                display: [/^block$/],
             },
             td: {
                 width: [/^\d+$/],
