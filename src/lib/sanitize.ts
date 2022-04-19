@@ -47,9 +47,9 @@ export default function sanitize(html: string) {
         ],
         allowedAttributes: {
             a: ["href", "name", "target", "rel"],
-            img: ["src", "alt", "height", "width"],
-            i: ["src", "alt", "height", "width"],
-            video: ["src", "poster", "controls", "preload", "width", "height"],
+            img: ["src", "alt", "height", "width", "style"],
+            i: ["src", "alt", "height", "width", "style"],
+            video: ["src", "poster", "controls", "preload", "width", "height", "style"],
             source: ["src", "type"],
             span: ["style"],
             table: ["style", "border"],
@@ -63,6 +63,7 @@ export default function sanitize(html: string) {
         allowedSchemes: ["https", "mailto"],
         allowedSchemesByTag: {
             img: ["https", "data"],
+            i: ["https", "data"],
         },
         transformTags: {
             a: (tagName: string, attribs: sanitizeHtml.Attributes) => {
@@ -83,6 +84,16 @@ export default function sanitize(html: string) {
                 "text-decoration": [/^(underline|line-through)$/],
             },
             img: {
+                width: [/^\d+$/],
+                height: [/^\d+$/],
+                float: [/^(left|center|right)$/],
+            },
+            i: {
+                width: [/^\d+$/],
+                height: [/^\d+$/],
+                float: [/^(left|center|right)$/],
+            },
+            video: {
                 width: [/^\d+$/],
                 height: [/^\d+$/],
                 float: [/^(left|center|right)$/],
