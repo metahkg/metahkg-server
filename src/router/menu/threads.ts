@@ -1,6 +1,6 @@
 import { Router } from "express";
 import isInteger from "is-sn-integer";
-import { db, summaryCl } from "../../common";
+import { threadCl } from "../../common";
 
 const router = Router();
 router.get("/api/threads", async (req, res) => {
@@ -24,13 +24,13 @@ router.get("/api/threads", async (req, res) => {
         return;
     }
 
-    const r = await summaryCl
+    const r = await threadCl
         .find({
             $where: function () {
                 return threads.includes(this.id);
             },
         })
-        .project({ _id: 0 })
+        .project({ _id: 0, conversation: 0 })
         .toArray();
     let result: any[] = [];
     threads.forEach((tid) => {

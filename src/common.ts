@@ -76,8 +76,7 @@ export function allequal(arr: any[]) {
 }
 export const db = client.db("metahkg");
 
-export const conversationCl = db.collection("conversation");
-export const summaryCl = db.collection("summary");
+export const threadCl = db.collection("thread");
 export const usersCl = db.collection("users");
 export const limitCl = db.collection("limit");
 export const viralCl = db.collection("viral");
@@ -86,3 +85,4 @@ export const verificationCl = db.collection("verification");
 export const categoryCl = db.collection("category");
 export const votesCl = db.collection("votes");
 export const linksCl = db.collection("links");
+export const notificationsCl = db.collection("notifications");

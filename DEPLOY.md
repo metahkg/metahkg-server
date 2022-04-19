@@ -20,7 +20,7 @@ $ mongoimport -d=metahkg templates/server/category.json
 $ mongosh
 test> use metahkg
 metahkg> db.viral.createIndex({ "createdAt": 1 }, { expireAfterSeconds: 172800 })
-metahkg> db.summary.createIndex({ "op": "text", "title": "text" }) //for text search
+metahkg> db.thread.createIndex({ "op": "text", "title": "text" }) //for text search
 metahkg> use metahkg
 metahkg> db.limit.createIndex({ "createdAt": 1 }, { expireAfterSeconds: 86400 })
 metahkg> db.verification.createIndex({ "createdAt": 1 }, { expireAfterSeconds: 604800 })

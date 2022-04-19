@@ -1,6 +1,6 @@
 import express from "express";
 import isInteger from "is-sn-integer";
-import { summaryCl, usersCl } from "../../common";
+import { threadCl, usersCl } from "../../common";
 import verifyUser from "../../lib/auth/verify";
 
 const router = express.Router();
@@ -32,7 +32,7 @@ router.get("/api/profile/:id", async (req, res) => {
     if (!requestedUser) return res.status(400).send({ error: "User not found" });
 
     if (!req.query.nameonly) {
-        requestedUser.count = await summaryCl.countDocuments({
+        requestedUser.count = await threadCl.countDocuments({
             "op.id": requestedUser.id,
         });
     }

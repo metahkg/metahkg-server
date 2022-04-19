@@ -1,6 +1,6 @@
 import body_parser from "body-parser";
 import express from "express";
-import { conversationCl, summaryCl, votesCl } from "../../common";
+import { threadCl, votesCl } from "../../common";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 import verifyUser from "../../lib/auth/verify";
@@ -24,10 +24,11 @@ router.post("/api/posts/vote", body_parser.json(), async (req, res) => {
 
     if (!user) return res.status(400).send({ error: "User not found." });
 
-    const thread = await conversationCl.findOne(
+    const thread = await threadCl.findOne(
         { id: req.body.id },
         {
             projection: {
+                _id: 0,
                 conversation: {
                     $filter: {
                         input: "$conversation",
@@ -62,19 +63,19 @@ router.post("/api/posts/vote", body_parser.json(), async (req, res) => {
     );
 
     if (!thread.conversation[0]?.[req.body.vote]) {
-        await conversationCl.updateOne(
+        await threadCl.updateOne(
             { id: req.body.id },
             { $set: { [`conversation.${index}.${req.body.vote}`]: 0 } }
         );
     }
 
-    await conversationCl.updateOne(
+    await threadCl.updateOne(
         { id: req.body.id },
         { $inc: { [`conversation.${index}.${req.body.vote}`]: 1 } }
     );
 
     if (req.body.cid === 1) {
-        await summaryCl.updateOne(
+        await threadCl.updateOne(
             { id: req.body.id },
             { $inc: { vote: req.body.vote === "U" ? 1 : -1 } }
         );

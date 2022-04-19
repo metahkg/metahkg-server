@@ -1,10 +1,10 @@
 import express from "express";
 import isInteger from "is-sn-integer";
-import { summaryCl, usersCl } from "../../common";
+import { threadCl, usersCl } from "../../common";
 import verifyUser from "../../lib/auth/verify";
 const router = express.Router();
 /**
- * get summary of threads created by a user
+ * get threads created by a user
  * syntax: GET /api/history/<user-id | "self">
  * returns an array of objects
  * sort:
@@ -33,12 +33,12 @@ router.get("/api/history/:id", async (req, res) => {
         1: { lastModified: -1 },
     }[Number(req.query.sort ?? 0)];
 
-    const history = await summaryCl
+    const history = await threadCl
         .find({ "op.id": user.id })
         .sort(sort)
         .skip(25 * (page - 1))
         .limit(25)
-        .project({ _id: 0 })
+        .project({ _id: 0, conversation: 0 })
         .toArray();
 
     if (!history.length) return res.send([null]);

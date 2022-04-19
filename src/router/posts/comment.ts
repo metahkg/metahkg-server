@@ -3,14 +3,13 @@ import express from "express";
 const router = express.Router();
 import body_parser from "body-parser";
 import {
-    conversationCl,
     imagesCl,
     linksCl,
     secret,
-    summaryCl,
     timediff,
     viralCl,
     LINKS_DOMAIN,
+    threadCl,
 } from "../../common";
 import { verify } from "../../lib/recaptcha";
 import findimages from "../../lib/findimages";
@@ -42,11 +41,11 @@ router.post("/api/posts/comment", body_parser.json(), async (req, res) => {
     const user = verifyUser(req.headers.authorization);
 
     const comment = sanitize(req.body.comment);
-    if (!user || !(await conversationCl.findOne({ id: req.body.id })))
+    if (!user || !(await threadCl.findOne({ id: req.body.id })))
         return res.status(404).send({ error: "Not found." });
 
-    const newCommentId = (await summaryCl.findOne({ id: req.body.id })).c + 1;
-    await summaryCl.updateOne(
+    const newCommentId = (await threadCl.findOne({ id: req.body.id })).c + 1;
+    await threadCl.updateOne(
         { id: req.body.id },
         { $inc: { c: 1 }, $currentDate: { lastModified: true } }
     );
@@ -66,7 +65,7 @@ router.post("/api/posts/comment", body_parser.json(), async (req, res) => {
         url: `/thread/${req.body.id}?c=${newCommentId}`,
     });
 
-    await conversationCl.updateOne(
+    await threadCl.updateOne(
         { id: req.body.id },
         {
             $push: {
@@ -110,15 +109,18 @@ router.post("/api/posts/comment", body_parser.json(), async (req, res) => {
             }
         );
     } else {
-        const summaryData = await summaryCl.findOne({
-            id: req.body.id,
-        });
+        const thread = await threadCl.findOne(
+            {
+                id: req.body.id,
+            },
+            { projection: { _id: 0, conversation: 0 } }
+        );
         await viralCl.insertOne({
             lastModified: new Date(),
             createdAt: new Date(),
-            id: summaryData.id,
+            id: thread.id,
             c: 1,
-            category: summaryData.category,
+            category: thread.category,
         });
     }
     res.send({ id: newCommentId });

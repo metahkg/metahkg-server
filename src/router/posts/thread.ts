@@ -7,7 +7,7 @@
 import express from "express";
 
 const router = express.Router();
-import { conversationCl, summaryCl, usersCl } from "../../common";
+import { threadCl, usersCl } from "../../common";
 import { hiddencats } from "../../lib/hiddencats";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
@@ -49,44 +49,29 @@ router.get("/api/thread/:id", async (req, res) => {
     ) {
         return res.status(400).send({ error: "Bad request." });
     }
-    const summaryData = await summaryCl.findOne(
-        { id: Number(req.params.id) },
+
+    const thread = await threadCl.findOne(
+        { id: id },
         {
             projection: {
-                _id: 0,
-            },
-        }
-    );
-
-    if (!summaryData) return res.status(404).send({ error: "Not Found" });
-
-    if (
-        !verifyUser(req.headers.authorization) &&
-        (await hiddencats()).includes(summaryData.category)
-    )
-        return res.status(401).send({ error: "Permission denied." });
-
-    const conversationData = await conversationCl.findOne(
-        { id: Number(req.params.id) },
-        {
-            projection: {
-                _id: 0,
+                id: 1,
+                category: 1,
+                title: 1,
+                slink: 1,
+                lastModified: 1,
+                c: 1,
+                createdAt: 1,
+                op: 1,
                 conversation: {
                     $filter: {
                         input: "$conversation",
                         cond: {
                             $and: [
                                 {
-                                    $gte: [
-                                        "$$this.id",
-                                        Number(req.query.start) || (page - 1) * 25 + 1,
-                                    ],
+                                    $gte: ["$$this.id", start || (page - 1) * 25 + 1],
                                 },
                                 {
-                                    $lte: [
-                                        "$$this.id",
-                                        Number(req.query.end) || page * 25,
-                                    ],
+                                    $lte: ["$$this.id", end || page * 25],
                                 },
                             ],
                         },
@@ -96,7 +81,13 @@ router.get("/api/thread/:id", async (req, res) => {
         }
     );
 
-    const thread = Object.assign(conversationData, summaryData);
+    if (!thread) return res.status(404).send({ error: "Not Found" });
+
+    if (
+        !verifyUser(req.headers.authorization) &&
+        (await hiddencats()).includes(thread.category)
+    )
+        return res.status(401).send({ error: "Permission denied." });
 
     for (let i = 0; i < thread?.conversation?.length; i++) {
         thread.conversation[i].user = await usersCl.findOne(

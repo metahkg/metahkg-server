@@ -2,7 +2,7 @@
 //Syntax: GET /api/category/<"all" | number(category id)>
 //"all" returns an array of all categories
 import express from "express";
-import { db, summaryCl } from "../common";
+import { db, threadCl } from "../common";
 const router = express.Router();
 import body_parser from "body-parser";
 import isInteger from "is-sn-integer";
@@ -26,16 +26,19 @@ router.get("/api/category/:id", body_parser.json(), async (req, res) => {
         return;
     }
     if (req.params.id?.startsWith("bytid")) {
-        const s = await summaryCl.findOne({
-            id: Number(req.params.id?.replace("bytid", "")),
-        });
-        const c = await categories.findOne({ id: s?.category });
-        if (!c) {
+        const thread = await threadCl.findOne(
+            {
+                id: Number(req.params.id?.replace("bytid", "")),
+            },
+            { projection: { _id: 0, category: 1 } }
+        );
+        const category = await categories.findOne({ id: thread?.category });
+        if (!category) {
             res.status(404);
             res.send({ error: "Not found." });
             return;
         }
-        res.send({ id: c.id, name: c.name });
+        res.send({ id: category.id, name: category.name });
         return;
     }
     const c = await categories.findOne({ id: Number(req.params.id) });

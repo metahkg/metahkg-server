@@ -1,6 +1,7 @@
+import { Type } from "@sinclair/typebox";
 import express from "express";
-import { summaryCl } from "../common";
-import isInteger from "is-sn-integer";
+import { ajv } from "../lib/ajv";
+import { threadCl } from "../common";
 
 const router = express.Router();
 /**
@@ -10,34 +11,42 @@ const router = express.Router();
  * 2: by last modification time
  */
 router.get("/api/search", async (req, res) => {
-    if (
-        !req.query.q ||
-        (req.query.sort && ![0, 1, 2].includes(Number(req.query.sort))) ||
-        (req.query.page && !isInteger(String(req.query.page))) ||
-        (req.query.mode && ![0, 1].includes(Number(req.query.mode)))
-    ) {
-        res.status(400);
-        res.send({ error: "Bad request." });
-        return;
-    }
     const page = Number(req.query.page) || 1;
-    const q = decodeURIComponent(String(req.query.q));
+    const query = decodeURIComponent(String(req.query.q));
+    const sort = Number(req.query.sort ?? 0);
+    const mode = Number(req.query.mode ?? 0);
+    const schema = Type.Object({
+        query: Type.String(),
+        sort: Type.Integer({ minimum: 0, maximum: 2 }),
+        page: Type.Integer({ minimum: 1 }),
+        mode: Type.Integer({ minimum: 0, maximum: 1 }),
+    });
+    if (
+        !ajv.validate(schema, {
+            page: page,
+            query: query,
+            sort: sort,
+            mode: mode,
+        })
+    )
+        return res.status(400).send({ error: "Bad request." });
 
-    const sort: any = {
+    const sortObj: any = {
         0: {},
         1: { createdAt: -1 },
         2: { lastModified: -1 },
-    }[Number(req.query.sort ?? 0)];
-    const find: any = {
-        0: { title: new RegExp(q, "i") },
-        1: { "op.name": new RegExp(q, "i") },
-    }[Number(req.query.mode ?? 0)];
-    const data = await summaryCl
-        .find(find)
-        .sort(sort)
+    }[sort];
+    const findObj: any = {
+        0: { title: new RegExp(query, "i") },
+        1: { "op.name": new RegExp(query, "i") },
+    }[mode];
+
+    const data = await threadCl
+        .find(findObj)
+        .sort(sortObj)
         .skip(25 * (page - 1))
         .limit(25)
-        .project({ _id: 0 })
+        .project({ _id: 0, conversation: 0 })
         .toArray();
     res.send(data.length ? data : [null]);
 });
