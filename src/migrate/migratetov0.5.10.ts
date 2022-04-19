@@ -18,7 +18,7 @@ async function rc1() {
         item.conversation.forEach((comment: comment, index: number) => {
             (async () => {
                 !comment.removed &&
-                    await conversationCl.updateOne(
+                    (await conversationCl.updateOne(
                         { _id: item._id },
                         {
                             $set: {
@@ -27,11 +27,10 @@ async function rc1() {
                                 ),
                             },
                         }
-                    );
+                    ));
             })();
         });
     });
 }
 
 rc1();
-
