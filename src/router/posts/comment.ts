@@ -3,7 +3,6 @@ import express from "express";
 const router = express.Router();
 import body_parser from "body-parser";
 import {
-    domain,
     conversationCl,
     imagesCl,
     linksCl,
@@ -13,17 +12,14 @@ import {
     viralCl,
     LINKS_DOMAIN,
 } from "../../common";
-import { JSDOM } from "jsdom";
-import createDOMPurify from "dompurify";
 import { verify } from "../../lib/recaptcha";
 import findimages from "../../lib/findimages";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 import verifyUser from "../../lib/auth/verify";
 import { generate } from "wcyat-rg";
+import sanitize from "../../lib/sanitize";
 
-const jsdomwindow: any = new JSDOM("").window;
-const DOMPurify = createDOMPurify(jsdomwindow);
 /** add a comment
  * Syntax: POST /api/comment {id (thread id) : number, comment : string}
  * client must have a cookie "key"
@@ -45,7 +41,7 @@ router.post("/api/posts/comment", body_parser.json(), async (req, res) => {
 
     const user = verifyUser(req.headers.authorization);
 
-    const comment = DOMPurify.sanitize(req.body.comment);
+    const comment = sanitize(req.body.comment);
     if (!user || !(await conversationCl.findOne({ id: req.body.id })))
         return res.status(404).send({ error: "Not found." });
 

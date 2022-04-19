@@ -25,15 +25,11 @@ import {
 } from "../../common";
 import { verify } from "../../lib/recaptcha";
 import findimages from "../../lib/findimages";
-import createDOMPurify from "dompurify";
-import { JSDOM } from "jsdom";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 import verifyUser from "../../lib/auth/verify";
 import { generate } from "wcyat-rg";
-
-const jsdomwindow: any = new JSDOM("").window;
-const DOMPurify = createDOMPurify(jsdomwindow);
+import sanitize from "../../lib/sanitize";
 
 router.post("/api/posts/create", body_parser.json(), async (req, res) => {
     const schema = Type.Object(
@@ -48,7 +44,7 @@ router.post("/api/posts/create", body_parser.json(), async (req, res) => {
     if (!ajv.validate(schema, req.body))
         return res.status(400).send({ error: "Bad request." });
 
-    const icomment = DOMPurify.sanitize(req.body.icomment);
+    const icomment = sanitize(req.body.icomment);
 
     if (!(await verify(secret, req.body.rtoken)))
         return res.status(400).send({ error: "recaptcha token invalid." });
