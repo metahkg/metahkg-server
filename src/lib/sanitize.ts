@@ -146,4 +146,3 @@ function transfromImage(tagName: string, attribs: sanitizeHtml.Attributes) {
     if (height > 400 || !height) attribs.width = "auto";
     return { tagName: tagName, attribs: attribs };
 }
-
