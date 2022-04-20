@@ -98,7 +98,12 @@ router.post(
             conversation: [
                 {
                     id: 1,
-                    user: user.id,
+                    user: {
+                        id: user.id,
+                        name: user.name,
+                        role: user.role,
+                        sex: user.sex,
+                    },
                     slink: `https://${LINKS_DOMAIN}/${commentSlinkId}`,
                     comment: comment,
                     createdAt: date,

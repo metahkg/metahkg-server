@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import { exit } from "process";
 import { comment } from "../types/db/thread";
 import sanitize from "../lib/sanitize";
+import { parse } from "node-html-parser";
 dotenv.config();
 async function rc1() {
     const mongouri = process.env.DB_URI;
@@ -56,5 +57,74 @@ async function mergeThread() {
     });
 }
 
+async function rc2() {
+    const mongouri = process.env.DB_URI;
+    if (!mongouri) {
+        console.log("please configure DB_URI in .env!");
+        exit(1);
+    }
+    const client = new MongoClient(mongouri);
+    await client.connect();
+    const db = client.db("metahkg");
+    const threadCl = db.collection("thread");
+    const usersCl = db.collection("users");
+    await threadCl.find().forEach((item) => {
+        const conversation: any[] = item.conversation;
+        conversation.forEach((comment, index) => {
+            !comment.removed &&
+                (async () => {
+                    if (typeof comment.user === "number") {
+                        await threadCl.updateOne(
+                            { _id: item._id },
+                            {
+                                $set: {
+                                    [`conversation.${index}.user`]: await usersCl.findOne(
+                                        {
+                                            id: comment.user,
+                                        },
+                                        {
+                                            projection: {
+                                                _id: 0,
+                                                id: 1,
+                                                name: 1,
+                                                role: 1,
+                                                sex: 1,
+                                            },
+                                        }
+                                    ),
+                                },
+                            }
+                        );
+                    }
+                    const parsed = parse(comment.comment);
+                    const quote =
+                        parsed?.firstChild === parsed?.querySelector("blockquote") &&
+                        parsed?.querySelector("blockquote div")?.innerHTML;
+                    if (quote) {
+                        const quotedComment = conversation.find(
+                            (i) => i.comment === quote
+                        );
+                        if (quotedComment) {
+                            await threadCl.updateOne(
+                                { _id: item._id },
+                                {
+                                    $set: {
+                                        [`conversation.${index}.quote`]: quotedComment,
+                                        [`conversation.${index}.comment`]: parsed
+                                            .removeChild(
+                                                parsed?.querySelector("blockquote")
+                                            )
+                                            .toString(),
+                                    },
+                                }
+                            );
+                        }
+                    }
+                })();
+        });
+    });
+}
+
 //rc1();
-mergeThread();
+//mergeThread();
+rc2();

@@ -89,23 +89,6 @@ router.get("/api/thread/:id", async (req, res) => {
     )
         return res.status(401).send({ error: "Permission denied." });
 
-    for (let i = 0; i < thread?.conversation?.length; i++) {
-        thread.conversation[i].user = await usersCl.findOne(
-            {
-                id: thread.conversation[i].user,
-            },
-            {
-                projection: {
-                    _id: 0,
-                    name: 1,
-                    id: 1,
-                    role: 1,
-                    sex: 1,
-                },
-            }
-        );
-    }
-
     res.send(thread);
 });
 export default router;

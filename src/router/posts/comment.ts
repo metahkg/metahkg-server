@@ -10,6 +10,7 @@ import {
     viralCl,
     LINKS_DOMAIN,
     threadCl,
+    usersCl,
 } from "../../common";
 import { verify } from "../../lib/recaptcha";
 import findimages from "../../lib/findimages";
@@ -49,6 +50,7 @@ router.post(
         const user = verifyUser(req.headers.authorization);
 
         const comment = sanitize(req.body.comment);
+        const { id, rtoken, quote } = req.body;
         if (!user || !(await threadCl.findOne({ id: req.body.id })))
             return res.status(404).send({ error: "Not found." });
 
@@ -70,19 +72,25 @@ router.post(
 
         await linksCl.insertOne({
             id: slinkId,
-            url: `/thread/${req.body.id}?c=${newCommentId}`,
+            url: `/thread/${id}?c=${newCommentId}`,
         });
 
         await threadCl.updateOne(
-            { id: req.body.id },
+            { id: id },
             {
                 $push: {
                     conversation: {
                         id: newCommentId,
-                        user: user.id,
+                        user: {
+                            id: user.id,
+                            name: user.name,
+                            role: user.role,
+                            sex: user.sex,
+                        },
                         comment: comment,
                         createdAt: new Date(),
                         slink: `https://${LINKS_DOMAIN}/${slinkId}`,
+                        quote: quote,
                     },
                 },
                 $currentDate: { lastModified: true },
