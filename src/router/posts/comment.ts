@@ -42,16 +42,17 @@ router.post(
         req: { body: Static<typeof schema>; headers: { authorization?: string } },
         res
     ) => {
+        const { id, rtoken, quote } = req.body;
+
         if (!ajv.validate(schema, req.body))
             return res.status(400).send({ error: "Bad request." });
 
-        if (!(await verify(secret, req.body.rtoken)))
+        if (!(await verify(secret, rtoken)))
             return res.status(400).send({ error: "recaptcha token invalid." });
 
         const user = verifyUser(req.headers.authorization);
 
         const comment = sanitize(req.body.comment);
-        const { id, rtoken, quote } = req.body;
         if (!user || !(await threadCl.findOne({ id: req.body.id })))
             return res.status(404).send({ error: "Not found." });
 
@@ -76,9 +77,14 @@ router.post(
             url: `/thread/${id}?c=${newCommentId}`,
         });
 
+        const quotedComment: comment | undefined =
+            (quote && (await threadCl.findOne({ id: id })).conversation?.[quote - 1]) ||
+            undefined;
+
         await threadCl.updateOne(
             { id: id },
             {
+                $inc: quotedComment && { [`conversation.${quote - 1}.replies`]: 1 },
                 $push: {
                     conversation: {
                         id: newCommentId,
@@ -91,9 +97,7 @@ router.post(
                         comment: comment,
                         createdAt: new Date(),
                         slink: `https://${LINKS_DOMAIN}/${slinkId}`,
-                        quote: quote && (
-                            await threadCl.findOne({ id: id })
-                        ).conversation.find((i: comment) => i.id === quote),
+                        quote: quotedComment,
                     },
                 },
                 $currentDate: { lastModified: true },
