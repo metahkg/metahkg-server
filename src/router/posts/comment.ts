@@ -10,7 +10,6 @@ import {
     viralCl,
     LINKS_DOMAIN,
     threadCl,
-    usersCl,
 } from "../../common";
 import { verify } from "../../lib/recaptcha";
 import findimages from "../../lib/findimages";
