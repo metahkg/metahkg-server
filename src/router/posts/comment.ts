@@ -91,9 +91,11 @@ router.post(
                         comment: comment,
                         createdAt: new Date(),
                         slink: `https://${LINKS_DOMAIN}/${slinkId}`,
-                        quote: quote && (
-                            await threadCl.findOne({ id: id })
-                        ).conversation.find((i: comment) => i.id === quote),
+                        quote:
+                            quote &&
+                            (
+                                await threadCl.findOne({ id: id })
+                            ).conversation.find((i: comment) => i.id === quote),
                     },
                 },
                 $currentDate: { lastModified: true },
