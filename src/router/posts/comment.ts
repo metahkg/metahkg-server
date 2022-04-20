@@ -19,6 +19,7 @@ import { ajv } from "../../lib/ajv";
 import verifyUser from "../../lib/auth/verify";
 import { generate } from "wcyat-rg";
 import sanitize from "../../lib/sanitize";
+import { comment } from "db/thread";
 
 const schema = Type.Object(
     {
@@ -90,7 +91,9 @@ router.post(
                         comment: comment,
                         createdAt: new Date(),
                         slink: `https://${LINKS_DOMAIN}/${slinkId}`,
-                        quote: quote,
+                        quote: quote && (
+                            await threadCl.findOne({ id: id })
+                        ).conversation.find((i: comment) => i.id === quote),
                     },
                 },
                 $currentDate: { lastModified: true },
