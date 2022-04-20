@@ -1,0 +1,12 @@
+version: "3.3"
+services:
+  service_backend_server:
+    build:
+      context: .
+      dockerfile: Dockerfile_dev
+    ports:
+      - '3008:3009'
+    restart: on-failure
+    container_name: backend_container_name
+    volumes:
+      - ./:/usr/src/app
