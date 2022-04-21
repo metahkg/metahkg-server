@@ -76,9 +76,13 @@ router.post(
             url: `/thread/${id}?c=${newCommentId}`,
         });
 
-        const quotedComment: comment | undefined =
-            (quote && (await threadCl.findOne({ id: id })).conversation?.[quote - 1]) ||
-            undefined;
+        let quotedComment: comment | undefined, quoteIndex: number;
+        if (quote) {
+            const thread = await threadCl.findOne({ id: id });
+            quoteIndex = thread?.conversation?.findIndex((i: comment) => i.id === quote);
+            quotedComment =
+                (quoteIndex !== -1 && thread.conversation[quoteIndex]) || undefined;
+        }
 
         await threadCl.updateOne(
             { id: id },
@@ -106,7 +110,7 @@ router.post(
         quotedComment &&
             (await threadCl.updateOne(
                 { id: id },
-                { $inc: { [`conversation.${quote - 1}.replies`]: 1 } }
+                { $push: { [`conversation.${quoteIndex}.replies`]: newCommentId } }
             ));
 
         const imagesInComment = findimages(comment);
