@@ -105,6 +105,10 @@ async function rc2() {
                             (i) => i.comment === quote
                         );
                         if (quotedComment) {
+                            conversation[index].quote = quotedComment;
+                            conversation[index].comment = parsed
+                                .removeChild(parsed?.querySelector("blockquote"))
+                                .toString();
                             await threadCl.updateOne(
                                 { _id: item._id },
                                 {

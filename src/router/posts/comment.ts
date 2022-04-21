@@ -83,25 +83,31 @@ router.post(
         await threadCl.updateOne(
             { id: id },
             {
-                $inc: quotedComment && { [`conversation.${quote - 1}.replies`]: 1 },
                 $push: {
-                    conversation: {
-                        id: newCommentId,
-                        user: {
-                            id: user.id,
-                            name: user.name,
-                            role: user.role,
-                            sex: user.sex,
+                    conversation: Object.assign(
+                        {
+                            id: newCommentId,
+                            user: {
+                                id: user.id,
+                                name: user.name,
+                                role: user.role,
+                                sex: user.sex,
+                            },
+                            comment: comment,
+                            createdAt: new Date(),
+                            slink: `https://${LINKS_DOMAIN}/${slinkId}`,
                         },
-                        comment: comment,
-                        createdAt: new Date(),
-                        slink: `https://${LINKS_DOMAIN}/${slinkId}`,
-                        quote: quotedComment,
-                    },
+                        quotedComment && { quote: quotedComment }
+                    ),
                 },
                 $currentDate: { lastModified: true },
             }
         );
+        quotedComment &&
+            (await threadCl.updateOne(
+                { id: id },
+                { $inc: { [`conversation.${quote - 1}.replies`]: 1 } }
+            ));
 
         const imagesInComment = findimages(comment);
         if (imagesInComment.length) {
