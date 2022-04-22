@@ -20,12 +20,7 @@ router.get("/api/posts/images/:id", async (req, res) => {
                     $filter: {
                         input: "$images",
                         cond: {
-                            $and: [
-                                {
-                                    $gte: ["$$this.cid", cid],
-                                    $lte: ["$$this.cid", cid],
-                                },
-                            ],
+                            $eq: ["$$this.cid", cid],
                         },
                     },
                 },
