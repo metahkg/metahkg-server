@@ -62,6 +62,7 @@ router.get("/api/thread/:id", async (req, res) => {
                 c: 1,
                 createdAt: 1,
                 op: 1,
+                pin: 1,
                 conversation: {
                     $filter: {
                         input: "$conversation",

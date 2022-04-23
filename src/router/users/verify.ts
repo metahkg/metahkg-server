@@ -8,7 +8,8 @@
 import dotenv from "dotenv";
 import express from "express";
 import body_parser from "body-parser";
-import { db, usersCl, verificationCl } from "../../common";
+import { usersCl, verificationCl } from "../../common";
+import { userRole } from "../../types/user";
 import hash from "hash.js";
 import { Static, Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
@@ -38,23 +39,22 @@ router.post(
         const verificationData = await verificationCl.findOne({
             type: "register",
             email: req.body.email,
+            code: req.body.code,
         });
 
-        if (!verificationData)
-            return res
-                .status(404)
-                .send({ error: "Not found. Your code night have expired." });
-
         if (verificationData.code !== req.body.code)
-            return res.status(401).send({ error: "Code incorrect" });
+            return res.status(401).send({
+                error: "Code incorrect or email not found, your verfication code might have expired.",
+            });
 
         const newUserId =
             (await usersCl.find().sort({ id: -1 }).limit(1).toArray())[0]?.id + 1 || 1;
+
         const newUser: {
             name: string;
             id: number;
             email: string;
-            role: "user" | "admin";
+            role: userRole;
             createdAt: Date;
             sex: "M" | "F";
         } = {

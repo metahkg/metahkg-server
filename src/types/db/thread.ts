@@ -1,5 +1,5 @@
-import type { userSexType } from "user";
-import type { userRole } from "./users";
+import type { userSex } from "../user";
+import type { userRole } from "../user";
 
 export type comment = {
     /** comment id */
@@ -19,7 +19,7 @@ export type comment = {
 export type threadOp = {
     id: number;
     name: string;
-    sex: userSexType;
+    sex: userSex;
     role: userRole;
 };
 

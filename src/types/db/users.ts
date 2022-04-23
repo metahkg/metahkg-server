@@ -1,3 +1,5 @@
+import { userRole, userSex } from "user";
+
 export interface user {
     /** mongodb object id */
     _id: string;
@@ -12,9 +14,8 @@ export interface user {
     /** user name */
     name: string;
     /** user sex */
-    sex: "M" | "F";
+    sex: userSex;
     /** role */
-    role: "admin" | "user";
+    role: userRole;
 }
 
-export type userRole = "admin" | "user";
