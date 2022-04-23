@@ -3,6 +3,7 @@ import { Router } from "express";
 import { ajv } from "../../lib/ajv";
 import { threadCl } from "../../common";
 import verifyUser from "../../lib/auth/verify";
+import bodyParser from "body-parser";
 
 const router = Router();
 
@@ -11,8 +12,9 @@ const schema = Type.Object({
     cid: Type.Integer({ minimum: 1 }),
 });
 
-router.get(
-    "/api/post/pin",
+router.post(
+    "/api/posts/pin",
+    bodyParser.json(),
     async (
         req: { body: Static<typeof schema>; headers: { authorization?: string } },
         res
@@ -51,6 +53,8 @@ router.get(
         const comment = thread.conversation?.[0];
 
         if (!comment) return res.status(404).send({ error: "Comment not found." });
+        if (comment.removed)
+            return res.status(403).send({ error: "Comment has been removed." });
 
         await threadCl.updateOne({ id: threadId }, { $set: { pin: comment } });
 
