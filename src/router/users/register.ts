@@ -118,9 +118,7 @@ router.post(
             digits: 30,
         });
         const verify = {
-            from: `Metahkg support <support@${
-                process.env.domain || "metahkg.org"
-            }>`,
+            from: `Metahkg support <support@${process.env.domain || "metahkg.org"}>`,
             to: req.body.email,
             subject: "Metahkg - verify your email",
             text: `Verify your email with the following link:
