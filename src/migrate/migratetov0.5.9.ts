@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import { MongoClient } from "mongodb";
 import { exit } from "process";
+import User from "../models/user";
 import { generate } from "wcyat-rg";
 dotenv.config();
 async function rc1() {

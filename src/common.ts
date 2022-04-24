@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { MongoClient } from "mongodb";
+import { Collection, MongoClient } from "mongodb";
 
 dotenv.config();
 export const mongouri = process.env.DB_URI || "mongodb://localhost"; //mongo connection string
@@ -77,7 +77,7 @@ export function allequal(arr: any[]) {
 export const db = client.db("metahkg");
 
 export const threadCl = db.collection("thread");
-export const usersCl = db.collection("users");
+export const usersCl: Collection = db.collection("users");
 export const limitCl = db.collection("limit");
 export const viralCl = db.collection("viral");
 export const imagesCl = db.collection("images");

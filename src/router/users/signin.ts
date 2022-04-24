@@ -14,6 +14,7 @@ import bcrypt from "bcrypt";
 import { Static, Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 import { createToken } from "../../lib/auth/createtoken";
+import User from "../../models/user";
 
 dotenv.config();
 const schema = Type.Object(
@@ -33,7 +34,7 @@ router.post(
 
         const user = await usersCl.findOne({
             $or: [{ name: req.body.name }, { email: req.body.name }],
-        });
+        }) as User;
 
         if (!user) {
             const verifyUser = await verificationCl.findOne({

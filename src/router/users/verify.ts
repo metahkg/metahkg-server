@@ -14,6 +14,7 @@ import hash from "hash.js";
 import { Static, Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 import { createToken } from "../../lib/auth/createtoken";
+import User from "../../models/user";
 
 dotenv.config();
 const router = express.Router();
@@ -50,17 +51,11 @@ router.post(
         const newUserId =
             (await usersCl.find().sort({ id: -1 }).limit(1).toArray())[0]?.id + 1 || 1;
 
-        const newUser: {
-            name: string;
-            id: number;
-            email: string;
-            role: userRole;
-            createdAt: Date;
-            sex: "M" | "F";
-        } = {
+        const newUser: User = {
             name: verificationData?.name,
             id: newUserId,
             email: hash.sha256().update(verificationData?.email).digest("hex"),
+            pwd: verificationData?.pwd,
             role: "user",
             createdAt: new Date(),
             sex: verificationData?.sex,
@@ -69,7 +64,11 @@ router.post(
         const token = createToken(newUser.id, newUser.name, newUser.sex, newUser.role);
         await usersCl.insertOne(newUser);
 
-        res.send({ id: verificationData?.id, name: verificationData?.name, token: token });
+        res.send({
+            id: verificationData?.id,
+            name: verificationData?.name,
+            token: token,
+        });
         await verificationCl.deleteOne({ email: req.body.email });
     }
 );

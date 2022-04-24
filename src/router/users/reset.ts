@@ -6,6 +6,7 @@ import mailgun from "mailgun-js";
 import { generate } from "wcyat-rg";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
+import User from "../../models/user";
 
 const mg = mailgun({
     apiKey: process.env.mailgun_key || "",
@@ -24,7 +25,7 @@ router.post("/api/users/reset", bodyParser.json(), async (req, res) => {
 
     const hashedemail = hash.sha256().update(req.body.email).digest("hex");
 
-    const userData = await usersCl.findOne({ email: hashedemail });
+    const userData = await usersCl.findOne({ email: hashedemail }) as User;
     if (!userData) return res.status(404).send({ error: "User not found." });
 
     if ((await limitCl.countDocuments({ type: "reset", email: hashedemail })) >= 2)
