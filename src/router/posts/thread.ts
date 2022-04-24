@@ -51,7 +51,7 @@ router.get("/api/thread/:id", async (req, res) => {
         return res.status(400).send({ error: "Bad request." });
     }
 
-    const thread = await threadCl.findOne(
+    const thread = (await threadCl.findOne(
         { id: id },
         {
             projection: {
@@ -81,7 +81,7 @@ router.get("/api/thread/:id", async (req, res) => {
                 },
             },
         }
-    ) as Thread;
+    )) as Thread;
 
     if (!thread) return res.status(404).send({ error: "Not Found" });
 

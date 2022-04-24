@@ -27,12 +27,12 @@ router.get("/api/category/:id", body_parser.json(), async (req, res) => {
         return;
     }
     if (req.params.id?.startsWith("bytid")) {
-        const thread = await threadCl.findOne(
+        const thread = (await threadCl.findOne(
             {
                 id: Number(req.params.id?.replace("bytid", "")),
             },
             { projection: { _id: 0, category: 1 } }
-        ) as Thread;
+        )) as Thread;
         const category = await categories.findOne({ id: thread?.category });
         if (!category) {
             res.status(404);

@@ -19,7 +19,7 @@ router.post("/api/posts/check", body_parser.json(), async (req, res) => {
     if (!ajv.validate(schema, req.body))
         return res.status(400).send({ error: "Bad request." });
 
-    if (!(await threadCl.findOne({ id: req.body.id }) as Thread))
+    if (!((await threadCl.findOne({ id: req.body.id })) as Thread))
         return res.status(404).send({ error: "Not found." });
 
     res.send({ response: "ok" });

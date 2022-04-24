@@ -53,10 +53,11 @@ router.post(
         const user = verifyUser(req.headers.authorization);
 
         const comment = sanitize(req.body.comment);
-        if (!user || !(await threadCl.findOne({ id: req.body.id }) as Thread))
+        if (!user || !((await threadCl.findOne({ id: req.body.id })) as Thread))
             return res.status(404).send({ error: "Not found." });
 
-        const newCommentId = (await threadCl.findOne({ id: req.body.id }) as Thread)?.c + 1;
+        const newCommentId =
+            ((await threadCl.findOne({ id: req.body.id })) as Thread)?.c + 1;
         await threadCl.updateOne(
             { id: req.body.id },
             { $inc: { c: 1 }, $currentDate: { lastModified: true } }
@@ -79,7 +80,7 @@ router.post(
 
         let quotedComment: commentType | undefined, quoteIndex: number;
         if (quote) {
-            const thread = await threadCl.findOne({ id: id }) as Thread;
+            const thread = (await threadCl.findOne({ id: id })) as Thread;
             quoteIndex = thread?.conversation?.findIndex((i) => i.id === quote);
             quotedComment =
                 (quoteIndex !== -1 && thread.conversation[quoteIndex]) || undefined;
@@ -117,9 +118,9 @@ router.post(
         const imagesInComment = findimages(comment);
         if (imagesInComment.length) {
             const imagesData: { image: string; cid: number }[] = (
-                await imagesCl.findOne({
+                (await imagesCl.findOne({
                     id: req.body.id,
-                }) as Images
+                })) as Images
             ).images;
 
             imagesInComment.forEach((item) => {
@@ -145,12 +146,12 @@ router.post(
                 }
             );
         } else {
-            const thread = await threadCl.findOne(
+            const thread = (await threadCl.findOne(
                 {
                     id: req.body.id,
                 },
                 { projection: { _id: 0, conversation: 0 } }
-            ) as Thread;
+            )) as Thread;
             await viralCl.insertOne({
                 lastModified: new Date(),
                 createdAt: new Date(),

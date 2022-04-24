@@ -35,13 +35,13 @@ router.get("/api/history/:id", async (req, res) => {
         1: { lastModified: -1 },
     }[Number(req.query.sort ?? 0)];
 
-    const history = await threadCl
+    const history = (await threadCl
         .find({ "op.id": user.id })
         .sort(sort)
         .skip(25 * (page - 1))
         .limit(25)
         .project({ _id: 0, conversation: 0 })
-        .toArray() as Thread[];
+        .toArray()) as Thread[];
 
     if (!history.length) return res.send([null]);
     res.send(history);
