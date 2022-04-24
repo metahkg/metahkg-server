@@ -7,6 +7,7 @@ import { hiddencats as gethiddencats } from "../../lib/hiddencats";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 import verifyUser from "../../lib/auth/verify";
+import Thread from "../../models/thread";
 const router = express.Router();
 /**
  * sort:
@@ -36,7 +37,7 @@ router.get("/api/menu/:category", async (req, res) => {
                 id: Number(req.params.category.replace("bytid", "")),
             },
             { projection: { _id: 0, category: 1 } }
-        );
+        ) as Thread;
         if (!thread || !thread.category)
             return res.status(404).send({ error: "Not found." });
 
@@ -65,13 +66,13 @@ router.get("/api/menu/:category", async (req, res) => {
               .skip(25 * (page - 1))
               .limit(25)
               .project({ _id: 0, conversation: 0 })
-              .toArray();
+              .toArray() as Thread[];
     if (sort) {
         for (let index = 0; index < data.length; index++) {
             data[index] = await threadCl.findOne(
                 { id: data[index].id },
                 { projection: { _id: 0, conversation: 0 } }
-            );
+            ) as Thread;
         }
     }
     res.send(data.length ? data : [null]);

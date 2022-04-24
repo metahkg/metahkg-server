@@ -2,6 +2,7 @@ import { Type } from "@sinclair/typebox";
 import express from "express";
 import { ajv } from "../lib/ajv";
 import { threadCl } from "../common";
+import Thread from "../models/thread";
 
 const router = express.Router();
 /**
@@ -47,7 +48,7 @@ router.get("/api/search", async (req, res) => {
         .skip(25 * (page - 1))
         .limit(25)
         .project({ _id: 0, conversation: 0 })
-        .toArray();
+        .toArray() as Thread[];
     res.send(data.length ? data : [null]);
 });
 export default router;

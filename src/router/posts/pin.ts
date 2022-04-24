@@ -4,6 +4,7 @@ import { ajv } from "../../lib/ajv";
 import { threadCl } from "../../common";
 import verifyUser from "../../lib/auth/verify";
 import bodyParser from "body-parser";
+import Thread from "../../models/thread";
 
 const router = Router();
 
@@ -43,7 +44,7 @@ router.post(
                     },
                 },
             }
-        );
+        ) as Thread;
 
         if (!thread)
             return res.status(403).send({

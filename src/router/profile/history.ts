@@ -3,6 +3,7 @@ import isInteger from "is-sn-integer";
 import User from "../../models/user";
 import { threadCl, usersCl } from "../../common";
 import verifyUser from "../../lib/auth/verify";
+import Thread from "../../models/thread";
 const router = express.Router();
 /**
  * get threads created by a user
@@ -25,7 +26,7 @@ router.get("/api/history/:id", async (req, res) => {
     const user =
         req.params.id === "self"
             ? verifyUser(req.headers.authorization)
-            : await usersCl.findOne({ id: Number(req.params.id) }) as User;
+            : ((await usersCl.findOne({ id: Number(req.params.id) })) as User);
 
     if (!user) return res.status(400).send({ error: "User not found." });
 
@@ -40,7 +41,7 @@ router.get("/api/history/:id", async (req, res) => {
         .skip(25 * (page - 1))
         .limit(25)
         .project({ _id: 0, conversation: 0 })
-        .toArray();
+        .toArray() as Thread[];
 
     if (!history.length) return res.send([null]);
     res.send(history);

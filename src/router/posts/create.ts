@@ -28,6 +28,9 @@ import { ajv } from "../../lib/ajv";
 import verifyUser from "../../lib/auth/verify";
 import { generate } from "wcyat-rg";
 import sanitize from "../../lib/sanitize";
+import Limit from "../../models/limit";
+import Images from "../../models/images";
+import Thread from "../../models/thread";
 const schema = Type.Object(
     {
         comment: Type.String(),
@@ -66,12 +69,12 @@ router.post(
 
         const newThreadId =
             (
-                await threadCl
+                (await threadCl
                     .find()
                     .sort({ id: -1 })
                     .limit(1)
                     .project({ id: 1, _id: 0 })
-                    .toArray()
+                    .toArray()) as Thread[]
             )[0]?.id + 1 || 1;
 
         const date = new Date();
@@ -93,7 +96,7 @@ router.post(
             url: `/thread/${newThreadId}?c=1`,
         });
 
-        const threadData = {
+        const threadData: Thread = {
             id: newThreadId,
             conversation: [
                 {
@@ -115,7 +118,6 @@ router.post(
                 sex: user.sex,
                 role: user.role,
             },
-            sex: user.sex,
             c: 1,
             vote: 0,
             slink: `https://${LINKS_DOMAIN}/${newThreadId}`,
@@ -139,8 +141,12 @@ router.post(
             imagesData.push({ image: item, cid: 1 });
         });
 
-        await imagesCl.insertOne({ id: newThreadId, images: imagesData });
-        await limitCl.insertOne({ id: user.id, createdAt: date, type: "create" });
+        await imagesCl.insertOne({ id: newThreadId, images: imagesData } as Images);
+        await limitCl.insertOne({
+            id: user.id,
+            createdAt: date,
+            type: "create",
+        } as Limit);
 
         res.send({ id: newThreadId });
     }

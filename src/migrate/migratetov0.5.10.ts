@@ -1,7 +1,7 @@
 import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
 import { exit } from "process";
-import { comment } from "../types/db/thread";
+import { commentType } from "../types/db/thread";
 import sanitize from "../lib/sanitize";
 import { parse } from "node-html-parser";
 dotenv.config();
@@ -16,7 +16,7 @@ async function rc1() {
     const db = client.db("metahkg");
     const conversationCl = db.collection("conversation");
     await conversationCl.find().forEach((item) => {
-        item.conversation.forEach((comment: comment, index: number) => {
+        item.conversation.forEach((comment: commentType, index: number) => {
             (async () => {
                 !comment.removed &&
                     (await conversationCl.updateOne(

@@ -6,6 +6,7 @@ import { db, threadCl } from "../common";
 const router = express.Router();
 import body_parser from "body-parser";
 import isInteger from "is-sn-integer";
+import Thread from "../models/thread";
 
 router.get("/api/category/:id", body_parser.json(), async (req, res) => {
     if (
@@ -31,7 +32,7 @@ router.get("/api/category/:id", body_parser.json(), async (req, res) => {
                 id: Number(req.params.id?.replace("bytid", "")),
             },
             { projection: { _id: 0, category: 1 } }
-        );
+        ) as Thread;
         const category = await categories.findOne({ id: thread?.category });
         if (!category) {
             res.status(404);

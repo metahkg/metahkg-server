@@ -12,6 +12,7 @@ import { hiddencats } from "../../lib/hiddencats";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 import verifyUser from "../../lib/auth/verify";
+import Thread from "../../models/thread";
 
 /**
  * type:
@@ -80,7 +81,7 @@ router.get("/api/thread/:id", async (req, res) => {
                 },
             },
         }
-    );
+    ) as Thread;
 
     if (!thread) return res.status(404).send({ error: "Not Found" });
 

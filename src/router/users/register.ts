@@ -89,14 +89,14 @@ async function valid(req: { body: Static<typeof schema> }, res: Response) {
  */
 async function exceptions(req: { body: Static<typeof schema> }, res: Response) {
     if (
-        (await usersCl.findOne({ user: req.body.name })) as User ||
+        ((await usersCl.findOne({ user: req.body.name })) as User) ||
         (await verificationCl.findOne({ user: req.body.name }))
     ) {
         res.status(409).send({ error: "Username exists." });
         return false;
     }
     if (
-        (await usersCl.findOne({ email: req.body.email })) as User ||
+        ((await usersCl.findOne({ email: req.body.email })) as User) ||
         (await verificationCl.findOne({ email: req.body.email }))
     ) {
         res.status(409).send({ error: "Email exists." });

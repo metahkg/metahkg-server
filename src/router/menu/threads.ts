@@ -1,6 +1,8 @@
 import { Router } from "express";
-import isInteger from "is-sn-integer";
+import Thread from "../../models/thread";
 import { threadCl } from "../../common";
+import { ajv } from "../../lib/ajv";
+import { Type } from "@sinclair/typebox";
 
 const router = Router();
 router.get("/api/threads", async (req, res) => {
@@ -9,30 +11,19 @@ router.get("/api/threads", async (req, res) => {
         threads = JSON.parse(threads);
         if (!Array.isArray(threads)) throw new Error("Not an array.");
     } catch {
-        res.status(400);
-        res.send({ error: "Bad request." });
-        return;
-    }
-    if (
-        !threads.every(function (element) {
-            return typeof element === "number" && isInteger(element);
-        }) ||
-        threads.length > 25
-    ) {
-        res.status(400);
-        res.send({ error: "Bad request." });
-        return;
+        return res.status(400).send({ error: "Bad request." });
     }
 
-    const r = await threadCl
+    if (!ajv.validate(Type.Array(Type.Integer(), { maxItems: 25 }), threads))
+        return res.status(400).send({ error: "Bad request." });
+
+    const r = (await threadCl
         .find({
-            $where: function () {
-                return threads.includes(this.id);
-            },
+            $in: threads,
         })
         .project({ _id: 0, conversation: 0 })
-        .toArray();
-    let result: any[] = [];
+        .toArray()) as Thread[];
+    let result: Thread[] = [];
     threads.forEach((tid) => {
         const index = r.findIndex((i) => i.id === tid);
         index !== -1 && result.push(r[index]);

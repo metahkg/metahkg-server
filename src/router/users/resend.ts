@@ -1,11 +1,12 @@
 import dotenv from "dotenv";
 import { Router } from "express";
-import { db, secret, domain, verificationCl, limitCl } from "../../common";
+import { secret, domain, verificationCl, limitCl } from "../../common";
 import { verify } from "../../lib/recaptcha";
 import mailgun from "mailgun-js";
 import bodyParser from "body-parser";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
+import Limit from "../../models/limit";
 
 dotenv.config();
 const mg = mailgun({
@@ -50,7 +51,7 @@ ${verificationUserData.code}`,
         type: "resend",
         email: req.body.email,
         createdAt: new Date(),
-    });
+    } as Limit);
     res.send({ success: true });
 });
 export default router;

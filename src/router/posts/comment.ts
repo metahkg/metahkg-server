@@ -18,7 +18,8 @@ import { ajv } from "../../lib/ajv";
 import verifyUser from "../../lib/auth/verify";
 import { generate } from "wcyat-rg";
 import sanitize from "../../lib/sanitize";
-import { comment } from "../../types/db/thread";
+import Images from "../../models/images";
+import Thread, { commentType } from "../../models/thread";
 
 const schema = Type.Object(
     {
@@ -52,10 +53,10 @@ router.post(
         const user = verifyUser(req.headers.authorization);
 
         const comment = sanitize(req.body.comment);
-        if (!user || !(await threadCl.findOne({ id: req.body.id })))
+        if (!user || !(await threadCl.findOne({ id: req.body.id }) as Thread))
             return res.status(404).send({ error: "Not found." });
 
-        const newCommentId = (await threadCl.findOne({ id: req.body.id })).c + 1;
+        const newCommentId = (await threadCl.findOne({ id: req.body.id }) as Thread)?.c + 1;
         await threadCl.updateOne(
             { id: req.body.id },
             { $inc: { c: 1 }, $currentDate: { lastModified: true } }
@@ -76,10 +77,10 @@ router.post(
             url: `/thread/${id}?c=${newCommentId}`,
         });
 
-        let quotedComment: comment | undefined, quoteIndex: number;
+        let quotedComment: commentType | undefined, quoteIndex: number;
         if (quote) {
-            const thread = await threadCl.findOne({ id: id });
-            quoteIndex = thread?.conversation?.findIndex((i: comment) => i.id === quote);
+            const thread = await threadCl.findOne({ id: id }) as Thread;
+            quoteIndex = thread?.conversation?.findIndex((i) => i.id === quote);
             quotedComment =
                 (quoteIndex !== -1 && thread.conversation[quoteIndex]) || undefined;
         }
@@ -118,7 +119,7 @@ router.post(
             const imagesData: { image: string; cid: number }[] = (
                 await imagesCl.findOne({
                     id: req.body.id,
-                })
+                }) as Images
             ).images;
 
             imagesInComment.forEach((item) => {
@@ -128,7 +129,7 @@ router.post(
 
             await imagesCl.updateOne(
                 { id: req.body.id },
-                { $set: { images: imagesData } }
+                { $set: { images: imagesData } as Images }
             );
         }
         const viralData = await viralCl.findOne({ id: req.body.id });
@@ -149,7 +150,7 @@ router.post(
                     id: req.body.id,
                 },
                 { projection: { _id: 0, conversation: 0 } }
-            );
+            ) as Thread;
             await viralCl.insertOne({
                 lastModified: new Date(),
                 createdAt: new Date(),
