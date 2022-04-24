@@ -8,7 +8,10 @@ import { ajv } from "../../lib/ajv";
 
 const router = Router();
 
-const schema = Type.Object({ id: Type.Integer({ minimum: 1 }) });
+const schema = Type.Object(
+    { id: Type.Integer({ minimum: 1 }) },
+    { additionalProperties: false }
+);
 
 router.post(
     "/api/posts/unpin",

@@ -8,10 +8,13 @@ import Thread from "../../models/thread";
 
 const router = Router();
 
-const schema = Type.Object({
-    id: Type.Integer({ minimum: 1 }),
-    cid: Type.Integer({ minimum: 1 }),
-});
+const schema = Type.Object(
+    {
+        id: Type.Integer({ minimum: 1 }),
+        cid: Type.Integer({ minimum: 1 }),
+    },
+    { additionalProperties: false }
+);
 
 router.post(
     "/api/posts/pin",
@@ -28,7 +31,7 @@ router.post(
         const user = verifyUser(req.headers.authorization);
         if (!user) return res.status(401).send({ error: "Unauthorized." });
 
-        const thread = await threadCl.findOne(
+        const thread = (await threadCl.findOne(
             {
                 "op.id": user.id,
                 id: threadId,
@@ -44,7 +47,7 @@ router.post(
                     },
                 },
             }
-        ) as Thread;
+        )) as Thread;
 
         if (!thread)
             return res.status(403).send({

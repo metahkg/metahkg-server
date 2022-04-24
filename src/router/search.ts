@@ -16,12 +16,15 @@ router.get("/api/search", async (req, res) => {
     const query = decodeURIComponent(String(req.query.q));
     const sort = Number(req.query.sort ?? 0);
     const mode = Number(req.query.mode ?? 0);
-    const schema = Type.Object({
-        query: Type.String(),
-        sort: Type.Integer({ minimum: 0, maximum: 2 }),
-        page: Type.Integer({ minimum: 1 }),
-        mode: Type.Integer({ minimum: 0, maximum: 1 }),
-    });
+    const schema = Type.Object(
+        {
+            query: Type.String(),
+            sort: Type.Integer({ minimum: 0, maximum: 2 }),
+            page: Type.Integer({ minimum: 1 }),
+            mode: Type.Integer({ minimum: 0, maximum: 1 }),
+        },
+        { additionalProperties: false }
+    );
     if (
         !ajv.validate(schema, {
             page: page,
@@ -42,13 +45,13 @@ router.get("/api/search", async (req, res) => {
         1: { "op.name": new RegExp(query, "i") },
     }[mode];
 
-    const data = await threadCl
+    const data = (await threadCl
         .find(findObj)
         .sort(sortObj)
         .skip(25 * (page - 1))
         .limit(25)
         .project({ _id: 0, conversation: 0 })
-        .toArray() as Thread[];
+        .toArray()) as Thread[];
     res.send(data.length ? data : [null]);
 });
 export default router;
