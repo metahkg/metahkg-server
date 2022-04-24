@@ -27,4 +27,4 @@ COPY --from=build /usr/src/app/node_modules ./node_modules
 
 RUN yarn install
 
-CMD touch .env && if [ ${env} = "dev" ]; then node start.js; npx nodemon src/server.ts; else yarn run start; fi;
+CMD touch .env && if [ "${env}" = "dev" ]; then node start.js; npx nodemon src/server.ts; else yarn run start; fi;
