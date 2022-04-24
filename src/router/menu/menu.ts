@@ -32,12 +32,12 @@ router.get("/api/menu/:category", async (req, res) => {
 
     const hiddencats = await gethiddencats();
     if (req.params.category.startsWith("bytid")) {
-        const thread = await threadCl.findOne(
+        const thread = (await threadCl.findOne(
             {
                 id: Number(req.params.category.replace("bytid", "")),
             },
             { projection: { _id: 0, category: 1 } }
-        ) as Thread;
+        )) as Thread;
         if (!thread || !thread.category)
             return res.status(404).send({ error: "Not found." });
 
@@ -60,19 +60,19 @@ router.get("/api/menu/:category", async (req, res) => {
               .skip(25 * (page - 1))
               .limit(25)
               .toArray()
-        : await threadCl
+        : ((await threadCl
               .find(find)
               .sort({ lastModified: -1 })
               .skip(25 * (page - 1))
               .limit(25)
               .project({ _id: 0, conversation: 0 })
-              .toArray() as Thread[];
+              .toArray()) as Thread[]);
     if (sort) {
         for (let index = 0; index < data.length; index++) {
-            data[index] = await threadCl.findOne(
+            data[index] = (await threadCl.findOne(
                 { id: data[index].id },
                 { projection: { _id: 0, conversation: 0 } }
-            ) as Thread;
+            )) as Thread;
         }
     }
     res.send(data.length ? data : [null]);

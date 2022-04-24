@@ -11,7 +11,10 @@ router.get("/api/profile/:id", async (req, res) => {
     const id = req.params.id === "self" ? Number(req.params.id) : req.params.id;
 
     if (
-        !ajv.validate(Type.Union([Type.Integer({ minimum: 1 }), Type.Literal("self")]), id)
+        !ajv.validate(
+            Type.Union([Type.Integer({ minimum: 1 }), Type.Literal("self")]),
+            id
+        )
     )
         return res.status(400).send({ error: "Bad request." });
 
