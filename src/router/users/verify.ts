@@ -54,6 +54,7 @@ router.post(
             name: string;
             id: number;
             email: string;
+            pwd: string;
             role: "user" | "admin";
             createdAt: Date;
             sex: "M" | "F";
@@ -61,6 +62,7 @@ router.post(
             name: verificationData.name,
             id: newUserId,
             email: hash.sha256().update(verificationData.email).digest("hex"),
+            pwd: verificationData.pwd,
             role: "user",
             createdAt: new Date(),
             sex: verificationData.sex,
