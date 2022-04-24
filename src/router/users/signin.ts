@@ -32,9 +32,9 @@ router.post(
         if (!ajv.validate(schema, req.body))
             return res.status(400).send({ error: "Bad request." });
 
-        const user = await usersCl.findOne({
+        const user = (await usersCl.findOne({
             $or: [{ name: req.body.name }, { email: req.body.name }],
-        }) as User;
+        })) as User;
 
         if (!user) {
             const verifyUser = await verificationCl.findOne({

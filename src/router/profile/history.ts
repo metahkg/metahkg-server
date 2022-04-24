@@ -25,7 +25,7 @@ router.get("/api/history/:id", async (req, res) => {
     const user =
         req.params.id === "self"
             ? verifyUser(req.headers.authorization)
-            : await usersCl.findOne({ id: Number(req.params.id) }) as User;
+            : ((await usersCl.findOne({ id: Number(req.params.id) })) as User);
 
     if (!user) return res.status(400).send({ error: "User not found." });
 

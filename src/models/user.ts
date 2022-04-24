@@ -9,6 +9,6 @@ export default class User {
         public pwd: string,
         public sex: userSex,
         public role: userRole,
-        public _id?: ObjectId,
+        public _id?: ObjectId
     ) {}
 }

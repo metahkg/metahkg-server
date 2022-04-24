@@ -12,7 +12,7 @@ router.get("/api/profile/:id", async (req, res) => {
 
     const user = verifyUser(req.headers.authorization);
 
-    const requestedUser = await usersCl.findOne(
+    const requestedUser = (await usersCl.findOne(
         {
             id: req.params.id === "self" && user ? user.id : Number(req.params.id),
         },
@@ -28,7 +28,7 @@ router.get("/api/profile/:id", async (req, res) => {
                       _id: 0,
                   },
         }
-    ) as User;
+    )) as User;
 
     if (!requestedUser) return res.status(400).send({ error: "User not found" });
 
@@ -40,7 +40,7 @@ router.get("/api/profile/:id", async (req, res) => {
         });
     }
 
-    res.send(Object.assign(requestedUser, {count}));
+    res.send(Object.assign(requestedUser, { count }));
 });
 
 export default router;

@@ -25,7 +25,7 @@ router.post("/api/users/reset", bodyParser.json(), async (req, res) => {
 
     const hashedemail = hash.sha256().update(req.body.email).digest("hex");
 
-    const userData = await usersCl.findOne({ email: hashedemail }) as User;
+    const userData = (await usersCl.findOne({ email: hashedemail })) as User;
     if (!userData) return res.status(404).send({ error: "User not found." });
 
     if ((await limitCl.countDocuments({ type: "reset", email: hashedemail })) >= 2)
