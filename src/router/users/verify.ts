@@ -69,7 +69,11 @@ router.post(
         const token = createToken(newUser.id, newUser.name, newUser.sex, newUser.role);
         await usersCl.insertOne(newUser);
 
-        res.send({ id: verificationData?.id, name: verificationData?.name, token: token });
+        res.send({
+            id: verificationData?.id,
+            name: verificationData?.name,
+            token: token,
+        });
         await verificationCl.deleteOne({ email: req.body.email });
     }
 );
