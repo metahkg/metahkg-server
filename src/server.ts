@@ -36,7 +36,7 @@ app.use(function (req, res, next) {
     );
     return next();
 });
-process.env.dev && app.use(cors());
+process.env.cors && app.use(cors());
 app.use(morgan("dev"));
 app.use(cookieParser());
 app.use(router);

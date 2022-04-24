@@ -18,7 +18,7 @@ import { ajv } from "../../lib/ajv";
 import verifyUser from "../../lib/auth/verify";
 import { generate } from "wcyat-rg";
 import sanitize from "../../lib/sanitize";
-import { comment } from "db/thread";
+import { comment } from "../../types/db/thread";
 
 const schema = Type.Object(
     {

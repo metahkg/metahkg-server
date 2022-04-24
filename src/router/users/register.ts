@@ -23,8 +23,8 @@ import { ajv } from "../../lib/ajv";
 
 dotenv.config();
 const mg = mailgun({
-    apiKey: process.env.mailgun_key,
-    domain: process.env.mailgun_domain || "metahkg.org",
+    apiKey: process.env.mailgun_key || "",
+    domain: process.env.domain || "metahkg.org",
 });
 const router = express.Router();
 const signupMode =
@@ -32,7 +32,7 @@ const signupMode =
         normal: "normal",
         none: "none",
         invite: "invite",
-    }[process.env.signup] || "normal";
+    }[process.env.signup || ""] || "normal";
 
 /**
  * It checks if the request body is valid
@@ -118,7 +118,7 @@ router.post(
         });
         const verify = {
             from: `Metahkg support <support@${
-                process.env.mailgun_domain || "metahkg.org"
+                process.env.domain || "metahkg.org"
             }>`,
             to: req.body.email,
             subject: "Metahkg - verify your email",
@@ -127,7 +127,7 @@ https://${domain}/users/verify?code=${encodeURIComponent(
                 code
             )}&email=${encodeURIComponent(req.body.email)}
 
-Alternatively, use this code at https://${domain}/users/verify : 
+Alternatively, use this code at https://${domain}/users/verify :
 ${code}`,
         };
         await mg.messages().send(verify);

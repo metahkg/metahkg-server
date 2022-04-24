@@ -9,8 +9,8 @@ import { ajv } from "../../lib/ajv";
 
 dotenv.config();
 const mg = mailgun({
-    apiKey: process.env.mailgun_key,
-    domain: process.env.mailgun_domain || "metahkg.org",
+    apiKey: process.env.mailgun_key || "",
+    domain: process.env.domain || "metahkg.org",
 });
 const router = Router();
 router.post("/api/users/resend", bodyParser.json(), async (req, res) => {
@@ -34,7 +34,7 @@ router.post("/api/users/resend", bodyParser.json(), async (req, res) => {
         return res.status(429).send({ error: "You can only resend 5 times a day." });
 
     const verifyMsg = {
-        from: `Metahkg support <support@${process.env.mailgun_domain || "metahkg.org"}>`,
+        from: `Metahkg support <support@${process.env.domain || "metahkg.org"}>`,
         to: req.body.email,
         subject: "Metahkg - verify your email",
         text: `Verify your email with the following link:

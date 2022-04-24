@@ -8,8 +8,8 @@ import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 
 const mg = mailgun({
-    apiKey: process.env.mailgun_key,
-    domain: process.env.mailgun_domain || "metahkg.org",
+    apiKey: process.env.mailgun_key || "",
+    domain: process.env.domain || "metahkg.org",
 });
 const router = Router();
 router.post("/api/users/reset", bodyParser.json(), async (req, res) => {
@@ -38,15 +38,15 @@ router.post("/api/users/reset", bodyParser.json(), async (req, res) => {
     });
 
     const reset = {
-        from: `Metahkg support <support@${process.env.mailgun_domain || "metahkg.org"}>`,
+        from: `Metahkg support <support@${process.env.domain || "metahkg.org"}>`,
         to: req.body.email,
         subject: "Metahkg - Reset Password",
         text: `Reset your password with the following link:
     https://${domain}/users/reset?code=${encodeURIComponent(
             verificationCode
         )}&email=${encodeURIComponent(req.body.email)}
-    
-    Alternatively, use this code at https://${domain}/reset : 
+
+    Alternatively, use this code at https://${domain}/reset :
     ${verificationCode}`,
     };
     await mg.messages().send(reset);

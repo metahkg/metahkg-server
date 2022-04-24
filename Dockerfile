@@ -2,6 +2,9 @@ FROM node:latest AS build
 
 WORKDIR /usr/src/app
 
+ARG env
+ENV env $env
+
 COPY package.json ./
 COPY yarn.lock ./
 COPY tsconfig.json ./
@@ -9,7 +12,7 @@ COPY tsconfig.json ./
 COPY . ./
 
 RUN yarn install
-RUN yarn build
+RUN if [ ${env} = "dev" ]; then mkdir -p dist; else yarn build; fi;
 
 FROM node:latest
 
@@ -24,4 +27,4 @@ COPY --from=build /usr/src/app/node_modules ./node_modules
 
 RUN yarn install
 
-CMD touch .env && yarn run start
+CMD touch .env && if [ ${env} = "dev" ]; then node start.js; npx nodemon src/server.ts; else yarn run start; fi;

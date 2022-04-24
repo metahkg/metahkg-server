@@ -5,7 +5,7 @@ dotenv.config();
 export const mongouri = process.env.DB_URI || "mongodb://localhost"; //mongo connection string
 export const LINKS_DOMAIN = process.env.LINKS_DOMAIN;
 export const client = new MongoClient(mongouri);
-export const secret = process.env.recaptchasecret; //recaptcha secret used to cerify recaptcha tokens
+export const secret = process.env.recaptchasecret || ""; //recaptcha secret used to cerify recaptcha tokens
 /**
  * get difference in seconds between now and a time string
  */
@@ -63,7 +63,7 @@ export function objtoarr(obj: any): any[] {
     return arr;
 }
 
-export const domain = process.env.domain.startsWith(".")
+export const domain = process.env.domain?.startsWith(".")
     ? process.env.domain?.replace(".", "")
     : process.env.domain;
 

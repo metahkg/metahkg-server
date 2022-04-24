@@ -2155,7 +2155,7 @@ node-html-parser@^5.3.3:
 
 nodemon@^2.0.15:
   version "2.0.15"
-  resolved "https://registry.npmjs.org/nodemon/-/nodemon-2.0.15.tgz"
+  resolved "https://registry.yarnpkg.com/nodemon/-/nodemon-2.0.15.tgz#504516ce3b43d9dc9a955ccd9ec57550a31a8d4e"
   integrity sha512-gdHMNx47Gw7b3kWxJV64NI+Q5nfl0y5DgDbiVtShiwa7Z0IZ07Ll4RLFo6AjrhzMtoEZn5PDE3/c2AbVsiCkpA==
   dependencies:
     chokidar "^3.5.2"
@@ -2970,7 +2970,7 @@ tr46@~0.0.3:
 
 ts-node@^10.7.0:
   version "10.7.0"
-  resolved "https://registry.npmjs.org/ts-node/-/ts-node-10.7.0.tgz"
+  resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-10.7.0.tgz#35d503d0fab3e2baa672a0e94f4b40653c2463f5"
   integrity sha512-TbIGS4xgJoX2i3do417KSaep1uRAW/Lu+WAL2doDHC0D6ummjirVOXU5/7aiZotbQ5p1Zp9tP7U6cYhA0O7M8A==
   dependencies:
     "@cspotcode/source-map-support" "0.7.0"
