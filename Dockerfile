@@ -12,7 +12,7 @@ COPY tsconfig.json ./
 COPY . ./
 
 RUN yarn install
-RUN if [ ${env} = "dev" ]; then mkdir -p dist; else yarn build; fi;
+RUN if [ ${env} -eq "dev" ]; then mkdir -p dist; else yarn build; fi;
 
 FROM node:latest
 
