@@ -46,8 +46,7 @@ router.get("/api/category/:id", body_parser.json(), async (req, res) => {
 
     const category = await categoryCl.findOne({ id: Number(req.params.id) });
 
-    if (!category)
-        return res.status(404).send({ error: "Not found." });
+    if (!category) return res.status(404).send({ error: "Not found." });
 
     res.send({ id: category.id, name: category.name, hidden: category.hidden });
 });
