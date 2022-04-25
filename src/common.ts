@@ -1,4 +1,5 @@
 import dotenv from "dotenv";
+import Mailgun from "mailgun-js";
 import { Collection, MongoClient } from "mongodb";
 
 dotenv.config();
@@ -87,3 +88,10 @@ export const votesCl = db.collection("votes");
 export const linksCl = db.collection("links");
 export const notificationsCl = db.collection("notifications");
 export const inviteCl = db.collection("invite");
+
+export const mgDomain = process.env.mailgun_domain || process.env.domain || "metahkg.org";
+
+export const mg = Mailgun({
+    apiKey: process.env.mailgun_key || "",
+    domain: mgDomain,
+});

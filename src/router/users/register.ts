@@ -11,19 +11,14 @@
 */
 import { Router } from "express";
 import body_parser from "body-parser";
-import { domain, secret, usersCl, verificationCl, inviteCl } from "../../common";
+import { domain, secret, usersCl, verificationCl, inviteCl, mg, mgDomain } from "../../common";
 import EmailValidator from "email-validator";
 import { verifyCaptcha } from "../../lib/recaptcha";
 import bcrypt from "bcrypt";
-import mailgun from "mailgun-js";
 import { generate } from "wcyat-rg";
 import { Static, Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 
-const mg = mailgun({
-    apiKey: process.env.mailgun_key || "",
-    domain: process.env.domain || "metahkg.org",
-});
 const router = Router();
 
 const schema = Type.Object(
@@ -82,7 +77,7 @@ router.post(
         });
 
         const verify = {
-            from: `Metahkg support <support@${process.env.domain || "metahkg.org"}>`,
+            from: `Metahkg support <support@${mgDomain}>`,
             to: req.body.email,
             subject: "Metahkg - verify your email",
             text: `Verify your email with the following link:

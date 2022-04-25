@@ -1,18 +1,13 @@
 import { Router } from "express";
-import { domain, limitCl, usersCl, verificationCl } from "../../common";
+import { domain, limitCl, mg, mgDomain, usersCl, verificationCl } from "../../common";
 import bodyParser from "body-parser";
 import hash from "hash.js";
-import mailgun from "mailgun-js";
 import { generate } from "wcyat-rg";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 import User from "../../models/user";
 import Limit from "../../models/limit";
 
-const mg = mailgun({
-    apiKey: process.env.mailgun_key || "",
-    domain: process.env.domain || "metahkg.org",
-});
 const router = Router();
 router.post("/api/users/reset", bodyParser.json(), async (req, res) => {
     const schema = Type.Object(
@@ -40,7 +35,7 @@ router.post("/api/users/reset", bodyParser.json(), async (req, res) => {
     });
 
     const reset = {
-        from: `Metahkg support <support@${process.env.domain || "metahkg.org"}>`,
+        from: `Metahkg support <support@${mgDomain}>`,
         to: req.body.email,
         subject: "Metahkg - Reset Password",
         text: `Reset your password with the following link:
