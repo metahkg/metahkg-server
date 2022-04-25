@@ -8,7 +8,7 @@ import { Type } from "@sinclair/typebox";
 const router = express.Router();
 
 router.get("/api/profile/:id", async (req, res) => {
-    const id = req.params.id === "self" ? Number(req.params.id) : req.params.id;
+    const id = req.params.id === "self" ? req.params.id : Number(req.params.id);
 
     if (
         !ajv.validate(
