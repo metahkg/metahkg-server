@@ -8,10 +8,10 @@ ENV env $env
 COPY package.json ./
 COPY yarn.lock ./
 COPY tsconfig.json ./
+RUN yarn install
 
 COPY . ./
 
-RUN yarn install
 RUN if [ "${env}" = "dev" ]; then mkdir -p dist; else yarn build; fi;
 
 FROM node:latest
@@ -20,6 +20,7 @@ WORKDIR /usr/src/app
 
 COPY ./package.json .
 COPY ./yarn.lock .
+COPY ./tsconfig.json ./
 COPY ./start.js .
 ADD ./static ./static
 COPY --from=build /usr/src/app/dist ./dist
