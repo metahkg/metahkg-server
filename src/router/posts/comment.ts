@@ -11,7 +11,7 @@ import {
     LINKS_DOMAIN,
     threadCl,
 } from "../../common";
-import { verify } from "../../lib/recaptcha";
+import { verifyCaptcha } from "../../lib/recaptcha";
 import findimages from "../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
@@ -47,7 +47,7 @@ router.post(
         if (!ajv.validate(schema, req.body))
             return res.status(400).send({ error: "Bad request." });
 
-        if (!(await verify(secret, rtoken)))
+        if (!(await verifyCaptcha(secret, rtoken)))
             return res.status(400).send({ error: "recaptcha token invalid." });
 
         const user = verifyUser(req.headers.authorization);

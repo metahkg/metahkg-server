@@ -16,12 +16,11 @@ import {
     limitCl,
     categoryCl,
     viralCl,
-    imagesCl,
     LINKS_DOMAIN,
     linksCl,
     threadCl,
 } from "../../common";
-import { verify } from "../../lib/recaptcha";
+import { verifyCaptcha } from "../../lib/recaptcha";
 import findimages from "../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
@@ -53,7 +52,7 @@ router.post(
 
         const comment = sanitize(req.body.comment);
 
-        if (!(await verify(secret, req.body.rtoken)))
+        if (!(await verifyCaptcha(secret, req.body.rtoken)))
             return res.status(400).send({ error: "recaptcha token invalid." });
 
         const user = verifyUser(req.headers.authorization);
@@ -119,6 +118,9 @@ router.post(
                 role: user.role,
             },
             c: 1,
+            images: findimages(comment).map((item) => {
+                return { image: item, cid: 1 };
+            }),
             vote: 0,
             slink: `https://${LINKS_DOMAIN}/${newThreadId}`,
             title: req.body.title,
@@ -128,6 +130,7 @@ router.post(
         };
 
         await threadCl.insertOne(threadData);
+
         await viralCl.insertOne({
             id: threadData.id,
             c: 1,
@@ -136,12 +139,6 @@ router.post(
             createdAt: date,
         });
 
-        const imagesData: { image: string; cid: number }[] = [];
-        findimages(comment).forEach((item) => {
-            imagesData.push({ image: item, cid: 1 });
-        });
-
-        await imagesCl.insertOne({ id: newThreadId, images: imagesData } as Images);
         await limitCl.insertOne({
             id: user.id,
             createdAt: date,

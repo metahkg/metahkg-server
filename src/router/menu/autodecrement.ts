@@ -1,9 +1,8 @@
-import { db } from "../../common";
+import { viralCl } from "../../common";
 /**
  * Decrease collection "viral" documents count by 1
  for sorting popularity
  */
 export async function autodecrement() {
-    const viral = db.collection("viral");
-    await viral.updateMany({}, { $inc: { c: -1 } });
+    await viralCl.updateMany({}, { $inc: { c: -1 } });
 }

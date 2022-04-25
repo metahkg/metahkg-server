@@ -13,6 +13,7 @@ export default class Thread {
         public lastModified: Date,
         public createdAt: Date,
         public slink: string,
+        public images?: { image: string; cid: number }[],
         public _id?: ObjectId
     ) {}
 }
