@@ -11,7 +11,15 @@
 */
 import { Router } from "express";
 import body_parser from "body-parser";
-import { domain, secret, usersCl, verificationCl, inviteCl, mg, mgDomain } from "../../common";
+import {
+    domain,
+    secret,
+    usersCl,
+    verificationCl,
+    inviteCl,
+    mg,
+    mgDomain,
+} from "../../common";
 import EmailValidator from "email-validator";
 import { verifyCaptcha } from "../../lib/recaptcha";
 import bcrypt from "bcrypt";
