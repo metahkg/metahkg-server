@@ -19,16 +19,19 @@ router.get("/api/threads", async (req, res) => {
 
     const r = (await threadCl
         .find({
-            $in: threads,
+            id: { $in: threads },
         })
         .project({ _id: 0, conversation: 0 })
         .toArray()) as Thread[];
+
     let result: Thread[] = [];
+
     threads.forEach((tid) => {
         const index = r.findIndex((i) => i.id === tid);
         index !== -1 && result.push(r[index]);
     });
     !result.length && result.push(null);
+
     res.send(result);
 });
 export default router;
