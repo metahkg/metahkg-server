@@ -19,6 +19,7 @@ import {
     LINKS_DOMAIN,
     linksCl,
     threadCl,
+    imagesCl,
 } from "../../common";
 import { verifyCaptcha } from "../../lib/recaptcha";
 import findimages from "../../lib/findimages";
@@ -118,9 +119,6 @@ router.post(
                 role: user.role,
             },
             c: 1,
-            images: findimages(comment).map((item) => {
-                return { image: item, cid: 1 };
-            }),
             vote: 0,
             slink: `https://${LINKS_DOMAIN}/${newThreadId}`,
             title: req.body.title,
@@ -130,6 +128,13 @@ router.post(
         };
 
         await threadCl.insertOne(threadData);
+
+        await imagesCl.insertOne({
+            id: newThreadId,
+            images: findimages(comment).map((item) => {
+                return { image: item, cid: 1 };
+            }),
+        });
 
         await viralCl.insertOne({
             id: threadData.id,
