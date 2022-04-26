@@ -6,29 +6,29 @@ import { Type } from "@sinclair/typebox";
 
 const router = Router();
 router.get("/api/threads", async (req, res) => {
-    let threads = decodeURIComponent(String(req.query.threads));
+    let requestedThreads = decodeURIComponent(String(req.query.threads));
     try {
-        threads = JSON.parse(threads);
-        if (!Array.isArray(threads)) throw new Error("Not an array.");
+        requestedThreads = JSON.parse(requestedThreads);
+        if (!Array.isArray(requestedThreads)) throw new Error("Not an array.");
     } catch {
         return res.status(400).send({ error: "Bad request." });
     }
 
-    if (!ajv.validate(Type.Array(Type.Integer(), { maxItems: 25 }), threads))
+    if (!ajv.validate(Type.Array(Type.Integer(), { maxItems: 25 }), requestedThreads))
         return res.status(400).send({ error: "Bad request." });
 
-    const r = (await threadCl
+    const threads = (await threadCl
         .find({
-            id: { $in: threads },
+            id: { $in: requestedThreads },
         })
         .project({ _id: 0, conversation: 0 })
         .toArray()) as Thread[];
 
     let result: Thread[] = [];
 
-    threads.forEach((tid) => {
-        const index = r.findIndex((i) => i.id === tid);
-        index !== -1 && result.push(r[index]);
+    requestedThreads.forEach((tid) => {
+        const thread = threads.find((i) => i.id === tid);
+        thread && result.push(thread);
     });
     !result.length && result.push(null);
 
