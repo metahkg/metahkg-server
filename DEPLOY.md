@@ -6,8 +6,8 @@ It is recommended to use docker for deployment (also supports hot reload).
 
 Docs:
 
-- master branch [master.docs.metahkg.org/docker](https://master.docs.metahkg.org/docker)
-- dev branch [dev.docs.metahkg.org/docker](https://dev.docs.metahkg.org/docker)
+-   master branch [master.docs.metahkg.org/docker](https://master.docs.metahkg.org/docker)
+-   dev branch [dev.docs.metahkg.org/docker](https://dev.docs.metahkg.org/docker)
 
 ## Manually
 
@@ -15,10 +15,10 @@ Docs:
 
 ### Prerequisites
 
-- x86_64 debian linux (only tested on ubuntu)
-- mongodb (either locally or remotely)
-- mailgun key (for sending emails, obviously)
-- recaptcha site key and secret pair (for anti-spamming)
+-   x86_64 debian linux (only tested on ubuntu)
+-   mongodb (either locally or remotely)
+-   mailgun key (for sending emails, obviously)
+-   recaptcha site key and secret pair (for anti-spamming)
 
 ### Set up
 
