@@ -1,18 +1,13 @@
-import dotenv from "dotenv";
 import { Router } from "express";
-import { db, secret, domain, verificationCl, limitCl } from "../../common";
-import { verify } from "../../lib/recaptcha";
-import mailgun from "mailgun-js";
+import { secret, domain, verificationCl, limitCl, mg, mgDomain } from "../../common";
+import { verifyCaptcha } from "../../lib/recaptcha";
 import bodyParser from "body-parser";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
+import Limit from "../../models/limit";
 
-dotenv.config();
-const mg = mailgun({
-    apiKey: process.env.mailgun_key,
-    domain: process.env.mailgun_domain || "metahkg.org",
-});
 const router = Router();
+
 router.post("/api/users/resend", bodyParser.json(), async (req, res) => {
     const schema = Type.Object(
         { email: Type.String({ format: "email" }), rtoken: Type.String() },
@@ -21,7 +16,7 @@ router.post("/api/users/resend", bodyParser.json(), async (req, res) => {
     if (!ajv.validate(schema, req.body))
         return res.status(400).send({ error: "Bad request." });
 
-    if (!(await verify(secret, req.body.rtoken)))
+    if (!(await verifyCaptcha(secret, req.body.rtoken)))
         return res.status(400).send({ error: "recaptcha token invalid." });
 
     const verificationUserData = await verificationCl.findOne({ email: req.body.email });
@@ -34,7 +29,7 @@ router.post("/api/users/resend", bodyParser.json(), async (req, res) => {
         return res.status(429).send({ error: "You can only resend 5 times a day." });
 
     const verifyMsg = {
-        from: `Metahkg support <support@${process.env.mailgun_domain || "metahkg.org"}>`,
+        from: `Metahkg support <support@${mgDomain}>`,
         to: req.body.email,
         subject: "Metahkg - verify your email",
         text: `Verify your email with the following link:
@@ -50,7 +45,7 @@ ${verificationUserData.code}`,
         type: "resend",
         email: req.body.email,
         createdAt: new Date(),
-    });
+    } as Limit);
     res.send({ success: true });
 });
 export default router;

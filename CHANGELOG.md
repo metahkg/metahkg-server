@@ -93,3 +93,7 @@ node server/migrate/migratetov0.5.2.js
 ## v0.5.9rc2
 
 - simplify thread request
+
+## v0.5.10rc1
+
+- sanitize html

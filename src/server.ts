@@ -7,6 +7,7 @@ import changecode from "./router/users/changecode";
 import { client } from "./common";
 import { setup } from "./mongo/setupmongo";
 import morgan from "morgan";
+import cors from "cors";
 dotenv.config();
 const app = express();
 /**
@@ -35,6 +36,7 @@ app.use(function (req, res, next) {
     );
     return next();
 });
+process.env.cors && app.use(cors());
 app.use(morgan("dev"));
 app.use(cookieParser());
 app.use(router);

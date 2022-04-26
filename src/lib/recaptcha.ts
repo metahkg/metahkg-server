@@ -6,7 +6,7 @@ import axios from "axios";
  * @param {string} token - The token you got from the user's browser.
  * @returns The `verify` function returns a promise that resolves to a boolean.
  */
-export async function verify(secret: string, token: string) {
+export async function verifyCaptcha(secret: string, token: string) {
     const verify = await axios.get(
         `https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${token}`
     );

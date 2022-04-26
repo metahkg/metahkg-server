@@ -4,7 +4,8 @@ export type user = {
     email: string;
     pwd: string;
     name: string;
-    sex: "M" | "F";
+    sex: userSex;
 };
 
-export type userSexType = "M" | "F";
+export type userSex = "M" | "F";
+export type userRole = "admin" | "user";

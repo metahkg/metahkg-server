@@ -1,17 +1,13 @@
 import { Router } from "express";
 import isInteger from "is-sn-integer";
-import { db } from "../../common";
+import { imagesCl } from "../../common";
 const router = Router();
 router.get("/api/posts/images/:id", async (req, res) => {
-    if (!isInteger(req.params.id)) {
-        res.status(400);
-        res.send({ error: "Bad request." });
-        return;
-    }
+    if (!isInteger(req.params.id)) return res.status(400).send({ error: "Bad request." });
+
     const id = Number(req.params.id);
     const cid = Number(req.query.c);
-    const images = db.collection("images");
-    const result = await images.findOne(
+    const result = await imagesCl.findOne(
         { id: id },
         {
             projection: {
@@ -20,12 +16,7 @@ router.get("/api/posts/images/:id", async (req, res) => {
                     $filter: {
                         input: "$images",
                         cond: {
-                            $and: [
-                                {
-                                    $gte: ["$$this.cid", cid],
-                                    $lte: ["$$this.cid", cid],
-                                },
-                            ],
+                            $eq: ["$$this.cid", cid],
                         },
                     },
                 },

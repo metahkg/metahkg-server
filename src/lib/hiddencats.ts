@@ -1,5 +1,4 @@
-import { db } from "../common";
+import { categoryCl, db } from "../common";
 export async function hiddencats() {
-    const category = db.collection("category");
-    return (await category.find({ hidden: true }).toArray()).map((item) => item.id);
+    return (await categoryCl.find({ hidden: true }).toArray()).map((item) => item.id);
 }

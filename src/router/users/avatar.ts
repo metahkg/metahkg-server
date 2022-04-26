@@ -55,7 +55,7 @@ router.post("/api/users/avatar", upload.single("avatar"), async (req, res) => {
     if (
         //check if file type is not aupported
         !["jpg", "svg", "png", "jpeg", "jfif"].includes(
-            req.file?.originalname.split(".").pop()
+            req.file?.originalname?.split(".")?.pop() || ""
         )
     ) {
         //remove the file

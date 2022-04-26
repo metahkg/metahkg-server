@@ -1,16 +1,13 @@
 import { Router } from "express";
-import { db, domain, limitCl, usersCl, verificationCl } from "../../common";
+import { domain, limitCl, mg, mgDomain, usersCl, verificationCl } from "../../common";
 import bodyParser from "body-parser";
 import hash from "hash.js";
-import mailgun from "mailgun-js";
 import { generate } from "wcyat-rg";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
+import User from "../../models/user";
+import Limit from "../../models/limit";
 
-const mg = mailgun({
-    apiKey: process.env.mailgun_key,
-    domain: process.env.mailgun_domain || "metahkg.org",
-});
 const router = Router();
 router.post("/api/users/reset", bodyParser.json(), async (req, res) => {
     const schema = Type.Object(
@@ -24,7 +21,7 @@ router.post("/api/users/reset", bodyParser.json(), async (req, res) => {
 
     const hashedemail = hash.sha256().update(req.body.email).digest("hex");
 
-    const userData = await usersCl.findOne({ email: hashedemail });
+    const userData = (await usersCl.findOne({ email: hashedemail })) as User;
     if (!userData) return res.status(404).send({ error: "User not found." });
 
     if ((await limitCl.countDocuments({ type: "reset", email: hashedemail })) >= 2)
@@ -38,15 +35,15 @@ router.post("/api/users/reset", bodyParser.json(), async (req, res) => {
     });
 
     const reset = {
-        from: `Metahkg support <support@${process.env.mailgun_domain || "metahkg.org"}>`,
+        from: `Metahkg support <support@${mgDomain}>`,
         to: req.body.email,
         subject: "Metahkg - Reset Password",
         text: `Reset your password with the following link:
     https://${domain}/users/reset?code=${encodeURIComponent(
             verificationCode
         )}&email=${encodeURIComponent(req.body.email)}
-    
-    Alternatively, use this code at https://${domain}/reset : 
+
+    Alternatively, use this code at https://${domain}/reset :
     ${verificationCode}`,
     };
     await mg.messages().send(reset);
@@ -59,6 +56,6 @@ router.post("/api/users/reset", bodyParser.json(), async (req, res) => {
         type: "reset",
         email: userData.email,
         createdAt: new Date(),
-    });
+    } as Limit);
     res.send({ response: "ok" });
 });

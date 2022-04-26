@@ -8,11 +8,13 @@
 import dotenv from "dotenv";
 import express from "express";
 import body_parser from "body-parser";
-import { db, usersCl, verificationCl } from "../../common";
+import { usersCl, verificationCl } from "../../common";
+import { userRole } from "../../types/user";
 import hash from "hash.js";
 import { Static, Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 import { createToken } from "../../lib/auth/createtoken";
+import User from "../../models/user";
 
 dotenv.config();
 const router = express.Router();
@@ -38,40 +40,35 @@ router.post(
         const verificationData = await verificationCl.findOne({
             type: "register",
             email: req.body.email,
+            code: req.body.code,
         });
 
-        if (!verificationData)
-            return res
-                .status(404)
-                .send({ error: "Not found. Your code night have expired." });
-
-        if (verificationData.code !== req.body.code)
-            return res.status(401).send({ error: "Code incorrect" });
+        if (verificationData?.code !== req.body.code)
+            return res.status(401).send({
+                error: "Code incorrect or email not found, your verfication code might have expired.",
+            });
 
         const newUserId =
             (await usersCl.find().sort({ id: -1 }).limit(1).toArray())[0]?.id + 1 || 1;
-        const newUser: {
-            name: string;
-            id: number;
-            email: string;
-            pwd: string;
-            role: "user" | "admin";
-            createdAt: Date;
-            sex: "M" | "F";
-        } = {
-            name: verificationData.name,
+
+        const newUser: User = {
+            name: verificationData?.name,
             id: newUserId,
-            email: hash.sha256().update(verificationData.email).digest("hex"),
-            pwd: verificationData.pwd,
+            email: hash.sha256().update(verificationData?.email).digest("hex"),
+            pwd: verificationData?.pwd,
             role: "user",
             createdAt: new Date(),
-            sex: verificationData.sex,
+            sex: verificationData?.sex,
         };
 
         const token = createToken(newUser.id, newUser.name, newUser.sex, newUser.role);
         await usersCl.insertOne(newUser);
 
-        res.send({ id: verificationData.id, name: verificationData.name, token: token });
+        res.send({
+            id: verificationData?.id,
+            name: verificationData?.name,
+            token: token,
+        });
         await verificationCl.deleteOne({ email: req.body.email });
     }
 );

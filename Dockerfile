@@ -1,28 +1,31 @@
-FROM node:17 AS build
+FROM node:latest AS build
 
 WORKDIR /usr/src/app
 
-RUN yarn add typescript
+ARG env
+ENV env $env
 
 COPY package.json ./
 COPY yarn.lock ./
 COPY tsconfig.json ./
+RUN yarn install
 
 COPY . ./
 
-RUN yarn install
-RUN yarn build
+RUN if [ "${env}" = "dev" ]; then mkdir -p dist; else yarn build; fi;
 
-FROM node:17
+FROM node:latest
 
 WORKDIR /usr/src/app
 
 COPY ./package.json .
 COPY ./yarn.lock .
+COPY ./tsconfig.json ./
 COPY ./start.js .
 ADD ./static ./static
 COPY --from=build /usr/src/app/dist ./dist
+COPY --from=build /usr/src/app/node_modules ./node_modules
 
 RUN yarn install
 
-CMD touch .env && yarn run start
+CMD touch .env && if [ "${env}" = "dev" ]; then node start.js; npx nodemon src/server.ts; else yarn run start; fi;

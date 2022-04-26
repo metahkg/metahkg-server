@@ -4,9 +4,10 @@ import express from "express";
 
 const router = express.Router();
 import body_parser from "body-parser";
-import { db } from "../../common";
+import { db, threadCl } from "../../common";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
+import Thread from "../../models/thread";
 
 router.post("/api/posts/check", body_parser.json(), async (req, res) => {
     const schema = Type.Object(
@@ -15,16 +16,12 @@ router.post("/api/posts/check", body_parser.json(), async (req, res) => {
         },
         { additionalProperties: false }
     );
-    if (!ajv.validate(schema, req.body)) {
-        res.status(400);
-        res.send({ error: "Bad request." });
-        return;
-    }
-    if (!(await db.collection("conversation").findOne({ id: req.body.id }))) {
-        res.status(404);
-        res.send({ error: "Not found." });
-        return;
-    }
+    if (!ajv.validate(schema, req.body))
+        return res.status(400).send({ error: "Bad request." });
+
+    if (!((await threadCl.findOne({ id: req.body.id })) as Thread))
+        return res.status(404).send({ error: "Not found." });
+
     res.send({ response: "ok" });
 });
 export default router;
