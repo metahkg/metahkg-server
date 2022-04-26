@@ -4,11 +4,11 @@ import isInteger from "is-sn-integer";
 import verifyUser from "../../lib/auth/verify";
 
 const router = express.Router();
-router.get("/api/posts/votes", async (req, res) => {
-    if (!req.query.id || !isInteger(String(req.query.id)))
+router.get("/api/posts/uservotes/:id", async (req, res) => {
+    if (!req.params.id || !isInteger(String(req.params.id)))
         return res.status(400).send({ error: "Bad request." });
 
-    const id = Number(req.query.id);
+    const id = Number(req.params.id);
 
     const user = verifyUser(req.headers.authorization);
 

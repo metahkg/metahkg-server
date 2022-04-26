@@ -5,7 +5,7 @@ import posts from "./router/posts";
 import loggedin from "./router/users/loggedin";
 import search from "./router/search";
 import vote from "./router/posts/vote";
-import getvotes from "./router/posts/getvotes";
+import getvotes from "./router/posts/userVotes";
 import profile from "./router/profile";
 import menu from "./router/menu/menu";
 import threads from "./router/menu/threads";

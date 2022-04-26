@@ -42,6 +42,8 @@ export type commentType = {
     U?: number;
     /** downvotes */
     D?: number;
+    /** replies */
+    replies?: number[];
 };
 
 export type threadOpType = {
