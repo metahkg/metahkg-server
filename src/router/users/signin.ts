@@ -33,12 +33,18 @@ router.post(
             return res.status(400).send({ error: "Bad request." });
 
         const user = (await usersCl.findOne({
-            $or: [{ name: req.body.name }, { email: req.body.name }],
+            $or: [
+                { name: req.body.name },
+                { email: hash.sha256().update(req.body.name).digest("hex") },
+            ],
         })) as User;
 
         if (!user) {
             const verifyUser = await verificationCl.findOne({
-                $or: [{ name: req.body.name }, { email: req.body.name }],
+                $or: [
+                    { name: req.body.name },
+                    { email: hash.sha256().update(req.body.name).digest("hex") },
+                ],
             });
 
             if (verifyUser && (await bcrypt.compare(req.body.pwd, verifyUser.pwd)))
