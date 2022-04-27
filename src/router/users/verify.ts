@@ -9,7 +9,6 @@ import dotenv from "dotenv";
 import express from "express";
 import body_parser from "body-parser";
 import { usersCl, verificationCl } from "../../common";
-import { userRole } from "../../types/user";
 import hash from "hash.js";
 import { Static, Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";

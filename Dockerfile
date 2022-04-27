@@ -22,7 +22,7 @@ COPY ./package.json .
 COPY ./yarn.lock .
 COPY ./tsconfig.json ./
 COPY ./start.js .
-ADD ./static ./static
+COPY ./static ./static
 COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/node_modules ./node_modules
 
