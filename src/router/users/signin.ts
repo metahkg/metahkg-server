@@ -15,7 +15,7 @@ import { Static, Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 import { createToken } from "../../lib/auth/createtoken";
 import User from "../../models/user";
-
+import hash from "hash.js";
 dotenv.config();
 const schema = Type.Object(
     {
