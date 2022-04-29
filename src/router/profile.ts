@@ -1,5 +1,5 @@
 import express from "express";
-import history from "./profile/history";
+import history from "./menu/history";
 import profile from "./profile/profile";
 import getavatars from "./profile/getavatars";
 

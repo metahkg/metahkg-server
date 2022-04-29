@@ -85,6 +85,13 @@ router.get("/api/posts/thread/:id", async (req, res) => {
 
     if (!thread) return res.status(404).send({ error: "Not Found" });
 
+    if (req.query.sort === "vote") {
+        thread.conversation = thread.conversation.sort(function (a, b) {
+            // use 0 if upvote or downvote is undefined
+            return (b.U || 0 - b.D || 0) - (a.U || 0 - a.D || 0);
+        });
+    }
+
     if (
         !verifyUser(req.headers.authorization) &&
         (await hiddencats()).includes(thread.category)
