@@ -20,8 +20,8 @@ import hash from "hash.js";
 dotenv.config();
 const schema = Type.Object(
     {
-        name: Type.String(),
-        pwd: Type.String(),
+        name: Type.Union([Type.RegEx(/^\S{1,15}$/), Type.String({ format: "email" })]),
+        pwd: Type.RegEx(/^[a-f0-9]{64}$/i),
     },
     { additionalProperties: false }
 );

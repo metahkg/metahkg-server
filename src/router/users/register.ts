@@ -32,7 +32,7 @@ const router = Router();
 const schema = Type.Object(
     {
         name: Type.RegEx(/^\S{1,15}$/),
-        pwd: Type.String({ minLength: 8 }),
+        pwd: Type.String(/^[a-f0-9]{64}$/i),
         email: Type.String({ format: "email" }),
         rtoken: Type.String(),
         sex: Type.Union([Type.Literal("M"), Type.Literal("F")]),
