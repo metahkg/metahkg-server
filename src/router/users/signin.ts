@@ -21,6 +21,7 @@ dotenv.config();
 const schema = Type.Object(
     {
         name: Type.Union([Type.RegEx(/^\S{1,15}$/), Type.String({ format: "email" })]),
+        // check if password is a sha256 hash
         pwd: Type.RegEx(/^[a-f0-9]{64}$/i),
     },
     { additionalProperties: false }

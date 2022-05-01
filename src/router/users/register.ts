@@ -32,7 +32,8 @@ const router = Router();
 const schema = Type.Object(
     {
         name: Type.RegEx(/^\S{1,15}$/),
-        pwd: Type.String(/^[a-f0-9]{64}$/i),
+        // check if password is a sha256 hash
+        pwd: Type.RegEx(/^[a-f0-9]{64}$/i),
         email: Type.String({ format: "email" }),
         rtoken: Type.String(),
         sex: Type.Union([Type.Literal("M"), Type.Literal("F")]),
