@@ -51,7 +51,7 @@ router.post(
             if (verifyUser && (await bcrypt.compare(req.body.pwd, verifyUser.pwd)))
                 return res.send({ unverified: true });
 
-            return res.status(400).send({ error: "User not found." });
+            return res.status(404).send({ error: "User not found." });
         }
 
         const pwdMatch = await bcrypt.compare(req.body.pwd, user.pwd);
