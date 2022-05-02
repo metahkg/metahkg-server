@@ -47,7 +47,7 @@ router.get("/api/profile/:id", async (req, res) => {
             "op.id": requestedUser.id,
         });
 
-    res.send(Object.assign(requestedUser, { count }));
+    res.send({ ...requestedUser, count });
 });
 
 export default router;

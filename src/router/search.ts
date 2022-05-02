@@ -52,6 +52,6 @@ router.get("/api/search", async (req, res) => {
         .limit(25)
         .project({ _id: 0, conversation: 0 })
         .toArray()) as Thread[];
-    res.send(data.length ? data : [null]);
+    res.send(data);
 });
 export default router;

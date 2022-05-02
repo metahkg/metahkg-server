@@ -19,6 +19,6 @@ router.get("/api/posts/uservotes/:id", async (req, res) => {
         { projection: { [id]: 1, _id: 0 } }
     );
 
-    res.send(uservotes?.[id] || [null]);
+    res.send(uservotes?.[id] || {});
 });
 export default router;

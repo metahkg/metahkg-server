@@ -75,6 +75,6 @@ router.get("/api/menu/:category", async (req, res) => {
             )) as Thread;
         }
     }
-    res.send(data.length ? data : [null]);
+    res.send(data);
 });
 export default router;

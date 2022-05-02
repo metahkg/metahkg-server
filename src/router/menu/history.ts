@@ -43,7 +43,6 @@ router.get("/api/history/:id", async (req, res) => {
         .project({ _id: 0, conversation: 0 })
         .toArray()) as Thread[];
 
-    if (!history.length) return res.send([null]);
     res.send(history);
 });
 export default router;

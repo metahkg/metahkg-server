@@ -30,7 +30,6 @@ router.get("/api/threads", async (req, res) => {
         const thread = threads.find((i) => i.id === tid);
         thread && result.push(thread);
     });
-    !result.length && result.push(null);
 
     res.send(result);
 });
