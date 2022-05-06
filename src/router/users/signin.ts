@@ -1,4 +1,4 @@
-//Signin
+//Sign in
 /*Syntax: POST /api/signin
 {
   name (username OR email): string,
