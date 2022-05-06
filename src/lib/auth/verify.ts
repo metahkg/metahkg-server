@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { ajv } from "../ajv";
-import { jwtTokenSchema, jwtTokenType } from "jwt/user";
+import { jwtTokenSchema, jwtTokenType } from "../../types/jwt/user";
 
 export default function verifyUser(token?: string): false | jwtTokenType {
     token = token?.slice(7);
