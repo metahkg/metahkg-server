@@ -146,11 +146,10 @@ export default function sanitize(html: string) {
     if (parsed.firstChild instanceof TextNode || parsed.lastChild instanceof TextNode) {
         const marginTop = parsed.firstChild instanceof TextNode ? "15px" : "0px";
         const marginBottom = parsed.lastChild instanceof TextNode ? "15px" : "0px";
-        parsed.replaceWith(
-            `<p style="margin-top: ${marginTop}; margin-bottom: ${marginBottom};">${parsed.toString()}</p>`
-        );
+        
+        return `<p style="margin-top: ${marginTop}; margin-bottom: ${marginBottom};">${parsed.toString()}</p>`;
     }
-    return parsed.toString();
+    return clean;
 }
 
 function transformImage(tagName: string, attribs: sanitizeHtml.Attributes) {
