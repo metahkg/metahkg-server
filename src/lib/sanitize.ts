@@ -62,10 +62,10 @@ export default function sanitize(html: string) {
             code: ["class"],
             q: ["cite"],
         },
-        allowedSchemes: ["https", "mailto"],
+        allowedSchemes: ["http", "https", "mailto"],
         allowedSchemesByTag: {
-            img: ["https", "data"],
-            i: ["https", "data"],
+            img: ["http", "https", "data"],
+            i: ["http", "https", "data"],
         },
         transformTags: {
             a: (tagName: string, attribs: sanitizeHtml.Attributes) => {
