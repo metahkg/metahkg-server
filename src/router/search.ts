@@ -3,11 +3,12 @@ import express from "express";
 import { ajv } from "../lib/ajv";
 import { threadCl } from "../common";
 import Thread from "../models/thread";
+import { Sort } from "mongodb";
 
 const router = express.Router();
 /**
  * sort:
- * 0: by relevence //default
+ * 0: by relevance //default
  * 1: by creation time
  * 2: by last modification time
  */
@@ -23,7 +24,7 @@ router.get("/api/search", async (req, res) => {
             page: Type.Integer({ minimum: 1 }),
             mode: Type.Integer({ minimum: 0, maximum: 1 }),
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
     if (
         !ajv.validate(schema, {
@@ -35,23 +36,33 @@ router.get("/api/search", async (req, res) => {
     )
         return res.status(400).send({ error: "Bad request." });
 
-    const sortObj: any = {
-        0: {},
+    const sortObj = {
+        0: {
+            /*[mode ? "op.name" : "title"]: { $meta: "textScore" }*/
+        },
         1: { createdAt: -1 },
         2: { lastModified: -1 },
-    }[sort];
-    const findObj: any = {
-        0: { title: new RegExp(query, "i") },
-        1: { "op.name": new RegExp(query, "i") },
-    }[mode];
+    }[sort] as Sort;
+
+    const regex = new RegExp(query, "i");
 
     const data = (await threadCl
-        .find(findObj)
+        .find({
+            $or: [
+                mode ? { "op.name": regex } : { title: regex },
+                /*{
+                    $text: {
+                        $search: query,
+                    },
+                },*/
+            ],
+        })
         .sort(sortObj)
         .skip(25 * (page - 1))
         .limit(25)
         .project({ _id: 0, conversation: 0 })
         .toArray()) as Thread[];
+
     res.send(data);
 });
 export default router;

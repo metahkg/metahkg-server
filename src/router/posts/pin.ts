@@ -13,7 +13,7 @@ const schema = Type.Object(
         id: Type.Integer({ minimum: 1 }),
         cid: Type.Integer({ minimum: 1 }),
     },
-    { additionalProperties: false }
+    { additionalProperties: false },
 );
 
 router.post(
@@ -21,7 +21,7 @@ router.post(
     bodyParser.json(),
     async (
         req: { body: Static<typeof schema>; headers: { authorization?: string } },
-        res
+        res,
     ) => {
         const { id: threadId, cid: commentId } = req.body;
 
@@ -46,7 +46,7 @@ router.post(
                         },
                     },
                 },
-            }
+            },
         )) as Thread;
 
         if (!thread)
@@ -63,7 +63,7 @@ router.post(
         await threadCl.updateOne({ id: threadId }, { $set: { pin: comment } });
 
         res.send({ response: "ok" });
-    }
+    },
 );
 
 export default router;

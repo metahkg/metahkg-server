@@ -14,7 +14,7 @@ router.post("/api/users/reset", bodyParser.json(), async (req, res) => {
         {
             email: Type.String({ format: "email" }),
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
     if (!ajv.validate(schema, req.body))
         return res.status(400).send({ error: "Bad request." });
@@ -40,7 +40,7 @@ router.post("/api/users/reset", bodyParser.json(), async (req, res) => {
         subject: "Metahkg - Reset Password",
         text: `Reset your password with the following link:
     https://${domain}/users/reset?code=${encodeURIComponent(
-            verificationCode
+            verificationCode,
         )}&email=${encodeURIComponent(req.body.email)}
 
     Alternatively, use this code at https://${domain}/reset :

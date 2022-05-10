@@ -33,3 +33,6 @@ yarn-error.log*
 deploy.sh
 .lh/
 package-lock.json
+
+# eslint
+/.eslintcache

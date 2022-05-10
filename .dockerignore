@@ -28,6 +28,7 @@ uploads/
 .vscode/
 
 # internal
-deploy.sh
 .lh/
-package-lock.json
+
+# intellij
+.idea/

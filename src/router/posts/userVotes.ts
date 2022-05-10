@@ -16,7 +16,7 @@ router.get("/api/posts/uservotes/:id", async (req, res) => {
 
     const uservotes = await votesCl.findOne(
         { id: user.id },
-        { projection: { [id]: 1, _id: 0 } }
+        { projection: { [id]: 1, _id: 0 } },
     );
 
     res.send(uservotes?.[id] || {});

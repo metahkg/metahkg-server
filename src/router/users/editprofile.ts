@@ -12,7 +12,7 @@ router.post("/api/users/editprofile", body_parser.json(), async (req, res) => {
             name: Type.Optional(Type.String()),
             sex: Type.Optional(Type.Union([Type.Literal("M"), Type.Literal("F")])),
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
     if (!ajv.validate(schema, req.body) || !Object.keys(req.body).length)
         return res.status(400).send({ error: "Bad request." });

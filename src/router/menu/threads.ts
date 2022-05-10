@@ -24,7 +24,7 @@ router.get("/api/threads", async (req, res) => {
         .project({ _id: 0, conversation: 0 })
         .toArray()) as Thread[];
 
-    let result: Thread[] = [];
+    const result: Thread[] = [];
 
     requestedThreads.forEach((tid) => {
         const thread = threads.find((i) => i.id === tid);

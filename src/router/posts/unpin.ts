@@ -10,7 +10,7 @@ const router = Router();
 
 const schema = Type.Object(
     { id: Type.Integer({ minimum: 1 }) },
-    { additionalProperties: false }
+    { additionalProperties: false },
 );
 
 router.post(
@@ -18,7 +18,7 @@ router.post(
     bodyParser.json(),
     async (
         req: { body: Static<typeof schema>; headers: { authorization?: string } },
-        res
+        res,
     ) => {
         const { id: threadId } = req.body;
 
@@ -29,7 +29,7 @@ router.post(
 
         const thread = (await threadCl.findOne(
             { id: threadId },
-            { projection: { _id: 0, op: 1 } }
+            { projection: { _id: 0, op: 1 } },
         )) as Thread;
 
         if (!thread) return res.status(404).json({ error: "Thread not found." });
@@ -46,7 +46,7 @@ router.post(
         return res.json({
             response: "Comment unpinned.",
         });
-    }
+    },
 );
 
 export default router;

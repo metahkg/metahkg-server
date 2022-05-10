@@ -24,7 +24,7 @@ router.get("/api/menu/:category", async (req, res) => {
             sort: Type.Union([Type.Literal(0), Type.Literal(1)]),
             page: Type.Integer({ minimum: 1 }),
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
 
     if (!ajv.validate(schema, { category: category, page: page, sort: sort }))
@@ -36,7 +36,7 @@ router.get("/api/menu/:category", async (req, res) => {
             {
                 id: Number(req.params.category.replace("bytid", "")),
             },
-            { projection: { _id: 0, category: 1 } }
+            { projection: { _id: 0, category: 1 } },
         )) as Thread;
         if (!thread || !thread.category)
             return res.status(404).send({ error: "Not found." });
@@ -50,7 +50,7 @@ router.get("/api/menu/:category", async (req, res) => {
     if (!(await categoryCl.findOne({ id: category })))
         return res.status(404).send({ error: "Not found." });
 
-    let find =
+    const find =
         category === 1 ? { category: { $nin: hiddencats } } : { category: category };
 
     const data = sort
@@ -71,7 +71,7 @@ router.get("/api/menu/:category", async (req, res) => {
         for (let index = 0; index < data.length; index++) {
             data[index] = (await threadCl.findOne(
                 { id: data[index].id },
-                { projection: { _id: 0, conversation: 0 } }
+                { projection: { _id: 0, conversation: 0 } },
             )) as Thread;
         }
     }

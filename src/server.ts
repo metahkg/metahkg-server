@@ -3,7 +3,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 import { autodecrement } from "./router/menu/autodecrement";
 import router from "./router";
-import changecode from "./router/users/changecode";
+import updateVerificationCode from "./router/users/updateVerificationCode";
 import { client } from "./common";
 import { setup } from "./mongo/setupmongo";
 import morgan from "morgan";
@@ -16,7 +16,7 @@ const app = express();
 setInterval(() => {
     setTimeout(autodecrement, 7200 * 1000);
 }, 7200 * 1000);
-setInterval(changecode, 3600 * 1000);
+setInterval(updateVerificationCode, 3600 * 1000);
 app.disable("x-powered-by");
 /**
  * Get client ip from cloudflare
@@ -24,15 +24,11 @@ app.disable("x-powered-by");
 app.set("trust proxy", true);
 /**
  * Set content security policy
- * sa.wcyat.engineer, analytics.wcyat.me,
- static.cloudflareinsights.com: analytics
- * cdnjs.cloudflare.com: deliver axios
- for usage in the browser console
- */
+*/
 app.use(function (req, res, next) {
     res.setHeader(
         "Content-Security-Policy",
-        "script-src 'self' https://www.gstatic.com/recaptcha/ https://www.google.com/recaptcha/ https://sa.metahkg.org https://static.cloudflareinsights.com https://cdnjs.cloudflare.com"
+        "script-src 'self' https://www.gstatic.com/recaptcha/ https://www.google.com/recaptcha/ https://sa.metahkg.org https://static.cloudflareinsights.com https://cdnjs.cloudflare.com",
     );
     return next();
 });

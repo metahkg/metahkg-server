@@ -1,7 +1,7 @@
 import { generate } from "wcyat-rg";
 import { timediff, verificationCl } from "../../common";
 
-export default async function changecode() {
+export default async function updateVerificationCode() {
     await verificationCl.find().forEach((item) => {
         (async () => {
             if (timediff(item.lastModified || item.createdAt) > 86400) {
@@ -22,7 +22,7 @@ export default async function changecode() {
                         $currentDate: {
                             lastModified: true,
                         },
-                    }
+                    },
                 );
             }
         })();

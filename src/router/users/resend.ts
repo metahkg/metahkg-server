@@ -11,7 +11,7 @@ const router = Router();
 router.post("/api/users/resend", bodyParser.json(), async (req, res) => {
     const schema = Type.Object(
         { email: Type.String({ format: "email" }), rtoken: Type.String() },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
     if (!ajv.validate(schema, req.body))
         return res.status(400).send({ error: "Bad request." });
@@ -34,7 +34,7 @@ router.post("/api/users/resend", bodyParser.json(), async (req, res) => {
         subject: "Metahkg - verify your email",
         text: `Verify your email with the following link:
 https://${domain}/users/verify?code=${encodeURIComponent(
-            verificationUserData.code
+            verificationUserData.code,
         )}&email=${encodeURIComponent(req.body.email)}
 
 Alternatively, use this code at https://${domain}/verify :

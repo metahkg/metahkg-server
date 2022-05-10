@@ -1,16 +1,24 @@
 import express from "express";
 import register from "./users/register";
-import signin from "./users/signin";
+import signIn from "./users/signin";
+import status from "./users/status";
 import verify from "./users/verify";
 import resend from "./users/resend";
-import editprofile from "./users/editprofile";
+import editProfile from "./users/editprofile";
 import avatar from "./users/avatar";
+import block from "./users/block";
+import unblock from "./users/unblock";
 
 const router = express.Router();
+
 router.use(register);
-router.use(signin);
+router.use(signIn);
 router.use(verify);
 router.use(resend);
-router.use(editprofile);
+router.use(editProfile);
 router.use(avatar);
+router.use(block);
+router.use(unblock);
+router.use(status);
+
 export default router;
