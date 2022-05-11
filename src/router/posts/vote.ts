@@ -14,7 +14,7 @@ const schema = Type.Object(
         cid: Type.Integer({ minimum: 1 }),
         vote: Type.Union([Type.Literal("U"), Type.Literal("D")]),
     },
-    { additionalProperties: false },
+    { additionalProperties: false }
 );
 
 router.post(
@@ -22,7 +22,7 @@ router.post(
     body_parser.json(),
     async (
         req: { body: Static<typeof schema>; headers: { authorization?: string } },
-        res,
+        res
     ) => {
         if (!ajv.validate(schema, req.body))
             return res.status(400).send({ error: "Bad request." });
@@ -50,7 +50,7 @@ router.post(
                         },
                     },
                 },
-            },
+            }
         )) as Thread;
 
         if (!thread) return res.status(404).send({ error: "Thread not found." });
@@ -66,30 +66,30 @@ router.post(
 
         await votesCl.updateOne(
             { id: user.id },
-            { $set: { [`${req.body.id}.${req.body.cid}`]: req.body.vote } },
+            { $set: { [`${req.body.id}.${req.body.cid}`]: req.body.vote } }
         );
 
         if (!thread.conversation[0]?.[req.body.vote]) {
             await threadCl.updateOne(
                 { id: req.body.id },
-                { $set: { [`conversation.${index}.${req.body.vote}`]: 0 } },
+                { $set: { [`conversation.${index}.${req.body.vote}`]: 0 } }
             );
         }
 
         await threadCl.updateOne(
             { id: req.body.id },
-            { $inc: { [`conversation.${index}.${req.body.vote}`]: 1 } },
+            { $inc: { [`conversation.${index}.${req.body.vote}`]: 1 } }
         );
 
         if (req.body.cid === 1) {
             await threadCl.updateOne(
                 { id: req.body.id },
-                { $inc: { vote: req.body.vote === "U" ? 1 : -1 } },
+                { $inc: { vote: req.body.vote === "U" ? 1 : -1 } }
             );
         }
 
         res.send({ response: "ok" });
-    },
+    }
 );
 
 export default router;

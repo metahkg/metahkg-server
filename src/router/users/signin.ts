@@ -24,7 +24,7 @@ const schema = Type.Object(
         // check if password is a sha256 hash
         pwd: Type.RegEx(/^[a-f0-9]{64}$/i),
     },
-    { additionalProperties: false },
+    { additionalProperties: false }
 );
 
 router.post(
@@ -63,6 +63,6 @@ router.post(
             name: user.name,
             token: createToken(user.id, user.name, user.sex, user.role),
         });
-    },
+    }
 );
 export default router;

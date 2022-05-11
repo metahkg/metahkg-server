@@ -25,7 +25,7 @@ router.get("/api/posts/thread/:id/replies/:cid", async (req, res) => {
     if (!targetComment) return res.status(404).send({ error: "Not found." });
 
     const replies = thread.conversation.filter((comment) =>
-        targetComment.replies?.includes(comment.id),
+        targetComment.replies?.includes(comment.id)
     );
 
     res.send(replies);

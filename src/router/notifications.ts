@@ -46,7 +46,7 @@ router.get("/api/notifications", async (req, res) => {
                     },
                 },
             },
-        },
+        }
     );
     res.send(notifications);
 });

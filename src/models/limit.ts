@@ -6,6 +6,6 @@ export default class Limit {
         public type: limitType,
         public id?: number,
         public email?: string,
-        public _id?: ObjectId,
+        public _id?: ObjectId
     ) {}
 }

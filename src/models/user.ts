@@ -10,6 +10,6 @@ export default class User {
         public sex: userSex,
         public role: userRole,
         public _id?: ObjectId,
-        public blocked?: number[],
+        public blocked?: number[]
     ) {}
 }
