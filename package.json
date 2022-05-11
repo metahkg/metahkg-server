@@ -68,6 +68,7 @@
     "start:api": "yarn run start",
     "lint": "eslint --fix src && prettier --write src",
     "build": "npx tsc",
+    "test": "exit 0",
     "deploy": "yarn run build && yarn run start",
     "dev": "nodemon ./src/server.ts"
   },
