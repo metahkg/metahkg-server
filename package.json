@@ -1,13 +1,12 @@
 {
   "name": "metahkg-server",
-  "version": "0.5.10",
+  "version": "0.6.0",
   "author": "wcyat",
   "homepage": "https://metahkg.org",
   "repository": "https://github.com/metahkg/metahkg-server",
   "license": "AGPL-3.0-or-later",
   "keywords": [
-    "forum",
-    "react"
+    "forum"
   ],
   "dependencies": {
     "@sinclair/typebox": "^0.23.4",
@@ -27,7 +26,6 @@
     "is-sn-integer": "^0.3.0",
     "jsdom": "^19.0.0",
     "jsonwebtoken": "^8.5.1",
-    "jwt-decode": "^3.1.2",
     "mailgun-js": "^0.22.0",
     "mongodb": "^4.5.0",
     "morgan": "^1.10.0",
@@ -54,6 +52,11 @@
     "@types/sanitize-html": "^2.6.2",
     "@types/sharp": "^0.30.2",
     "@types/valid-url": "^1.0.3",
+    "@typescript-eslint/eslint-plugin": "^5.23.0",
+    "@typescript-eslint/parser": "^5.23.0",
+    "eslint": "^8.15.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-prettier": "^4.0.0",
     "nodemon": "^2.0.15",
     "prettier": "^2.6.2",
     "system-commands": "^1.1.7",
@@ -63,15 +66,10 @@
   "scripts": {
     "start": "node start.js && node dist/server.js",
     "start:api": "yarn run start",
+    "lint": "eslint --fix src && prettier --write src",
     "build": "npx tsc",
     "deploy": "yarn run build && yarn run start",
     "dev": "nodemon ./src/server.ts"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
   },
   "browserslist": {
     "production": [

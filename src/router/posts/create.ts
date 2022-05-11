@@ -38,7 +38,7 @@ const schema = Type.Object(
         title: Type.String(),
         category: Type.Integer(),
     },
-    { additionalProperties: false }
+    { additionalProperties: false },
 );
 
 router.post(
@@ -46,7 +46,7 @@ router.post(
     body_parser.json(),
     async (
         req: { body: Static<typeof schema>; headers: { authorization?: string } },
-        res
+        res,
     ) => {
         if (!ajv.validate(schema, req.body))
             return res.status(400).send({ error: "Bad request." });
@@ -151,6 +151,6 @@ router.post(
         } as Limit);
 
         res.send({ id: newThreadId });
-    }
+    },
 );
 export default router;

@@ -28,7 +28,7 @@ const schema = Type.Object(
         rtoken: Type.String(),
         quote: Type.Optional(Type.Integer({ minimum: 1 })),
     },
-    { additionalProperties: false }
+    { additionalProperties: false },
 );
 
 /** add a comment
@@ -40,7 +40,7 @@ router.post(
     body_parser.json(),
     async (
         req: { body: Static<typeof schema>; headers: { authorization?: string } },
-        res
+        res,
     ) => {
         const { id, rtoken, quote } = req.body;
 
@@ -60,7 +60,7 @@ router.post(
             ((await threadCl.findOne({ id: req.body.id })) as Thread)?.c + 1;
         await threadCl.updateOne(
             { id: req.body.id },
-            { $inc: { c: 1 }, $currentDate: { lastModified: true } }
+            { $inc: { c: 1 }, $currentDate: { lastModified: true } },
         );
         let slinkId = generate({
             include: { numbers: true, lower: true, upper: true, special: false },
@@ -103,16 +103,16 @@ router.post(
                             createdAt: new Date(),
                             slink: `https://${LINKS_DOMAIN}/${slinkId}`,
                         },
-                        quotedComment && { quote: quotedComment }
+                        quotedComment && { quote: quotedComment },
                     ),
                 },
                 $currentDate: { lastModified: true },
-            }
+            },
         );
         quotedComment &&
             (await threadCl.updateOne(
                 { id: id },
-                { $push: { [`conversation.${quoteIndex}.replies`]: newCommentId } }
+                { $push: { [`conversation.${quoteIndex}.replies`]: newCommentId } },
             ));
 
         const imagesInComment = findimages(comment);
@@ -130,7 +130,7 @@ router.post(
 
             await imagesCl.updateOne(
                 { id: req.body.id },
-                { $set: { images: imagesData } as Images }
+                { $set: { images: imagesData } as Images },
             );
         }
         const viralData = await viralCl.findOne({ id: req.body.id });
@@ -143,14 +143,14 @@ router.post(
                         timediff(viralData.createdAt) > 86400
                             ? { lastModified: true, createdAt: true }
                             : { lastModified: true },
-                }
+                },
             );
         } else {
             const thread = (await threadCl.findOne(
                 {
                     id: req.body.id,
                 },
-                { projection: { _id: 0, conversation: 0 } }
+                { projection: { _id: 0, conversation: 0 } },
             )) as Thread;
             await viralCl.insertOne({
                 lastModified: new Date(),
@@ -161,6 +161,6 @@ router.post(
             });
         }
         res.send({ id: newCommentId });
-    }
+    },
 );
 export default router;

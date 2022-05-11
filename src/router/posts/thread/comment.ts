@@ -32,7 +32,7 @@ router.get("/api/posts/thread/:id/comment/:cid", async (req, res) => {
                     },
                 },
             },
-        }
+        },
     )) as Thread;
 
     const comment = thread?.conversation?.[0];

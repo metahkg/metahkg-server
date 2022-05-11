@@ -13,7 +13,7 @@ router.get("/api/profile/:id", async (req, res) => {
     if (
         !ajv.validate(
             Type.Union([Type.Integer({ minimum: 1 }), Type.Literal("self")]),
-            id
+            id,
         )
     )
         return res.status(400).send({ error: "Bad request." });
@@ -35,7 +35,7 @@ router.get("/api/profile/:id", async (req, res) => {
                       role: 1,
                       _id: 0,
                   },
-        }
+        },
     )) as User;
 
     if (!requestedUser) return res.status(400).send({ error: "User not found" });
@@ -47,7 +47,7 @@ router.get("/api/profile/:id", async (req, res) => {
             "op.id": requestedUser.id,
         });
 
-    res.send(Object.assign(requestedUser, { count }));
+    res.send({ ...requestedUser, count });
 });
 
 export default router;

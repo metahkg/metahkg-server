@@ -1,8 +1,10 @@
 import sanitizeHtml from "sanitize-html";
 import { JSDOM } from "jsdom";
 import createDOMPurify from "dompurify";
-const jsdomwindow: any = new JSDOM("").window;
-const DOMPurify = createDOMPurify(jsdomwindow);
+import { parse, TextNode } from "node-html-parser";
+
+const domWindow: any = new JSDOM("").window;
+const DOMPurify = createDOMPurify(domWindow);
 export default function sanitize(html: string) {
     html = DOMPurify.sanitize(html);
     const clean = sanitizeHtml(html, {
@@ -71,11 +73,11 @@ export default function sanitize(html: string) {
                     attribs.target = "_blank";
                     attribs.rel = "noreferrer";
                 }
-                return { tagName: tagName, attribs: attribs };
+                return { tagName, attribs };
             },
-            img: transfromImage,
-            i: transfromImage,
-            video: transfromImage,
+            img: transformImage,
+            i: transformImage,
+            video: transformImage,
         },
         allowedStyles: {
             span: {
@@ -126,11 +128,11 @@ export default function sanitize(html: string) {
                 ],
                 "font-style": [/^(normal|italic|oblique)$/],
                 "text-transform": [/^(none|capitalize|uppercase|lowercase)$/],
-                "letter-spacing": [/^[\d\.]+$/],
-                "word-spacing": [/^[\d\.]+$/],
-                "line-height": [/^[\d\.]+$/],
+                "letter-spacing": [/^[\d.]+$/],
+                "word-spacing": [/^[\d.]+$/],
+                "line-height": [/^[\d.]+$/],
                 "list-style-type": [
-                    /^(none|disc|circle|square|decimal|decimal-leading-zero|lower-roman|upper-roman|lower-greek|lower-latin|upper-latin|armenian|georgian|cjk-ideographic|hebrew|hiragana|hiragana-iroha|katakana|katakana-iroha|lower-alpha|upper-alpha|none|inherit)$/,
+                    /^(disc|circle|square|decimal|decimal-leading-zero|lower-roman|upper-roman|lower-greek|lower-latin|upper-latin|armenian|georgian|cjk-ideographic|hebrew|hiragana|hiragana-iroha|katakana|katakana-iroha|lower-alpha|upper-alpha|none|inherit)$/,
                 ],
                 "table-layout": [/^(auto|fixed)$/],
             },
@@ -140,12 +142,19 @@ export default function sanitize(html: string) {
             pre: [/^language-.+$/],
         },
     });
+    const parsed = parse(clean);
+    if (parsed.firstChild instanceof TextNode || parsed.lastChild instanceof TextNode) {
+        const marginTop = parsed.firstChild instanceof TextNode ? "15px" : "0px";
+        const marginBottom = parsed.lastChild instanceof TextNode ? "15px" : "0px";
+
+        return `<p style="margin-top: ${marginTop}; margin-bottom: ${marginBottom};">${parsed.toString()}</p>`;
+    }
     return clean;
 }
 
-function transfromImage(tagName: string, attribs: sanitizeHtml.Attributes) {
+function transformImage(tagName: string, attribs: sanitizeHtml.Attributes) {
     const height = Number(attribs.height);
     if (height > 400) attribs.height = "400";
     if (height > 400 || !height) attribs.width = "auto";
-    return { tagName: tagName, attribs: attribs };
+    return { tagName, attribs };
 }

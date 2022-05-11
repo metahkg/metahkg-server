@@ -3,7 +3,7 @@ services:
   service_backend_server:
     build:
       context: .
-      dockerfile: Dockerfile_dev
+      dockerfile: dev.Dockerfile
     ports:
       - '3008:3009'
     restart: on-failure

@@ -15,7 +15,7 @@ const mongouri = process.env.DB_URI;
                 { id: i.id },
                 {
                     $set: { slink: (await conversation.findOne({ _id: i._id })).slink },
-                }
+                },
             );
             await conversation.replaceOne(
                 { _id: i._id },
@@ -24,7 +24,7 @@ const mongouri = process.env.DB_URI;
                     lastModified: i.lastModified,
                     _id: i._id,
                     id: i.id,
-                }
+                },
             );
         })().then(() => {
             exit(0);

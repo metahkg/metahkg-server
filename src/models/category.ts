@@ -5,6 +5,6 @@ export default class Category {
         public id: number,
         public name: string,
         public hidden?: boolean,
-        public _id?: ObjectId
+        public _id?: ObjectId,
     ) {}
 }

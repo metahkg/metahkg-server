@@ -9,7 +9,6 @@ import dotenv from "dotenv";
 import express from "express";
 import body_parser from "body-parser";
 import { usersCl, verificationCl } from "../../common";
-import { userRole } from "../../types/user";
 import hash from "hash.js";
 import { Static, Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
@@ -24,7 +23,7 @@ const schema = Type.Object(
         email: Type.String({ format: "email" }),
         code: Type.String(),
     },
-    { additionalProperties: false }
+    { additionalProperties: false },
 );
 
 router.post(
@@ -70,7 +69,7 @@ router.post(
             token: token,
         });
         await verificationCl.deleteOne({ email: req.body.email });
-    }
+    },
 );
 
 export default router;

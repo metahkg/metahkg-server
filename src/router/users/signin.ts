@@ -1,4 +1,4 @@
-//Signin
+//Sign in
 /*Syntax: POST /api/signin
 {
   name (username OR email): string,
@@ -16,13 +16,15 @@ import { ajv } from "../../lib/ajv";
 import { createToken } from "../../lib/auth/createtoken";
 import User from "../../models/user";
 import hash from "hash.js";
+
 dotenv.config();
 const schema = Type.Object(
     {
-        name: Type.String(),
-        pwd: Type.String(),
+        name: Type.Union([Type.RegEx(/^\S{1,15}$/), Type.String({ format: "email" })]),
+        // check if password is a sha256 hash
+        pwd: Type.RegEx(/^[a-f0-9]{64}$/i),
     },
-    { additionalProperties: false }
+    { additionalProperties: false },
 );
 
 router.post(
@@ -50,7 +52,7 @@ router.post(
             if (verifyUser && (await bcrypt.compare(req.body.pwd, verifyUser.pwd)))
                 return res.send({ unverified: true });
 
-            return res.status(400).send({ error: "User not found." });
+            return res.status(404).send({ error: "User not found." });
         }
 
         const pwdMatch = await bcrypt.compare(req.body.pwd, user.pwd);
@@ -61,6 +63,6 @@ router.post(
             name: user.name,
             token: createToken(user.id, user.name, user.sex, user.role),
         });
-    }
+    },
 );
 export default router;

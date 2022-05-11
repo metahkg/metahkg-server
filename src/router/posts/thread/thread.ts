@@ -7,7 +7,7 @@
 import express from "express";
 
 const router = express.Router();
-import { threadCl, usersCl } from "../../../common";
+import { threadCl } from "../../../common";
 import { hiddencats } from "../../../lib/hiddencats";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../../lib/ajv";
@@ -33,7 +33,7 @@ router.get("/api/posts/thread/:id", async (req, res) => {
             start: Type.Optional(Type.Integer()),
             end: Type.Optional(Type.Integer()),
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
     if (
         !ajv.validate(schema, {
@@ -80,10 +80,17 @@ router.get("/api/posts/thread/:id", async (req, res) => {
                     },
                 },
             },
-        }
+        },
     )) as Thread;
 
     if (!thread) return res.status(404).send({ error: "Not Found" });
+
+    if (req.query.sort === "vote") {
+        thread.conversation = thread.conversation.sort(function (a, b) {
+            // use 0 if upvote or down vote is undefined
+            return (b.U || 0 - b.D || 0) - (a.U || 0 - a.D || 0);
+        });
+    }
 
     if (
         !verifyUser(req.headers.authorization) &&

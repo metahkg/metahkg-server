@@ -32,13 +32,14 @@ const router = Router();
 const schema = Type.Object(
     {
         name: Type.RegEx(/^\S{1,15}$/),
-        pwd: Type.String({ minLength: 8 }),
+        // check if password is a sha256 hash
+        pwd: Type.RegEx(/^[a-f0-9]{64}$/i),
         email: Type.String({ format: "email" }),
         rtoken: Type.String(),
         sex: Type.Union([Type.Literal("M"), Type.Literal("F")]),
         invitecode: Type.Optional(Type.String()),
     },
-    { additionalProperties: false }
+    { additionalProperties: false },
 );
 
 router.post(
@@ -90,7 +91,7 @@ router.post(
             subject: "Metahkg - verify your email",
             text: `Verify your email with the following link:
 https://${domain}/users/verify?code=${encodeURIComponent(
-                code
+                code,
             )}&email=${encodeURIComponent(req.body.email)}
 
 Alternatively, use this code at https://${domain}/users/verify :
@@ -111,6 +112,6 @@ ${code}`,
             type: "register",
         });
         res.send({ response: "ok" });
-    }
+    },
 );
 export default router;

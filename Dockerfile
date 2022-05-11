@@ -1,4 +1,4 @@
-FROM node:latest AS build
+FROM node:18 AS build
 
 WORKDIR /usr/src/app
 
@@ -14,7 +14,7 @@ COPY . ./
 
 RUN if [ "${env}" = "dev" ]; then mkdir -p dist; else yarn build; fi;
 
-FROM node:latest
+FROM node:18
 
 WORKDIR /usr/src/app
 
@@ -22,7 +22,7 @@ COPY ./package.json .
 COPY ./yarn.lock .
 COPY ./tsconfig.json ./
 COPY ./start.js .
-ADD ./static ./static
+COPY ./static ./static
 COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/node_modules ./node_modules
 

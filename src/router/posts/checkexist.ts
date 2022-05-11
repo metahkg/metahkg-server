@@ -14,7 +14,7 @@ router.post("/api/posts/check", body_parser.json(), async (req, res) => {
         {
             id: Type.Integer(),
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
     if (!ajv.validate(schema, req.body))
         return res.status(400).send({ error: "Bad request." });

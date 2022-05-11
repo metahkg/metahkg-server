@@ -50,11 +50,11 @@ async function avatars() {
                     .get(item.avatar, { responseType: "stream" })
                     .then(async (res) => {
                         res.data.pipe(
-                            fs.createWriteStream(`images/avatars/${item.id}.png`)
+                            fs.createWriteStream(`images/avatars/${item.id}.png`),
                         );
                         await users.updateOne(
                             { _id: item._id },
-                            { $unset: { avatar: true } }
+                            { $unset: { avatar: true } },
                         );
                     });
             }
