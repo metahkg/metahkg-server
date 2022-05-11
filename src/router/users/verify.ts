@@ -23,7 +23,7 @@ const schema = Type.Object(
         email: Type.String({ format: "email" }),
         code: Type.String(),
     },
-    { additionalProperties: false },
+    { additionalProperties: false }
 );
 
 router.post(
@@ -69,7 +69,7 @@ router.post(
             token: token,
         });
         await verificationCl.deleteOne({ email: req.body.email });
-    },
+    }
 );
 
 export default router;

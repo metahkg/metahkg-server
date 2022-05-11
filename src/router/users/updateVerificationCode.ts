@@ -22,7 +22,7 @@ export default async function updateVerificationCode() {
                         $currentDate: {
                             lastModified: true,
                         },
-                    },
+                    }
                 );
             }
         })();

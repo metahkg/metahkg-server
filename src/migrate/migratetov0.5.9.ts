@@ -15,7 +15,7 @@ async function rc1() {
                 {
                     $set: { role: user.admin ? "admin" : "user" },
                     $unset: { admin: 1, key: 1 },
-                },
+                }
             );
         }
     });
@@ -35,7 +35,7 @@ async function rc2() {
         if (item.user) {
             usersCl.updateOne(
                 { _id: item._id },
-                { $set: { name: item.user }, $unset: { user: 1 } },
+                { $set: { name: item.user }, $unset: { user: 1 } }
             );
         }
     });
@@ -58,10 +58,10 @@ async function rc2() {
                                         role: 1,
                                         sex: 1,
                                     },
-                                },
+                                }
                             ),
                         },
-                    },
+                    }
                 );
             }
             if (item.user || item.catname || item.sex) {
@@ -75,7 +75,7 @@ async function rc2() {
                             catname: 1,
                             sex: 1,
                         },
-                    },
+                    }
                 );
             }
         })();
@@ -99,7 +99,7 @@ async function slinks() {
         if (!item.slink.startsWith(`https://${LINKS_DOMAIN}`)) {
             summaryCl.updateOne(
                 { _id: item._id },
-                { $set: { slink: `https://${LINKS_DOMAIN}/${item.id}` } },
+                { $set: { slink: `https://${LINKS_DOMAIN}/${item.id}` } }
             );
         }
     });
@@ -138,11 +138,11 @@ async function slinks() {
                                 $set: {
                                     [`conversation.${index}.slink`]: `https://${LINKS_DOMAIN}/${slinkId}`,
                                 },
-                            },
+                            }
                         );
                     }
                 })();
-            },
+            }
         );
     });
 }
