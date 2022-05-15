@@ -15,7 +15,7 @@ router.post(
     "/api/users/unblock",
     async (
         req: { body: Static<typeof schema>; headers: { authorization?: string } },
-        res,
+        res
     ) => {
         const { userId } = req.body;
         const user = verifyUser(req.headers.authorization);
@@ -28,14 +28,14 @@ router.post(
                 (await usersCl.findOneAndUpdate(
                     { id: user.id },
                     [{ $pull: { blocked: userId } }],
-                    { returnDocument: "after" },
+                    { returnDocument: "after" }
                 )) as unknown as User
             )?.blocked;
             return res.send({ blocked, success: true });
         } catch {
             return res.status(500).json({ error: "Internal server error." });
         }
-    },
+    }
 );
 
 export default router;

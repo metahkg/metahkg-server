@@ -14,7 +14,7 @@ export default class Thread {
         public createdAt: Date,
         public slink: string,
         public images?: { image: string; cid: number }[],
-        public _id?: ObjectId,
+        public _id?: ObjectId
     ) {}
 }
 

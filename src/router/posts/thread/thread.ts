@@ -33,7 +33,7 @@ router.get("/api/posts/thread/:id", async (req, res) => {
             start: Type.Optional(Type.Integer()),
             end: Type.Optional(Type.Integer()),
         },
-        { additionalProperties: false },
+        { additionalProperties: false }
     );
     if (
         !ajv.validate(schema, {
@@ -80,7 +80,7 @@ router.get("/api/posts/thread/:id", async (req, res) => {
                     },
                 },
             },
-        },
+        }
     )) as Thread;
 
     if (!thread) return res.status(404).send({ error: "Not Found" });

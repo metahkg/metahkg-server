@@ -20,7 +20,7 @@ const mongouri = process.env.DB_URI;
             if (isInteger(i1[0]) && typeof i1[1].sex !== "boolean") {
                 users.updateOne(
                     { _id: i._id },
-                    { $set: { [`${i1[0]}.sex`]: i1[1].sex === "male" } },
+                    { $set: { [`${i1[0]}.sex`]: i1[1].sex === "male" } }
                 );
             }
         });
