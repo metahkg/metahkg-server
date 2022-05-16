@@ -13,7 +13,7 @@ async function main() {
         if (EmailValidator.validate(item.email)) {
             users.updateOne(
                 { _id: item._id },
-                { $set: { email: hash.sha256().update(item.email).digest("hex") } },
+                { $set: { email: hash.sha256().update(item.email).digest("hex") } }
             );
         }
     });

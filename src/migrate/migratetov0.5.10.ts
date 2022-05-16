@@ -24,10 +24,10 @@ async function rc1() {
                         {
                             $set: {
                                 [`conversation.${index}.comment`]: sanitize(
-                                    comment.comment,
+                                    comment.comment
                                 ),
                             },
-                        },
+                        }
                     ));
             })();
         });
@@ -90,10 +90,10 @@ async function rc2() {
                                                 role: 1,
                                                 sex: 1,
                                             },
-                                        },
+                                        }
                                     ),
                                 },
-                            },
+                            }
                         );
                     }
                     const parsed = parse(comment.comment);
@@ -102,7 +102,7 @@ async function rc2() {
                         parsed?.querySelector("blockquote div")?.innerHTML;
                     if (quote) {
                         const quotedComment = conversation.find(
-                            (i) => i.comment === quote,
+                            (i) => i.comment === quote
                         );
                         if (quotedComment) {
                             conversation[index].quote = quotedComment;
@@ -116,11 +116,11 @@ async function rc2() {
                                         [`conversation.${index}.quote`]: quotedComment,
                                         [`conversation.${index}.comment`]: parsed
                                             .removeChild(
-                                                parsed?.querySelector("blockquote"),
+                                                parsed?.querySelector("blockquote")
                                             )
                                             .toString(),
                                     },
-                                },
+                                }
                             );
                         }
                     }

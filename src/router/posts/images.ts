@@ -21,7 +21,7 @@ router.get("/api/posts/images/:id", async (req, res) => {
                     },
                 },
             },
-        },
+        }
     );
     res.send(result.images);
 });

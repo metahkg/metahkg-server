@@ -24,7 +24,7 @@ router.get("/api/search", async (req, res) => {
             page: Type.Integer({ minimum: 1 }),
             mode: Type.Integer({ minimum: 0, maximum: 1 }),
         },
-        { additionalProperties: false },
+        { additionalProperties: false }
     );
     if (
         !ajv.validate(schema, {

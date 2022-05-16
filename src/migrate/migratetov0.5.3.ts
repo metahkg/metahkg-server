@@ -47,7 +47,7 @@ async function updatesex() {
             if (isInteger(i1[0]) && typeof i1[1].sex === "boolean") {
                 threadusers.updateOne(
                     { _id: i._id },
-                    { $set: { [`${i1[0]}.sex`]: i1[1].sex ? "M" : "F" } },
+                    { $set: { [`${i1[0]}.sex`]: i1[1].sex ? "M" : "F" } }
                 );
             }
         });
