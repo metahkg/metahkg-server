@@ -1,4 +1,4 @@
-FROM node:18 AS build
+FROM node:18-alpine AS build
 
 WORKDIR /usr/src/app
 
@@ -14,7 +14,7 @@ COPY . ./
 
 RUN if [ "${env}" = "dev" ]; then mkdir -p dist; else yarn build; fi;
 
-FROM node:18
+FROM node:18-alpine
 
 WORKDIR /usr/src/app
 
