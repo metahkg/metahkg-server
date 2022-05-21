@@ -18,25 +18,35 @@ async function addText() {
     await client.connect();
     const db = client.db("metahkg");
     const threadCl = db.collection("thread");
-    await threadCl.find().forEach((item) => {
-        item.conversation.forEach((comment: commentType, index: number) => {
-            if (!comment.text) {
-                (async () => {
+    await Promise.all(
+        (
+            await threadCl.find().toArray()
+        ).map(async (item) => {
+            await Promise.all(
+                item.conversation.map(async (comment: commentType, index: number) => {
+                    let quote = comment.quote;
+
+                    while (quote) {
+                        if (!quote.text)
+                            quote.text = htmlToText(quote.comment, { wordwrap: false });
+                        quote = quote.quote;
+                    }
+
+                    if (!comment.text)
+                        comment.text = htmlToText(comment.comment, { wordwrap: false });
+
                     await threadCl.updateOne(
                         { _id: item._id },
                         {
                             $set: {
-                                [`conversation.${index}.text`]: htmlToText(
-                                    comment.comment,
-                                    { wordwrap: false }
-                                ),
+                                [`conversation.${index}`]: comment,
                             },
                         }
                     );
-                })();
-            }
-        });
-    });
+                })
+            );
+        })
+    );
 }
 
 addText().then(() => {});

@@ -46,6 +46,8 @@ export type commentType = {
     D?: number;
     /** replies */
     replies?: number[];
+    /** quote **/
+    quote?: commentType;
 };
 
 export type threadOpType = {
