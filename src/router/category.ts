@@ -16,7 +16,7 @@ router.get("/api/category/:id", body_parser.json(), async (req, res) => {
     const schema = Type.Union([
         Type.Integer({ minimum: 1 }),
         Type.Literal("all"),
-        Type.RegEx(/^bytid[0-9]*$/),
+        Type.RegEx(/^bytid\d*$/),
     ]);
 
     if (!ajv.validate(schema, id)) return res.status(400).send({ error: "Bad request." });
