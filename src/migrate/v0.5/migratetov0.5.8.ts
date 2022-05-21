@@ -1,5 +1,5 @@
 import { MongoClient } from "mongodb";
-import findimages from "../lib/findimages";
+import findimages from "../../lib/findimages";
 import axios from "axios";
 import fs from "fs";
 import dotenv from "dotenv";

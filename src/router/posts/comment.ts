@@ -1,6 +1,4 @@
 import express from "express";
-
-const router = express.Router();
 import body_parser from "body-parser";
 import {
     imagesCl,
@@ -12,7 +10,7 @@ import {
     threadCl,
 } from "../../common";
 import { verifyCaptcha } from "../../lib/recaptcha";
-import findimages from "../../lib/findimages";
+import findImages from "../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 import verifyUser from "../../lib/auth/verify";
@@ -20,6 +18,9 @@ import { generate } from "wcyat-rg";
 import sanitize from "../../lib/sanitize";
 import Images from "../../models/images";
 import Thread, { commentType } from "../../models/thread";
+import { htmlToText } from "html-to-text";
+
+const router = express.Router();
 
 const schema = Type.Object(
     {
@@ -52,9 +53,13 @@ router.post(
 
         const user = verifyUser(req.headers.authorization);
 
-        const comment = sanitize(req.body.comment);
-        if (!user || !((await threadCl.findOne({ id: req.body.id })) as Thread))
+        if (!user) return res.status(401).send({ error: "Unauthorized." });
+
+        if (!((await threadCl.findOne({ id: req.body.id })) as Thread))
             return res.status(404).send({ error: "Not found." });
+
+        const comment = sanitize(req.body.comment);
+        const text = htmlToText(comment, { wordwrap: false });
 
         const newCommentId =
             ((await threadCl.findOne({ id: req.body.id })) as Thread)?.c + 1;
@@ -79,6 +84,7 @@ router.post(
         });
 
         let quotedComment: commentType | undefined, quoteIndex: number;
+
         if (quote) {
             const thread = (await threadCl.findOne({ id: id })) as Thread;
             quoteIndex = thread?.conversation?.findIndex((i) => i.id === quote);
@@ -87,7 +93,7 @@ router.post(
         }
 
         await threadCl.updateOne(
-            { id: id },
+            { id },
             {
                 $push: {
                     conversation: Object.assign(
@@ -99,7 +105,8 @@ router.post(
                                 role: user.role,
                                 sex: user.sex,
                             },
-                            comment: comment,
+                            comment,
+                            text,
                             createdAt: new Date(),
                             slink: `https://${LINKS_DOMAIN}/${slinkId}`,
                         },
@@ -115,7 +122,7 @@ router.post(
                 { $push: { [`conversation.${quoteIndex}.replies`]: newCommentId } }
             ));
 
-        const imagesInComment = findimages(comment);
+        const imagesInComment = findImages(comment);
         if (imagesInComment.length) {
             const imagesData: { image: string; cid: number }[] = (
                 (await imagesCl.findOne({
@@ -160,6 +167,7 @@ router.post(
                 category: thread.category,
             });
         }
+
         res.send({ id: newCommentId });
     }
 );

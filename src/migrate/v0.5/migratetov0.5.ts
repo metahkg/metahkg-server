@@ -1,4 +1,4 @@
-import { objtoarr } from "../common";
+import { objtoarr } from "../../common";
 import { MongoClient } from "mongodb";
 import { exit } from "process";
 import dotenv from "dotenv";

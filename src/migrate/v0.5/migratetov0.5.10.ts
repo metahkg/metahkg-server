@@ -1,8 +1,8 @@
 import { MongoClient } from "mongodb";
 import dotenv from "dotenv";
 import { exit } from "process";
-import { commentType } from "../models/thread";
-import sanitize from "../lib/sanitize";
+import { commentType } from "../../models/thread";
+import sanitize from "../../lib/sanitize";
 import { parse } from "node-html-parser";
 dotenv.config();
 async function rc1() {

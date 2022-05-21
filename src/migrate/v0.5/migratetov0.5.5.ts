@@ -1,5 +1,5 @@
 import { MongoClient } from "mongodb";
-import { domain } from "../common";
+import { domain } from "../../common";
 import axios from "axios";
 import dotenv from "dotenv";
 dotenv.config();
