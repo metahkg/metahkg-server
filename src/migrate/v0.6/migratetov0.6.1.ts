@@ -26,10 +26,7 @@ async function addText() {
                 const text = htmlToText(item.pin.html, {
                     wordwrap: false,
                 });
-                await threadCl.updateOne(
-                    { id: item.id },
-                    { $set: { "pin.text": text } }
-                );
+                await threadCl.updateOne({ id: item.id }, { $set: { "pin.text": text } });
             }
             await Promise.all(
                 item.conversation.map(async (comment: commentType, index: number) => {
@@ -58,4 +55,6 @@ async function addText() {
     );
 }
 
-addText().then(() => {exit(0)});
+addText().then(() => {
+    exit(0);
+});
