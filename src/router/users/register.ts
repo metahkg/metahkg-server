@@ -26,6 +26,7 @@ import bcrypt from "bcrypt";
 import { generate } from "wcyat-rg";
 import { Static, Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
+import hash from "hash.js";
 
 const router = Router();
 
@@ -72,10 +73,16 @@ router.post(
 
         if (
             (await usersCl.findOne({
-                $or: [{ user: req.body.name }, { email: req.body.email }],
+                $or: [
+                    { user: req.body.name },
+                    { email: hash.sha256().update(req.body.email).digest("hex") },
+                ],
             })) ||
             (await verificationCl.findOne({
-                $or: [{ user: req.body.name }, { email: req.body.email }],
+                $or: [
+                    { user: req.body.name },
+                    { email: req.body.email },
+                ],
             }))
         )
             return res.status(409).send({ error: "Username or email exists." });
