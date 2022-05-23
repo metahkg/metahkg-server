@@ -74,13 +74,13 @@ router.post(
         if (
             (await usersCl.findOne({
                 $or: [
-                    { user: req.body.name },
+                    { name: req.body.name },
                     { email: hash.sha256().update(req.body.email).digest("hex") },
                 ],
             })) ||
             (await verificationCl.findOne({
                 $or: [
-                    { user: req.body.name },
+                    { name: req.body.name },
                     { email: req.body.email },
                 ],
             }))
