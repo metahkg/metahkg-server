@@ -23,7 +23,7 @@ async function addText() {
             await threadCl.find().toArray()
         ).map(async (item) => {
             if (item.pin && !item.pin.text) {
-                const text = htmlToText(item.pin.html, {
+                const text = htmlToText(item.pin.comment, {
                     wordwrap: false,
                 });
                 await threadCl.updateOne({ id: item.id }, { $set: { "pin.text": text } });
