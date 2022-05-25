@@ -8,6 +8,7 @@ import editProfile from "./users/editprofile";
 import avatar from "./users/avatar";
 import block from "./users/block";
 import unblock from "./users/unblock";
+import reset from "./users/reset";
 
 const router = express.Router();
 
@@ -20,5 +21,6 @@ router.use(avatar);
 router.use(block);
 router.use(unblock);
 router.use(status);
+router.use(reset);
 
 export default router;

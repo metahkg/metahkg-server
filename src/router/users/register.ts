@@ -79,10 +79,7 @@ router.post(
                 ],
             })) ||
             (await verificationCl.findOne({
-                $or: [
-                    { name: req.body.name },
-                    { email: req.body.email },
-                ],
+                $or: [{ name: req.body.name }, { email: req.body.email }],
             }))
         )
             return res.status(409).send({ error: "Username or email exists." });

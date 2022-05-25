@@ -9,7 +9,6 @@
 //only for human
 import express from "express";
 
-const router = express.Router();
 import body_parser from "body-parser";
 import {
     secret,
@@ -22,15 +21,18 @@ import {
     imagesCl,
 } from "../../common";
 import { verifyCaptcha } from "../../lib/recaptcha";
-import findimages from "../../lib/findimages";
+import findImages from "../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 import verifyUser from "../../lib/auth/verify";
 import { generate } from "wcyat-rg";
 import sanitize from "../../lib/sanitize";
 import Limit from "../../models/limit";
-import Images from "../../models/images";
 import Thread from "../../models/thread";
+import { htmlToText } from "html-to-text";
+
+const router = express.Router();
+
 const schema = Type.Object(
     {
         comment: Type.String(),
@@ -52,6 +54,7 @@ router.post(
             return res.status(400).send({ error: "Bad request." });
 
         const comment = sanitize(req.body.comment);
+        const text = htmlToText(comment, { wordwrap: false });
 
         if (!(await verifyCaptcha(secret, req.body.rtoken)))
             return res.status(400).send({ error: "recaptcha token invalid." });
@@ -96,28 +99,26 @@ router.post(
             url: `/thread/${newThreadId}?c=1`,
         });
 
+        const userData = {
+            id: user.id,
+            name: user.name,
+            role: user.role,
+            sex: user.sex,
+        };
+
         const threadData: Thread = {
             id: newThreadId,
             conversation: [
                 {
                     id: 1,
-                    user: {
-                        id: user.id,
-                        name: user.name,
-                        role: user.role,
-                        sex: user.sex,
-                    },
+                    user: userData,
                     slink: `https://${LINKS_DOMAIN}/${commentSlinkId}`,
-                    comment: comment,
+                    comment,
+                    text,
                     createdAt: date,
                 },
             ],
-            op: {
-                id: user.id,
-                name: user.name,
-                sex: user.sex,
-                role: user.role,
-            },
+            op: userData,
             c: 1,
             vote: 0,
             slink: `https://${LINKS_DOMAIN}/${newThreadId}`,
@@ -131,7 +132,7 @@ router.post(
 
         await imagesCl.insertOne({
             id: newThreadId,
-            images: findimages(comment).map((item) => {
+            images: findImages(comment).map((item) => {
                 return { image: item, cid: 1 };
             }),
         });

@@ -8,6 +8,7 @@ import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 import verifyUser from "../../lib/auth/verify";
 import Thread from "../../models/thread";
+
 const router = express.Router();
 /**
  * sort:
@@ -20,7 +21,7 @@ router.get("/api/menu/:category", async (req, res) => {
     let category = Number(req.params.category) || req.params.category;
     const schema = Type.Object(
         {
-            category: Type.Union([Type.Integer(), Type.RegEx(/bytid[1-9][0-9]+/i)]),
+            category: Type.Union([Type.Integer(), Type.RegEx(/bytid\d+/i)]),
             sort: Type.Union([Type.Literal(0), Type.Literal(1)]),
             page: Type.Integer({ minimum: 1 }),
         },
@@ -67,14 +68,20 @@ router.get("/api/menu/:category", async (req, res) => {
               .limit(25)
               .project({ _id: 0, conversation: 0 })
               .toArray()) as Thread[]);
-    if (sort) {
-        for (let index = 0; index < data.length; index++) {
-            data[index] = (await threadCl.findOne(
-                { id: data[index].id },
-                { projection: { _id: 0, conversation: 0 } }
-            )) as Thread;
-        }
-    }
+
+    if (sort)
+        return res.send(
+            await Promise.all(
+                data.map(
+                    async (thread) =>
+                        (await threadCl.findOne(
+                            { id: thread.id },
+                            { projection: { _id: 0, conversation: 0 } }
+                        )) as Thread
+                )
+            )
+        );
+
     res.send(data);
 });
 export default router;

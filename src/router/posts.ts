@@ -1,6 +1,6 @@
 import express from "express";
 import threads from "./posts/thread";
-import addComment from "./posts/addComment";
+import addComment from "./posts/comment";
 import create from "./posts/create";
 import checkExist from "./posts/checkexist";
 import userVotes from "./posts/userVotes";

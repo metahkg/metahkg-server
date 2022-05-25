@@ -7,7 +7,6 @@
 */
 import dotenv from "dotenv";
 import express from "express";
-const router = express.Router();
 import body_parser from "body-parser";
 import { usersCl, verificationCl } from "../../common";
 import bcrypt from "bcrypt";
@@ -18,6 +17,8 @@ import User from "../../models/user";
 import hash from "hash.js";
 
 dotenv.config();
+const router = express.Router();
+
 const schema = Type.Object(
     {
         name: Type.Union([Type.RegEx(/^\S{1,15}$/), Type.String({ format: "email" })]),

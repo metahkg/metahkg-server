@@ -34,6 +34,8 @@ export type commentType = {
     user: publicUserType;
     /** html string */
     comment: string;
+    /** comment converted to text */
+    text: string;
     /** date string */
     createdAt: Date;
     /** shortened link */
@@ -44,6 +46,8 @@ export type commentType = {
     D?: number;
     /** replies */
     replies?: number[];
+    /** quote **/
+    quote?: commentType;
 };
 
 export type threadOpType = {

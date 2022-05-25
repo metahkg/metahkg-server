@@ -64,11 +64,9 @@ router.post(
         await usersCl.insertOne(newUser);
 
         res.send({
-            id: verificationData?.id,
-            name: verificationData?.name,
             token: token,
         });
-        await verificationCl.deleteOne({ email: req.body.email });
+        await verificationCl.deleteOne({ type: "register", email: req.body.email });
     }
 );
 
