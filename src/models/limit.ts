@@ -1,4 +1,4 @@
-import { limitType } from "db/limit";
+import { limitType } from "../types/db/limit";
 import { ObjectId } from "mongodb";
 
 export default class Limit {

@@ -1,4 +1,4 @@
-import { userRole, userSex } from "user";
+import { userRole, userSex } from "../user";
 
 export interface user {
     /** mongodb object id */
