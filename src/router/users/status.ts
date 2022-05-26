@@ -4,7 +4,7 @@ import verifyUser from "../../lib/auth/verify";
 
 const router = Router();
 router.get("/api/users/status", async (req, res) => {
-    if (!req.cookies.key) return res.send({ signedIn: false });
+    if (!req.headers.authorization) return res.send({ signedIn: false });
     const user = verifyUser(req.headers.authorization);
     if (!user) return res.send({ signedIn: false });
     res.send({
