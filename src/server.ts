@@ -9,6 +9,8 @@ import Fastify from "fastify";
 import refreshToken from "./lib/auth/refreshToken";
 import fastify_express from "@fastify/express";
 import updateToken from "./lib/auth/updateToken";
+import multipart from "@fastify/multipart";
+import expressRoutes from "./router/expressRoutes";
 
 dotenv.config();
 
@@ -39,6 +41,7 @@ async function build() {
     });
 
     process.env.cors && fastify.register(cors);
+    fastify.register(multipart);
 
     fastify.register(updateToken);
     fastify.register(refreshToken);
@@ -55,6 +58,7 @@ async function build() {
      */
 
     fastify.register(router, { prefix: "/api" });
+    fastify.use(expressRoutes);
 
     fastify.listen({ port: Number(process.env.port) || 3200, host: "0.0.0.0" }, (err) => {
         if (err) console.log(err);

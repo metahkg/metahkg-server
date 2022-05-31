@@ -4,7 +4,6 @@ import status from "./users/status";
 import verify from "./users/verify";
 import resend from "./users/resend";
 import editProfile from "./users/editprofile";
-import avatar from "./users/avatar";
 import block from "./users/block";
 import unblock from "./users/unblock";
 import reset from "./users/reset";
@@ -20,7 +19,6 @@ export default (
     router.register(verify);
     router.register(resend);
     router.register(editProfile);
-    router.register(avatar);
     router.register(block);
     router.register(unblock);
     router.register(status);
