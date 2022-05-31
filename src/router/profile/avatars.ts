@@ -7,19 +7,21 @@ export default function (
     opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) {
-    fastify.get("/:id", async (req: FastifyRequest<{ Params: { id: string } }>, res) => {
-        if (!isInteger(req.params.id))
-            return res.status(400).send({ error: "Bad request." });
+    fastify.get(
+        "/avatars/:id",
+        async (req: FastifyRequest<{ Params: { id: string } }>, res) => {
+            if (!isInteger(req.params.id))
+                return res.status(400).send({ error: "Bad request." });
 
-        const filename = `images/avatars/${req.params.id}.png`;
-        res.header("Content-Type", "image/png");
-        fs.stat(filename, (err) => {
-            if (!err) res.send(fs.readFileSync(`${process.env.root}/${filename}`));
-            else
-                res.send(
-                    fs.readFileSync(`${process.env.root}/static/images/noavatar.png`)
-                );
-        });
-    });
+            const filename = `images/avatars/${req.params.id}.png`;
+            fs.stat(filename, async (err) => {
+                const stream = await fs.createReadStream(`${process.env.root}/
+                    ${err ? "static/images/noavatar.png" : filename}
+                `);
+                res.header("Content-Type", "image/png");
+                res.type("image/png").send(stream);
+            });
+        }
+    );
     done();
 }
