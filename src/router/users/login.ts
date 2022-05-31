@@ -32,7 +32,7 @@ export default (
     fastify.post(
         "/login",
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            console.log("sign in")
+            console.log("sign in");
             const { name, pwd } = req.body;
             if (!ajv.validate(schema, req.body))
                 return res.status(400).send({ error: "Bad request." });

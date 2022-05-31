@@ -61,7 +61,8 @@ export default (
                 }
             )) as Thread;
 
-            if (!thread) return res.status(404).send({ error: "Thread or comment not found." });
+            if (!thread)
+                return res.status(404).send({ error: "Thread or comment not found." });
 
             const index = cid - 1;
             const userVotes = await votesCl.findOne({ id: user.id });

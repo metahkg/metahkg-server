@@ -76,11 +76,9 @@ export default (
             if (
                 (await limitCl.countDocuments({ type: "reset", email: hashedEmail })) >= 2
             )
-                return res
-                    .status(429)
-                    .send({
-                        error: "You can only request reset password 2 times a day.",
-                    });
+                return res.status(429).send({
+                    error: "You can only request reset password 2 times a day.",
+                });
 
             const verificationCode = generate({
                 include: { numbers: true, upper: true, lower: true, special: false },

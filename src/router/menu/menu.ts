@@ -65,9 +65,7 @@ export default (
                 return res.status(404).send({ error: "Not found." });
 
             const find =
-                category === 1
-                    ? { category: { $nin: hiddenCats } }
-                    : { category };
+                category === 1 ? { category: { $nin: hiddenCats } } : { category };
 
             const data = sort
                 ? await viralCl
