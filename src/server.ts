@@ -1,19 +1,22 @@
 import dotenv from "dotenv";
-import express from "express";
-import cookieParser from "cookie-parser";
-import { autodecrement } from "./router/menu/autodecrement";
+import { autodecrement } from "./lib/autodecrement";
 import router from "./router";
-import updateVerificationCode from "./router/users/updateVerificationCode";
-import { client, usersCl } from "./common";
+import updateVerificationCode from "./lib/updateVerificationCode";
+import { client } from "./common";
 import { setup } from "./mongo/setupmongo";
-import morgan from "morgan";
-import cors from "cors";
-import verifyUser from "./lib/auth/verify";
-import User from "./models/user";
-import { createToken } from "./lib/auth/createtoken";
+import cors from "@fastify/cors";
+import Fastify from "fastify";
+import refreshToken from "./lib/auth/refreshToken";
+import fastify_express from "@fastify/express";
+import updateToken from "./lib/auth/updateToken";
 
 dotenv.config();
-const app = express();
+
+const fastify = Fastify({
+    logger: true,
+    trustProxy: true,
+});
+
 /**
  * Decrease count by one in collection "viral" every 2 hours
  */
@@ -21,66 +24,40 @@ setInterval(() => {
     setTimeout(autodecrement, 7200 * 1000);
 }, 7200 * 1000);
 setInterval(updateVerificationCode, 3600 * 1000);
-app.disable("x-powered-by");
-/**
- * Get client ip from cloudflare
- */
-app.set("trust proxy", true);
-/**
- * Set content security policy
- */
-app.use(function (req, res, next) {
-    res.setHeader(
-        "Content-Security-Policy",
-        "script-src 'self' https://www.gstatic.com/recaptcha/ https://www.google.com/recaptcha/ https://sa.metahkg.org https://static.cloudflareinsights.com https://cdnjs.cloudflare.com"
-    );
-    return next();
-});
 
-process.env.cors && app.use(cors());
+async function build() {
+    await fastify.register(fastify_express);
+    /**
+     * Set content security policy
+     */
+    fastify.use((req, res, next) => {
+        res.setHeader(
+            "Content-Security-Policy",
+            "script-src 'self' https://www.gstatic.com/recaptcha/ https://www.google.com/recaptcha/ https://sa.metahkg.org https://static.cloudflareinsights.com https://cdnjs.cloudflare.com"
+        );
+        next();
+    });
 
-app.use(morgan("dev"));
+    process.env.cors && fastify.register(cors);
 
-app.use(cookieParser());
+    fastify.register(updateToken);
+    fastify.register(refreshToken);
 
-app.use(async (req, res, next) => {
-    const user = verifyUser(req.headers.authorization);
-
-    if (user) {
-        const userData = (await usersCl.findOne({ id: user.id })) as User;
-        if (userData.name !== user.name || userData.sex !== user.sex) {
-            const newToken = createToken(
-                userData.id,
-                userData.name,
-                userData.sex,
-                userData.role
-            );
-            req.headers.authorization = `Bearer ${newToken}`;
-            res.setHeader("token", newToken);
-        }
-    }
-
-    return next();
-});
-
-app.use(router);
-
-app.use(async (req, res, next) => {
-    if (req.path.startsWith("/api")) {
-        res.status(404);
-        res.send({ error: "Route not found." });
-        return;
-    }
-    return next();
-});
+    return fastify;
+}
 
 (async () => {
     await client.connect();
     await setup();
+    const fastify = await build();
     /**
      * The port can be modified in .env
      */
-    app.listen(Number(process.env.port) || 3200, () => {
+
+    fastify.register(router, { prefix: "/api" });
+
+    fastify.listen({ port: Number(process.env.port) || 3200, host: "0.0.0.0" }, (err) => {
+        if (err) console.log(err);
         console.log(`listening at port ${process.env.port || 3200}`);
     });
 })();

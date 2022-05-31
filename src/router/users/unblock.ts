@@ -4,38 +4,42 @@ import { ajv } from "../../lib/ajv";
 import verifyUser from "../../lib/auth/verify";
 import { usersCl } from "../../common";
 import User from "../../models/user";
+import {FastifyInstance, FastifyPluginOptions, FastifyRequest} from "fastify";
 
-const router = Router();
+export default (
+    fastify: FastifyInstance,
+    opts: FastifyPluginOptions,
+    done: (e?: Error) => void
+) => {
+    const schema = Type.Object({
+        userId: Type.Integer({ minimum: 1 }),
+    });
 
-const schema = Type.Object({
-    userId: Type.Integer({ minimum: 1 }),
-});
+    fastify.post(
+        "/api/users/unblock",
+        async (
+            req: FastifyRequest<{ Body: Static<typeof schema>; }>,
+            res
+        ) => {
+            const { userId } = req.body;
+            const user = verifyUser(req.headers.authorization);
 
-router.post(
-    "/api/users/unblock",
-    async (
-        req: { body: Static<typeof schema>; headers: { authorization?: string } },
-        res
-    ) => {
-        const { userId } = req.body;
-        const user = verifyUser(req.headers.authorization);
+            if (!ajv.validate(schema, req.body) || !user)
+                return res.status(400).send({ error: "Bad request." });
 
-        if (!ajv.validate(schema, req.body) || !user)
-            return res.status(400).json({ error: "Bad request." });
-
-        try {
-            const blocked = (
-                (await usersCl.findOneAndUpdate(
-                    { id: user.id },
-                    [{ $pull: { blocked: userId } }],
-                    { returnDocument: "after" }
-                )) as unknown as User
-            )?.blocked;
-            return res.send({ blocked, success: true });
-        } catch {
-            return res.status(500).json({ error: "Internal server error." });
+            try {
+                const blocked = (
+                    (await usersCl.findOneAndUpdate(
+                        { id: user.id },
+                        [{ $pull: { blocked: userId } }],
+                        { returnDocument: "after" }
+                    )) as unknown as User
+                )?.blocked;
+                return res.send({ blocked, success: true });
+            } catch {
+                return res.status(500).send({ error: "Internal server error." });
+            }
         }
-    }
-);
-
-export default router;
+    );
+    done();
+};

@@ -1,13 +1,13 @@
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import info from "./category/info";
-import categories from "./category/categories";
+import { categoryCl } from "../../common";
 
 export default function (
     fastify: FastifyInstance,
     opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) {
-    fastify.register(info);
-    fastify.register(categories);
+    fastify.get("/", async (req, res) => {
+        res.send(await categoryCl.find().project({ _id: 0 }).sort({ id: 1 }).toArray());
+    });
     done();
 }

@@ -97,3 +97,7 @@ node server/migrate/migratetov0.5.2.js
 ## v0.5.10rc1
 
 - sanitize html
+
+## v2.0.0
+
+- migrate to fastify, reorganize paths

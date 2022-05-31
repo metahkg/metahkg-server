@@ -1,4 +1,4 @@
-import { viralCl } from "../../common";
+import { viralCl } from "../common";
 /**
  * Decrease collection "viral" documents count by 1
  for sorting popularity

@@ -1,10 +1,9 @@
-import express from "express";
-import history from "./menu/history";
 import profile from "./profile/profile";
 import getavatars from "./profile/avatars";
+import {FastifyInstance, FastifyPluginOptions} from "fastify";
 
-const router = express.Router();
-router.use(history);
-router.use(profile);
-router.use(getavatars);
-export default router;
+export default function (fastify: FastifyInstance, opts: FastifyPluginOptions, done: (e?: Error) => void) {
+    fastify.register(profile);
+    fastify.register(getavatars);
+    done();
+}
