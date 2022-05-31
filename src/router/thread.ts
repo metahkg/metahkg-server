@@ -1,8 +1,8 @@
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
 import checkExist from "./thread/get/checkExist";
-import getComment from "./thread/get/comment";
+import getComment from "./thread/get/comment/comment";
 import images from "./thread/get/images";
-import replies from "./thread/get/replies";
+import replies from "./thread/get/comment/replies";
 import thread from "./thread/get/thread";
 import userVotes from "./thread/get/userVotes";
 import addComment from "./thread/actions/comment";

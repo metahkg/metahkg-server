@@ -1,7 +1,7 @@
-import Thread from "../../../models/thread";
-import { threadCl } from "../../../common";
+import Thread from "../../../../models/thread";
+import { threadCl } from "../../../../common";
 import { Type } from "@sinclair/typebox";
-import { ajv } from "../../../lib/ajv";
+import { ajv } from "../../../../lib/ajv";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 
 export default (
