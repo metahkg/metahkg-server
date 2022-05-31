@@ -4,7 +4,7 @@ import { ajv } from "../../lib/ajv";
 import verifyUser from "../../lib/auth/verify";
 import { usersCl } from "../../common";
 import User from "../../models/user";
-import {FastifyInstance, FastifyPluginOptions, FastifyRequest} from "fastify";
+import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 
 export default (
     fastify: FastifyInstance,
@@ -17,10 +17,7 @@ export default (
 
     fastify.post(
         "/api/users/unblock",
-        async (
-            req: FastifyRequest<{ Body: Static<typeof schema>; }>,
-            res
-        ) => {
+        async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const { userId } = req.body;
             const user = verifyUser(req.headers.authorization);
 

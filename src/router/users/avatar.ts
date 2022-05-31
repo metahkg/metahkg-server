@@ -48,7 +48,6 @@ export default (
         );
     }
 
-
     const router = Router();
     /**
      * Image is saved to uploads/ upon uploading

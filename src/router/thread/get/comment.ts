@@ -31,7 +31,7 @@ export default (
                         conversation: {
                             $elemMatch: {
                                 id: cid,
-                            }
+                            },
                         },
                     },
                 }
@@ -39,7 +39,8 @@ export default (
 
             const comment = thread?.conversation?.[0];
 
-            if (!comment) return res.status(404).send({ error: "Thread or comment not found." });
+            if (!comment)
+                return res.status(404).send({ error: "Thread or comment not found." });
 
             res.send(comment);
         }
