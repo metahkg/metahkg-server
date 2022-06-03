@@ -72,7 +72,7 @@ export default (
             await usersCl.insertOne(newUser);
 
             res.send({
-                token: token,
+                token,
             });
             await verificationCl.deleteOne({ type: "register", email: req.body.email });
         }

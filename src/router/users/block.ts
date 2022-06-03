@@ -1,10 +1,8 @@
 import { Static, Type } from "@sinclair/typebox";
-import { Router } from "express";
 import { ajv } from "../../lib/ajv";
 import verifyUser from "../../lib/auth/verify";
 import { usersCl } from "../../common";
 import User from "../../models/user";
-
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 
 export default (
@@ -33,7 +31,7 @@ export default (
                         { returnDocument: "after" }
                     )) as unknown as User
                 )?.blocked;
-                return res.send({ blocked, success: true });
+                return res.send({ blocked });
             } catch {
                 return res.status(500).send({ error: "Internal server error." });
             }
