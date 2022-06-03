@@ -35,7 +35,7 @@ async function build() {
     fastify.use((req, res, next) => {
         res.setHeader(
             "Content-Security-Policy",
-            "script-src 'self' https://www.gstatic.com/recaptcha/ https://www.google.com/recaptcha/ https://sa.metahkg.org https://static.cloudflareinsights.com https://cdnjs.cloudflare.com",
+            "script-src 'self' https://www.gstatic.com/recaptcha/ https://www.google.com/recaptcha/ https://sa.metahkg.org https://static.cloudflareinsights.com https://cdnjs.cloudflare.com"
         );
         next();
     });
