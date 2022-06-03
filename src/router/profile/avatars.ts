@@ -1,16 +1,19 @@
-import { Router } from "express";
 import isInteger from "is-sn-integer";
 import fs from "fs";
+import { Router } from "express";
 
 const router = Router();
-router.get("/api/avatars/:id", async (req, res) => {
+
+router.get("/api/profile/avatars/:id", async (req, res) => {
     if (!isInteger(req.params.id)) return res.status(400).send({ error: "Bad request." });
 
     const filename = `images/avatars/${req.params.id}.png`;
-    res.setHeader("Content-Type", "image/png");
     fs.stat(filename, (err) => {
-        if (!err) res.sendFile(`${process.env.root}/${filename}`);
-        else res.sendFile(`${process.env.root}/static/images/noavatar.png`);
+        const path = `${process.env.root}/${
+            err ? "static/images/noavatar.png" : filename
+        }`;
+        res.sendFile(path);
     });
 });
+
 export default router;

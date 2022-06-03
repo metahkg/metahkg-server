@@ -1,5 +1,5 @@
 import { generate } from "wcyat-rg";
-import { timediff, verificationCl } from "../../common";
+import { timediff, verificationCl } from "../common";
 
 export default async function updateVerificationCode() {
     await verificationCl.find().forEach((item) => {
