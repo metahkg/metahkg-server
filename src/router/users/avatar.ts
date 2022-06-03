@@ -20,7 +20,7 @@ async function compress(filename: string, id: number) {
     const r = width / 2;
     const circleShape = Buffer.from(
         //svg circle
-        `<svg><circle cx="${r}" cy="${r}" r="${r}" /></svg>`,
+        `<svg><circle cx="${r}" cy="${r}" r="${r}" /></svg>`
     );
     fs.rmSync(`images/avatars/${id}.png`);
     //use sharp to resize
@@ -38,7 +38,7 @@ async function compress(filename: string, id: number) {
     await move(
         `${process.env.root}/tmp/avatars/${id}.png`,
         `${process.env.root}/images/avatars/${id}.png`,
-        { overwrite: true },
+        { overwrite: true }
     );
 }
 
@@ -59,7 +59,7 @@ router.post("/api/users/avatar", upload.single("avatar"), async (req, res) => {
     if (
         //check if file type is not aupported
         !["jpg", "svg", "png", "jpeg", "jfif"].includes(
-            req.file?.originalname?.split(".")?.pop() || "",
+            req.file?.originalname?.split(".")?.pop() || ""
         )
     ) {
         //remove the file
@@ -84,7 +84,7 @@ router.post("/api/users/avatar", upload.single("avatar"), async (req, res) => {
     await move(
         `${process.env.root}/${req.file?.path}`,
         `${process.env.root}/images/processing/avatars/${newFileName}`,
-        { overwrite: true },
+        { overwrite: true }
     );
     try {
         //compress the file
