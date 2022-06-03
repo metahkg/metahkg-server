@@ -32,7 +32,7 @@ export default (
                         { returnDocument: "after" }
                     )) as unknown as User
                 )?.blocked;
-                return res.send({ blocked, success: true });
+                return res.send({ blocked });
             } catch {
                 return res.status(500).send({ error: "Internal server error." });
             }

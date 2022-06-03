@@ -56,8 +56,6 @@ export default (
             if (!pwdMatch) return res.status(401).send({ error: "Password incorrect." });
 
             res.send({
-                id: user.id,
-                name: user.name,
                 token: createToken(user.id, user.name, user.sex, user.role),
             });
         }

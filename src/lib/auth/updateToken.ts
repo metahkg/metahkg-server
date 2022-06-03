@@ -7,7 +7,7 @@ import { FastifyInstance, FastifyPluginOptions } from "fastify";
 export default function (
     fastify: FastifyInstance,
     opts: FastifyPluginOptions,
-    done: (e?: Error) => void,
+    done: (e?: Error) => void
 ) {
     fastify.use(async (req, res, next) => {
         const user = verifyUser(req.headers.authorization);
@@ -19,7 +19,7 @@ export default function (
                     userData.id,
                     userData.name,
                     userData.sex,
-                    userData.role,
+                    userData.role
                 );
                 req.headers.authorization = `Bearer ${newToken}`;
                 res.setHeader("token", newToken);

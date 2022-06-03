@@ -63,7 +63,7 @@ ${verificationUserData.code}`,
                 email,
                 createdAt: new Date(),
             } as Limit);
-            res.send({ success: true });
+            res.send({ response: "ok" });
         }
     );
     done();
