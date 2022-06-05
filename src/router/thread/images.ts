@@ -1,5 +1,5 @@
 import isInteger from "is-sn-integer";
-import { imagesCl } from "../../../common";
+import { imagesCl } from "../../common";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 
 export default (

@@ -1,6 +1,6 @@
-import { votesCl } from "../../../common";
+import { votesCl } from "../../common";
 import isInteger from "is-sn-integer";
-import verifyUser from "../../../lib/auth/verify";
+import verifyUser from "../../lib/auth/verify";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 
 export default (
