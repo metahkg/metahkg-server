@@ -72,7 +72,7 @@ export default (
                 newUser.sex,
                 newUser.role
             );
-            
+
             res.send({
                 token,
             });
