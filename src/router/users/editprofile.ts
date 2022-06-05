@@ -29,6 +29,12 @@ export default (
             const user = verifyUser(req.headers.authorization);
             if (!user) return res.status(404).send({ error: "User not found." });
 
+            if (
+                req.body.name !== user.name &&
+                (await usersCl.findOne({ name: req.body.name }))
+            )
+                return res.status(409).send({ error: "Name already taken." });
+
             await usersCl.updateOne({ id: user.id }, { $set: req.body });
 
             res.send({
