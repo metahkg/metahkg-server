@@ -1,8 +1,8 @@
 import { Static, Type } from "@sinclair/typebox";
-import { ajv } from "../../../lib/ajv";
-import { threadCl } from "../../../common";
-import verifyUser from "../../../lib/auth/verify";
-import Thread from "../../../models/thread";
+import { ajv } from "../../lib/ajv";
+import { threadCl } from "../../common";
+import verifyUser from "../../lib/auth/verify";
+import Thread from "../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 
 export default function (

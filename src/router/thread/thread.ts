@@ -4,12 +4,12 @@
  * conversation: main conversation content
  * users: content of users involved in the conversation
  */
-import { threadCl } from "../../../common";
-import { hiddencats } from "../../../lib/hiddencats";
+import { threadCl } from "../../common";
+import { hiddencats } from "../../lib/hiddencats";
 import { Type } from "@sinclair/typebox";
-import { ajv } from "../../../lib/ajv";
-import verifyUser from "../../../lib/auth/verify";
-import Thread from "../../../models/thread";
+import { ajv } from "../../lib/ajv";
+import verifyUser from "../../lib/auth/verify";
+import Thread from "../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 
 export default (
