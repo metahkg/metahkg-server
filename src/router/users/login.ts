@@ -47,7 +47,7 @@ export default (
                 });
 
                 if (verifyUser && (await bcrypt.compare(pwd, verifyUser.pwd)))
-                    return res.send({ unverified: true });
+                    return res.code(401).send({ error: "Please verify your email." });
 
                 return res.status(404).send({ error: "User not found." });
             }
