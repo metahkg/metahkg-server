@@ -1,7 +1,7 @@
-import Thread from "../../../../models/thread";
-import { threadCl } from "../../../../common";
 import { Type } from "@sinclair/typebox";
-import { ajv } from "../../../../lib/ajv";
+import { threadCl } from "../../../common";
+import { ajv } from "../../../lib/ajv";
+import Thread from "../../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 
 export default (
@@ -10,7 +10,7 @@ export default (
     done: (e?: Error) => void
 ) => {
     fastify.get(
-        "/:id/comment/:cid",
+        "/:id/comment/:cid/replies",
         async (req: FastifyRequest<{ Params: { id: string; cid: string } }>, res) => {
             const id = Number(req.params.id);
             const cid = Number(req.params.cid);
@@ -24,7 +24,10 @@ export default (
                 return res.status(400).send({ error: "Bad request." });
 
             const thread = (await threadCl.findOne(
-                { id, conversation: { $elemMatch: { id: cid } } },
+                {
+                    id,
+                    conversation: { $elemMatch: { id: cid } },
+                },
                 {
                     projection: {
                         _id: 0,
@@ -37,12 +40,28 @@ export default (
                 }
             )) as Thread;
 
-            const comment = thread?.conversation?.[0];
+            const targetComment = thread?.conversation?.[0];
 
-            if (!comment)
+            if (!targetComment)
                 return res.status(404).send({ error: "Thread or comment not found." });
 
-            res.send(comment);
+            const replies = (
+                await threadCl.findOne(
+                    { id },
+                    {
+                        projection: {
+                            _id: 0,
+                            conversation: {
+                                $elemMatch: {
+                                    id: { $in: targetComment.replies },
+                                },
+                            },
+                        },
+                    }
+                )
+            )?.conversation;
+
+            res.send(replies);
         }
     );
     done();

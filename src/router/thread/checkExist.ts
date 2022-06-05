@@ -1,9 +1,9 @@
 //check whether a thread exist
 //syntax: POST /api/check {id : number}
-import { threadCl } from "../../../common";
+import { threadCl } from "../../common";
 import { Type } from "@sinclair/typebox";
-import { ajv } from "../../../lib/ajv";
-import Thread from "../../../models/thread";
+import { ajv } from "../../lib/ajv";
+import Thread from "../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 
 export default (

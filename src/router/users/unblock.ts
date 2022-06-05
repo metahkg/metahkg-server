@@ -1,5 +1,4 @@
 import { Static, Type } from "@sinclair/typebox";
-import { Router } from "express";
 import { ajv } from "../../lib/ajv";
 import verifyUser from "../../lib/auth/verify";
 import { usersCl } from "../../common";

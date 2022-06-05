@@ -1,15 +1,15 @@
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import checkExist from "./thread/get/checkExist";
-import getComment from "./thread/get/comment/comment";
-import images from "./thread/get/images";
-import replies from "./thread/get/comment/replies";
-import thread from "./thread/get/thread";
-import userVotes from "./thread/get/userVotes";
-import addComment from "./thread/actions/comment";
-import create from "./thread/actions/create";
-import pin from "./thread/actions/pin";
-import unpin from "./thread/actions/unpin";
-import vote from "./thread/actions/vote";
+import checkExist from "./thread/checkExist";
+import getComment from "./thread/comment/getComment";
+import images from "./thread/images";
+import replies from "./thread/comment/replies";
+import thread from "./thread/thread";
+import userVotes from "./thread/userVotes";
+import addComment from "./thread/comment/addComment";
+import create from "./thread/create";
+import pin from "./thread/pin";
+import unpin from "./thread/unpin";
+import vote from "./thread/comment/vote";
 
 export default (
     fastify: FastifyInstance,

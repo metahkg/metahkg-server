@@ -16,16 +16,16 @@ import {
     linksCl,
     threadCl,
     imagesCl,
-} from "../../../common";
-import { verifyCaptcha } from "../../../lib/recaptcha";
-import findImages from "../../../lib/findimages";
+} from "../../common";
+import { verifyCaptcha } from "../../lib/recaptcha";
+import findImages from "../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
-import { ajv } from "../../../lib/ajv";
-import verifyUser from "../../../lib/auth/verify";
+import { ajv } from "../../lib/ajv";
+import verifyUser from "../../lib/auth/verify";
 import { generate } from "wcyat-rg";
-import sanitize from "../../../lib/sanitize";
-import Limit from "../../../models/limit";
-import Thread from "../../../models/thread";
+import sanitize from "../../lib/sanitize";
+import Limit from "../../models/limit";
+import Thread from "../../models/thread";
 import { htmlToText } from "html-to-text";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 

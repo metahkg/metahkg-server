@@ -63,18 +63,19 @@ export default (
                 sex: verificationData?.sex,
             };
 
+            await usersCl.insertOne(newUser);
+            await verificationCl.deleteOne({ type: "register", email: req.body.email });
+
             const token = createToken(
                 newUser.id,
                 newUser.name,
                 newUser.sex,
                 newUser.role
             );
-            await usersCl.insertOne(newUser);
-
+            
             res.send({
                 token,
             });
-            await verificationCl.deleteOne({ type: "register", email: req.body.email });
         }
     );
     done();

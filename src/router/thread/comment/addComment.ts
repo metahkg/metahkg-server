@@ -94,8 +94,8 @@ export default (
             let quotedComment: commentType | undefined, quoteIndex: number;
 
             if (quote) {
-                const thread = (await threadCl.findOne({ id: id })) as Thread;
-                quoteIndex = thread?.conversation?.findIndex((i) => i.id === quote);
+                const thread = (await threadCl.findOne({ id })) as Thread;
+                quoteIndex = thread?.conversation?.findIndex((i) => i?.id === quote);
                 quotedComment =
                     (quoteIndex !== -1 && thread.conversation[quoteIndex]) || undefined;
             }
@@ -104,22 +104,20 @@ export default (
                 { id },
                 {
                     $push: {
-                        conversation: Object.assign(
-                            {
-                                id: newCommentId,
-                                user: {
-                                    id: user.id,
-                                    name: user.name,
-                                    role: user.role,
-                                    sex: user.sex,
-                                },
-                                comment,
-                                text,
-                                createdAt: new Date(),
-                                slink: `https://${LINKS_DOMAIN}/${slinkId}`,
+                        conversation: {
+                            id: newCommentId,
+                            user: {
+                                id: user.id,
+                                name: user.name,
+                                role: user.role,
+                                sex: user.sex,
                             },
-                            quotedComment && { quote: quotedComment }
-                        ),
+                            comment,
+                            text,
+                            createdAt: new Date(),
+                            slink: `https://${LINKS_DOMAIN}/${slinkId}`,
+                            ...(quotedComment && { quote: quotedComment }),
+                        },
                     },
                     $currentDate: { lastModified: true },
                 }
@@ -172,10 +170,11 @@ export default (
                     },
                     { projection: { _id: 0, conversation: 0 } }
                 )) as Thread;
+
                 await viralCl.insertOne({
                     lastModified: new Date(),
                     createdAt: new Date(),
-                    id: thread.id,
+                    id: thread?.id,
                     c: 1,
                     category: thread.category,
                 });
