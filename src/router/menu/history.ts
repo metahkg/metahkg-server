@@ -30,7 +30,7 @@ export default (
         ) => {
             const id = Number(req.params.id) || req.params.id;
             const page = Number(req.query.page) || 1;
-            const sort = Number(req.query.sort);
+            const sort = Number(req.query.sort || 0);
 
             if (
                 !ajv.validate(
