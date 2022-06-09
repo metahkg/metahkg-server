@@ -37,7 +37,7 @@
     "email-validator": "^2.0.4",
     "express": "^4.17.3",
     "fastify": "^4.0.0-rc.3",
-    "fastify-plugin": "^2.0.0",
+    "fastify-plugin": "^2.3.4",
     "fs-extra": "^10.1.0",
     "hash.js": "^1.1.7",
     "html-to-text": "^8.2.0",
