@@ -35,7 +35,7 @@
     "dompurify": "^2.3.6",
     "dotenv": "^16.0.0",
     "email-validator": "^2.0.4",
-    "express": "^4.17.3",
+    "express": "^4.18.1",
     "fastify": "^4.0.0-rc.3",
     "fastify-plugin": "^2.0.0",
     "fs-extra": "^10.1.0",
