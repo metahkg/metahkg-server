@@ -23,7 +23,7 @@
     "@types/jsonwebtoken": "^8.5.8",
     "@types/mailgun-js": "^0.22.12",
     "@types/multer": "^1.4.7",
-    "@types/node": "^17.0.24",
+    "@types/node": "^17.0.34",
     "@types/sanitize-html": "^2.6.2",
     "@types/sharp": "^0.30.2",
     "@types/valid-url": "^1.0.3",
