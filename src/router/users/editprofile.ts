@@ -1,5 +1,3 @@
-import { Router } from "express";
-import body_parser from "body-parser";
 import { Static, Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 import { usersCl } from "../../common";
