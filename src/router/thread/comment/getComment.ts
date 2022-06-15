@@ -21,7 +21,7 @@ export default (
             });
 
             if (!ajv.validate(schema, { id, cid }))
-                return res.status(400).send({ error: "Bad request." });
+                return res.code(400).send({ error: "Bad request." });
 
             const thread = (await threadCl.findOne(
                 { id, conversation: { $elemMatch: { id: cid } } },
@@ -40,7 +40,7 @@ export default (
             const comment = thread?.conversation?.[0];
 
             if (!comment)
-                return res.status(404).send({ error: "Thread or comment not found." });
+                return res.code(404).send({ error: "Thread or comment not found." });
 
             res.send(comment);
         }

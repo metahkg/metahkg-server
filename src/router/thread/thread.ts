@@ -66,7 +66,7 @@ export default (
                     (end < start ||
                         (!start && (end > page * 25 || end < (page - 1) * 25 + 1))))
             ) {
-                return res.status(400).send({ error: "Bad request." });
+                return res.code(400).send({ error: "Bad request." });
             }
 
             const thread = (await threadCl.findOne(
@@ -104,7 +104,7 @@ export default (
                 }
             )) as Thread;
 
-            if (!thread) return res.status(404).send({ error: "Not Found" });
+            if (!thread) return res.code(404).send({ error: "Not Found" });
 
             if (req.query.sort === "vote") {
                 thread.conversation = thread.conversation.sort(function (a, b) {
@@ -117,7 +117,7 @@ export default (
                 !verifyUser(req.headers.authorization) &&
                 (await hiddencats()).includes(thread.category)
             )
-                return res.status(401).send({ error: "Permission denied." });
+                return res.code(403).send({ error: "Permission denied." });
 
             res.send(thread);
         }

@@ -27,7 +27,7 @@ export default function (
                     id
                 )
             )
-                return res.status(400).send({ error: "Bad request." });
+                return res.code(400).send({ error: "Bad request." });
 
             const user = verifyUser(req.headers.authorization);
 
@@ -52,7 +52,7 @@ export default function (
                 }
             )) as User;
 
-            if (!requestedUser) return res.status(400).send({ error: "User not found" });
+            if (!requestedUser) return res.code(400).send({ error: "User not found" });
 
             let count: number;
 

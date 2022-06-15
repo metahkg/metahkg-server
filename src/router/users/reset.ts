@@ -27,14 +27,14 @@ export default (
         "/reset",
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             if (!ajv.validate(schema, req.body))
-                return res.status(400).send({ error: "Bad request." });
+                return res.code(400).send({ error: "Bad request." });
 
             const { email, token, pwd } = req.body;
 
             const hashedEmail = hash.sha256().update(email).digest("hex");
 
             const userData = (await usersCl.findOne({ email: hashedEmail })) as User;
-            if (!userData) return res.status(404).send({ error: "User not found." });
+            if (!userData) return res.code(404).send({ error: "User not found." });
 
             if (token && pwd) {
                 if (
@@ -44,13 +44,13 @@ export default (
                         code: token,
                     }))
                 )
-                    return res.status(401).send({
+                    return res.code(401).send({
                         error: "Token incorrect, or expired, or you have not requested reset password.",
                     });
 
                 const userData = (await usersCl.findOne({ email: hashedEmail })) as User;
 
-                if (!userData) return res.status(404).send({ error: "User not found." });
+                if (!userData) return res.code(404).send({ error: "User not found." });
 
                 await usersCl.updateOne(
                     { email: hashedEmail },
@@ -76,7 +76,7 @@ export default (
             if (
                 (await limitCl.countDocuments({ type: "reset", email: hashedEmail })) >= 2
             )
-                return res.status(429).send({
+                return res.code(429).send({
                     error: "You can only request reset password 2 times a day.",
                 });
 

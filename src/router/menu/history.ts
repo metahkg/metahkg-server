@@ -45,14 +45,14 @@ export default (
                     { id, page, sort }
                 )
             )
-                return res.status(400).send({ error: "Bad request." });
+                return res.code(400).send({ error: "Bad request." });
 
             const requestedUser =
                 req.params.id === "self"
                     ? verifyUser(req.headers.authorization)
                     : ((await usersCl.findOne({ id: Number(req.params.id) })) as User);
 
-            if (!requestedUser) return res.status(400).send({ error: "User not found." });
+            if (!requestedUser) return res.code(400).send({ error: "User not found." });
 
             const history = (await threadCl
                 .find({ "op.id": requestedUser.id })

@@ -55,17 +55,17 @@ export default (
                     ajv.validate(Type.Integer({ minimum: 1 }), id)
                 )
             )
-                return res.status(400).send({ error: "Bad request." });
+                return res.code(400).send({ error: "Bad request." });
 
             if (!(await verifyCaptcha(secret, rtoken)))
-                return res.status(400).send({ error: "recaptcha token invalid." });
+                return res.code(400).send({ error: "recaptcha token invalid." });
 
             const user = verifyUser(req.headers.authorization);
 
-            if (!user) return res.status(401).send({ error: "Unauthorized." });
+            if (!user) return res.code(403).send({ error: "Permission denied." });
 
             if (!((await threadCl.findOne({ id })) as Thread))
-                return res.status(404).send({ error: "Not found." });
+                return res.code(404).send({ error: "Not found." });
 
             const comment = sanitize(req.body.comment);
             const text = htmlToText(comment, { wordwrap: false });

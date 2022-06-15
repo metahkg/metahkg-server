@@ -21,7 +21,7 @@ export default (
             const threadId = Number(req.params.id);
 
             if (!ajv.validate(Type.Integer({ minimum: 1 }), threadId))
-                return res.status(400).send({ error: "Bad request." });
+                return res.code(400).send({ error: "Bad request." });
 
             const user = verifyUser(req.headers.authorization);
 
@@ -30,14 +30,14 @@ export default (
                 { projection: { _id: 0, op: 1 } }
             )) as Thread;
 
-            if (!thread) return res.status(404).send({ error: "Thread not found." });
+            if (!thread) return res.code(404).send({ error: "Thread not found." });
 
             const authorized =
                 user && (thread?.op?.id === user.id || user.role === "admin");
 
             if (!authorized)
-                return res.status(401).send({
-                    error: "Unauthorized.",
+                return res.code(403).send({
+                    error: "Permission denied.",
                 });
 
             await threadCl.updateOne({ id: threadId }, { $unset: { pin: 1 } });

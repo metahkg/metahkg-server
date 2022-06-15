@@ -44,10 +44,10 @@ export default (
                     )
                 )
             )
-                return res.status(400).send({ error: "Bad request." });
+                return res.code(400).send({ error: "Bad request." });
 
             const user = verifyUser(req.headers.authorization);
-            if (!user) return res.status(400).send({ error: "User not found." });
+            if (!user) return res.code(400).send({ error: "User not found." });
 
             const thread = (await threadCl.findOne(
                 { id, conversation: { $elemMatch: { id: cid } } },
@@ -62,7 +62,7 @@ export default (
             )) as Thread;
 
             if (!thread)
-                return res.status(404).send({ error: "Thread or comment not found." });
+                return res.code(404).send({ error: "Thread or comment not found." });
 
             const index = cid - 1;
             const userVotes = await votesCl.findOne({ id: user.id });
@@ -70,7 +70,7 @@ export default (
             if (!userVotes) {
                 await votesCl.insertOne({ id: user.id });
             } else if (userVotes?.[id]?.[cid]) {
-                return res.status(403).send({ error: "You have already voted." });
+                return res.code(403).send({ error: "You have already voted." });
             }
 
             await votesCl.updateOne(

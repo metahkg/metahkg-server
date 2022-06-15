@@ -41,7 +41,7 @@ export default (
             );
 
             if (!ajv.validate(schema, { category, page, sort }))
-                return res.status(400).send({ error: "Bad request." });
+                return res.code(400).send({ error: "Bad request." });
 
             const hiddenCats = await gethiddencats();
 
@@ -53,16 +53,16 @@ export default (
                     { projection: { _id: 0, category: 1 } }
                 )) as Thread;
                 if (!thread || !thread.category)
-                    return res.status(404).send({ error: "Not found." });
+                    return res.code(404).send({ error: "Not found." });
 
                 category = thread.category;
             }
 
             if (!verifyUser(req.headers.authorization) && hiddenCats.includes(category))
-                return res.status(401).send({ error: "Permission denied." });
+                return res.code(403).send({ error: "Permission denied." });
 
             if (!(await categoryCl.findOne({ id: category })))
-                return res.status(404).send({ error: "Not found." });
+                return res.code(404).send({ error: "Not found." });
 
             const find =
                 category === 1 ? { category: { $nin: hiddenCats } } : { category };

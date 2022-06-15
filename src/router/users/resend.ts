@@ -21,16 +21,16 @@ export default (
             const { email, rtoken } = req.body;
 
             if (!ajv.validate(schema, req.body))
-                return res.status(400).send({ error: "Bad request." });
+                return res.code(400).send({ error: "Bad request." });
 
             if (!(await verifyCaptcha(secret, rtoken)))
-                return res.status(400).send({ error: "recaptcha token invalid." });
+                return res.code(400).send({ error: "recaptcha token invalid." });
 
             const verificationUserData = await verificationCl.findOne({
                 email,
             });
             if (!verificationUserData) {
-                return res.status(404).send({
+                return res.code(404).send({
                     error: "Email not found.",
                 });
             }

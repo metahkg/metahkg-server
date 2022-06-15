@@ -21,7 +21,7 @@ export default (
             const user = verifyUser(req.headers.authorization);
 
             if (!ajv.validate(schema, req.body) || !user)
-                return res.status(400).send({ error: "Bad request." });
+                return res.code(400).send({ error: "Bad request." });
 
             try {
                 const blocked = (
@@ -33,7 +33,7 @@ export default (
                 )?.blocked;
                 return res.send({ blocked });
             } catch {
-                return res.status(500).send({ error: "Internal server error." });
+                return res.code(500).send({ error: "Internal server error." });
             }
         }
     );
