@@ -74,7 +74,7 @@ router.post("/api/users/avatar", upload.single("avatar"), async (req, res) => {
         fs.rm(`${process.env.root}/uploads/${req.file?.filename}`, (err) => {
             console.error(err);
         });
-        return res.status(400).send({ error: "User not found." });
+        return res.status(404).send({ error: "User not found." });
     }
     //rename file to <user-id>.<extension>
     const newFileName = `${user.id}.${req.file.originalname.split(".").pop()}`;

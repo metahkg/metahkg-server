@@ -17,7 +17,7 @@ export default (
                 requestedThreads = JSON.parse(requestedThreads);
                 if (!Array.isArray(requestedThreads)) throw new Error("Not an array.");
             } catch {
-                return res.status(400).send({ error: "Bad request." });
+                return res.code(400).send({ error: "Bad request." });
             }
 
             if (
@@ -26,7 +26,7 @@ export default (
                     requestedThreads
                 )
             )
-                return res.status(400).send({ error: "Bad request." });
+                return res.code(400).send({ error: "Bad request." });
 
             const threads = (await threadCl
                 .find({

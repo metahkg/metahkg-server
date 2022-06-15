@@ -32,10 +32,10 @@ export default function (
                     ajv.validate(Type.Integer({ minimum: 1 }), threadId)
                 )
             )
-                return res.status(400).send({ error: "Bad request." });
+                return res.code(400).send({ error: "Bad request." });
 
             const user = verifyUser(req.headers.authorization);
-            if (!user) return res.status(401).send({ error: "Unauthorized." });
+            if (!user) return res.code(403).send({ error: "Permission denied." });
 
             const thread = (await threadCl.findOne(
                 {
@@ -56,15 +56,15 @@ export default function (
             )) as Thread;
 
             if (!thread)
-                return res.status(403).send({
+                return res.code(403).send({
                     error: "Thread not found, or you are not the op.",
                 });
 
             const comment = thread.conversation?.[0];
 
-            if (!comment) return res.status(404).send({ error: "Comment not found." });
+            if (!comment) return res.code(404).send({ error: "Comment not found." });
             if (comment.removed)
-                return res.status(403).send({ error: "Comment has been removed." });
+                return res.code(403).send({ error: "Comment has been removed." });
 
             await threadCl.updateOne({ id: threadId }, { $set: { pin: comment } });
 

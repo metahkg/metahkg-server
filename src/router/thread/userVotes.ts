@@ -12,13 +12,13 @@ export default (
         "/:id/uservotes",
         async (req: FastifyRequest<{ Params: { id: string } }>, res) => {
             if (!req.params.id || !isInteger(String(req.params.id)))
-                return res.status(400).send({ error: "Bad request." });
+                return res.code(400).send({ error: "Bad request." });
 
             const id = Number(req.params.id);
 
             const user = verifyUser(req.headers.authorization);
 
-            if (!user) return res.status(400).send({ error: "User not found" });
+            if (!user) return res.code(400).send({ error: "User not found" });
 
             const userVotes = await votesCl.findOne(
                 { id: user.id },

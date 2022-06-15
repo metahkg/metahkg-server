@@ -45,7 +45,7 @@ export default (
                     mode: mode,
                 })
             )
-                return res.status(400).send({ error: "Bad request." });
+                return res.code(400).send({ error: "Bad request." });
 
             const sortObj = {
                 0: {

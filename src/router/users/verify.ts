@@ -33,10 +33,10 @@ export default (
         "/verify",
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             if (!ajv.validate(schema, req.body))
-                return res.status(400).send({ error: "Bad request." });
+                return res.code(400).send({ error: "Bad request." });
 
             if (req.body.code?.length !== 30)
-                return res.status(400).send({ error: "Code must be of 30 digits." });
+                return res.code(400).send({ error: "Code must be of 30 digits." });
 
             const verificationData = await verificationCl.findOne({
                 type: "register",
@@ -45,7 +45,7 @@ export default (
             });
 
             if (verificationData?.code !== req.body.code)
-                return res.status(401).send({
+                return res.code(401).send({
                     error: "Code incorrect or email not found, your verfication code might have expired.",
                 });
 

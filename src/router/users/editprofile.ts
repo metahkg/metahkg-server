@@ -22,16 +22,16 @@ export default (
         "/editprofile",
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             if (!ajv.validate(schema, req.body) || !Object.keys(req.body).length)
-                return res.status(400).send({ error: "Bad request." });
+                return res.code(400).send({ error: "Bad request." });
 
             const user = verifyUser(req.headers.authorization);
-            if (!user) return res.status(404).send({ error: "User not found." });
+            if (!user) return res.code(404).send({ error: "User not found." });
 
             if (
                 req.body.name !== user.name &&
                 (await usersCl.findOne({ name: req.body.name }))
             )
-                return res.status(409).send({ error: "Name already taken." });
+                return res.code(409).send({ error: "Name already taken." });
 
             await usersCl.updateOne({ id: user.id }, { $set: req.body });
 

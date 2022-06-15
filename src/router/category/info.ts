@@ -24,7 +24,7 @@ export default function (
         ]);
 
         if (!ajv.validate(schema, id))
-            return res.status(400).send({ error: "Bad request." });
+            return res.code(400).send({ error: "Bad request." });
 
         if (id === "all")
             return res.send(
@@ -44,14 +44,14 @@ export default function (
                 { projection: { _id: 0 } }
             );
 
-            if (!category) return res.status(404).send({ error: "Not found." });
+            if (!category) return res.code(404).send({ error: "Not found." });
 
             return res.send(category);
         }
 
         const category = await categoryCl.findOne({ id: Number(req.params.id) });
 
-        if (!category) return res.status(404).send({ error: "Not found." });
+        if (!category) return res.code(404).send({ error: "Not found." });
 
         res.send({ id: category.id, name: category.name, hidden: category.hidden });
     });

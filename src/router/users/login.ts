@@ -35,7 +35,7 @@ export default (
             console.log("sign in");
             const { name, pwd } = req.body;
             if (!ajv.validate(schema, req.body))
-                return res.status(400).send({ error: "Bad request." });
+                return res.code(400).send({ error: "Bad request." });
 
             const user = (await usersCl.findOne({
                 $or: [{ name }, { email: hash.sha256().update(name).digest("hex") }],
@@ -49,11 +49,11 @@ export default (
                 if (verifyUser && (await bcrypt.compare(pwd, verifyUser.pwd)))
                     return res.code(401).send({ error: "Please verify your email." });
 
-                return res.status(404).send({ error: "User not found." });
+                return res.code(404).send({ error: "User not found." });
             }
 
             const pwdMatch = await bcrypt.compare(pwd, user.pwd);
-            if (!pwdMatch) return res.status(401).send({ error: "Password incorrect." });
+            if (!pwdMatch) return res.code(401).send({ error: "Password incorrect." });
 
             res.send({
                 token: createToken(user.id, user.name, user.sex, user.role),

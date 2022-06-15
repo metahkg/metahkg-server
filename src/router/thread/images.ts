@@ -14,7 +14,7 @@ export default (
             res
         ) => {
             if (!isInteger(req.params.id))
-                return res.status(400).send({ error: "Bad request." });
+                return res.code(400).send({ error: "Bad request." });
 
             const id = Number(req.params.id);
             const cid = Number(req.query.c);

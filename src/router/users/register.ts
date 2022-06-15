@@ -49,10 +49,10 @@ export default (
         "/register",
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             if (!ajv.validate(schema, req.body) || EmailValidator.validate(req.body.name))
-                return res.status(400).send({ error: "Bad request." });
+                return res.code(400).send({ error: "Bad request." });
 
             if (!(await verifyCaptcha(secret, req.body.rtoken)))
-                return res.status(400).send({ error: "recaptcha token invalid." });
+                return res.code(400).send({ error: "recaptcha token invalid." });
 
             // signup modes (process.env.signupMode)
             const signupMode =
@@ -63,14 +63,14 @@ export default (
                 }[process.env.signupMode || ""] || "normal";
 
             if (signupMode === "none")
-                return res.status(429).send({ error: "No signup allowed." });
+                return res.code(429).send({ error: "No signup allowed." });
 
             // TODO: WARNING: frontend not implemented !!!
             if (
                 signupMode === "invite" &&
                 !(await inviteCl.findOne({ code: req.body.invitecode }))
             )
-                return res.status(409).send({ error: "Invalid invite code." });
+                return res.code(409).send({ error: "Invalid invite code." });
 
             if (
                 (await usersCl.findOne({
@@ -83,7 +83,7 @@ export default (
                     $or: [{ name: req.body.name }, { email: req.body.email }],
                 }))
             )
-                return res.status(409).send({ error: "Username or email exists." });
+                return res.code(409).send({ error: "Username or email exists." });
 
             const code = generate({
                 include: { numbers: true, upper: true, lower: true, special: false },

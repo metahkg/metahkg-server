@@ -54,16 +54,16 @@ export default (
             res
         ) => {
             if (!ajv.validate(schema, req.body))
-                return res.status(400).send({ error: "Bad request." });
+                return res.code(400).send({ error: "Bad request." });
 
             const comment = sanitize(req.body.comment);
             const text = htmlToText(comment, { wordwrap: false });
 
             if (!(await verifyCaptcha(secret, req.body.rtoken)))
-                return res.status(400).send({ error: "recaptcha token invalid." });
+                return res.code(400).send({ error: "recaptcha token invalid." });
 
             const user = verifyUser(req.headers.authorization);
-            if (!user) return res.status(400).send({ error: "User not found." });
+            if (!user) return res.code(400).send({ error: "User not found." });
 
             if ((await limitCl.countDocuments({ id: user.id, type: "create" })) >= 10)
                 return res
@@ -71,7 +71,7 @@ export default (
                     .send({ error: "You cannot create more than 10 topics a day." });
 
             const category = await categoryCl.findOne({ id: req.body.category });
-            if (!category) return res.status(404).send({ error: "Category not found." });
+            if (!category) return res.code(404).send({ error: "Category not found." });
 
             const newThreadId =
                 (
