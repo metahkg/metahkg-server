@@ -11,7 +11,7 @@
   ],
   "dependencies": {
     "@fastify/cors": "^8.0.0",
-    "@fastify/express": "^1.1.0",
+    "@fastify/express": "^2.0.0",
     "@fastify/multipart": "^7.0.0",
     "@sinclair/typebox": "^0.23.4",
     "@types/bcrypt": "^5.0.0",
@@ -36,7 +36,7 @@
     "dotenv": "^16.0.0",
     "email-validator": "^2.0.4",
     "express": "^4.17.3",
-    "fastify": "^4.0.0-rc.3",
+    "fastify": "^4.0.2",
     "fastify-plugin": "^2.0.0",
     "fs-extra": "^10.1.0",
     "hash.js": "^1.1.7",
