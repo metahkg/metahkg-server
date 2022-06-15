@@ -1,6 +1,5 @@
 import { domain, limitCl, mg, mgDomain, usersCl, verificationCl } from "../../common";
 import hash from "hash.js";
-import { generate } from "wcyat-rg";
 import { Static, Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 import User from "../../models/user";
@@ -8,6 +7,7 @@ import Limit from "../../models/limit";
 import bcrypt from "bcrypt";
 import { createToken } from "../../lib/auth/createtoken";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
+import { randomBytes } from "crypto";
 
 export default (
     fastify: FastifyInstance,
@@ -80,10 +80,7 @@ export default (
                     error: "You can only request reset password 2 times a day.",
                 });
 
-            const verificationCode = generate({
-                include: { numbers: true, upper: true, lower: true, special: false },
-                digits: 30,
-            });
+            const verificationCode = randomBytes(15).toString("hex");
 
             const reset = {
                 from: `Metahkg support <support@${mgDomain}>`,

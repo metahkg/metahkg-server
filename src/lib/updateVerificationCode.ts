@@ -1,5 +1,5 @@
-import { generate } from "wcyat-rg";
 import { timediff, verificationCl } from "../common";
+import { randomBytes } from "crypto";
 
 export default async function updateVerificationCode() {
     await verificationCl.find().forEach((item) => {
@@ -8,20 +8,8 @@ export default async function updateVerificationCode() {
                 await verificationCl.updateOne(
                     { _id: item._id },
                     {
-                        $set: {
-                            code: generate({
-                                include: {
-                                    numbers: true,
-                                    upper: true,
-                                    lower: true,
-                                    special: false,
-                                },
-                                digits: 30,
-                            }),
-                        },
-                        $currentDate: {
-                            lastModified: true,
-                        },
+                        $set: { code: randomBytes(15).toString("hex") },
+                        $currentDate: { lastModified: true },
                     }
                 );
             }
