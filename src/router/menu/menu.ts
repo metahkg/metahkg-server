@@ -70,7 +70,7 @@ export default (
             const timeForViral = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
 
             const data = sort
-                ? await threadCl
+                ? ((await threadCl
                       .aggregate([
                           {
                               $match: { ...find, lastModified: { $gte: timeForViral } },
@@ -98,11 +98,12 @@ export default (
                                   },
                               },
                           },
-                          { $sort: { newComments: -1 } },
+                          { $sort: { newComments: -1, lastModified: -1 } },
+                          { $project: { _id: 0, conversation: 0, newComments: 0 } },
                           { $skip: 25 * (page - 1) },
                           { $limit: 25 },
                       ])
-                      .toArray()
+                      .toArray()) as Thread[])
                 : ((await threadCl
                       .find(find)
                       .sort({ lastModified: -1 })
