@@ -101,3 +101,7 @@ node server/migrate/migratetov0.5.2.js
 ## v2.0.0
 
 - migrate to fastify, reorganize paths
+
+## v2.1.0
+
+- deprecate viral collection in favor of aggregation
