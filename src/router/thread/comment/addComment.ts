@@ -1,10 +1,4 @@
-import {
-    imagesCl,
-    linksCl,
-    secret,
-    LINKS_DOMAIN,
-    threadCl,
-} from "../../../common";
+import { imagesCl, linksCl, secret, LINKS_DOMAIN, threadCl } from "../../../common";
 import { verifyCaptcha } from "../../../lib/recaptcha";
 import findImages from "../../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
