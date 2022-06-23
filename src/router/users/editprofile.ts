@@ -12,7 +12,7 @@ export default (
 ) => {
     const schema = Type.Object(
         {
-            name: Type.Optional(Type.String()),
+            name: Type.Optional(Type.RegEx(/^\S{1,15}$/)),
             sex: Type.Optional(Type.Union([Type.Literal("M"), Type.Literal("F")])),
         },
         { additionalProperties: false }

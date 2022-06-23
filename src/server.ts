@@ -1,5 +1,4 @@
 import dotenv from "dotenv";
-import { autodecrement } from "./lib/autodecrement";
 import router from "./router";
 import updateVerificationCode from "./lib/updateVerificationCode";
 import { client } from "./common";
@@ -19,12 +18,6 @@ const fastify = Fastify({
     trustProxy: true,
 });
 
-/**
- * Decrease count by one in collection "viral" every 2 hours
- */
-setInterval(() => {
-    setTimeout(autodecrement, 7200 * 1000);
-}, 7200 * 1000);
 setInterval(updateVerificationCode, 3600 * 1000);
 
 async function build() {

@@ -80,7 +80,6 @@ export const db = client.db("metahkg");
 export const threadCl = db.collection("thread");
 export const usersCl: Collection = db.collection("users");
 export const limitCl = db.collection("limit");
-export const viralCl = db.collection("viral");
 export const imagesCl = db.collection("images");
 export const verificationCl = db.collection("verification");
 export const categoryCl = db.collection("category");

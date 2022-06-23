@@ -1,7 +1,7 @@
 // get 20 neweat/hottezt threads in a category
 // note: category 1 returns all categories
 // Syntax: GET /api/menu/<category id>?sort=<0 | 1>&page=<number>
-import { categoryCl, threadCl, viralCl } from "../../common";
+import { categoryCl, threadCl } from "../../common";
 import { hiddencats as gethiddencats } from "../../lib/hiddencats";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
@@ -67,12 +67,41 @@ export default (
             const find =
                 category === 1 ? { category: { $nin: hiddenCats } } : { category };
 
+            const timeForViral = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
+
             const data = sort
-                ? await viralCl
-                      .find(find)
-                      .sort({ c: -1, lastModified: -1 })
-                      .skip(25 * (page - 1))
-                      .limit(25)
+                ? await threadCl
+                      .aggregate([
+                          {
+                              $match: { ...find, lastModified: { $gte: timeForViral } },
+                          },
+                          {
+                              $addFields: {
+                                  newComments: {
+                                      $reduce: {
+                                          input: "$conversation",
+                                          initialValue: 0,
+                                          in: {
+                                              $add: [
+                                                  "$$value",
+                                                  {
+                                                      $toInt: {
+                                                          $gte: [
+                                                              "$$this.createdAt",
+                                                              timeForViral,
+                                                          ],
+                                                      },
+                                                  },
+                                              ],
+                                          },
+                                      },
+                                  },
+                              },
+                          },
+                          { $sort: { newComments: -1 } },
+                          { $skip: 25 * (page - 1) },
+                          { $limit: 25 },
+                      ])
                       .toArray()
                 : ((await threadCl
                       .find(find)
@@ -81,19 +110,6 @@ export default (
                       .limit(25)
                       .project({ _id: 0, conversation: 0 })
                       .toArray()) as Thread[]);
-
-            if (sort)
-                return res.send(
-                    await Promise.all(
-                        data.map(
-                            async (thread) =>
-                                (await threadCl.findOne(
-                                    { id: thread.id },
-                                    { projection: { _id: 0, conversation: 0 } }
-                                )) as Thread
-                        )
-                    )
-                );
 
             res.send(data);
         }

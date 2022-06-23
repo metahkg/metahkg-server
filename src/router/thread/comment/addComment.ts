@@ -2,8 +2,6 @@ import {
     imagesCl,
     linksCl,
     secret,
-    timediff,
-    viralCl,
     LINKS_DOMAIN,
     threadCl,
 } from "../../../common";
@@ -145,39 +143,6 @@ export default (
                     { id },
                     { $set: { images: imagesData } as Images }
                 );
-            }
-
-            const viralData = await viralCl.findOne({ id });
-
-            if (viralData) {
-                await viralCl.updateOne(
-                    { id },
-                    {
-                        ...(viralData.c < 1 && { $set: { c: 1 } }),
-                        ...(viralData.c > 0 && { $inc: { c: 1 } }),
-                        $currentDate: {
-                            lastModified: true,
-                            ...(timediff(viralData.createdAt) > 86400 && {
-                                createdAt: true,
-                            }),
-                        },
-                    }
-                );
-            } else {
-                const thread = (await threadCl.findOne(
-                    {
-                        id,
-                    },
-                    { projection: { _id: 0, conversation: 0 } }
-                )) as Thread;
-
-                await viralCl.insertOne({
-                    lastModified: new Date(),
-                    createdAt: new Date(),
-                    id: thread?.id,
-                    c: 1,
-                    category: thread.category,
-                });
             }
 
             res.send({ id: newCommentId });

@@ -11,7 +11,6 @@ import {
     secret,
     limitCl,
     categoryCl,
-    viralCl,
     LINKS_DOMAIN,
     linksCl,
     threadCl,
@@ -138,14 +137,6 @@ export default (
                 images: findImages(comment).map((item) => {
                     return { image: item, cid: 1 };
                 }),
-            });
-
-            await viralCl.insertOne({
-                id: threadData.id,
-                c: 1,
-                category: threadData.category,
-                lastModified: date,
-                createdAt: date,
             });
 
             await limitCl.insertOne({
