@@ -49,7 +49,7 @@ export default (
                 return res.code(400).send({ error: "Bad request." });
 
             const { rtoken, quote } = req.body;
-            
+
             if (!(await verifyCaptcha(secret, rtoken)))
                 return res.code(400).send({ error: "recaptcha token invalid." });
 

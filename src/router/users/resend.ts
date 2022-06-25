@@ -20,7 +20,7 @@ export default (
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             if (!ajv.validate(schema, req.body))
                 return res.code(400).send({ error: "Bad request." });
-                
+
             const { email, rtoken } = req.body;
 
             if (!(await verifyCaptcha(secret, rtoken)))
