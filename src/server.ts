@@ -26,13 +26,13 @@ async function build() {
     /**
      * Set content security policy
      */
-    fastify.use((req, res, next) => {
-        res.setHeader(
+    fastify.addHook("preHandler", (_req, res, done) => {
+        res.header(
             "Content-Security-Policy",
             // eslint-disable-next-line max-len
             "script-src 'self' https://www.gstatic.com/recaptcha/ https://www.google.com/recaptcha/ https://sa.metahkg.org https://static.cloudflareinsights.com https://cdnjs.cloudflare.com"
         );
-        next();
+        done();
     });
 
     process.env.cors && fastify.register(cors);
@@ -40,6 +40,7 @@ async function build() {
 
     fastify.register(fastifyRateLimit, {
         max: 200,
+        ban: 50,
         timeWindow: 1000 * 30,
     });
 

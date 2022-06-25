@@ -1,9 +1,7 @@
 //get categories
 //Syntax: GET /api/category/<"all" | number(category id)>
 //"all" returns an array of all categories
-import { Router } from "express";
 import { categoryCl, threadCl } from "../../common";
-import body_parser from "body-parser";
 import Thread from "../../models/thread";
 import { Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";

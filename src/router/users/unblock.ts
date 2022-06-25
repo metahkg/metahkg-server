@@ -17,12 +17,13 @@ export default (
     fastify.post(
         "/api/users/unblock",
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            const { userId } = req.body;
             const user = verifyUser(req.headers.authorization);
 
             if (!ajv.validate(schema, req.body) || !user)
                 return res.code(400).send({ error: "Bad request." });
 
+            const { userId } = req.body;
+            
             try {
                 const blocked = (
                     (await usersCl.findOneAndUpdate(

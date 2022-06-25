@@ -23,9 +23,7 @@ export default function (
             req: FastifyRequest<{ Body: Static<typeof schema>; Params: { id: string } }>,
             res
         ) => {
-            const { cid: commentId } = req.body;
             const threadId = Number(req.params.id);
-
             if (
                 !(
                     ajv.validate(schema, req.body) &&
@@ -33,6 +31,8 @@ export default function (
                 )
             )
                 return res.code(400).send({ error: "Bad request." });
+
+            const { cid: commentId } = req.body;
 
             const user = verifyUser(req.headers.authorization);
             if (!user) return res.code(403).send({ error: "Permission denied." });

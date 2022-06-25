@@ -1,6 +1,4 @@
 import dotenv from "dotenv";
-import express from "express";
-import body_parser from "body-parser";
 import { usersCl, verificationCl } from "../../common";
 import bcrypt from "bcrypt";
 import { Static, Type } from "@sinclair/typebox";
@@ -15,9 +13,16 @@ dotenv.config();
 
 export default (
     fastify: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
+    fastify.register(fastifyRateLimit, {
+        global: false,
+        max: 5,
+        ban: 5,
+        timeWindow: 1000 * 60 * 30,
+    });
+
     const schema = Type.Object(
         {
             name: Type.Union([
@@ -33,10 +38,10 @@ export default (
     fastify.post(
         "/login",
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            const { name, pwd } = req.body;
-
             if (!ajv.validate(schema, req.body))
                 return res.code(400).send({ error: "Bad request." });
+
+            const { name, pwd } = req.body;
 
             const user = (await usersCl.findOne({
                 $or: [{ name }, { email: hash.sha256().update(name).digest("hex") }],

@@ -18,10 +18,10 @@ export default (
     fastify.post(
         "/resend",
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            const { email, rtoken } = req.body;
-
             if (!ajv.validate(schema, req.body))
                 return res.code(400).send({ error: "Bad request." });
+                
+            const { email, rtoken } = req.body;
 
             if (!(await verifyCaptcha(secret, rtoken)))
                 return res.code(400).send({ error: "recaptcha token invalid." });
