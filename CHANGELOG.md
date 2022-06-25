@@ -105,3 +105,8 @@ node server/migrate/migratetov0.5.2.js
 ## v2.1.0
 
 - deprecate viral collection in favor of aggregation
+
+## v2.2.0
+
+- add rate limiting
+- replace editprofile with rename

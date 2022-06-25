@@ -1,6 +1,6 @@
 {
   "name": "metahkg-server",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "author": "wcyat",
   "homepage": "https://metahkg.org",
   "repository": "https://github.com/metahkg/metahkg-server",
@@ -13,6 +13,7 @@
     "@fastify/cors": "^8.0.0",
     "@fastify/express": "^2.0.0",
     "@fastify/multipart": "^7.0.0",
+    "@fastify/rate-limit": "^7.0.0",
     "@sinclair/typebox": "^0.23.4",
     "@types/bcrypt": "^5.0.0",
     "@types/dompurify": "^2.3.3",

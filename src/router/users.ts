@@ -3,7 +3,7 @@ import login from "./users/login";
 import status from "./users/status";
 import verify from "./users/verify";
 import resend from "./users/resend";
-import editProfile from "./users/editprofile";
+import rename from "./users/rename";
 import block from "./users/block";
 import unblock from "./users/unblock";
 import reset from "./users/reset";
@@ -18,7 +18,7 @@ export default (
     router.register(login);
     router.register(verify);
     router.register(resend);
-    router.register(editProfile);
+    router.register(rename);
     router.register(block);
     router.register(unblock);
     router.register(status);

@@ -10,6 +10,7 @@ import fastify_express from "@fastify/express";
 import updateToken from "./lib/auth/updateToken";
 import multipart from "@fastify/multipart";
 import expressRoutes from "./router/expressRoutes";
+import fastifyRateLimit from "@fastify/rate-limit";
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ async function build() {
     fastify.use((req, res, next) => {
         res.setHeader(
             "Content-Security-Policy",
+            // eslint-disable-next-line max-len
             "script-src 'self' https://www.gstatic.com/recaptcha/ https://www.google.com/recaptcha/ https://sa.metahkg.org https://static.cloudflareinsights.com https://cdnjs.cloudflare.com"
         );
         next();
@@ -35,6 +37,11 @@ async function build() {
 
     process.env.cors && fastify.register(cors);
     fastify.register(multipart);
+
+    fastify.register(fastifyRateLimit, {
+        max: 200,
+        timeWindow: 1000 * 30,
+    });
 
     fastify.register(updateToken);
     fastify.register(refreshToken);

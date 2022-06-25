@@ -11,15 +11,12 @@ export default (
     done: (e?: Error) => void
 ) => {
     const schema = Type.Object(
-        {
-            name: Type.Optional(Type.RegEx(/^\S{1,15}$/)),
-            sex: Type.Optional(Type.Union([Type.Literal("M"), Type.Literal("F")])),
-        },
+        { name: Type.RegEx(/^\S{1,15}$/) },
         { additionalProperties: false }
     );
 
     fastify.put(
-        "/editprofile",
+        "/rename",
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             if (!ajv.validate(schema, req.body) || !Object.keys(req.body).length)
                 return res.code(400).send({ error: "Bad request." });
@@ -27,17 +24,16 @@ export default (
             const user = verifyUser(req.headers.authorization);
             if (!user) return res.code(404).send({ error: "User not found." });
 
-            if (
-                req.body.name !== user.name &&
-                (await usersCl.findOne({ name: req.body.name }))
-            )
+            const { name: newName } = req.body;
+
+            if (newName !== user.name && (await usersCl.findOne({ name: newName })))
                 return res.code(409).send({ error: "Name already taken." });
 
-            await usersCl.updateOne({ id: user.id }, { $set: req.body });
+            await usersCl.updateOne({ id: user.id }, { $set: { name: newName } });
 
             res.send({
                 response: "ok",
-                token: createToken(user.id, req.body.name, req.body.sex, user.role),
+                token: createToken(user.id, newName, user.sex, user.role),
             });
         }
     );

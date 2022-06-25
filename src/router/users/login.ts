@@ -9,6 +9,7 @@ import { createToken } from "../../lib/auth/createtoken";
 import User from "../../models/user";
 import hash from "hash.js";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
+import fastifyRateLimit from "@fastify/rate-limit";
 
 dotenv.config();
 
@@ -32,8 +33,8 @@ export default (
     fastify.post(
         "/login",
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            console.log("sign in");
             const { name, pwd } = req.body;
+
             if (!ajv.validate(schema, req.body))
                 return res.code(400).send({ error: "Bad request." });
 
@@ -47,13 +48,13 @@ export default (
                 });
 
                 if (verifyUser && (await bcrypt.compare(pwd, verifyUser.pwd)))
-                    return res.code(401).send({ error: "Please verify your email." });
+                    return res.code(409).send({ error: "Please verify your email." });
 
-                return res.code(404).send({ error: "User not found." });
+                return res.code(401).send({ error: "Login failed." });
             }
 
             const pwdMatch = await bcrypt.compare(pwd, user.pwd);
-            if (!pwdMatch) return res.code(401).send({ error: "Password incorrect." });
+            if (!pwdMatch) return res.code(401).send({ error: "Login failed." });
 
             res.send({
                 token: createToken(user.id, user.name, user.sex, user.role),
