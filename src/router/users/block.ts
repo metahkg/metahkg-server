@@ -23,7 +23,7 @@ export default (
                 return res.code(400).send({ error: "Bad request." });
 
             const { userId } = req.body;
-            
+
             try {
                 const blocked = (
                     (await usersCl.findOneAndUpdate(
