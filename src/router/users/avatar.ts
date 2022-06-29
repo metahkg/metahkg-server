@@ -55,20 +55,20 @@ export default function (
     fastify.post("/avatar", { preHandler: upload.single("avatar") }, async (req, res) => {
         try {
             const file = req.file as unknown as Express.Multer.File;
-            if (!file) return res.status(400).send({ error: "Bad request." });
+            if (!file) return res.code(400).send({ error: "Bad request." });
 
             if (file?.size > maxSize) {
                 fs.rm(file?.path, (err) => {
                     console.error(err);
                 });
-                return res.status(422).send({ error: "file too large." });
+                return res.code(422).send({ error: "file too large." });
             }
             if (!file.mimetype.match(/^image\/(png|svg|jpg|jpeg)$/)) {
                 //remove the file
                 fs.rm(file?.path, (err) => {
                     console.error(err);
                 });
-                return res.status(400).send({ error: "File type not supported." });
+                return res.code(400).send({ error: "File type not supported." });
             }
             const user = verifyUser(req.headers.authorization);
             //send 404 if no such user
@@ -76,7 +76,7 @@ export default function (
                 fs.rm(`${process.env.root}/uploads/${file?.filename}`, (err) => {
                     console.error(err);
                 });
-                return res.status(404).send({ error: "User not found." });
+                return res.code(404).send({ error: "User not found." });
             }
             //rename file to <user-id>.<extension>
             const newFileName = `${user.id}.${file.originalname.split(".").pop()}`;
@@ -93,7 +93,7 @@ export default function (
                 await compress(`images/processing/avatars/${newFileName}`, user.id);
                 fs.rmSync(`images/processing/avatars/${newFileName}`);
             } catch {
-                res.status(422);
+                res.code(422);
                 res.send({
                     error: "Could not complete the request. Please check your file.",
                 });
@@ -105,7 +105,7 @@ export default function (
             res.send({ response: "ok" });
         } catch (err) {
             console.error(err);
-            res.status(500).send({ error: "Internal server error." });
+            res.code(500).send({ error: "Internal server error." });
         }
     });
     done();

@@ -14,7 +14,7 @@ export default function (
         "/avatars/:id",
         (req: FastifyRequest<{ Params: { id: string } }>, res) => {
             if (!isInteger(req.params.id))
-                return res.status(400).send({ error: "Bad request." });
+                return res.code(400).send({ error: "Bad request." });
 
             const filename = `images/avatars/${req.params.id}.png`;
 
