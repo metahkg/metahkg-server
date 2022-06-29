@@ -1,4 +1,4 @@
-interface votes {
+export interface votes {
     _id: string;
     // mongodb object id
     id: number;
