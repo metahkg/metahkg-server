@@ -1,10 +1,7 @@
 import sanitizeHtml from "sanitize-html";
-import { JSDOM } from "jsdom";
-import createDOMPurify from "dompurify";
+import DOMPurify from "isomorphic-dompurify";
 import { parse, TextNode } from "node-html-parser";
 
-const domWindow: any = new JSDOM("").window;
-const DOMPurify = createDOMPurify(domWindow);
 export default function sanitize(html: string) {
     html = DOMPurify.sanitize(html);
     const clean = sanitizeHtml(html, {

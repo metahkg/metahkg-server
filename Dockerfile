@@ -8,6 +8,8 @@ ENV env $env
 COPY ./package.json ./
 COPY ./yarn.lock ./
 COPY ./tsconfig.json ./
+COPY ./tsconfig.build.json ./
+COPY ./nest-cli.json ./
 
 RUN if [ "${env}" = "dev" ]; then yarn install; else yarn install --production; fi;
 
@@ -23,6 +25,9 @@ WORKDIR /usr/src/app
 COPY ./package.json ./
 COPY ./yarn.lock ./
 COPY ./tsconfig.json ./
+COPY ./tsconfig.build.json ./
+COPY ./nest-cli.json ./
+
 COPY ./start.js ./
 COPY ./static ./static
 COPY --from=build /usr/src/app/dist ./dist
