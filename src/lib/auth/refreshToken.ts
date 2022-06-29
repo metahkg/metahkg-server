@@ -17,10 +17,7 @@ export default function (
                 new Date(exp).getTime() - 60 * 60 * 24 * 7 <
                 new Date().getTime() - 60 * 60
             )
-                res.header(
-                    "token",
-                    createToken(user.id, user.name, user.sex, user.role)
-                );
+                res.header("token", createToken(user.id, user.name, user.sex, user.role));
         }
         done();
     });
