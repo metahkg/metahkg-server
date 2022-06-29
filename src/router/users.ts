@@ -7,11 +7,12 @@ import rename from "./users/rename";
 import block from "./users/block";
 import unblock from "./users/unblock";
 import reset from "./users/reset";
+import avatar from "./users/avatar";
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
 
 export default (
     router: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
     router.register(register);
@@ -23,5 +24,6 @@ export default (
     router.register(unblock);
     router.register(status);
     router.register(reset);
+    router.register(avatar);
     done();
 };

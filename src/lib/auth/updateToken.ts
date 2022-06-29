@@ -9,7 +9,7 @@ export default function (
     opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) {
-    fastify.use(async (req, res, next) => {
+    fastify.addHook("preHandler", async (req, res) => {
         const user = verifyUser(req.headers.authorization);
 
         if (user) {
@@ -22,10 +22,9 @@ export default function (
                     userData.role
                 );
                 req.headers.authorization = `Bearer ${newToken}`;
-                res.setHeader("token", newToken);
+                res.header("token", newToken);
             }
         }
-        next();
     });
     done();
 }

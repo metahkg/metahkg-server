@@ -7,7 +7,6 @@ import { createToken } from "../../lib/auth/createtoken";
 import User from "../../models/user";
 import hash from "hash.js";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import fastifyRateLimit from "@fastify/rate-limit";
 
 dotenv.config();
 
@@ -16,13 +15,6 @@ export default (
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
-    fastify.register(fastifyRateLimit, {
-        global: false,
-        max: 5,
-        ban: 5,
-        timeWindow: 1000 * 60 * 30,
-    });
-
     const schema = Type.Object(
         {
             name: Type.Union([
@@ -37,6 +29,13 @@ export default (
 
     fastify.post(
         "/login",
+        {
+            preHandler: fastify.rateLimit({
+                max: 5,
+                ban: 5,
+                timeWindow: 1000 * 60 * 5,
+            }),
+        },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             if (!ajv.validate(schema, req.body))
                 return res.code(400).send({ error: "Bad request." });

@@ -3,6 +3,7 @@ import Mailgun from "mailgun-js";
 import { Collection, MongoClient } from "mongodb";
 
 dotenv.config();
+
 export const mongouri = process.env.DB_URI || "mongodb://localhost"; //mongo connection string
 export const LINKS_DOMAIN = process.env.LINKS_DOMAIN;
 export const client = new MongoClient(mongouri);

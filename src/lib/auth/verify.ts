@@ -1,6 +1,9 @@
 import jwt from "jsonwebtoken";
 import { ajv } from "../ajv";
 import { jwtTokenSchema, jwtTokenType } from "../../types/jwt/user";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export default function verifyUser(token?: string): false | jwtTokenType {
     token = token?.slice(7);

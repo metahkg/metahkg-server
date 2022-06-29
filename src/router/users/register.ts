@@ -26,6 +26,9 @@ import { Static, Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 import hash from "hash.js";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export default (
     fastify: FastifyInstance,

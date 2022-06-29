@@ -8,7 +8,7 @@ export default function (
     opts: FastifyPluginOptions,
     done: (err?: Error) => void
 ) {
-    fastify.use((req, res, next) => {
+    fastify.addHook("preHandler", (req, res, done) => {
         const token = req.headers.authorization;
         const user = verifyUser(token) as jwtTokenType & { exp: number };
         if (user) {
@@ -17,12 +17,12 @@ export default function (
                 new Date(exp).getTime() - 60 * 60 * 24 * 7 <
                 new Date().getTime() - 60 * 60
             )
-                res.setHeader(
+                res.header(
                     "token",
                     createToken(user.id, user.name, user.sex, user.role)
                 );
         }
-        next();
+        done();
     });
     done();
 }

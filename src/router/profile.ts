@@ -1,4 +1,5 @@
 import profile from "./profile/profile";
+import avatars from "./profile/avatars";
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
 
 export default function (
@@ -7,5 +8,6 @@ export default function (
     done: (e?: Error) => void
 ) {
     fastify.register(profile);
+    fastify.register(avatars);
     done();
 }

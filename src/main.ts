@@ -3,26 +3,28 @@ import router from "./router";
 import updateVerificationCode from "./lib/updateVerificationCode";
 import { client } from "./common";
 import { setup } from "./mongo/setupmongo";
-import cors from "@fastify/cors";
 import Fastify from "fastify";
 import refreshToken from "./lib/auth/refreshToken";
-import fastify_express from "@fastify/express";
 import updateToken from "./lib/auth/updateToken";
 import multipart from "@fastify/multipart";
-import expressRoutes from "./router/expressRoutes";
 import fastifyRateLimit from "@fastify/rate-limit";
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
+import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify";
+import fastifyCors from "@fastify/cors";
 
 dotenv.config();
-
-const fastify = Fastify({
-    logger: true,
-    trustProxy: true,
-});
 
 setInterval(updateVerificationCode, 3600 * 1000);
 
 async function build() {
-    await fastify.register(fastify_express);
+    const fastify = Fastify({
+        logger: true,
+        trustProxy: true,
+    });
+
+    process.env.cors && fastify.register(fastifyCors);
+
     /**
      * Set content security policy
      */
@@ -35,10 +37,10 @@ async function build() {
         done();
     });
 
-    process.env.cors && fastify.register(cors);
     fastify.register(multipart);
 
     fastify.register(fastifyRateLimit, {
+        global: true,
         max: 200,
         ban: 50,
         timeWindow: 1000 * 30,
@@ -47,21 +49,26 @@ async function build() {
     fastify.register(updateToken);
     fastify.register(refreshToken);
 
-    return fastify;
+    fastify.register(router, { prefix: "/api" });
+
+    const app = await NestFactory.create<NestFastifyApplication>(
+        AppModule,
+        new FastifyAdapter(fastify)
+    );
+
+    return app;
 }
 
 (async () => {
     await client.connect();
     await setup();
-    const fastify = await build();
+
+    const app = await build();
+
     /**
      * The port can be modified in .env
      */
-
-    fastify.register(router, { prefix: "/api" });
-    fastify.use(expressRoutes);
-
-    fastify.listen({ port: Number(process.env.port) || 3200, host: "0.0.0.0" }, (err) => {
+    await app.listen(Number(process.env.port) || 3200, "0.0.0.0", (err: Error) => {
         if (err) console.log(err);
         console.log(`listening at port ${process.env.port || 3200}`);
     });

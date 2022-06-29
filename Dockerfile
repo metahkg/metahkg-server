@@ -28,4 +28,4 @@ COPY ./static ./static
 COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/node_modules ./node_modules
 
-CMD touch .env && if [ "${env}" = "dev" ]; then node start.js; npx nodemon src/server.ts; else yarn run start; fi;
+CMD touch .env && if [ "${env}" = "dev" ]; then yarn dev; else yarn start; fi;
