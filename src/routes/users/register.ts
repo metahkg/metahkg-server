@@ -1,4 +1,4 @@
-//Signup for an account
+//register for an account
 //humans only
 /*Syntax: POST /api/register
 {
@@ -61,7 +61,7 @@ export default (
                 }[process.env.register || ""] || "normal";
 
             if (registerMode === "none")
-                return res.code(429).send({ error: "No signup allowed." });
+                return res.code(429).send({ error: "Registration not allowed." });
 
             // TODO: WARNING: frontend not implemented !!!
             if (
