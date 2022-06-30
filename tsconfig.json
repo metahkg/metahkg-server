@@ -5,17 +5,16 @@
     "target": "es2017",
     "noImplicitAny": true,
     "noImplicitUseStrict": true,
+    "experimentalDecorators": true,
+    "allowJs": true,
     "moduleResolution": "node",
     "sourceMap": true,
+    "declaration": true,
     "outDir": "dist",
     "baseUrl": ".",
     "paths": {
-      "*": [
-        "node_modules/*"
-      ]
+      "*": ["node_modules/*"]
     }
   },
-  "include": [
-    "src/**/*"
-  ]
+  "include": ["src/**/*"]
 }

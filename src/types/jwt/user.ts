@@ -1,4 +1,7 @@
 import { Static, Type } from "@sinclair/typebox";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 export const jwtTokenSchema = Type.Object({
     id: Type.Integer(),

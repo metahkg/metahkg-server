@@ -1,8 +1,17 @@
 import jwt from "jsonwebtoken";
 import { jwtTokenType } from "../../types/jwt/user";
-import { userRole } from "../../types/user";
+import { userSex, userRole } from "../../types/user";
+import dotenv from "dotenv";
 
-export function createToken(id: number, name: string, sex: "M" | "F", role: userRole) {
+dotenv.config();
+
+export function createToken(user: {
+    id: number;
+    name: string;
+    sex: userSex;
+    role: userRole;
+}) {
+    const { id, name, sex, role } = user;
     const jsonData: jwtTokenType = {
         id: id,
         name: name,

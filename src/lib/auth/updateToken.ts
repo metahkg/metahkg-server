@@ -6,26 +6,20 @@ import { FastifyInstance, FastifyPluginOptions } from "fastify";
 
 export default function (
     fastify: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) {
-    fastify.use(async (req, res, next) => {
+    fastify.addHook("preHandler", async (req, res) => {
         const user = verifyUser(req.headers.authorization);
 
         if (user) {
             const userData = (await usersCl.findOne({ id: user.id })) as User;
-            if (userData.name !== user.name || userData.sex !== user.sex) {
-                const newToken = createToken(
-                    userData.id,
-                    userData.name,
-                    userData.sex,
-                    userData.role
-                );
+            if (userData.name !== user.name) {
+                const newToken = createToken(user);
                 req.headers.authorization = `Bearer ${newToken}`;
-                res.setHeader("token", newToken);
+                res.header("token", newToken);
             }
         }
-        next();
     });
     done();
 }
