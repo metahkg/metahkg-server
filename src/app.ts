@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 import routes from "./routes";
-import updateVerificationCode from "./lib/updateVerificationCode";
 import Fastify from "fastify";
 import refreshToken from "./lib/auth/refreshToken";
 import updateToken from "./lib/auth/updateToken";
@@ -12,8 +11,6 @@ import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify
 import fastifyCors from "@fastify/cors";
 
 dotenv.config();
-
-setInterval(updateVerificationCode, 3600 * 1000);
 
 export default async function MetahkgServer() {
     const fastify = Fastify({
