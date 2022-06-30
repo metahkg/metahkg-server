@@ -118,3 +118,9 @@ node server/migrate/migratetov0.5.2.js
 - replace signupmode with register (process.env.register)
 - split reset into forgot and reset
 - status no longer sends a token, instead a token is added to the header upon request when the token has been issued for more than two days
+
+## v2.4.0
+
+- profile no longer support self
+- block and unblock no longer return the list of blocked users
+- added blocklist to get blocked users

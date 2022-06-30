@@ -1,13 +1,12 @@
 import User from "../../models/user";
 import { threadCl, usersCl } from "../../common";
-import verifyUser from "../../lib/auth/verify";
 import { ajv } from "../../lib/ajv";
 import { Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 
 export default function (
     fastify: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) {
     fastify.get(
@@ -19,25 +18,13 @@ export default function (
             }>,
             res
         ) => {
-            const id = req.params.id === "self" ? req.params.id : Number(req.params.id);
+            const id = Number(req.params.id);
 
-            if (
-                !ajv.validate(
-                    Type.Union([Type.Integer({ minimum: 1 }), Type.Literal("self")]),
-                    id
-                )
-            )
+            if (!ajv.validate(Type.Integer({ minimum: 1 }), id))
                 return res.code(400).send({ error: "Bad request." });
 
-            const user = verifyUser(req.headers.authorization);
-
             const requestedUser = (await usersCl.findOne(
-                {
-                    id:
-                        req.params.id === "self" && user
-                            ? user.id
-                            : Number(req.params.id),
-                },
+                { id },
                 {
                     projection: req.query.nameonly
                         ? { name: 1, _id: 0 }

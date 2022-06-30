@@ -6,6 +6,7 @@ import resend from "./users/resend";
 import rename from "./users/rename";
 import block from "./users/block";
 import unblock from "./users/unblock";
+import blocklist from "./users/blocklist";
 import reset from "./users/reset";
 import forgot from "./users/forgot";
 import avatar from "./users/avatar";
@@ -23,6 +24,7 @@ export default (
     fastify.register(rename);
     fastify.register(block);
     fastify.register(unblock);
+    fastify.register(blocklist);
     fastify.register(status);
     fastify.register(reset);
     fastify.register(forgot);

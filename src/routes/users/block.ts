@@ -2,12 +2,11 @@ import { Static, Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 import verifyUser from "../../lib/auth/verify";
 import { usersCl } from "../../common";
-import User from "../../models/user";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 
 export default (
     fastify: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
     const schema = Type.Object({
@@ -24,18 +23,9 @@ export default (
 
             const { userId } = req.body;
 
-            try {
-                const blocked = (
-                    (await usersCl.findOneAndUpdate(
-                        { id: user.id },
-                        [{ $push: { blocked: userId } }],
-                        { returnDocument: "after" }
-                    )) as unknown as User
-                )?.blocked;
-                return res.send({ blocked });
-            } catch {
-                return res.code(500).send({ error: "Internal server error." });
-            }
+            await usersCl.updateOne({ id: user.id }, { $push: { blocked: userId } });
+
+            return res.send({ response: "ok" });
         }
     );
     done();

@@ -873,15 +873,15 @@
     domhandler "^4.2.0"
     selderee "^0.6.0"
 
+"@sinclair/typebox@0.23.4":
+  version "0.23.4"
+  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.23.4.tgz#6ff93fd2585ce44f7481c9ff6af610fbb5de98a4"
+  integrity sha512-0/WqSvpVbCBAV1yPeko7eAczKbs78dNVAaX14quVlwOb2wxfKuXCx91h4NrEfkYK9zEnyVSW4JVI/trP3iS+Qg==
+
 "@sinclair/typebox@^0.23.3":
   version "0.23.5"
   resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.23.5.tgz#93f7b9f4e3285a7a9ade7557d9a8d36809cbc47d"
   integrity sha512-AFBVi/iT4g20DHoujvMH1aEDn8fGJh4xsRGCP6d8RpLPMqsNPvW01Jcn0QysXTsg++/xj25NmJsGyH9xug/wKg==
-
-"@sinclair/typebox@^0.24.1":
-  version "0.24.1"
-  resolved "https://registry.yarnpkg.com/@sinclair/typebox/-/typebox-0.24.1.tgz#b4ff200fb4f18dfd15c53e984d8801e2c8df1526"
-  integrity sha512-v59jW0KQIy4iMP0Pn7gcpQ48YDXa9vOopsRhaPWmsStTxaVNYIqFY3eK6y4PU+53hlQoaQ8pAxU4cPIaMFEJwg==
 
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
