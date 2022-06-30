@@ -49,12 +49,12 @@ async function build() {
     fastify.register(updateToken);
     fastify.register(refreshToken);
 
-    fastify.register(router, { prefix: "/api" });
-
     const app = await NestFactory.create<NestFastifyApplication>(
         AppModule,
         new FastifyAdapter(fastify)
     );
+
+    app.register(router, { prefix: "/api" });
 
     return app;
 }
