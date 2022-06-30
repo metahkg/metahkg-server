@@ -9,6 +9,7 @@
     "allowJs": true,
     "moduleResolution": "node",
     "sourceMap": true,
+    "declaration": true,
     "outDir": "dist",
     "baseUrl": ".",
     "paths": {
