@@ -38,9 +38,9 @@ export const resetMsg = (params: { email: string; code: string }) => {
         subject: "Metahkg - Reset Password",
         html: /*html*/ `<h1>Reset Password</h1>
         <p>Click here to reset your password:</h1>
-        <a href="https://${domain}/users/reset?code=${encodeURIComponent(code)}&email=${encodeURIComponent(
-            email
-        )}">Reset</a>
+        <a href="https://${domain}/users/reset?code=${encodeURIComponent(
+            code
+        )}&email=${encodeURIComponent(email)}">Reset</a>
         <p>Alternatively, use this code at https://${domain}/reset :</p>
         <p>${code}</p>`,
     };
