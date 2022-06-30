@@ -11,10 +11,12 @@ export default function (
         const user = verifyUser(req.headers.authorization);
         if (!user) return res.code(404).send({ error: "User not found." });
 
-        const blocklist = (await usersCl.findOne(
-            { user: user.id },
-            { projection: { _id: 0, blocked: 1 } }
-        )).blocked;
+        const blocklist = (
+            await usersCl.findOne(
+                { user: user.id },
+                { projection: { _id: 0, blocked: 1 } }
+            )
+        ).blocked;
 
         res.send(blocklist);
     });
