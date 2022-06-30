@@ -25,7 +25,7 @@ export const verifyMsg = (params: { email: string; code: string }) => {
     <a href="https://${domain}/users/verify?code=${encodeURIComponent(
             code
         )}&email=${encodeURIComponent(email)}">Verify</a>
-    <p>Alternatively, use this code at https://${domain}/users/verify :<p>
+    <p>Alternatively, use the code below <a href="https://${domain}/users/verify">here</a>:<p>
     <p>${code}</p>`,
     };
 };
@@ -41,7 +41,7 @@ export const resetMsg = (params: { email: string; code: string }) => {
         <a href="https://${domain}/users/reset?code=${encodeURIComponent(
             code
         )}&email=${encodeURIComponent(email)}">Reset</a>
-        <p>Alternatively, use this code at https://${domain}/reset :</p>
+        <p>Alternatively, use the code below <a href="https://${domain}/users/reset">here</a>:</p>
         <p>${code}</p>`,
     };
 };

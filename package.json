@@ -1,6 +1,6 @@
 {
   "name": "metahkg-server",
-  "version": "2.4.0",
+  "version": "2.4.0-4",
   "main": "dist/app.js",
   "author": "wcyat",
   "homepage": "https://metahkg.org",
@@ -23,7 +23,6 @@
     "@types/fs-extra": "^9.0.13",
     "@types/html-to-text": "^8.1.0",
     "@types/jsonwebtoken": "^8.5.8",
-    "@types/mailgun-js": "^0.22.12",
     "@types/multer": "^1.4.7",
     "@types/node": "^18.0.0",
     "@types/sanitize-html": "^2.6.2",
@@ -44,7 +43,6 @@
     "is-sn-integer": "^0.3.0",
     "isomorphic-dompurify": "^0.20.0",
     "jsonwebtoken": "^8.5.1",
-    "mailgun-js": "^0.22.0",
     "mailgun.js": "^7.0.2",
     "mongodb": "^4.7.0",
     "node-html-parser": "^5.3.3",
