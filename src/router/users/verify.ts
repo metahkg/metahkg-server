@@ -18,7 +18,7 @@ dotenv.config();
 
 export default (
     fastify: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
     const schema = Type.Object(
@@ -66,16 +66,9 @@ export default (
             await usersCl.insertOne(newUser);
             await verificationCl.deleteOne({ type: "register", email: req.body.email });
 
-            const token = createToken(
-                newUser.id,
-                newUser.name,
-                newUser.sex,
-                newUser.role
-            );
+            const token = createToken(newUser);
 
-            res.send({
-                token,
-            });
+            res.send({ token });
         }
     );
     done();

@@ -1,9 +1,10 @@
-import { secret, domain, verificationCl, limitCl, mg, mgDomain } from "../../common";
+import { secret, verificationCl, limitCl } from "../../common";
 import { verifyCaptcha } from "../../lib/recaptcha";
 import { Static, Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 import Limit from "../../models/limit";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
+import { mg, mgDomain, verifyMsg } from "../../lib/mailgun";
 
 export default (
     fastify: FastifyInstance,
@@ -45,19 +46,11 @@ export default (
                     .status(429)
                     .send({ error: "You can only resend 5 times a day." });
 
-            const verifyMsg = {
-                from: `Metahkg support <support@${mgDomain}>`,
-                to: email,
-                subject: "Metahkg - verify your email",
-                text: `Verify your email with the following link:
-https://${domain}/users/verify?code=${encodeURIComponent(
-                    verificationUserData.code
-                )}&email=${encodeURIComponent(email)}
+            await mg.messages.create(
+                mgDomain,
+                verifyMsg({ email, code: verificationUserData.code })
+            );
 
-Alternatively, use this code at https://${domain}/verify :
-${verificationUserData.code}`,
-            };
-            await mg.messages().send(verifyMsg);
             await limitCl.insertOne({
                 type: "resend",
                 email,

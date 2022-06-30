@@ -60,9 +60,7 @@ export default (
             const pwdMatch = await bcrypt.compare(pwd, user.pwd);
             if (!pwdMatch) return res.code(401).send({ error: "Login failed." });
 
-            res.send({
-                token: createToken(user.id, user.name, user.sex, user.role),
-            });
+            res.send({ token: createToken(user) });
         }
     );
     done();

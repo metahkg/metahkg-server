@@ -110,3 +110,11 @@ node server/migrate/migratetov0.5.2.js
 
 - add rate limiting
 - replace editprofile with rename
+
+## v2.3.0
+
+- use nestjs
+- express no longer needed; migrated all express code to fastify.
+- replace signupmode with register (process.env.register)
+- split reset into forgot and reset
+- status no longer sends a token, instead a token is added to the header upon request when the token has been issued for more than two days

@@ -7,7 +7,7 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 
 export default (
     fastify: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
     const schema = Type.Object(
@@ -33,7 +33,7 @@ export default (
 
             res.send({
                 response: "ok",
-                token: createToken(user.id, newName, user.sex, user.role),
+                token: createToken({ ...user, name: newName }),
             });
         }
     );

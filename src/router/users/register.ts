@@ -9,15 +9,8 @@
   sex: string
 }
 */
-import {
-    domain,
-    secret,
-    usersCl,
-    verificationCl,
-    inviteCl,
-    mg,
-    mgDomain,
-} from "../../common";
+import { secret, usersCl, verificationCl, inviteCl } from "../../common";
+import { mg, mgDomain, verifyMsg } from "../../lib/mailgun";
 import EmailValidator from "email-validator";
 import { verifyCaptcha } from "../../lib/recaptcha";
 import bcrypt from "bcrypt";
@@ -32,7 +25,7 @@ dotenv.config();
 
 export default (
     fastify: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
     const schema = Type.Object(
@@ -54,36 +47,38 @@ export default (
             if (!ajv.validate(schema, req.body) || EmailValidator.validate(req.body.name))
                 return res.code(400).send({ error: "Bad request." });
 
-            if (!(await verifyCaptcha(secret, req.body.rtoken)))
+            const { name, pwd, email, rtoken, sex, invitecode } = req.body;
+
+            if (!(await verifyCaptcha(secret, rtoken)))
                 return res.code(400).send({ error: "recaptcha token invalid." });
 
-            // signup modes (process.env.signupMode)
-            const signupMode =
+            // register modes (process.env.register)
+            const registerMode =
                 {
                     normal: "normal",
                     none: "none",
                     invite: "invite",
-                }[process.env.signupMode || ""] || "normal";
+                }[process.env.register || ""] || "normal";
 
-            if (signupMode === "none")
+            if (registerMode === "none")
                 return res.code(429).send({ error: "No signup allowed." });
 
             // TODO: WARNING: frontend not implemented !!!
             if (
-                signupMode === "invite" &&
-                !(await inviteCl.findOne({ code: req.body.invitecode }))
+                registerMode === "invite" &&
+                !(await inviteCl.findOne({ code: invitecode }))
             )
                 return res.code(409).send({ error: "Invalid invite code." });
 
             if (
                 (await usersCl.findOne({
                     $or: [
-                        { name: req.body.name },
-                        { email: hash.sha256().update(req.body.email).digest("hex") },
+                        { name: name },
+                        { email: hash.sha256().update(email).digest("hex") },
                     ],
                 })) ||
                 (await verificationCl.findOne({
-                    $or: [{ name: req.body.name }, { email: req.body.email }],
+                    $or: [{ name: name }, { email: email }],
                 }))
             )
                 return res.code(409).send({ error: "Username or email exists." });
@@ -93,32 +88,19 @@ export default (
                 digits: 30,
             });
 
-            const verify = {
-                from: `Metahkg support <support@${mgDomain}>`,
-                to: req.body.email,
-                subject: "Metahkg - verify your email",
-                text: `Verify your email with the following link:
-https://${domain}/users/verify?code=${encodeURIComponent(
-                    code
-                )}&email=${encodeURIComponent(req.body.email)}
+            await mg.messages.create(mgDomain, verifyMsg({ email, code }));
 
-Alternatively, use this code at https://${domain}/users/verify :
-${code}`,
-            };
-
-            await mg.messages().send(verify);
-
-            const hashedPwd = await bcrypt.hash(req.body.pwd, 10);
-
+            const hashedPwd = await bcrypt.hash(pwd, 10);
             await verificationCl.insertOne({
                 createdAt: new Date(),
-                code: code,
-                email: req.body.email,
+                code,
+                email,
                 pwd: hashedPwd,
-                name: req.body.name,
-                sex: req.body.sex,
+                name,
+                sex,
                 type: "register",
             });
+
             res.send({ response: "ok" });
         }
     );

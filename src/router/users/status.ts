@@ -1,11 +1,10 @@
-import { createToken } from "../../lib/auth/createtoken";
 import verifyUser from "../../lib/auth/verify";
 
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
 
 export default (
     fastify: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
     fastify.get("/status", async (req, res) => {
@@ -15,10 +14,10 @@ export default (
         if (!user) return res.send({ active: false });
 
         res.send({
+            /** whether the token is valid */
             active: true,
             id: user.id,
             name: user.name,
-            token: createToken(user.id, user.name, user.sex, user.role),
         });
     });
     done();

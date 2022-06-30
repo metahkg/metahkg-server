@@ -5,7 +5,7 @@ import { jwtTokenType } from "../../types/jwt/user";
 
 export default function (
     fastify: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (err?: Error) => void
 ) {
     fastify.addHook("preHandler", (req, res, done) => {
@@ -15,9 +15,9 @@ export default function (
             const { exp } = user;
             if (
                 new Date(exp).getTime() - 60 * 60 * 24 * 7 <
-                new Date().getTime() - 60 * 60
+                new Date().getTime() - 60 * 60 * 24 * 2
             )
-                res.header("token", createToken(user.id, user.name, user.sex, user.role));
+                res.header("token", createToken(user));
         }
         done();
     });
