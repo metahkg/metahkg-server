@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import router from "./router";
+import routes from "./routes";
 import updateVerificationCode from "./lib/updateVerificationCode";
 import { client } from "./common";
 import { setup } from "./mongo/setupmongo";
@@ -54,7 +54,7 @@ async function build() {
         new FastifyAdapter(fastify)
     );
 
-    app.register(router, { prefix: "/api" });
+    app.register(routes, { prefix: "/api" });
 
     return app;
 }

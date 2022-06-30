@@ -7,23 +7,25 @@ import rename from "./users/rename";
 import block from "./users/block";
 import unblock from "./users/unblock";
 import reset from "./users/reset";
+import forgot from "./users/forgot";
 import avatar from "./users/avatar";
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
 
 export default (
-    router: FastifyInstance,
+    fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
-    router.register(register);
-    router.register(login);
-    router.register(verify);
-    router.register(resend);
-    router.register(rename);
-    router.register(block);
-    router.register(unblock);
-    router.register(status);
-    router.register(reset);
-    router.register(avatar);
+    fastify.register(register);
+    fastify.register(login);
+    fastify.register(verify);
+    fastify.register(resend);
+    fastify.register(rename);
+    fastify.register(block);
+    fastify.register(unblock);
+    fastify.register(status);
+    fastify.register(reset);
+    fastify.register(forgot);
+    fastify.register(avatar);
     done();
 };

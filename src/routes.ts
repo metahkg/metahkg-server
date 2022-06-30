@@ -1,13 +1,13 @@
-import users from "./router/users";
-import category from "./router/category";
-import menu from "./router/menu";
-import thread from "./router/thread";
-import profile from "./router/profile";
+import users from "./routes/users";
+import category from "./routes/category";
+import menu from "./routes/menu";
+import thread from "./routes/thread";
+import profile from "./routes/profile";
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
 
 export default (
     fastify: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
     fastify.register(users, { prefix: "/users" });
