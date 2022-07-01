@@ -52,6 +52,19 @@ docker-build:
       exists:
         - Dockerfile
 
+tagging:
+  stage: publish
+  only:
+    - master
+    - dev
+  script:
+    - git config --global user.name metahkg-bot
+    - git config --global user.email bot@metahkg.org
+    - tag=$(cat package.json | grep version | grep -Eo "[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+")
+    - if [ $CI_COMMIT_BRANCH = "dev" ]; then tag=${tag}-dev; fi;
+    - git tag "$tag"
+    - git push --tags https://root:$gitlab_token@$CI_SERVER_HOST/$CI_PROJECT_PATH.git HEAD:${CI_COMMIT_BRANCH}
+
 publish:
   image: node:latest
   stage: deploy
