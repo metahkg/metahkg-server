@@ -17,7 +17,7 @@ stages:
 
 lint:
   stage: lint
-  image: node:18
+  image: node:latest
   before_script:
     - git checkout $CI_COMMIT_BRANCH
     - git config user.name metahkg-bot

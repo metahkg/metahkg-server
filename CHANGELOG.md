@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.5.0
+
+- support time, score, and latest for sorting comments
+
 ## v2.4.0
 
 - profile no longer support self
