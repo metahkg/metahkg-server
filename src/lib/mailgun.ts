@@ -21,12 +21,10 @@ export const verifyMsg = (params: { email: string; code: string }) => {
         to: email,
         subject: "Metahkg - verify your email",
         html: /*html*/ `<h1>Verify your email</h1>
-    <p>Click here to verify your email address:</p>
-    <a href="https://${domain}/users/verify?code=${encodeURIComponent(
+        <p>Click here to verify your email address:</p>
+        <a href="https://${domain}/users/verify?code=${encodeURIComponent(
             code
-        )}&email=${encodeURIComponent(email)}">Verify</a>
-    <p>Alternatively, use the code below <a href="https://${domain}/users/verify">here</a>:<p>
-    <p>${code}</p>`,
+        )}&email=${encodeURIComponent(email)}">Verify</a>`,
     };
 };
 
@@ -40,8 +38,6 @@ export const resetMsg = (params: { email: string; code: string }) => {
         <p>Click here to reset your password:</h1>
         <a href="https://${domain}/users/reset?code=${encodeURIComponent(
             code
-        )}&email=${encodeURIComponent(email)}">Reset</a>
-        <p>Alternatively, use the code below <a href="https://${domain}/users/reset">here</a>:</p>
-        <p>${code}</p>`,
+        )}&email=${encodeURIComponent(email)}">Reset</a>`,
     };
 };
