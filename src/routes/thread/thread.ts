@@ -81,7 +81,12 @@ export default (
                                 },
                             },
                         },
-                        { $unwind: "$conversation" },
+                        {
+                            $unwind: {
+                                path: "$conversation",
+                                preserveNullAndEmptyArrays: true,
+                            },
+                        },
                         {
                             $sort: {
                                 score: {
@@ -104,7 +109,11 @@ export default (
                                 newRoot: {
                                     $mergeObjects: [
                                         "$doc",
-                                        { conversation: "$conversation" },
+                                        {
+                                            conversation: {
+                                                $ifNull: ["$conversation", []],
+                                            },
+                                        },
                                     ],
                                 },
                             },
@@ -114,7 +123,10 @@ export default (
                     .toArray()
             )[0] as Thread;
 
-            if (!thread) return res.code(404).send({ error: "Not Found" });
+            console.log(thread);
+
+            if (!(await threadCl.findOne({ id })))
+                return res.code(404).send({ error: "Not Found" });
 
             if (
                 !verifyUser(req.headers.authorization) &&
