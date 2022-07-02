@@ -6,7 +6,7 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 
 export default (
     fastify: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
     fastify.get(
@@ -45,6 +45,8 @@ export default (
             if (!targetComment)
                 return res.code(404).send({ error: "Thread or comment not found." });
 
+            console.log(targetComment.replies);
+
             const replies = (
                 await threadCl.findOne(
                     { id },
@@ -52,8 +54,11 @@ export default (
                         projection: {
                             _id: 0,
                             conversation: {
-                                $elemMatch: {
-                                    id: { $in: targetComment.replies },
+                                $filter: {
+                                    input: "$conversation",
+                                    cond: {
+                                        $in: ["$$this.id", targetComment.replies],
+                                    },
                                 },
                             },
                         },
