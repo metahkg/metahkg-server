@@ -18,7 +18,7 @@
     "@nestjs/common": "^8.4.7",
     "@nestjs/core": "^8.4.7",
     "@nestjs/platform-fastify": "^9.0.0-next.2",
-    "@sinclair/typebox": "0.23.4",
+    "@sinclair/typebox": "0.23.5",
     "@types/bcrypt": "^5.0.0",
     "@types/fs-extra": "^9.0.13",
     "@types/html-to-text": "^8.1.0",
