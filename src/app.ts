@@ -20,7 +20,7 @@ export default async function MetahkgServer() {
     fastify.setErrorHandler((error, _request, reply) => {
         console.error(error);
         reply.code(500).send({ statusCode: 500, error: "Internal server error." });
-    })
+    });
 
     process.env.cors && fastify.register(fastifyCors);
 
