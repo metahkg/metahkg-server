@@ -123,6 +123,7 @@ export default function sanitize(html: string) {
                 "font-weight": [
                     /^(normal|bold|bolder|lighter|100|200|300|400|500|600|700|800|900)$/,
                 ],
+                "font-size": [/^\d{1,2}(pt|px)$/],
                 "font-style": [/^(normal|italic|oblique)$/],
                 "text-transform": [/^(none|capitalize|uppercase|lowercase)$/],
                 "letter-spacing": [/^[\d.]+$/],
