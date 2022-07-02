@@ -88,7 +88,7 @@ export default function sanitize(html: string) {
                 float: [/^(left|center|right)$/],
                 display: [/^block$/],
                 "margin-left": [/^auto$/],
-                "margin-right": [/^auto$/]
+                "margin-right": [/^auto$/],
             },
             i: {
                 width: [/^\d+$/],
@@ -96,7 +96,7 @@ export default function sanitize(html: string) {
                 float: [/^(left|center|right)$/],
                 display: [/^block$/],
                 "margin-left": [/^auto$/],
-                "margin-right": [/^auto$/]
+                "margin-right": [/^auto$/],
             },
             video: {
                 width: [/^\d+$/],
@@ -104,7 +104,7 @@ export default function sanitize(html: string) {
                 float: [/^(left|center|right)$/],
                 display: [/^block$/],
                 "margin-left": [/^auto$/],
-                "margin-right": [/^auto$/]
+                "margin-right": [/^auto$/],
             },
             td: {
                 width: [/^\d+$/],
