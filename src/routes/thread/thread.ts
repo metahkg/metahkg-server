@@ -103,7 +103,18 @@ export default (
                         {
                             $group: {
                                 _id: "$_id",
+                                doc: { $first: "$$ROOT" },
                                 conversation: { $push: "$conversation" },
+                            },
+                        },
+                        {
+                            $replaceRoot: {
+                                newRoot: {
+                                    $mergeObjects: [
+                                        "$doc",
+                                        { conversation: "$conversation" },
+                                    ],
+                                },
                             },
                         },
                         { $project: { _id: 0 } },
