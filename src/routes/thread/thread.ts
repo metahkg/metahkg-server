@@ -38,8 +38,7 @@ export default (
             const end = Number(req.query.end) || page * 25;
             const sort = (req.query.sort || "time") as "score" | "time" | "latest";
 
-            if (end < start)
-                return res.code(400).send({ error: "Bad request." });
+            if (end < start) return res.code(400).send({ error: "Bad request." });
 
             const thread = (
                 await threadCl
