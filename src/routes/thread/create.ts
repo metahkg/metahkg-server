@@ -9,7 +9,6 @@
 //only for human
 import {
     secret,
-    limitCl,
     categoryCl,
     LINKS_DOMAIN,
     linksCl,
@@ -19,11 +18,9 @@ import {
 import { verifyCaptcha } from "../../lib/recaptcha";
 import findImages from "../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
-import { ajv } from "../../lib/ajv";
 import verifyUser from "../../lib/auth/verify";
 import { generate } from "wcyat-rg";
 import sanitize from "../../lib/sanitize";
-import Limit from "../../models/limit";
 import Thread from "../../models/thread";
 import { htmlToText } from "html-to-text";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
@@ -45,6 +42,13 @@ export default (
 
     fastify.post(
         "/create",
+        {
+            preHandler: fastify.rateLimit({
+                max: 10,
+                timeWindow: 1000 * 60 * 60,
+            }),
+            schema: { body: schema },
+        },
         async (
             req: FastifyRequest<{
                 Body: Static<typeof schema>;
@@ -52,9 +56,6 @@ export default (
             }>,
             res
         ) => {
-            if (!ajv.validate(schema, req.body))
-                return res.code(400).send({ error: "Bad request." });
-
             const comment = sanitize(req.body.comment);
             const text = htmlToText(comment, { wordwrap: false });
 
@@ -63,11 +64,6 @@ export default (
 
             const user = verifyUser(req.headers.authorization);
             if (!user) return res.code(400).send({ error: "User not found." });
-
-            if ((await limitCl.countDocuments({ id: user.id, type: "create" })) >= 10)
-                return res
-                    .status(429)
-                    .send({ error: "You cannot create more than 10 topics a day." });
 
             const category = await categoryCl.findOne({ id: req.body.category });
             if (!category) return res.code(404).send({ error: "Category not found." });
@@ -138,12 +134,6 @@ export default (
                     return { image: item, cid: 1 };
                 }),
             });
-
-            await limitCl.insertOne({
-                id: user.id,
-                createdAt: date,
-                type: "create",
-            } as Limit);
 
             res.send({ id: newThreadId });
         }

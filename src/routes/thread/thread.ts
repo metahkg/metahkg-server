@@ -1,27 +1,34 @@
 import { threadCl } from "../../common";
 import { hiddencats } from "../../lib/hiddencats";
-import { Type } from "@sinclair/typebox";
-import { ajv } from "../../lib/ajv";
+import { Static, Type } from "@sinclair/typebox";
 import verifyUser from "../../lib/auth/verify";
 import Thread from "../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
+import regex from "../../lib/regex";
 
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
+    const querySchema = Type.Object({
+        page: Type.Optional(Type.RegEx(regex.integer)),
+        start: Type.Optional(Type.RegEx(regex.integer)),
+        end: Type.Optional(Type.RegEx(regex.integer)),
+        sort: Type.Optional(Type.RegEx(/^(score|time|latest)$/)),
+    });
+
+    const paramsSchema = Type.Object({
+        id: Type.RegEx(regex.integer),
+    });
+
     fastify.get(
         "/:id",
+        { schema: { params: paramsSchema, querystring: querySchema } },
         async (
             req: FastifyRequest<{
-                Params: { id: string };
-                Querystring: {
-                    page?: string;
-                    start?: string;
-                    end?: string;
-                    sort?: string;
-                };
+                Params: Static<typeof paramsSchema>;
+                Querystring: Static<typeof querySchema>;
             }>,
             res
         ) => {
@@ -29,23 +36,9 @@ export default (
             const page = Number(req.query.page) || 1;
             const start = Number(req.query.start) || (page - 1) * 25 + 1;
             const end = Number(req.query.end) || page * 25;
-            const sort = req.query.sort || ("time" as "score" | "time" | "latest");
+            const sort = (req.query.sort || "time") as "score" | "time" | "latest";
 
-            const schema = Type.Object(
-                {
-                    id: Type.Integer(),
-                    page: Type.Integer({ minimum: 1 }),
-                    start: Type.Integer({ minimum: 1 }),
-                    end: Type.Integer({ minimum: start }),
-                    sort: Type.Union([
-                        Type.Literal("score"),
-                        Type.Literal("time"),
-                        Type.Literal("latest"),
-                    ]),
-                },
-                { additionalProperties: false }
-            );
-            if (!ajv.validate(schema, { id, page, start, end, sort }))
+            if (end < start)
                 return res.code(400).send({ error: "Bad request." });
 
             const thread = (
