@@ -52,8 +52,11 @@ export default (
                         projection: {
                             _id: 0,
                             conversation: {
-                                $elemMatch: {
-                                    id: { $in: targetComment.replies },
+                                $filter: {
+                                    input: "$conversation",
+                                    cond: {
+                                        $in: ["$$this.id", targetComment.replies],
+                                    },
                                 },
                             },
                         },
