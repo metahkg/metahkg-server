@@ -87,18 +87,24 @@ export default function sanitize(html: string) {
                 height: [/^\d+$/],
                 float: [/^(left|center|right)$/],
                 display: [/^block$/],
+                "margin-left": [/^auto$/],
+                "margin-right": [/^auto$/]
             },
             i: {
                 width: [/^\d+$/],
                 height: [/^\d+$/],
                 float: [/^(left|center|right)$/],
                 display: [/^block$/],
+                "margin-left": [/^auto$/],
+                "margin-right": [/^auto$/]
             },
             video: {
                 width: [/^\d+$/],
                 height: [/^\d+$/],
                 float: [/^(left|center|right)$/],
                 display: [/^block$/],
+                "margin-left": [/^auto$/],
+                "margin-right": [/^auto$/]
             },
             td: {
                 width: [/^\d+$/],
