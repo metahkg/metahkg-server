@@ -29,7 +29,7 @@ lint:
     - git commit -a -m lint || exit 0
     - git push origin $CI_COMMIT_BRANCH
   rules:
-    - if: $CI_COMMIT_AUTHOR != "metahkg-bot <bot@metahkg.org>"
+    - if: $CI_COMMIT_AUTHOR != "metahkg-bot <bot@metahkg.org>" && ($CI_COMMIT_BRANCH == "dev" || $CI_COMMIT_BRANCH == "master")
 
 sast:
   stage: test
@@ -55,9 +55,6 @@ docker-build:
 tagging:
   image: alpine:latest
   stage: deploy
-  only:
-    - master
-    - dev
   before_script:
     - apk add git
   script:
