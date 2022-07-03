@@ -45,8 +45,6 @@ export default (
             if (!targetComment)
                 return res.code(404).send({ error: "Thread or comment not found." });
 
-            console.log(targetComment.replies);
-
             const replies = (
                 await threadCl.findOne(
                     { id },
@@ -57,7 +55,7 @@ export default (
                                 $filter: {
                                     input: "$conversation",
                                     cond: {
-                                        $in: ["$$this.id", targetComment.replies],
+                                        $in: ["$$this.id", targetComment.replies || []],
                                     },
                                 },
                             },
