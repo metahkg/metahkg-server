@@ -1,117 +1,132 @@
-/**
- * get conversation
- * Syntax: GET /api/thread/<thread id>/<"conversation"/"users">
- * conversation: main conversation content
- * users: content of users involved in the conversation
- */
 import { threadCl } from "../../common";
 import { hiddencats } from "../../lib/hiddencats";
-import { Type } from "@sinclair/typebox";
-import { ajv } from "../../lib/ajv";
+import { Static, Type } from "@sinclair/typebox";
 import verifyUser from "../../lib/auth/verify";
 import Thread from "../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
+import regex from "../../lib/regex";
 
 export default (
     fastify: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
-    /**
-     * type:
-     *  0: users
-     *  1: details
-     *  2: conversation
-     * default type is 1
-     */
+    const querySchema = Type.Object({
+        page: Type.Optional(Type.RegEx(regex.integer)),
+        start: Type.Optional(Type.RegEx(regex.integer)),
+        end: Type.Optional(Type.RegEx(regex.integer)),
+        sort: Type.Optional(Type.RegEx(/^(score|time|latest)$/)),
+    });
+
+    const paramsSchema = Type.Object({
+        id: Type.RegEx(regex.integer),
+    });
+
     fastify.get(
         "/:id",
+        { schema: { params: paramsSchema, querystring: querySchema } },
         async (
             req: FastifyRequest<{
-                Params: { id: string };
-                Querystring: {
-                    page?: string;
-                    start?: string;
-                    end?: string;
-                    sort?: string;
-                };
+                Params: Static<typeof paramsSchema>;
+                Querystring: Static<typeof querySchema>;
             }>,
             res
         ) => {
             const id = Number(req.params.id);
             const page = Number(req.query.page) || 1;
-            const start = Number(req.query.start);
-            const end = Number(req.query.end);
+            const start = Number(req.query.start) || (page - 1) * 25 + 1;
+            const end = Number(req.query.end) || page * 25;
+            const sort = (req.query.sort || "time") as "score" | "time" | "latest";
 
-            const schema = Type.Object(
-                {
-                    id: Type.Integer(),
-                    page: Type.Integer({ minimum: 1 }),
-                    start: Type.Optional(Type.Integer()),
-                    end: Type.Optional(Type.Integer()),
-                },
-                { additionalProperties: false }
-            );
-            if (
-                !ajv.validate(schema, {
-                    id: id,
-                    page: page,
-                    start: start || undefined,
-                    end: end || undefined,
-                }) ||
-                (start &&
-                    (start > end ||
-                        (!end && (start < (page - 1) * 25 + 1 || start > page * 25)))) ||
-                (end &&
-                    (end < start ||
-                        (!start && (end > page * 25 || end < (page - 1) * 25 + 1))))
-            ) {
-                return res.code(400).send({ error: "Bad request." });
-            }
+            if (end < start) return res.code(400).send({ error: "Bad request." });
 
-            const thread = (await threadCl.findOne(
-                { id: id },
-                {
-                    projection: {
-                        id: 1,
-                        category: 1,
-                        title: 1,
-                        slink: 1,
-                        lastModified: 1,
-                        c: 1,
-                        createdAt: 1,
-                        op: 1,
-                        pin: 1,
-                        conversation: {
-                            $filter: {
-                                input: "$conversation",
-                                cond: {
-                                    $and: [
-                                        {
-                                            $gte: [
-                                                "$$this.id",
-                                                start || (page - 1) * 25 + 1,
+            const thread = (
+                await threadCl
+                    .aggregate([
+                        { $match: { id } },
+                        {
+                            $set: {
+                                conversation: {
+                                    $filter: {
+                                        input: "$conversation",
+                                        cond: {
+                                            $and: [
+                                                { $gte: ["$$this.id", start] },
+                                                { $lte: ["$$this.id", end] },
                                             ],
                                         },
+                                    },
+                                },
+                            },
+                        },
+                        {
+                            $set: {
+                                conversation: {
+                                    $map: {
+                                        input: "$conversation",
+                                        in: {
+                                            $mergeObjects: [
+                                                "$$this",
+                                                {
+                                                    score: {
+                                                        $subtract: [
+                                                            { $ifNull: ["$$this.U", 0] },
+                                                            { $ifNull: ["$$this.D", 0] },
+                                                        ],
+                                                    },
+                                                },
+                                            ],
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                        {
+                            $unwind: {
+                                path: "$conversation",
+                                preserveNullAndEmptyArrays: true,
+                            },
+                        },
+                        {
+                            $sort: {
+                                score: {
+                                    "conversation.score": -1,
+                                    "conversation.createdAt": 1,
+                                },
+                                time: { "conversation.createdAt": 1 },
+                                latest: { "conversation.createdAt": -1 },
+                            }[sort],
+                        },
+                        {
+                            $group: {
+                                _id: "$_id",
+                                doc: { $first: "$$ROOT" },
+                                conversation: { $push: "$conversation" },
+                            },
+                        },
+                        {
+                            $replaceRoot: {
+                                newRoot: {
+                                    $mergeObjects: [
+                                        "$doc",
                                         {
-                                            $lte: ["$$this.id", end || page * 25],
+                                            conversation: {
+                                                $ifNull: ["$conversation", []],
+                                            },
                                         },
                                     ],
                                 },
                             },
                         },
-                    },
-                }
-            )) as Thread;
+                        { $project: { _id: 0 } },
+                    ])
+                    .toArray()
+            )[0] as Thread;
 
-            if (!thread) return res.code(404).send({ error: "Not Found" });
+            console.log(thread);
 
-            if (req.query.sort === "vote") {
-                thread.conversation = thread.conversation.sort(function (a, b) {
-                    // use 0 if upvote or down vote is undefined
-                    return (b.U || 0 - b.D || 0) - (a.U || 0 - a.D || 0);
-                });
-            }
+            if (!(await threadCl.findOne({ id })))
+                return res.code(404).send({ error: "Not Found" });
 
             if (
                 !verifyUser(req.headers.authorization) &&

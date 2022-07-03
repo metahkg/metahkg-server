@@ -4,27 +4,29 @@ import verifyUser from "../../lib/auth/verify";
 import Thread from "../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { ajv } from "../../lib/ajv";
-import { Type } from "@sinclair/typebox";
+import { Static, Type } from "@sinclair/typebox";
 
 export default (
     fastify: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
-    /**
-     * get threads created by a user
-     * syntax: GET /api/history/<user-id | "self">
-     * returns an array of objects
-     * sort:
-     * 0: by creation time //default
-     * 1: by last modification time
-     */
+    const querySchema = Type.Object({
+        sort: Type.Optional(Type.RegEx(/^(0|1)$/)),
+        page: Type.Optional(Type.RegEx(/^[1-9]\d*$/)),
+    });
+
+    const paramsSchema = Type.Object({
+        id: Type.RegEx(/^[1-9]\d*$/),
+    });
+
     fastify.get(
         "/history/:id",
+        { schema: { params: paramsSchema, querystring: querySchema } },
         async (
             req: FastifyRequest<{
-                Querystring: { sort?: string; page?: string };
-                Params: { id: string };
+                Querystring: Static<typeof querySchema>;
+                Params: Static<typeof paramsSchema>;
             }>,
             res
         ) => {

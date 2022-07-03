@@ -5,10 +5,8 @@ import refreshToken from "./lib/auth/refreshToken";
 import updateToken from "./lib/auth/updateToken";
 import multipart from "@fastify/multipart";
 import fastifyRateLimit from "@fastify/rate-limit";
-import { NestFactory } from "@nestjs/core";
-import { AppModule } from "./app.module";
-import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify";
 import fastifyCors from "@fastify/cors";
+import { ajv } from "./lib/ajv";
 
 dotenv.config();
 
@@ -16,6 +14,12 @@ export default async function MetahkgServer() {
     const fastify = Fastify({
         logger: true,
         trustProxy: true,
+    });
+
+    fastify.setValidatorCompiler((opt) => ajv.compile(opt.schema));
+    fastify.setErrorHandler((error, _request, reply) => {
+        console.error(error);
+        reply.code(500).send({ statusCode: 500, error: "Internal server error." });
     });
 
     process.env.cors && fastify.register(fastifyCors);
@@ -44,12 +48,7 @@ export default async function MetahkgServer() {
     fastify.register(updateToken);
     fastify.register(refreshToken);
 
-    const app = await NestFactory.create<NestFastifyApplication>(
-        AppModule,
-        new FastifyAdapter(fastify)
-    );
+    fastify.register(routes, { prefix: "/api" });
 
-    app.register(routes, { prefix: "/api" });
-
-    return app;
+    return fastify;
 }

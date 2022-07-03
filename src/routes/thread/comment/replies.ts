@@ -6,7 +6,7 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 
 export default (
     fastify: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
     fastify.get(
@@ -55,7 +55,7 @@ export default (
                                 $filter: {
                                     input: "$conversation",
                                     cond: {
-                                        $in: ["$$this.id", targetComment.replies],
+                                        $in: ["$$this.id", targetComment.replies || []],
                                     },
                                 },
                             },

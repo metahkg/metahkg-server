@@ -3,45 +3,53 @@
 // Syntax: GET /api/menu/<category id>?sort=<0 | 1>&page=<number>
 import { categoryCl, threadCl } from "../../common";
 import { hiddencats as gethiddencats } from "../../lib/hiddencats";
-import { Type } from "@sinclair/typebox";
-import { ajv } from "../../lib/ajv";
+import { Static, Type } from "@sinclair/typebox";
 import verifyUser from "../../lib/auth/verify";
 import Thread from "../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
+import regex from "../../lib/regex";
 
 export default (
     fastify: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
     /**
      * sort:
-     * 0 : newest
+     * 0 : latest
      * 1 : viral
      */
+    const querySchema = Type.Object(
+        {
+            sort: Type.Optional(Type.RegEx(/^(0|1)$/)),
+            page: Type.Optional(Type.RegEx(regex.integer)),
+        },
+        { additionalProperties: false }
+    );
+
+    const paramsSchema = Type.Object(
+        {
+            category: Type.Union([
+                Type.RegEx(regex.integer),
+                Type.RegEx(/^bytid[1-9]\d*$/),
+            ]),
+        },
+        { additionalProperties: false }
+    );
+
     fastify.get(
         "/:category",
+        { schema: { querystring: querySchema, params: paramsSchema } },
         async (
             req: FastifyRequest<{
-                Querystring: { sort?: string; page?: string };
-                Params: { category: string };
+                Querystring: Static<typeof querySchema>;
+                Params: Static<typeof paramsSchema>;
             }>,
             res
         ) => {
             const sort = Number(req.query.sort || 0);
             const page = Number(req.query.page) || 1;
             let category = Number(req.params.category) || req.params.category;
-            const schema = Type.Object(
-                {
-                    category: Type.Union([Type.Integer(), Type.RegEx(/bytid\d+/i)]),
-                    sort: Type.Union([Type.Literal(0), Type.Literal(1)]),
-                    page: Type.Integer({ minimum: 1 }),
-                },
-                { additionalProperties: false }
-            );
-
-            if (!ajv.validate(schema, { category, page, sort }))
-                return res.code(400).send({ error: "Bad request." });
 
             const hiddenCats = await gethiddencats();
 

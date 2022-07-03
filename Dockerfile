@@ -9,7 +9,6 @@ COPY ./package.json ./
 COPY ./yarn.lock ./
 COPY ./tsconfig.json ./
 COPY ./tsconfig.build.json ./
-COPY ./nest-cli.json ./
 
 RUN if [ "${env}" = "dev" ]; then yarn install; else yarn install --production; fi;
 
@@ -26,7 +25,6 @@ COPY ./package.json ./
 COPY ./yarn.lock ./
 COPY ./tsconfig.json ./
 COPY ./tsconfig.build.json ./
-COPY ./nest-cli.json ./
 
 COPY ./start.js ./
 COPY ./static ./static
