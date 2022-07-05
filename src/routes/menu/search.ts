@@ -55,7 +55,10 @@ export default (
                 2: { lastModified: -1 },
             }[sort] as Sort;
 
-            const regex = new RegExp(query, "i");
+            const regex = new RegExp(
+                query.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"),
+                "i"
+            );
 
             const data = (await threadCl
                 .find({
