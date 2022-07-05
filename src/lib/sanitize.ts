@@ -19,7 +19,6 @@ export default function sanitize(html: string) {
             "ol",
             "nl",
             "li",
-            "i",
             "strong",
             "em",
             "strike",
@@ -47,7 +46,6 @@ export default function sanitize(html: string) {
         allowedAttributes: {
             a: ["href", "name", "target", "rel"],
             img: ["src", "alt", "height", "width", "style"],
-            i: ["src", "alt", "height", "width", "style"],
             video: ["src", "poster", "controls", "preload", "width", "height", "style"],
             source: ["src", "type"],
             span: ["style"],
@@ -62,7 +60,6 @@ export default function sanitize(html: string) {
         allowedSchemes: ["http", "https", "mailto"],
         allowedSchemesByTag: {
             img: ["http", "https", "data"],
-            i: ["http", "https", "data"],
         },
         transformTags: {
             a: (tagName: string, attribs: sanitizeHtml.Attributes) => {
@@ -72,6 +69,8 @@ export default function sanitize(html: string) {
                 }
                 return { tagName, attribs };
             },
+            img: transformImage,
+            video: transformImage,
         },
         allowedStyles: {
             span: {
@@ -86,14 +85,7 @@ export default function sanitize(html: string) {
                 display: [/^block$/],
                 "margin-left": [/^auto$/],
                 "margin-right": [/^auto$/],
-            },
-            i: {
-                width: [/^\d+$/],
-                height: [/^\d+$/],
-                float: [/^(left|center|right)$/],
-                display: [/^block$/],
-                "margin-left": [/^auto$/],
-                "margin-right": [/^auto$/],
+                "aspect-ratio": [/^\d+\/\d+$/],
             },
             video: {
                 width: [/^\d+$/],
@@ -151,4 +143,16 @@ export default function sanitize(html: string) {
         return `<p style="margin-top: ${marginTop}; margin-bottom: ${marginBottom};">${parsed.toString()}</p>`;
     }
     return clean;
+}
+
+function transformImage(tagName: string, attribs: sanitizeHtml.Attributes) {
+    const height = Number(attribs.height);
+    const width = Number(attribs.width);
+    if (height > 400) attribs.height = "400";
+    if (height > 400 || !height) attribs.width = "auto";
+    console.log(height, width);
+    if (height && width)
+        attribs.style = `aspect-ratio: ${width}/${height};` + (attribs.style || "");
+    console.log(attribs.style)
+    return { tagName, attribs };
 }
