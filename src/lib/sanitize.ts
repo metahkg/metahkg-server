@@ -72,9 +72,6 @@ export default function sanitize(html: string) {
                 }
                 return { tagName, attribs };
             },
-            img: transformImage,
-            i: transformImage,
-            video: transformImage,
         },
         allowedStyles: {
             span: {
@@ -154,11 +151,4 @@ export default function sanitize(html: string) {
         return `<p style="margin-top: ${marginTop}; margin-bottom: ${marginBottom};">${parsed.toString()}</p>`;
     }
     return clean;
-}
-
-function transformImage(tagName: string, attribs: sanitizeHtml.Attributes) {
-    const height = Number(attribs.height);
-    if (height > 400) attribs.height = "400";
-    if (height > 400 || !height) attribs.width = "auto";
-    return { tagName, attribs };
 }
