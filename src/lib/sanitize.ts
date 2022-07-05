@@ -153,6 +153,6 @@ function transformImage(tagName: string, attribs: sanitizeHtml.Attributes) {
     console.log(height, width);
     if (height && width)
         attribs.style = `aspect-ratio: ${width}/${height};` + (attribs.style || "");
-    console.log(attribs.style)
+    console.log(attribs.style);
     return { tagName, attribs };
 }
