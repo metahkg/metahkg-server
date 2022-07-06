@@ -69,8 +69,6 @@ export default function sanitize(html: string) {
                 }
                 return { tagName, attribs };
             },
-            img: transformImage,
-            video: transformImage,
         },
         allowedStyles: {
             span: {
@@ -85,7 +83,6 @@ export default function sanitize(html: string) {
                 display: [/^block$/],
                 "margin-left": [/^auto$/],
                 "margin-right": [/^auto$/],
-                "aspect-ratio": [/^\d+\/\d+$/],
             },
             video: {
                 width: [/^\d+$/],
@@ -143,16 +140,4 @@ export default function sanitize(html: string) {
         return `<p style="margin-top: ${marginTop}; margin-bottom: ${marginBottom};">${parsed.toString()}</p>`;
     }
     return clean;
-}
-
-function transformImage(tagName: string, attribs: sanitizeHtml.Attributes) {
-    const height = Number(attribs.height);
-    const width = Number(attribs.width);
-    if (height > 400) attribs.height = "400";
-    if (height > 400 || !height) attribs.width = "auto";
-    console.log(height, width);
-    if (height && width)
-        attribs.style = `aspect-ratio: ${width}/${height};` + (attribs.style || "");
-    console.log(attribs.style);
-    return { tagName, attribs };
 }
