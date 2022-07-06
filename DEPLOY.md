@@ -20,21 +20,7 @@ Docs:
 - mailgun key (for sending emails, obviously)
 - recaptcha site key and secret pair (for anti-spamming)
 
-### Set up
-
-#### Mongodb
-
-```bash
-$ mongoimport -d=metahkg templates/server/category.json
-$ mongosh
-test> use metahkg
-metahkg> db.viral.createIndex({ "createdAt": 1 }, { expireAfterSeconds: 172800 })
-metahkg> db.thread.createIndex({ "op": "text", "title": "text" }) //for text search
-metahkg> use metahkg
-metahkg> db.limit.createIndex({ "createdAt": 1 }, { expireAfterSeconds: 86400 })
-metahkg> db.verification.createIndex({ "createdAt": 1 }, { expireAfterSeconds: 604800 })
-metahkg> exit
-```
+### Set up mongodb
 
 To use authentication:
 
@@ -53,7 +39,7 @@ and then use `mongod --auth --bind_ip_all`
 #### Environmental variables
 
 ```bash
-cp templates/template.env .env
+cp temp.env .env
 ```
 
 Then edit values in the .env file.

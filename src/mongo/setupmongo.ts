@@ -15,7 +15,7 @@ export async function setup() {
     await imagesCl.createIndex({ id: 1 });
     await categoryCl.createIndex({ id: 1 });
 
-    await threadCl.createIndex({ op: "text", title: "text" }); //text search
+    await threadCl.createIndex({ title: "text" }); //text search
     await limitCl.createIndex({ createdAt: 1 }, { expireAfterSeconds: 86400 });
     await verificationCl.createIndex({ createdAt: 1 }, { expireAfterSeconds: 300 });
 
