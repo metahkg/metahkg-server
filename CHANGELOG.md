@@ -1,5 +1,14 @@
 # Changelog
 
+## v2.5.3
+
+- remove support for i, please only use img
+- add aspect ratio to images
+
+## v2.5.2
+
+- remove transform image in html sanitize which causes issues on the frontend
+
 ## v2.5.0
 
 - support time, score, and latest for sorting comments

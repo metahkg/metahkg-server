@@ -1,13 +1,12 @@
-import { Type } from "@sinclair/typebox";
-import { ajv } from "../../lib/ajv";
+import { Static, Type } from "@sinclair/typebox";
 import { threadCl } from "../../common";
 import Thread from "../../models/thread";
-import { Sort } from "mongodb";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
+import regex from "../../lib/regex";
 
 export default (
     fastify: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
     /**
@@ -16,11 +15,24 @@ export default (
      * 1: by creation time
      * 2: by last modification time
      */
+
+    const querySchema = Type.Object({
+        page: Type.Optional(Type.RegEx(regex.integer)),
+        q: Type.String({ maxLength: 100, minLength: 1 }),
+        sort: Type.Optional(Type.RegEx(/^[0-2]$/)),
+        mode: Type.Optional(Type.RegEx(/^[01]$/)),
+    });
+
     fastify.get(
         "/search",
+        {
+            schema: {
+                querystring: querySchema,
+            },
+        },
         async (
             req: FastifyRequest<{
-                Querystring: { page?: string; q?: string; sort?: string; mode?: string };
+                Querystring: Static<typeof querySchema>;
             }>,
             res
         ) => {
@@ -28,32 +40,6 @@ export default (
             const query = decodeURIComponent(String(req.query.q));
             const sort = Number(req.query.sort ?? 0);
             const mode = Number(req.query.mode ?? 0);
-            const schema = Type.Object(
-                {
-                    query: Type.String(),
-                    sort: Type.Integer({ minimum: 0, maximum: 2 }),
-                    page: Type.Integer({ minimum: 1 }),
-                    mode: Type.Integer({ minimum: 0, maximum: 1 }),
-                },
-                { additionalProperties: false }
-            );
-            if (
-                !ajv.validate(schema, {
-                    page: page,
-                    query: query,
-                    sort: sort,
-                    mode: mode,
-                })
-            )
-                return res.code(400).send({ error: "Bad request." });
-
-            const sortObj = {
-                0: {
-                    /*[mode ? "op.name" : "title"]: { $meta: "textScore" }*/
-                },
-                1: { createdAt: -1 },
-                2: { lastModified: -1 },
-            }[sort] as Sort;
 
             const regex = new RegExp(
                 query.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"),
@@ -61,20 +47,46 @@ export default (
             );
 
             const data = (await threadCl
-                .find({
-                    $or: [
-                        mode ? { "op.name": regex } : { title: regex },
-                        /*{
-                        $text: {
-                            $search: query,
+                .aggregate(
+                    [
+                        { $match: mode === 1 ? { "op.name": regex } : { title: regex } },
+                        mode === 1
+                            ? undefined
+                            : {
+                                  $unionWith: {
+                                      coll: "thread",
+                                      pipeline: [
+                                          {
+                                              $match: {
+                                                  $text: {
+                                                      $search: query,
+                                                  },
+                                              },
+                                          },
+                                          {
+                                              $sort: {
+                                                  title: { $meta: "textScore" },
+                                              },
+                                          },
+                                      ],
+                                  },
+                              },
+                        { $group: { _id: "$_id", doc: { $first: "$$ROOT" } } },
+                        {
+                            $replaceRoot: {
+                                newRoot: "$doc",
+                            },
                         },
-                    },*/
-                    ],
-                })
-                .sort(sortObj)
-                .skip(25 * (page - 1))
-                .limit(25)
-                .project({ _id: 0, conversation: 0 })
+                        {
+                            0: undefined,
+                            1: { $sort: { createdAt: -1 } },
+                            2: { $sort: { lastModified: -1 } },
+                        }[sort],
+                        { $skip: (page - 1) * 25 },
+                        { $limit: 25 },
+                        { $project: { _id: 0, conversation: 0 } },
+                    ].filter((x) => x)
+                )
                 .toArray()) as Thread[];
 
             res.send(data);

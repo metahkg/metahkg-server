@@ -1,11 +1,11 @@
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
 import checkExist from "./thread/checkExist";
-import getComment from "./thread/comment/getComment";
+import getComment from "./thread/comment/comment";
 import images from "./thread/images";
 import replies from "./thread/comment/replies";
 import thread from "./thread/thread";
 import userVotes from "./thread/userVotes";
-import addComment from "./thread/comment/addComment";
+import addComment from "./thread/comment/create";
 import create from "./thread/create";
 import pin from "./thread/pin";
 import unpin from "./thread/unpin";

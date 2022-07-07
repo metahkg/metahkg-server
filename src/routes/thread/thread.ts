@@ -123,8 +123,6 @@ export default (
                     .toArray()
             )[0] as Thread;
 
-            console.log(thread);
-
             if (!(await threadCl.findOne({ id })))
                 return res.code(404).send({ error: "Not Found" });
 
