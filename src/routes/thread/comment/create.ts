@@ -64,10 +64,7 @@ export default (
             const text = htmlToText(comment, { wordwrap: false });
 
             const newCommentId = ((await threadCl.findOne({ id })) as Thread)?.c + 1;
-            await threadCl.updateOne(
-                { id },
-                { $inc: { c: 1 }, $currentDate: { lastModified: true } }
-            );
+
             let slinkId = generate({
                 include: { numbers: true, lower: true, upper: true, special: false },
                 digits: 7,
@@ -112,12 +109,14 @@ export default (
                             ...(quotedComment && { quote: quotedComment }),
                         },
                     },
+                    $inc: { c: 1 },
                     $currentDate: { lastModified: true },
                 }
             );
+
             quotedComment &&
                 (await threadCl.updateOne(
-                    { id: id },
+                    { id },
                     { $push: { [`conversation.${quoteIndex}.replies`]: newCommentId } }
                 ));
 
