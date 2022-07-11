@@ -64,7 +64,7 @@ export default function (
 
             if (!comment) return res.code(404).send({ error: "Comment not found." });
             if (comment.removed)
-                return res.code(403).send({ error: "Comment has been removed." });
+                return res.code(409).send({ error: "Comment has been removed." });
 
             await threadCl.updateOne({ id: threadId }, { $set: { pin: comment } });
 

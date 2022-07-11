@@ -72,9 +72,9 @@ export default (
                 (
                     (await threadCl
                         .find()
+                        .project({ id: 1, _id: 0 })
                         .sort({ id: -1 })
                         .limit(1)
-                        .project({ id: 1, _id: 0 })
                         .toArray()) as Thread[]
                 )[0]?.id + 1 || 1;
 

@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.6.0
+
+- blocklist sends the blocked users' info not just ids
+
 ## v2.5.3
 
 - remove support for i, please only use img
