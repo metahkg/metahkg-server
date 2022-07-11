@@ -19,12 +19,12 @@ export default function (
             )
         ).blocked as number[];
 
-        const blocklist = await usersCl
+        const blocklist = (await usersCl
             .find({
                 id: { $in: blocked },
             })
             .project({ _id: 0, id: 1, name: 1, sex: 1, createdAt: 1 })
-            .toArray() as User[];
+            .toArray()) as User[];
 
         res.send(
             blocked.map((id) => blocklist.find((i) => i.id === id)).filter((i) => i)
