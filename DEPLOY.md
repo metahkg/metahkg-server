@@ -4,10 +4,7 @@
 
 It is recommended to use docker for deployment (also supports hot reload).
 
-Docs:
-
-- master branch [master.docs.metahkg.org/docker](https://master.docs.metahkg.org/docker)
-- dev branch [dev.docs.metahkg.org/docker](https://dev.docs.metahkg.org/docker)
+[Docs](https://docs.metahkg.org/docs/category/deploy-metahkg)
 
 ## Manually
 
@@ -27,7 +24,7 @@ To use authentication:
 ```bash
 $ mongosh
 test> use admin
-admin> db.createUser({ user: "<username>", pwd: "<password>", roles: [ "root", "userAdminAnyDatabase" ])
+admin> db.createUser({ user: "<username>", pwd: "<password>", roles: [ "root", "userAdminAnyDatabase" ]})
 admin> use metahkg
 metahkg> db.createUser({ user: "<username>", pwd: "<password>", roles: [ { role: "readWrite", db: "metahkg" } ] })
 metahkg> use metahkg
