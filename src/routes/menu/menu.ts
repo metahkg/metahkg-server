@@ -62,8 +62,9 @@ export default (
                     },
                     { projection: { _id: 0, category: 1 } }
                 )) as Thread;
+
                 if (!thread || !thread.category)
-                    return res.code(404).send({ error: "Not found." });
+                    return res.code(404).send({ error: "Category not found." });
 
                 category = thread.category;
             }
@@ -72,7 +73,7 @@ export default (
                 return res.code(403).send({ error: "Permission denied." });
 
             if (!(await categoryCl.findOne({ id: category })))
-                return res.code(404).send({ error: "Not found." });
+                return res.code(404).send({ error: "Category not found." });
 
             const find =
                 category === 1 ? { category: { $nin: hiddenCats } } : { category };

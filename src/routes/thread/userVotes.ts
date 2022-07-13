@@ -17,8 +17,7 @@ export default (
             const id = Number(req.params.id);
 
             const user = verifyUser(req.headers.authorization);
-
-            if (!user) return res.code(400).send({ error: "User not found" });
+            if (!user) return res.code(401).send({ error: "Unauthorized" });
 
             const userVotes = await votesCl.findOne(
                 { id: user.id },

@@ -39,7 +39,7 @@ export default function (
                 }
             )) as User;
 
-            if (!requestedUser) return res.code(400).send({ error: "User not found" });
+            if (!requestedUser) return res.code(404).send({ error: "User not found" });
 
             let count: number;
 

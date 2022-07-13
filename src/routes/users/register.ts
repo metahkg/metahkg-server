@@ -50,7 +50,7 @@ export default (
             const { name, pwd, email, rtoken, sex, invitecode } = req.body;
 
             if (!(await verifyCaptcha(secret, rtoken)))
-                return res.code(400).send({ error: "recaptcha token invalid." });
+                return res.code(429).send({ error: "Recaptcha token invalid." });
 
             // register modes (process.env.register)
             const registerMode =
@@ -61,14 +61,14 @@ export default (
                 }[process.env.register || ""] || "normal";
 
             if (registerMode === "none")
-                return res.code(429).send({ error: "Registration not allowed." });
+                return res.code(400).send({ error: "Registration not allowed." });
 
             // TODO: WARNING: frontend not implemented !!!
             if (
                 registerMode === "invite" &&
                 !(await inviteCl.findOne({ code: invitecode }))
             )
-                return res.code(409).send({ error: "Invalid invite code." });
+                return res.code(400).send({ error: "Invalid invite code." });
 
             if (
                 (await usersCl.findOne({

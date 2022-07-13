@@ -20,7 +20,7 @@ export default (
                 return res.code(400).send({ error: "Bad request." });
 
             if (!((await threadCl.findOne({ id })) as Thread))
-                return res.code(404).send({ error: "Not found." });
+                return res.code(404).send({ error: "Thread not found." });
 
             res.send({ response: "ok" });
         }

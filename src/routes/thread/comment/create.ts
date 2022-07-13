@@ -2,7 +2,6 @@ import { imagesCl, linksCl, secret, LINKS_DOMAIN, threadCl } from "../../../comm
 import { verifyCaptcha } from "../../../lib/recaptcha";
 import findImages from "../../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
-import { ajv } from "../../../lib/ajv";
 import verifyUser from "../../../lib/auth/verify";
 import { generate } from "wcyat-rg";
 import sanitize from "../../../lib/sanitize";
@@ -10,6 +9,7 @@ import Images from "../../../models/images";
 import Thread, { commentType } from "../../../models/thread";
 import { htmlToText } from "html-to-text";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
+import regex from "../../../lib/regex";
 
 export default (
     fastify: FastifyInstance,
@@ -25,40 +25,39 @@ export default (
         { additionalProperties: false }
     );
 
+    const paramsSchema = Type.Object({ id: Type.RegEx(regex.integer) });
+
     /** add a comment
      * Syntax: POST /api/comment {id (thread id) : number, comment : string}
      * client must have a cookie "key"
      */
     fastify.post(
         "/:id/comment",
+        {
+            schema: {
+                body: schema,
+                params: paramsSchema,
+            },
+        },
         async (
             req: FastifyRequest<{
-                Params: { id: string };
+                Params: Static<typeof paramsSchema>;
                 Body: Static<typeof schema>;
             }>,
             res
         ) => {
             const id = Number(req.params.id);
 
-            if (
-                !(
-                    ajv.validate(schema, req.body) &&
-                    ajv.validate(Type.Integer({ minimum: 1 }), id)
-                )
-            )
-                return res.code(400).send({ error: "Bad request." });
-
             const { rtoken, quote } = req.body;
 
             if (!(await verifyCaptcha(secret, rtoken)))
-                return res.code(400).send({ error: "recaptcha token invalid." });
+                return res.code(429).send({ error: "Recaptcha token invalid." });
 
             const user = verifyUser(req.headers.authorization);
-
-            if (!user) return res.code(403).send({ error: "Permission denied." });
+            if (!user) return res.code(401).send({ error: "Unauthorized." });
 
             if (!((await threadCl.findOne({ id })) as Thread))
-                return res.code(404).send({ error: "Not found." });
+                return res.code(404).send({ error: "Thread not found." });
 
             const comment = sanitize(req.body.comment);
             const text = htmlToText(comment, { wordwrap: false });

@@ -25,7 +25,7 @@ export default (
             const { email, rtoken } = req.body;
 
             if (!(await verifyCaptcha(secret, rtoken)))
-                return res.code(400).send({ error: "recaptcha token invalid." });
+                return res.code(429).send({ error: "Recaptcha token invalid." });
 
             const verificationUserData = await verificationCl.findOne({
                 email,

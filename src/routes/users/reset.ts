@@ -43,7 +43,6 @@ export default (
                 });
 
             const user = (await usersCl.findOne({ email: hashedEmail })) as User;
-
             if (!user) return res.code(404).send({ error: "User not found." });
 
             await usersCl.updateOne(

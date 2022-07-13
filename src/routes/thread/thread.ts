@@ -126,7 +126,7 @@ export default (
             )[0] as Thread;
 
             if (!(await threadCl.findOne({ id })))
-                return res.code(404).send({ error: "Not found" });
+                return res.code(404).send({ error: "Thread not found" });
 
             if (
                 !verifyUser(req.headers.authorization) &&

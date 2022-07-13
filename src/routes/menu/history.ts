@@ -19,7 +19,7 @@ export default (
     });
 
     const paramsSchema = Type.Object({
-        id: Type.RegEx(/^[1-9]\d*$/),
+        id: Type.RegEx(/^([1-9]\d*|self)$/),
     });
 
     fastify.get(
@@ -37,27 +37,12 @@ export default (
             const sort = Number(req.query.sort || 0);
             const limit = Number(req.query.limit) || 25;
 
-            if (
-                !ajv.validate(
-                    Type.Object({
-                        id: Type.Union([
-                            Type.Integer({ minimum: 1 }),
-                            Type.Literal("self"),
-                        ]),
-                        page: Type.Integer({ minimum: 1 }),
-                        sort: Type.Integer({ minimum: 0, maximum: 1 }),
-                    }),
-                    { id, page, sort }
-                )
-            )
-                return res.code(400).send({ error: "Bad request." });
-
             const requestedUser =
                 req.params.id === "self"
                     ? verifyUser(req.headers.authorization)
-                    : ((await usersCl.findOne({ id: Number(req.params.id) })) as User);
+                    : ((await usersCl.findOne({ id })) as User as User);
 
-            if (!requestedUser) return res.code(400).send({ error: "User not found." });
+            if (!requestedUser) return res.code(404).send({ error: "User not found." });
 
             const history = (await threadCl
                 .find({ "op.id": requestedUser.id })

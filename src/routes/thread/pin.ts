@@ -35,11 +35,10 @@ export default function (
             const { cid: commentId } = req.body;
 
             const user = verifyUser(req.headers.authorization);
-            if (!user) return res.code(403).send({ error: "Permission denied." });
+            if (!user) return res.code(401).send({ error: "Unauthorized." });
 
             const thread = (await threadCl.findOne(
                 {
-                    "op.id": user.id,
                     id: threadId,
                 },
                 {
@@ -56,15 +55,20 @@ export default function (
             )) as Thread;
 
             if (!thread)
+                return res.code(404).send({
+                    error: "Thread not found.",
+                });
+
+            if (thread.op.id !== user.id)
                 return res.code(403).send({
-                    error: "Thread not found, or you are not the op.",
+                    error: "Permission denied.",
                 });
 
             const comment = thread.conversation?.[0];
 
             if (!comment) return res.code(404).send({ error: "Comment not found." });
             if (comment.removed)
-                return res.code(409).send({ error: "Comment has been removed." });
+                return res.code(410).send({ error: "Comment has been removed." });
 
             await threadCl.updateOne({ id: threadId }, { $set: { pin: comment } });
 

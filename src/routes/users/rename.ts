@@ -22,7 +22,7 @@ export default (
                 return res.code(400).send({ error: "Bad request." });
 
             const user = verifyUser(req.headers.authorization);
-            if (!user) return res.code(404).send({ error: "User not found." });
+            if (!user) return res.code(401).send({ error: "Unauthorized." });
 
             const { name: newName } = req.body;
 

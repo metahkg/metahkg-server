@@ -21,7 +21,6 @@ export default (
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const user = verifyUser(req.headers.authorization);
-
             if (!user) return res.code(401).send({ error: "Unauthorized." });
 
             const { userId } = req.body;

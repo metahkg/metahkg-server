@@ -61,14 +61,14 @@ export default function (
                 fs.rm(file?.path, (err) => {
                     console.error(err);
                 });
-                return res.code(422).send({ error: "file too large." });
+                return res.code(413).send({ error: "File too large." });
             }
             if (!file.mimetype.match(/^image\/(png|svg|jpg|jpeg)$/)) {
                 //remove the file
                 fs.rm(file?.path, (err) => {
                     console.error(err);
                 });
-                return res.code(400).send({ error: "File type not supported." });
+                return res.code(415).send({ error: "File type not supported." });
             }
             const user = verifyUser(req.headers.authorization);
             //send 404 if no such user
@@ -76,7 +76,7 @@ export default function (
                 fs.rm(`${process.env.root}/uploads/${file?.filename}`, (err) => {
                     console.error(err);
                 });
-                return res.code(404).send({ error: "User not found." });
+                return res.code(401).send({ error: "Unauthorized." });
             }
             //rename file to <user-id>.<extension>
             const newFileName = `${user.id}.${file.originalname.split(".").pop()}`;
@@ -93,10 +93,7 @@ export default function (
                 await compress(`images/processing/avatars/${newFileName}`, user.id);
                 fs.rmSync(`images/processing/avatars/${newFileName}`);
             } catch {
-                res.code(422);
-                res.send({
-                    error: "Could not complete the request. Please check your file.",
-                });
+                res.code(422).send({ error: "Could not process you file." });
                 fs.rm(`images/processing/avatars/${newFileName}`, (err) => {
                     console.error(err);
                 });
