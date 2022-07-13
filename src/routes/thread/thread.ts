@@ -16,7 +16,7 @@ export default (
         start: Type.Optional(Type.RegEx(regex.integer)),
         end: Type.Optional(Type.RegEx(regex.integer)),
         sort: Type.Optional(Type.RegEx(/^(score|time|latest)$/)),
-        limit: Type.Optional(Type.RegEx(regex.oneTo50))
+        limit: Type.Optional(Type.RegEx(regex.oneTo50)),
     });
 
     const paramsSchema = Type.Object({
