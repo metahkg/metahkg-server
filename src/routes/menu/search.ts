@@ -21,6 +21,7 @@ export default (
         q: Type.String({ maxLength: 100, minLength: 1 }),
         sort: Type.Optional(Type.RegEx(/^[0-2]$/)),
         mode: Type.Optional(Type.RegEx(/^[01]$/)),
+        limit: Type.Optional(Type.RegEx(regex.oneTo50)),
     });
 
     fastify.get(
@@ -40,6 +41,7 @@ export default (
             const query = decodeURIComponent(String(req.query.q));
             const sort = Number(req.query.sort ?? 0);
             const mode = Number(req.query.mode ?? 0);
+            const limit = Number(req.query.limit) || 25;
 
             const regex = new RegExp(
                 query.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"),
@@ -82,8 +84,8 @@ export default (
                             1: { $sort: { createdAt: -1 } },
                             2: { $sort: { lastModified: -1 } },
                         }[sort],
-                        { $skip: (page - 1) * 25 },
-                        { $limit: 25 },
+                        { $skip: (page - 1) * limit },
+                        { $limit: limit },
                         { $project: { _id: 0, conversation: 0 } },
                     ].filter((x) => x)
                 )

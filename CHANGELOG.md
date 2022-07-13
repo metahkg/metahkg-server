@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.7.0
+
+- add limit option to menu and thread
+
 ## v2.6.0
 
 - blocklist sends the blocked users' info not just ids

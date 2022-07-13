@@ -22,7 +22,7 @@ export default (
 
             if (
                 !ajv.validate(
-                    Type.Array(Type.Integer(), { maxItems: 25 }),
+                    Type.Array(Type.Integer(), { maxItems: 50 }),
                     requestedThreads
                 )
             )

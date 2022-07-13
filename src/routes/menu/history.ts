@@ -5,6 +5,7 @@ import Thread from "../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { ajv } from "../../lib/ajv";
 import { Static, Type } from "@sinclair/typebox";
+import regex from "../../lib/regex";
 
 export default (
     fastify: FastifyInstance,
@@ -14,6 +15,7 @@ export default (
     const querySchema = Type.Object({
         sort: Type.Optional(Type.RegEx(/^(0|1)$/)),
         page: Type.Optional(Type.RegEx(/^[1-9]\d*$/)),
+        limit: Type.Optional(Type.RegEx(regex.oneTo50)),
     });
 
     const paramsSchema = Type.Object({
@@ -33,6 +35,7 @@ export default (
             const id = Number(req.params.id) || req.params.id;
             const page = Number(req.query.page) || 1;
             const sort = Number(req.query.sort || 0);
+            const limit = Number(req.query.limit) || 25;
 
             if (
                 !ajv.validate(
@@ -62,8 +65,8 @@ export default (
                     ...(sort === 0 && { createdAt: -1 }),
                     ...(sort === 1 && { lastModified: -1 }),
                 })
-                .skip(25 * (page - 1))
-                .limit(25)
+                .skip(limit * (page - 1))
+                .limit(limit)
                 .project({ _id: 0, conversation: 0 })
                 .toArray()) as Thread[];
 

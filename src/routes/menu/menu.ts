@@ -23,6 +23,7 @@ export default (
         {
             sort: Type.Optional(Type.RegEx(/^(0|1)$/)),
             page: Type.Optional(Type.RegEx(regex.integer)),
+            limit: Type.Optional(Type.RegEx(regex.oneTo50)),
         },
         { additionalProperties: false }
     );
@@ -49,6 +50,7 @@ export default (
         ) => {
             const sort = Number(req.query.sort || 0);
             const page = Number(req.query.page) || 1;
+            const limit = Number(req.query.limit) || 25;
             let category = Number(req.params.category) || req.params.category;
 
             const hiddenCats = await gethiddencats();
@@ -108,15 +110,15 @@ export default (
                           },
                           { $sort: { newComments: -1, lastModified: -1 } },
                           { $project: { _id: 0, conversation: 0, newComments: 0 } },
-                          { $skip: 25 * (page - 1) },
-                          { $limit: 25 },
+                          { $skip: limit * (page - 1) },
+                          { $limit: limit },
                       ])
                       .toArray()) as Thread[])
                 : ((await threadCl
                       .find(find)
                       .sort({ lastModified: -1 })
-                      .skip(25 * (page - 1))
-                      .limit(25)
+                      .skip(limit * (page - 1))
+                      .limit(limit)
                       .project({ _id: 0, conversation: 0 })
                       .toArray()) as Thread[]);
 
