@@ -60,10 +60,10 @@ export default (
             const text = htmlToText(comment, { wordwrap: false });
 
             if (!(await verifyCaptcha(secret, req.body.rtoken)))
-                return res.code(400).send({ error: "recaptcha token invalid." });
+                return res.code(429).send({ error: "Recaptcha token invalid." });
 
             const user = verifyUser(req.headers.authorization);
-            if (!user) return res.code(400).send({ error: "User not found." });
+            if (!user) return res.code(401).send({ error: "Unauthorized." });
 
             const category = await categoryCl.findOne({ id: req.body.category });
             if (!category) return res.code(404).send({ error: "Category not found." });
