@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.7.1
+
+- error if comment removed
+- filter unwanted fileds ("U", "D", "replies") from pin and quote
+
 ## v2.7.0
 
 - add limit option to menu and thread

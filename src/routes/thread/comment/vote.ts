@@ -64,6 +64,9 @@ export default (
             if (!thread)
                 return res.code(404).send({ error: "Thread or comment not found." });
 
+            if (thread.conversation[0].removed)
+                return res.code(410).send({ error: "Comment has been removed." });
+
             const index = cid - 1;
             const userVotes = await votesCl.findOne({ id: user.id });
 

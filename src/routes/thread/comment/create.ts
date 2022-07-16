@@ -13,7 +13,7 @@ import regex from "../../../lib/regex";
 
 export default (
     fastify: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
     const schema = Type.Object(
@@ -89,7 +89,14 @@ export default (
                 const thread = (await threadCl.findOne({ id })) as Thread;
                 quoteIndex = thread?.conversation?.findIndex((i) => i?.id === quote);
                 quotedComment =
-                    (quoteIndex !== -1 && thread.conversation[quoteIndex]) || undefined;
+                    ((quoteIndex !== -1 &&
+                        Object.fromEntries(
+                            Object.entries(thread.conversation[quoteIndex]).filter(
+                                (i) => !["replies", "U", "D"].includes(i[0])
+                            )
+                        )) as commentType) || undefined;
+                        
+                if (quotedComment.removed) quotedComment = undefined;
             }
 
             await threadCl.updateOne(
@@ -114,6 +121,7 @@ export default (
                     $currentDate: { lastModified: true },
                 }
             );
+
             quotedComment &&
                 (await threadCl.updateOne(
                     { id: id },

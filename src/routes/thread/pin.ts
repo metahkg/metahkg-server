@@ -2,7 +2,7 @@ import { Static, Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
 import { threadCl } from "../../common";
 import verifyUser from "../../lib/auth/verify";
-import Thread from "../../models/thread";
+import Thread, { commentType } from "../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 
 export default function (
@@ -40,14 +40,18 @@ export default function (
             const thread = (await threadCl.findOne(
                 {
                     id: threadId,
+                    conversation: {
+                        $elemMatch: {
+                            id: commentId,
+                        },
+                    },
                 },
                 {
                     projection: {
                         _id: 0,
                         conversation: {
-                            $filter: {
-                                input: "$conversation",
-                                cond: { $eq: ["$$this.id", commentId] },
+                            $elemMatch: {
+                                id: commentId,
                             },
                         },
                     },
@@ -64,7 +68,9 @@ export default function (
                     error: "Permission denied.",
                 });
 
-            const comment = thread.conversation?.[0];
+            const comment = Object.fromEntries(Object.entries(thread.conversation?.[0]).filter(
+                (i) => !["replies", "U", "D"].includes(i[0])
+            ))[0] as commentType;
 
             if (!comment) return res.code(404).send({ error: "Comment not found." });
             if (comment.removed)
