@@ -95,7 +95,7 @@ export default (
                                 (i) => !["replies", "U", "D"].includes(i[0])
                             )
                         )) as commentType) || undefined;
-                        
+
                 if (quotedComment.removed) quotedComment = undefined;
             }
 
