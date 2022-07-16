@@ -31,11 +31,7 @@ export default (
                 {
                     projection: {
                         _id: 0,
-                        conversation: {
-                            $elemMatch: {
-                                id: cid,
-                            },
-                        },
+                        conversation: { $elemMatch: { id: cid } },
                     },
                 }
             )) as Thread;
@@ -44,7 +40,7 @@ export default (
 
             if (!targetComment)
                 return res.code(404).send({ error: "Thread or comment not found." });
-                
+
             if (targetComment.removed)
                 return res.code(410).send({ error: "Comment has been removed." });
 
@@ -59,6 +55,7 @@ export default (
                                     input: "$conversation",
                                     cond: {
                                         $in: ["$$this.id", targetComment?.replies || []],
+                                        $not: { $eq: ["$$this.removed", true] },
                                     },
                                 },
                             },

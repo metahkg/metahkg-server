@@ -3,7 +3,6 @@ import { threadCl, usersCl } from "../../common";
 import verifyUser from "../../lib/auth/verify";
 import Thread from "../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { ajv } from "../../lib/ajv";
 import { Static, Type } from "@sinclair/typebox";
 import regex from "../../lib/regex";
 

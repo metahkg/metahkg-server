@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.7.2
+
+- add more errors if comment removed
+- filter out removed comments in replies
+
 ## v2.7.1
 
 - error if comment removed
