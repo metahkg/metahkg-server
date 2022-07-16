@@ -7,7 +7,7 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 
 export default (
     fastify: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
     const schema = Type.Object(
@@ -18,7 +18,7 @@ export default (
     );
 
     fastify.post(
-        "/:id/vote/:cid",
+        "/:id/comment/:cid/vote",
         async (
             req: FastifyRequest<{
                 Body: Static<typeof schema>;

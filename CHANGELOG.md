@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.8.0
+
+- use `/thread/:id/comment/:cid` for vote so as to unify the API
+
 ## v2.7.2
 
 - add more errors if comment removed
