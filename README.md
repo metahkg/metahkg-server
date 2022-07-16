@@ -30,6 +30,14 @@ dev build (dev): [dev.metahkg.org](https://dev.metahkg.org)
 
 For manual deployment, see DEPLOY.md.
 
+## OpenApi specification
+
+See [openapi spec](https://gitlab.com/metahkg/openapi-spec).
+
+## Api docs
+
+See [api](https://docs.metahkg.org/docs/category/api) in [metahkg docs](https://docs.metahkg.org).
+
 ## Use as module
 
 ### Install
