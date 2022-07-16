@@ -1,9 +1,9 @@
 import { threadCl, votesCl } from "../../../common";
 import { Type, Static } from "@sinclair/typebox";
-import { ajv } from "../../../lib/ajv";
 import verifyUser from "../../../lib/auth/verify";
 import Thread from "../../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
+import regex from "../../../lib/regex";
 
 export default (
     fastify: FastifyInstance,
@@ -17,8 +17,14 @@ export default (
         { additionalProperties: false }
     );
 
+    const paramsSchema = Type.Object({
+        id: Type.RegEx(regex.integer),
+        cid: Type.RegEx(regex.integer),
+    });
+
     fastify.post(
         "/:id/comment/:cid/vote",
+        { schema: { body: schema, params: paramsSchema } },
         async (
             req: FastifyRequest<{
                 Body: Static<typeof schema>;
@@ -29,25 +35,8 @@ export default (
             const id = Number(req.params.id);
             const cid = Number(req.params.cid);
 
-            if (
-                !(
-                    ajv.validate(schema, req.body) &&
-                    ajv.validate(
-                        Type.Object({
-                            id: Type.Integer({ minimum: 1 }),
-                            cid: Type.Integer({ minimum: 1 }),
-                        }),
-                        {
-                            id,
-                            cid,
-                        }
-                    )
-                )
-            )
-                return res.code(400).send({ error: "Bad request." });
-
             const user = verifyUser(req.headers.authorization);
-            if (!user) return res.code(404).send({ error: "Unauthorized." });
+            if (!user) return res.code(401).send({ error: "Unauthorized." });
 
             const thread = (await threadCl.findOne(
                 { id, conversation: { $elemMatch: { id: cid } } },
