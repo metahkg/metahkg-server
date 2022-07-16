@@ -54,8 +54,15 @@ export default (
                                 $filter: {
                                     input: "$conversation",
                                     cond: {
-                                        $in: ["$$this.id", targetComment?.replies || []],
-                                        $not: { $eq: ["$$this.removed", true] },
+                                        $and: [
+                                            {
+                                                $in: [
+                                                    "$$this.id",
+                                                    targetComment?.replies || [],
+                                                ],
+                                            },
+                                            { $not: { $eq: ["$$this.removed", true] } },
+                                        ],
                                     },
                                 },
                             },
