@@ -144,10 +144,7 @@ export default (
                         imagesInComment.splice(index, 1);
                 });
 
-                await threadCl.updateOne(
-                    { id },
-                    { $push: { images: imagesInComment } }
-                );
+                await threadCl.updateOne({ id }, { $push: { images: imagesInComment } });
             }
 
             res.send({ id: newCommentId });
