@@ -3,6 +3,7 @@ import updateVerificationCode from "./lib/updateVerificationCode";
 import { client } from "./common";
 import { setup } from "./mongo/setupmongo";
 import MetahkgServer from "./app";
+import fastify from "fastify";
 
 dotenv.config();
 
@@ -13,6 +14,8 @@ setInterval(updateVerificationCode, 3600 * 1000);
     await setup();
 
     const app = MetahkgServer();
+
+    console.log("got app")
 
     /**
      * The port can be modified in .env

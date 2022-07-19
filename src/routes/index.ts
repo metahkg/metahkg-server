@@ -1,6 +1,6 @@
 import users from "./users";
-import menu from "./";
-import thread from "./";
+import menu from "./menu";
+import thread from "./thread";
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
 import me from "./me";
 import categories from "./categories";
