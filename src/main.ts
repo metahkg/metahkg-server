@@ -15,8 +15,6 @@ setInterval(updateVerificationCode, 3600 * 1000);
 
     const app = MetahkgServer();
 
-    console.log("got app")
-
     /**
      * The port can be modified in .env
      */
