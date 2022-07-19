@@ -2,7 +2,7 @@ import status from "./status";
 import rename from "./rename";
 import block from "./block";
 import unblock from "./unblock";
-import blocklist from "./blocklist";
+import blocked from "./blocked";
 import avatar from "./avatar";
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
 import votes from "./votes";
@@ -16,7 +16,7 @@ export default function (
     fastify.register(rename);
     fastify.register(block);
     fastify.register(unblock);
-    fastify.register(blocklist);
+    fastify.register(blocked);
     fastify.register(avatar);
     fastify.register(votes);
     done();

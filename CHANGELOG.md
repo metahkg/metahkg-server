@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.0.0rc2
+
+- use blocked instead of blocklist
+
 ## v3.0.0rc1
 
 - largely redesigned the api
