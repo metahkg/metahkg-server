@@ -5,14 +5,12 @@ import {
     threadCl,
     usersCl,
     linksCl,
-    imagesCl,
 } from "../common";
 import { categories } from "./category";
 export async function setup() {
     await threadCl.createIndex({ id: 1 });
     await usersCl.createIndex({ id: 1 });
     await linksCl.createIndex({ id: 1 });
-    await imagesCl.createIndex({ id: 1 });
     await categoryCl.createIndex({ id: 1 });
 
     await threadCl.createIndex({ title: "text" }); //text search

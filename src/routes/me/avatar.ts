@@ -1,9 +1,9 @@
 import dotenv from "dotenv";
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import multer from "fastify-multer"; //handle image uploads
+import multer from "fastify-multer"; // handle image uploads
 import fs from "fs";
 import { move } from "fs-extra";
-import sharp from "sharp"; //reshape images to circle
+import sharp from "sharp"; // reshape images to circle
 import verifyUser from "../../lib/auth/verify";
 
 dotenv.config();

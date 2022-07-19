@@ -13,7 +13,6 @@ import {
     LINKS_DOMAIN,
     linksCl,
     threadCl,
-    imagesCl,
 } from "../../common";
 import { verifyCaptcha } from "../../lib/recaptcha";
 import findImages from "../../lib/findimages";
@@ -124,16 +123,12 @@ export default (
                 category: category.id,
                 lastModified: date,
                 createdAt: date,
-            };
-
-            await threadCl.insertOne(threadData);
-
-            await imagesCl.insertOne({
-                id: newThreadId,
                 images: findImages(comment).map((item) => {
                     return { image: item, cid: 1 };
                 }),
-            });
+            };
+
+            await threadCl.insertOne(threadData);
 
             res.send({ id: newThreadId });
         }

@@ -1,4 +1,4 @@
-import { imagesCl, linksCl, secret, LINKS_DOMAIN, threadCl } from "../../../common";
+import { linksCl, secret, LINKS_DOMAIN, threadCl } from "../../../common";
 import { verifyCaptcha } from "../../../lib/recaptcha";
 import findImages from "../../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
@@ -32,7 +32,7 @@ export default (
      * client must have a cookie "key"
      */
     fastify.post(
-        "/:id/comment",
+        "/:id/comment/create",
         {
             schema: {
                 body: schema,
@@ -130,20 +130,23 @@ export default (
 
             const imagesInComment = findImages(comment);
             if (imagesInComment.length) {
-                const imagesData: { image: string; cid: number }[] = (
-                    (await imagesCl.findOne({
-                        id,
-                    })) as Images
+                const imagesData = (
+                    (await threadCl.findOne(
+                        {
+                            id,
+                        },
+                        { projection: { _id: 0, images: 1 } }
+                    )) as Images
                 ).images;
 
-                imagesInComment.forEach((item) => {
+                imagesInComment.forEach((item, index) => {
                     if (imagesData.findIndex((i) => i.image === item) === -1)
-                        imagesData.push({ image: item, cid: newCommentId });
+                        imagesInComment.splice(index, 1);
                 });
 
-                await imagesCl.updateOne(
+                await threadCl.updateOne(
                     { id },
-                    { $set: { images: imagesData } as Images }
+                    { $push: { images: imagesInComment } }
                 );
             }
 

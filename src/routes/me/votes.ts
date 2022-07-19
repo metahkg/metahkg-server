@@ -1,30 +1,37 @@
 import { votesCl } from "../../common";
-import isInteger from "is-sn-integer";
 import verifyUser from "../../lib/auth/verify";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
+import { Static, Type } from "@sinclair/typebox";
+import regex from "../../lib/regex";
 
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
-    fastify.get(
-        "/:id/uservotes",
-        async (req: FastifyRequest<{ Params: { id: string } }>, res) => {
-            if (!req.params.id || !isInteger(String(req.params.id)))
-                return res.code(400).send({ error: "Bad request." });
+    const paramsSchema = Type.Object({
+        id: Type.RegEx(regex.integer),
+    });
 
-            const id = Number(req.params.id);
+    fastify.get(
+        "/votes/:id",
+        {
+            schema: {
+                querystring: paramsSchema,
+            },
+        },
+        async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
+            const threadId = Number(req.params.id);
 
             const user = verifyUser(req.headers.authorization);
             if (!user) return res.code(401).send({ error: "Unauthorized" });
 
             const userVotes = await votesCl.findOne(
                 { id: user.id },
-                { projection: { [id]: 1, _id: 0 } }
+                { projection: { [threadId]: 1, _id: 0 } }
             );
 
-            res.send(userVotes?.[id] || {});
+            res.send(userVotes?.[threadId] || {});
         }
     );
     done();

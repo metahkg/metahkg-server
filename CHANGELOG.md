@@ -1,5 +1,14 @@
 # Changelog
 
+## v3.0.0rc1
+
+- largely redesigned the api
+- remove images collection and merge it into thread collection
+- split /users path into /users and /me
+- move pin and unpin into /thread/{id}/comment/{cid}
+- /categories for categories, and /category/{id} for category
+- many other path changes
+
 ## v2.8.0
 
 - use `/thread/:id/comment/:cid` for vote so as to unify the API

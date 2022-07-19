@@ -13,7 +13,8 @@ export default class Thread {
         public lastModified: Date,
         public createdAt: Date,
         public slink: string,
-        public images?: { image: string; cid: number }[],
+        public images: { image: string; cid: number }[],
+        public pin?: commentType,
         public _id?: ObjectId
     ) {}
 }
@@ -80,4 +81,5 @@ export interface threadType {
     createdAt: string;
     /** shortened link */
     slink: string;
+    pin?: commentType;
 }

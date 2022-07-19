@@ -1,38 +1,30 @@
 import { Static, Type } from "@sinclair/typebox";
-import { ajv } from "../../lib/ajv";
-import { threadCl } from "../../common";
-import verifyUser from "../../lib/auth/verify";
-import Thread, { commentType } from "../../models/thread";
+import { threadCl } from "../../../common";
+import verifyUser from "../../../lib/auth/verify";
+import Thread, { commentType } from "../../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
+import regex from "../../../lib/regex";
 
 export default function (
     fastify: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) {
-    const schema = Type.Object(
-        {
-            cid: Type.Integer({ minimum: 1 }),
-        },
-        { additionalProperties: false }
-    );
+    const paramsSchema = Type.Object({
+        id: Type.RegEx(regex.integer),
+        cid: Type.RegEx(regex.integer),
+    });
 
     fastify.put(
-        "/:id/pin",
-        async (
-            req: FastifyRequest<{ Body: Static<typeof schema>; Params: { id: string } }>,
-            res
-        ) => {
+        "/:id/comment/:cid/pin",
+        {
+            schema: {
+                params: paramsSchema,
+            },
+        },
+        async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
             const threadId = Number(req.params.id);
-            if (
-                !(
-                    ajv.validate(schema, req.body) &&
-                    ajv.validate(Type.Integer({ minimum: 1 }), threadId)
-                )
-            )
-                return res.code(400).send({ error: "Bad request." });
-
-            const { cid: commentId } = req.body;
+            const commentId = Number(req.params.cid);
 
             const user = verifyUser(req.headers.authorization);
             if (!user) return res.code(401).send({ error: "Unauthorized." });
@@ -58,15 +50,10 @@ export default function (
                 }
             )) as Thread;
 
-            if (!thread)
-                return res.code(404).send({
-                    error: "Thread not found.",
-                });
+            if (!thread) return res.code(404).send({ error: "Thread not found." });
 
             if (thread.op.id !== user.id)
-                return res.code(403).send({
-                    error: "Permission denied.",
-                });
+                return res.code(403).send({ error: "Permission denied." });
 
             const comment = Object.fromEntries(
                 Object.entries(thread.conversation?.[0]).filter(

@@ -10,7 +10,7 @@ export default function (
     done: (e?: Error) => void
 ) {
     fastify.get(
-        "/:id",
+        "/profile/:id",
         async (
             req: FastifyRequest<{
                 Params: { id: string };

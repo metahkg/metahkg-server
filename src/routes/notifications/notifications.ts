@@ -4,7 +4,7 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 
 export default (
     fastify: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
     fastify.get(
