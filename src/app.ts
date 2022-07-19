@@ -10,7 +10,7 @@ import { ajv } from "./lib/ajv";
 
 dotenv.config();
 
-export default async function MetahkgServer() {
+export default function MetahkgServer() {
     const fastify = Fastify({
         logger: true,
         trustProxy: true,
