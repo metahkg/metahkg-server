@@ -4,6 +4,7 @@ import verifyUser from "../../../lib/auth/verify";
 import Thread from "../../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../lib/regex";
+import Votes from "../../../models/votes";
 
 export default (
     fastify: FastifyInstance,
@@ -58,11 +59,11 @@ export default (
                 return res.code(410).send({ error: "Comment removed." });
 
             const index = commentId - 1;
-            const votes = await votesCl.findOne({ id: user.id });
+            const votes = await votesCl.findOne({ id: user.id }) as Votes;
 
             if (!votes) {
                 await votesCl.insertOne({ id: user.id });
-            } else if (votes?.[threadId]?.findOne({ cid: commentId })) {
+            } else if (votes?.[threadId]?.find((i) => i.cid === commentId)) {
                 return res.code(429).send({ error: "You have already voted." });
             }
 

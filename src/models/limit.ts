@@ -1,5 +1,6 @@
-import { limitType } from "../types/db/limit";
 import { ObjectId } from "mongodb";
+
+export type limitType = "resend" | "reset" | "create";
 
 export default class Limit {
     constructor(
