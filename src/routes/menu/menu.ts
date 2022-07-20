@@ -69,7 +69,10 @@ export default (
                 category = thread.category;
             }
 
-            if (!verifyUser(req.headers.authorization) && hiddenCats.includes(category as number))
+            if (
+                !verifyUser(req.headers.authorization) &&
+                hiddenCats.includes(category as number)
+            )
                 return res.code(403).send({ error: "Forbidden." });
 
             if (!(await categoryCl.findOne({ id: category })))

@@ -54,58 +54,62 @@ export default function (
      * only jpg, svg, png and jpeg are allowed
      * Image is renamed to <user-id>.<png/svg/jpg/jpeg>
      */
-    fastify.post("/avatar", { preHandler: [RequireAuth, upload.single("avatar")] }, async (req, res) => {
-        try {
-            const file = req.file as unknown as Express.Multer.File;
-            if (!file) return res.code(400).send({ error: "Bad request." });
-
-            if (file?.size > maxSize) {
-                fs.rm(file?.path, (err) => {
-                    console.error(err);
-                });
-                return res.code(413).send({ error: "File too large." });
-            }
-            if (!file.mimetype.match(/^image\/(png|svg|jpg|jpeg|jfif|gif|webp)$/i)) {
-                //remove the file
-                fs.rm(file?.path, (err) => {
-                    console.error(err);
-                });
-                return res.code(415).send({ error: "File type not supported." });
-            }
-            const user = verifyUser(req.headers.authorization);
-            if (!user) {
-                fs.rm(`${process.env.root}/uploads/${file?.filename}`, (err) => {
-                    console.error(err);
-                });
-                return res.code(401).send({ error: "Unauthorized." });
-            }
-            
-            //rename file to <user-id>.<extension>
-            const newFileName = `${user.id}.${file.originalname.split(".").pop()}`;
-            fs.mkdirSync("images/processing/avatars", { recursive: true });
-            fs.mkdirSync("images/avatars", { recursive: true });
-            //move file to processing folder
-            await move(
-                `${process.env.root}/${file?.path}`,
-                `${process.env.root}/images/processing/avatars/${newFileName}`,
-                { overwrite: true }
-            );
+    fastify.post(
+        "/avatar",
+        { preHandler: [RequireAuth, upload.single("avatar")] },
+        async (req, res) => {
             try {
-                //compress the file
-                await compress(`images/processing/avatars/${newFileName}`, user.id);
-                fs.rmSync(`images/processing/avatars/${newFileName}`);
-            } catch {
-                res.code(422).send({ error: "Could not process you file." });
-                fs.rm(`images/processing/avatars/${newFileName}`, (err) => {
-                    console.error(err);
-                });
-                return;
+                const file = req.file as unknown as Express.Multer.File;
+                if (!file) return res.code(400).send({ error: "Bad request." });
+
+                if (file?.size > maxSize) {
+                    fs.rm(file?.path, (err) => {
+                        console.error(err);
+                    });
+                    return res.code(413).send({ error: "File too large." });
+                }
+                if (!file.mimetype.match(/^image\/(png|svg|jpg|jpeg|jfif|gif|webp)$/i)) {
+                    //remove the file
+                    fs.rm(file?.path, (err) => {
+                        console.error(err);
+                    });
+                    return res.code(415).send({ error: "File type not supported." });
+                }
+                const user = verifyUser(req.headers.authorization);
+                if (!user) {
+                    fs.rm(`${process.env.root}/uploads/${file?.filename}`, (err) => {
+                        console.error(err);
+                    });
+                    return res.code(401).send({ error: "Unauthorized." });
+                }
+
+                //rename file to <user-id>.<extension>
+                const newFileName = `${user.id}.${file.originalname.split(".").pop()}`;
+                fs.mkdirSync("images/processing/avatars", { recursive: true });
+                fs.mkdirSync("images/avatars", { recursive: true });
+                //move file to processing folder
+                await move(
+                    `${process.env.root}/${file?.path}`,
+                    `${process.env.root}/images/processing/avatars/${newFileName}`,
+                    { overwrite: true }
+                );
+                try {
+                    //compress the file
+                    await compress(`images/processing/avatars/${newFileName}`, user.id);
+                    fs.rmSync(`images/processing/avatars/${newFileName}`);
+                } catch {
+                    res.code(422).send({ error: "Could not process you file." });
+                    fs.rm(`images/processing/avatars/${newFileName}`, (err) => {
+                        console.error(err);
+                    });
+                    return;
+                }
+                res.send({ response: "ok" });
+            } catch (err) {
+                console.error(err);
+                res.code(500).send({ error: "Internal server error." });
             }
-            res.send({ response: "ok" });
-        } catch (err) {
-            console.error(err);
-            res.code(500).send({ error: "Internal server error." });
         }
-    });
+    );
     done();
 }
