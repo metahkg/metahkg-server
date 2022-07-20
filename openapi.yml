@@ -29,6 +29,8 @@ tags:
     description: account operations
   - name: menu
     description: menu operations (get list of threads based on criteria)
+  - name: category
+    description: category operations
 
 paths:
   /thread/{id}:
@@ -768,6 +770,54 @@ paths:
           $ref: "#/components/responses/Unauthorized"
         "409":
           description: Name already taken
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /categories:
+    get:
+      tags:
+        - category
+      operationId: getCategories
+      summary: Get categories
+      description: "Get categories.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.0-dev/src/routes/categories.ts)"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Category"
+  /category/{id}:
+    get:
+      tags:
+        - category
+      operationId: getCategory
+      summary: Get category
+      description: "Get a category.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.0-dev/src/routes/category.ts)"
+      parameters:
+        - name: id
+          in: path
+          description: category id, or `bytid<thread id>`
+          required: true
+          schema:
+            anyOf:
+              - $ref: "#/components/schemas/Category/properties/id"
+              - type: string
+                pattern: ^bytid[1-9]\d*$
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+        "404":
+          description: "Category not found"
           content:
             application/json:
               schema:
