@@ -557,7 +557,7 @@ paths:
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.0-dev/src/routes/me/status.ts)"
       responses:
         "200":
-          description: "User is logged in"
+          description: Success
           content:
             application/json:
               schema:
