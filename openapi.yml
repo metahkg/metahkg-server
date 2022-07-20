@@ -910,9 +910,10 @@ components:
         name:
           type: string
           description: User name
-          example: "John Doe"
+          example: "wcyat"
           minLength: 1
           maxLength: 15
+          pattern: ^\S{1,15}$
         sex:
           type: string
           enum:
