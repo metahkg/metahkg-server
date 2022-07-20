@@ -24,12 +24,7 @@ export default (
                 return res.code(400).send({ error: "Bad request." });
             }
 
-            if (
-                !ajv.validate(
-                    Type.Array(Type.Integer(), { maxItems: 50 }),
-                    threads
-                )
-            )
+            if (!ajv.validate(Type.Array(Type.Integer(), { maxItems: 50 }), threads))
                 return res.code(400).send({ error: "Bad request." });
 
             const result = (await threadCl
@@ -41,9 +36,7 @@ export default (
                 .toArray()) as Thread[];
 
             res.send(
-                threads
-                    .map((tid) => result.find((i) => i.id === tid))
-                    .filter((i) => i)
+                threads.map((tid) => result.find((i) => i.id === tid)).filter((i) => i)
             );
         }
     );
