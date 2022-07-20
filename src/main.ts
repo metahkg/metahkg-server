@@ -3,7 +3,6 @@ import updateVerificationCode from "./lib/updateVerificationCode";
 import { client } from "./common";
 import { setup } from "./mongo/setupmongo";
 import MetahkgServer from "./app";
-import fastify from "fastify";
 
 dotenv.config();
 

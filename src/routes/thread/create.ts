@@ -97,6 +97,8 @@ export default (
                 sex: user.sex,
             };
 
+            const images = findImages(comment);
+
             const threadData: Thread = {
                 id: newThreadId,
                 conversation: [
@@ -107,18 +109,19 @@ export default (
                         comment,
                         text,
                         createdAt: date,
+                        images,
                     },
                 ],
                 op: userData,
                 c: 1,
-                vote: 0,
+                score: 0,
                 slink: `https://${LINKS_DOMAIN}/${newThreadId}`,
                 title: req.body.title,
                 category: category.id,
                 lastModified: date,
                 createdAt: date,
-                images: findImages(comment).map((item) => {
-                    return { image: item, cid: 1 };
+                images: images.map((item) => {
+                    return { src: item, cid: 1 };
                 }),
             };
 

@@ -31,25 +31,21 @@ export default (
             const commentId = Number(req.params.cid);
 
             const result = (await threadCl.findOne(
-                { id: threadId },
+                { id: threadId, conversation: { $eleMatch: { id: commentId } } },
                 {
                     projection: {
                         _id: 0,
-                        images: {
-                            $filter: {
-                                input: "$images",
-                                cond: {
-                                    $eq: ["$$this.cid", commentId],
-                                },
-                            },
-                        },
+                        conversation: { $elemMatch: { id: commentId } },
                     },
                 }
             )) as Thread;
 
-            if (!result) return res.code(404).send({ error: "Not found." });
+            if (!result) return res.code(404).send({ error: "Thread or comment not found." });
 
-            res.send(result.images);
+            if (result.conversation?.[0]?.removed)
+               return res.code(410).send({ error: "Comment removed." });
+
+            res.send(result?.conversation?.[0]?.images);
         }
     );
     done();

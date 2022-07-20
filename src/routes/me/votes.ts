@@ -17,7 +17,7 @@ export default (
         "/votes/:id",
         {
             schema: {
-                querystring: paramsSchema,
+                params: paramsSchema,
             },
         },
         async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {

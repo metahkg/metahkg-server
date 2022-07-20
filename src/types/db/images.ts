@@ -1,6 +1,6 @@
 export type imageType = {
     /** image source url */
-    image: string;
+    src: string;
     /** comment id */
     cid: number;
 };

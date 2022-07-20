@@ -99,6 +99,8 @@ export default (
                 if (quotedComment.removed) quotedComment = undefined;
             }
 
+            const imagesInComment = findImages(comment);
+
             await threadCl.updateOne(
                 { id },
                 {
@@ -115,6 +117,7 @@ export default (
                             text,
                             createdAt: new Date(),
                             slink: `https://${LINKS_DOMAIN}/${slinkId}`,
+                            images: imagesInComment,
                             ...(quotedComment && { quote: quotedComment }),
                         },
                     },
@@ -124,11 +127,10 @@ export default (
 
             quotedComment &&
                 (await threadCl.updateOne(
-                    { id: id },
+                    { id },
                     { $push: { [`conversation.${quoteIndex}.replies`]: newCommentId } }
                 ));
 
-            const imagesInComment = findImages(comment);
             if (imagesInComment.length) {
                 const imagesData = (
                     (await threadCl.findOne(
@@ -140,7 +142,7 @@ export default (
                 ).images;
 
                 imagesInComment.forEach((item, index) => {
-                    if (imagesData.findIndex((i) => i.image === item) === -1)
+                    if (imagesData.findIndex((i) => i.src === item) === -1)
                         imagesInComment.splice(index, 1);
                 });
 

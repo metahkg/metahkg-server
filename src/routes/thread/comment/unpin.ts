@@ -2,7 +2,6 @@ import { Static, Type } from "@sinclair/typebox";
 import { threadCl } from "../../../common";
 import Thread from "../../../models/thread";
 import verifyUser from "../../../lib/auth/verify";
-import { ajv } from "../../../lib/ajv";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../lib/regex";
 
@@ -27,9 +26,6 @@ export default (
         ) => {
             const threadId = Number(req.params.id);
             const commentId = Number(req.params.cid);
-
-            if (!ajv.validate(Type.Integer({ minimum: 1 }), threadId))
-                return res.code(400).send({ error: "Bad request." });
 
             const user = verifyUser(req.headers.authorization);
 

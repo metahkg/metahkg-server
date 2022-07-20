@@ -42,7 +42,7 @@ export default (
                 return res.code(404).send({ error: "Thread or comment not found." });
 
             if (targetComment.removed)
-                return res.code(410).send({ error: "Comment has been removed." });
+                return res.code(410).send({ error: "Comment removed." });
 
             const replies = (
                 await threadCl.findOne(

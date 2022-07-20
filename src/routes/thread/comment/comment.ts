@@ -43,7 +43,7 @@ export default (
                 return res.code(404).send({ error: "Thread or comment not found." });
 
             if (comment.removed)
-                return res.code(410).send({ error: "Comment has been removed." });
+                return res.code(410).send({ error: "Comment removed." });
 
             res.send(comment);
         }

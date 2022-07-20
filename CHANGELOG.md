@@ -1,5 +1,11 @@
 # Changelog
 
+## v3.1.0
+
+- images list in comments
+- use `src` instead or `image` for image source url
+- rename vote to score
+
 ## v3.0.0rc2
 
 - use blocked instead of blocklist

@@ -33,7 +33,7 @@ export default (
                 { projection: { _id: 0, images: 1 } }
             )) as Thread;
 
-            if (!result) return res.code(404).send({ error: "Not found." });
+            if (!result) return res.code(404).send({ error: "Thread not found." });
 
             res.send(result.images);
         }
