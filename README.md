@@ -22,7 +22,7 @@ dev build (dev): [dev.metahkg.org](https://dev.metahkg.org)
 
 ### Docker
 
-[Docs](https://docs.metahkg.org/docs/ategory/deploy-metahkg)
+[Docs](https://docs.metahkg.org/docs/category/deploy-metahkg)
 
 ### Manually
 
