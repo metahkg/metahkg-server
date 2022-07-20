@@ -26,12 +26,12 @@ export default (
             const user = verifyUser(req.headers.authorization);
             if (!user) return res.code(401).send({ error: "Unauthorized" });
 
-            const userVotes = await votesCl.findOne(
+            const votes = await votesCl.findOne(
                 { id: user.id },
                 { projection: { [threadId]: 1, _id: 0 } }
             );
 
-            res.send(userVotes?.[threadId] || {});
+            res.send(votes?.[threadId] || []);
         }
     );
     done();

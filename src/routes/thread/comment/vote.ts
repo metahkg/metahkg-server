@@ -28,23 +28,24 @@ export default (
         async (
             req: FastifyRequest<{
                 Body: Static<typeof schema>;
-                Params: { id: string; cid: string };
+                Params: Static<typeof paramsSchema>;
             }>,
             res
         ) => {
-            const id = Number(req.params.id);
-            const cid = Number(req.params.cid);
+            const threadId = Number(req.params.id);
+            const commentId = Number(req.params.cid);
+            const { vote } = req.body;
 
             const user = verifyUser(req.headers.authorization);
             if (!user) return res.code(401).send({ error: "Unauthorized." });
 
             const thread = (await threadCl.findOne(
-                { id, conversation: { $elemMatch: { id: cid } } },
+                { id: threadId, conversation: { $elemMatch: { id: commentId } } },
                 {
                     projection: {
                         _id: 0,
                         conversation: {
-                            $elemMatch: { id: cid },
+                            $elemMatch: { id: commentId },
                         },
                     },
                 }
@@ -56,36 +57,36 @@ export default (
             if (thread.conversation[0].removed)
                 return res.code(410).send({ error: "Comment removed." });
 
-            const index = cid - 1;
-            const userVotes = await votesCl.findOne({ id: user.id });
+            const index = commentId - 1;
+            const votes = await votesCl.findOne({ id: user.id });
 
-            if (!userVotes) {
+            if (!votes) {
                 await votesCl.insertOne({ id: user.id });
-            } else if (userVotes?.[id]?.[cid]) {
+            } else if (votes?.[threadId]?.findOne({ cid: commentId })) {
                 return res.code(429).send({ error: "You have already voted." });
             }
 
             await votesCl.updateOne(
                 { id: user.id },
-                { $set: { [`${id}.${cid}`]: req.body.vote } }
+                { $push: { [`${threadId}`]: { cid: commentId, vote } } }
             );
 
-            if (!thread.conversation[0]?.[req.body.vote]) {
+            if (!thread.conversation[0]?.[vote]) {
                 await threadCl.updateOne(
-                    { id },
+                    { id: threadId },
                     { $set: { [`conversation.${index}.${req.body.vote}`]: 0 } }
                 );
             }
 
             await threadCl.updateOne(
-                { id },
+                { id: threadId },
                 { $inc: { [`conversation.${index}.${req.body.vote}`]: 1 } }
             );
 
-            if (cid === 1) {
+            if (commentId === 1) {
                 await threadCl.updateOne(
-                    { id },
-                    { $inc: { score: req.body.vote === "U" ? 1 : -1 } }
+                    { id: threadId },
+                    { $inc: { score: { U: 1, D: -1 }[req.body.vote] } }
                 );
             }
 

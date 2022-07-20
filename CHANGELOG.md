@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.2.0
+
+- use array to store votes in each thread
+
 ## v3.1.0
 
 - images list in comments
