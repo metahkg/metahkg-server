@@ -41,7 +41,7 @@ export type commentType = {
     createdAt: Date;
     /** shortened link */
     slink: string;
-    images: string[],
+    images: string[];
     /** upvotes */
     U?: number;
     /** downvotes */
