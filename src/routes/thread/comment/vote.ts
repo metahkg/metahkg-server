@@ -59,7 +59,7 @@ export default (
                 return res.code(410).send({ error: "Comment removed." });
 
             const index = commentId - 1;
-            const votes = await votesCl.findOne({ id: user.id }) as Votes;
+            const votes = (await votesCl.findOne({ id: user.id })) as Votes;
 
             if (!votes) {
                 await votesCl.insertOne({ id: user.id });
