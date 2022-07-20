@@ -5,6 +5,7 @@ import { FastifyInstance, FastifyPluginOptions } from "fastify";
 import me from "./me";
 import categories from "./categories";
 import category from "./category";
+import notifications from "./notifications/notifications";
 
 export default (
     fastify: FastifyInstance,
@@ -17,5 +18,6 @@ export default (
     fastify.register(category, { prefix: "/category" });
     fastify.register(menu, { prefix: "/menu" });
     fastify.register(thread, { prefix: "/thread" });
+    fastify.register(notifications, { prefix: "/notifications" });
     done();
 };

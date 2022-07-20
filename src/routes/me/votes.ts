@@ -24,7 +24,7 @@ export default (
             const threadId = Number(req.params.id);
 
             const user = verifyUser(req.headers.authorization);
-            if (!user) return res.code(401).send({ error: "Unauthorized" });
+            if (!user) return res.code(401).send({ error: "Unauthorized." });
 
             const votes = await votesCl.findOne(
                 { id: user.id },

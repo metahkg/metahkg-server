@@ -1,5 +1,4 @@
 import { Static, Type } from "@sinclair/typebox";
-import { ajv } from "../../lib/ajv";
 import verifyUser from "../../lib/auth/verify";
 import { usersCl } from "../../common";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
@@ -15,15 +14,21 @@ export default (
 
     fastify.post(
         "/unblock",
+        { schema: { body: schema } },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const user = verifyUser(req.headers.authorization);
 
-            if (!ajv.validate(schema, req.body) || !user)
-                return res.code(400).send({ error: "Bad request." });
+            if (!user) return res.code(401).send({ error: "Unauthorized" });
 
             const { userId } = req.body;
 
-            await usersCl.updateOne({ id: user.id }, { $pull: { blocked: userId } });
+            if (
+                !(await usersCl.updateOne(
+                    { id: user.id, blocked: userId },
+                    { $pull: { blocked: userId } }
+                ))
+            )
+                return res.code(409).send({ error: "User not blocked." });
 
             return res.send({ response: "ok" });
         }

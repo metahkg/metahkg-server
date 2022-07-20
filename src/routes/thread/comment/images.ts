@@ -31,7 +31,7 @@ export default (
             const commentId = Number(req.params.cid);
 
             const result = (await threadCl.findOne(
-                { id: threadId, conversation: { $eleMatch: { id: commentId } } },
+                { id: threadId, conversation: { $elemMatch: { id: commentId } } },
                 {
                     projection: {
                         _id: 0,

@@ -5,6 +5,7 @@ import fs from "fs";
 import { move } from "fs-extra";
 import sharp from "sharp"; // reshape images to circle
 import verifyUser from "../../lib/auth/verify";
+import RequireAuth from "../../plugins/requireAuth";
 
 dotenv.config();
 
@@ -13,7 +14,7 @@ export default function (
     _opts: FastifyPluginOptions,
     done: () => void
 ) {
-    const maxSize = 1100000;
+    const maxSize = 2048000;
     const upload = multer({ dest: "uploads/", limits: { fileSize: maxSize } });
 
     /**
@@ -39,6 +40,7 @@ export default function (
                     blend: "dest-in",
                 },
             ])
+            .toFormat("png")
             .toFile(`${process.env.root}/tmp/avatars/${id}.png`)
             .catch((err) => console.log(err));
         await move(
@@ -52,7 +54,7 @@ export default function (
      * only jpg, svg, png and jpeg are allowed
      * Image is renamed to <user-id>.<png/svg/jpg/jpeg>
      */
-    fastify.post("/avatar", { preHandler: upload.single("avatar") }, async (req, res) => {
+    fastify.post("/avatar", { preHandler: [RequireAuth, upload.single("avatar")] }, async (req, res) => {
         try {
             const file = req.file as unknown as Express.Multer.File;
             if (!file) return res.code(400).send({ error: "Bad request." });
@@ -63,7 +65,7 @@ export default function (
                 });
                 return res.code(413).send({ error: "File too large." });
             }
-            if (!file.mimetype.match(/^image\/(png|svg|jpg|jpeg)$/)) {
+            if (!file.mimetype.match(/^image\/(png|svg|jpg|jpeg|jfif|gif|webp)$/i)) {
                 //remove the file
                 fs.rm(file?.path, (err) => {
                     console.error(err);
@@ -71,13 +73,13 @@ export default function (
                 return res.code(415).send({ error: "File type not supported." });
             }
             const user = verifyUser(req.headers.authorization);
-            //send 404 if no such user
             if (!user) {
                 fs.rm(`${process.env.root}/uploads/${file?.filename}`, (err) => {
                     console.error(err);
                 });
                 return res.code(401).send({ error: "Unauthorized." });
             }
+            
             //rename file to <user-id>.<extension>
             const newFileName = `${user.id}.${file.originalname.split(".").pop()}`;
             fs.mkdirSync("images/processing/avatars", { recursive: true });

@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.3.0
+
+- filter out and disallow access through images or comment to hidden threads for not-logged-in users
+
 ## v3.2.0
 
 - use array to store votes in each thread

@@ -1,7 +1,5 @@
 import { threadCl } from "../../common";
-import { hiddencats } from "../../lib/hiddencats";
 import { Static, Type } from "@sinclair/typebox";
-import verifyUser from "../../lib/auth/verify";
 import Thread from "../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../lib/regex";
@@ -127,12 +125,6 @@ export default (
 
             if (!(await threadCl.findOne({ id })))
                 return res.code(404).send({ error: "Thread not found" });
-
-            if (
-                !verifyUser(req.headers.authorization) &&
-                (await hiddencats()).includes(thread.category)
-            )
-                return res.code(403).send({ error: "Permission denied." });
 
             res.send(thread);
         }

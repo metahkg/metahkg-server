@@ -26,15 +26,17 @@ async function migrate() {
                 },
                 {
                     $set: {
-                        images:
-                            data.images.every(
-                                (image: { image: string; cid: number }) => image.image
-                            ) &&
-                            data.images.map((i: { image: string; cid: number }) => ({
-                                src: i.image,
-                                cid: i.cid,
-                            })),
-                        score: data.vote,
+                        ...(data.images.every(
+                            (image: { image: string; cid: number }) => image.image
+                        ) && {
+                            images: data.images.map(
+                                (i: { image: string; cid: number }) => ({
+                                    src: i.image,
+                                    cid: i.cid,
+                                })
+                            ),
+                        }),
+                        score: data.vote ?? data.score,
                     },
                     $unset: { vote: 1 },
                 }
@@ -48,9 +50,8 @@ async function migrate() {
                             },
                             {
                                 $set: {
-                                    [`conversation.${index}.images`]: findimages(
-                                        comment.comment
-                                    ),
+                                    [`conversation.${index}.images`]:
+                                        findimages(comment.comment) || [],
                                 },
                             }
                         );

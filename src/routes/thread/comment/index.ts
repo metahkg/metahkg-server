@@ -6,12 +6,14 @@ import unpin from "./unpin";
 import vote from "./vote";
 import images from "./images";
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
+import hidden from "../../../plugins/hidden";
 
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) {
+    fastify.addHook("preHandler", hidden);
     fastify.register(comment);
     fastify.register(replies);
     fastify.register(create);

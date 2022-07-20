@@ -69,8 +69,8 @@ export default (
                 category = thread.category;
             }
 
-            if (!verifyUser(req.headers.authorization) && hiddenCats.includes(category))
-                return res.code(403).send({ error: "Permission denied." });
+            if (!verifyUser(req.headers.authorization) && hiddenCats.includes(category as number))
+                return res.code(403).send({ error: "Forbidden." });
 
             if (!(await categoryCl.findOne({ id: category })))
                 return res.code(404).send({ error: "Category not found." });

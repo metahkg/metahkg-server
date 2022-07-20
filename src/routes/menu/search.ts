@@ -3,6 +3,8 @@ import { threadCl } from "../../common";
 import Thread from "../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../lib/regex";
+import { hiddencats } from "../../lib/hiddencats";
+import verifyUser from "../../lib/auth/verify";
 
 export default (
     fastify: FastifyInstance,
@@ -42,6 +44,7 @@ export default (
             const sort = Number(req.query.sort ?? 0);
             const mode = Number(req.query.mode ?? 0);
             const limit = Number(req.query.limit) || 25;
+            const user = verifyUser(req.headers.authorization);
 
             const regex = new RegExp(
                 query.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"),
@@ -51,28 +54,31 @@ export default (
             const data = (await threadCl
                 .aggregate(
                     [
-                        { $match: mode === 1 ? { "op.name": regex } : { title: regex } },
-                        mode === 1
-                            ? undefined
-                            : {
-                                  $unionWith: {
-                                      coll: "thread",
-                                      pipeline: [
-                                          {
-                                              $match: {
-                                                  $text: {
-                                                      $search: query,
-                                                  },
-                                              },
-                                          },
-                                          {
-                                              $sort: {
-                                                  title: { $meta: "textScore" },
-                                              },
-                                          },
-                                      ],
-                                  },
-                              },
+                        {
+                            $match: {
+                                ...(mode === 1 ? { "op.name": regex } : { title: regex }),
+                                ...(!user && { category: { $nin: await hiddencats() } }),
+                            },
+                        },
+                        mode === 1 && {
+                            $unionWith: {
+                                coll: "thread",
+                                pipeline: [
+                                    {
+                                        $match: {
+                                            $text: {
+                                                $search: query,
+                                            },
+                                        },
+                                    },
+                                    {
+                                        $sort: {
+                                            title: { $meta: "textScore" },
+                                        },
+                                    },
+                                ],
+                            },
+                        },
                         { $group: { _id: "$_id", doc: { $first: "$$ROOT" } } },
                         {
                             $replaceRoot: {

@@ -37,7 +37,7 @@ export default (
             if (!thread) return res.code(404).send({ error: "Thread not found." });
 
             const authorized = user && thread?.op?.id === user.id;
-            if (!authorized) return res.code(403).send({ error: "Permission denied." });
+            if (!authorized) return res.code(403).send({ error: "Forbidden." });
 
             if (thread?.pin?.id !== commentId)
                 return res.code(409).send({ error: "Comment is not pinned." });

@@ -5,6 +5,7 @@ import Thread from "../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { Static, Type } from "@sinclair/typebox";
 import regex from "../../lib/regex";
+import { hiddencats } from "../../lib/hiddencats";
 
 export default (
     fastify: FastifyInstance,
@@ -35,16 +36,20 @@ export default (
             const page = Number(req.query.page) || 1;
             const sort = Number(req.query.sort || 0);
             const limit = Number(req.query.limit) || 25;
+            const user = verifyUser(req.headers.authorization);
 
             const requestedUser =
                 req.params.id === "self"
-                    ? verifyUser(req.headers.authorization)
-                    : ((await usersCl.findOne({ id })) as User as User);
+                    ? user
+                    : ((await usersCl.findOne({ id })) as User);
 
             if (!requestedUser) return res.code(404).send({ error: "User not found." });
 
             const history = (await threadCl
-                .find({ "op.id": requestedUser.id })
+                .find({
+                    "op.id": requestedUser.id,
+                    ...(!user && { category: { $nin: await hiddencats() } }),
+                })
                 .sort({
                     ...(sort === 0 && { createdAt: -1 }),
                     ...(sort === 1 && { lastModified: -1 }),
