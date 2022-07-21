@@ -822,6 +822,138 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /users/login:
+    post:
+      tags:
+        - users
+      operationId: login
+      summary: Login
+      description: "Login with username/email and password. A jwt token is returned.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.0-dev/src/routes/users/login.ts)"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: Username or email
+                  anyOf:
+                    - $ref: "#/components/schemas/User/properties/name"
+                    - $ref: "#/components/schemas/email"
+                pwd:
+                  $ref: "#/components/schemas/hashedPwd"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Token"
+        "400":
+          $ref: "#/components/responses/Invalid"
+        "401":
+          description: "Login failed"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: "Email verification needed"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /users/register:
+    post:
+      tags:
+        - users
+      summary: Register
+      description: "Register an account. A verification email is sent to the email address after the request completes.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.0-dev/src/routes/users/register.ts)"
+      operationId: register
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - email
+                - pwd
+                - sex
+                - rtoken
+              properties:
+                name:
+                  $ref: "#/components/schemas/User/properties/name"
+                email:
+                  $ref: "#/components/schemas/email"
+                pwd:
+                  $ref: "#/components/schemas/hashedPwd"
+                sex:
+                  $ref: "#/components/schemas/User/properties/sex"
+                rtoken:
+                  $ref: "#/components/schemas/rtoken"
+                inviteCode:
+                  description: "Invite code, required if admin set register=invite
+                    See [register mode](https://docs.metahkg.org/docs/customize/registermode)"
+                  nullable: true
+                  type: string
+                  minLength: 1
+      responses:
+        "200":
+          description: Success, verification email sent.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OK"
+        "400":
+          description: Bad request / registration disabled / invalid invite code
+        "409":
+          description: "Email or username already in use"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /users/verify:
+    post:
+      tags:
+        - users
+      operationId: verify
+      summary: Verify email
+      description: "Verify email. A jwt token is returned.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.0-dev/src/routes/users/verify.ts)"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - code
+              properties:
+                email:
+                  $ref: "#/components/schemas/email"
+                code:
+                  type: string
+                  minLength: 30
+                  maxLength: 30
+                  description: "Verification code sent to email"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Token"
+        "400":
+          $ref: "#/components/responses/Invalid"
+        "401":
+          description: Code incorrect or expired / email not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
 
 servers:
   - url: https://dev.metahkg.org/api
@@ -923,6 +1055,17 @@ components:
           type: string
           format: date-time
           description: date when user was created
+    email:
+      type: string
+      format: email
+      description: user email
+      example: "metahkg@metahkg.org"
+    hashedPwd:
+      type: string
+      description: user password, hashed with sha256
+      example: "5ebe2294ecd0e0f08eab7690d2a6ee69f3d1d740960fb9b1b5ec9fb8f5d4ec2a"
+      minLength: 64
+      maxLength: 64
     Category:
       type: object
       properties:

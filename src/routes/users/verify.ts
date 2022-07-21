@@ -42,9 +42,9 @@ export default (
             });
 
             if (verificationData?.code !== req.body.code)
-                return res.code(401).send({
-                    error: "Code incorrect or expired, or email not found.",
-                });
+                return res
+                    .code(401)
+                    .send({ error: "Code incorrect or expired, or email not found." });
 
             const newUserId =
                 (await usersCl.find().sort({ id: -1 }).limit(1).toArray())[0]?.id + 1 ||

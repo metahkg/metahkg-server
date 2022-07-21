@@ -61,7 +61,7 @@ export default (
                 }[process.env.register || ""] || "normal";
 
             if (registerMode === "none")
-                return res.code(400).send({ error: "Registration not allowed." });
+                return res.code(400).send({ error: "Registration disabled." });
 
             // TODO: WARNING: frontend not implemented !!!
             if (
@@ -73,15 +73,15 @@ export default (
             if (
                 (await usersCl.findOne({
                     $or: [
-                        { name: name },
+                        { name },
                         { email: hash.sha256().update(email).digest("hex") },
                     ],
                 })) ||
                 (await verificationCl.findOne({
-                    $or: [{ name: name }, { email: email }],
+                    $or: [{ name }, { email }],
                 }))
             )
-                return res.code(409).send({ error: "Username or email exists." });
+                return res.code(409).send({ error: "Username or email already in use." });
 
             const code = generate({
                 include: { numbers: true, upper: true, lower: true, special: false },
