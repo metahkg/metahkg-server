@@ -72,10 +72,7 @@ export default (
 
             if (
                 (await usersCl.findOne({
-                    $or: [
-                        { name },
-                        { email: hash.sha256().update(email).digest("hex") },
-                    ],
+                    $or: [{ name }, { email: hash.sha256().update(email).digest("hex") }],
                 })) ||
                 (await verificationCl.findOne({
                     $or: [{ name }, { email }],
