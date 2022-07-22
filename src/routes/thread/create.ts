@@ -7,7 +7,13 @@
   category : number
 }*/
 //only for human
-import { RecaptchaSecret, categoryCl, LINKS_DOMAIN, linksCl, threadCl } from "../../common";
+import {
+    RecaptchaSecret,
+    categoryCl,
+    LINKS_DOMAIN,
+    linksCl,
+    threadCl,
+} from "../../common";
 import { verifyCaptcha } from "../../lib/recaptcha";
 import findImages from "../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
