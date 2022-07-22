@@ -9,7 +9,7 @@
   sex: string
 }
 */
-import { secret, usersCl, verificationCl, inviteCl } from "../../common";
+import { RecaptchaSecret, usersCl, verificationCl, inviteCl } from "../../common";
 import { mg, mgDomain, verifyMsg } from "../../lib/mailgun";
 import EmailValidator from "email-validator";
 import { verifyCaptcha } from "../../lib/recaptcha";
@@ -49,7 +49,7 @@ export default (
 
             const { name, pwd, email, rtoken, sex, invitecode } = req.body;
 
-            if (!(await verifyCaptcha(secret, rtoken)))
+            if (!(await verifyCaptcha(RecaptchaSecret, rtoken)))
                 return res.code(429).send({ error: "Recaptcha token invalid." });
 
             // register modes (process.env.register)

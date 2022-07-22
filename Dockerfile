@@ -5,10 +5,7 @@ WORKDIR /usr/src/app
 ARG env
 ENV env $env
 
-COPY ./package.json ./
-COPY ./yarn.lock ./
-COPY ./tsconfig.json ./
-COPY ./tsconfig.build.json ./
+COPY ./package.json ./yarn.lock ./tsconfig.json ./tsconfig.build.json ./
 
 RUN if [ "${env}" = "dev" ]; then yarn install; else yarn install --production; fi;
 
@@ -21,12 +18,8 @@ FROM node:18-alpine
 
 WORKDIR /usr/src/app
 
-COPY ./package.json ./
-COPY ./yarn.lock ./
-COPY ./tsconfig.json ./
-COPY ./tsconfig.build.json ./
+COPY ./package.json ./yarn.lock ./tsconfig.json ./tsconfig.build.json ./start.js ./
 
-COPY ./start.js ./
 COPY ./static ./static
 COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/node_modules ./node_modules

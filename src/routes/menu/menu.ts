@@ -1,6 +1,3 @@
-// get 20 neweat/hottezt threads in a category
-// note: category 1 returns all categories
-// Syntax: GET /api/menu/<category id>?sort=<0 | 1>&page=<number>
 import { categoryCl, threadCl } from "../../common";
 import { hiddencats as gethiddencats } from "../../lib/hiddencats";
 import { Static, Type } from "@sinclair/typebox";
@@ -113,7 +110,15 @@ export default (
                               },
                           },
                           { $sort: { newComments: -1, lastModified: -1 } },
-                          { $project: { _id: 0, conversation: 0, newComments: 0 } },
+                          {
+                              $project: {
+                                  _id: 0,
+                                  conversation: 0,
+                                  newComments: 0,
+                                  images: 0,
+                                  pin: 0,
+                              },
+                          },
                           { $skip: limit * (page - 1) },
                           { $limit: limit },
                       ])
@@ -123,7 +128,7 @@ export default (
                       .sort({ lastModified: -1 })
                       .skip(limit * (page - 1))
                       .limit(limit)
-                      .project({ _id: 0, conversation: 0 })
+                      .project({ _id: 0, conversation: 0, images: 0, pin: 0 })
                       .toArray()) as Thread[]);
 
             res.send(data);

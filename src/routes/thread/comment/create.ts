@@ -1,4 +1,4 @@
-import { linksCl, secret, LINKS_DOMAIN, threadCl } from "../../../common";
+import { linksCl, RecaptchaSecret, LINKS_DOMAIN, threadCl } from "../../../common";
 import { verifyCaptcha } from "../../../lib/recaptcha";
 import findImages from "../../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
@@ -50,7 +50,7 @@ export default (
 
             const { rtoken, quote } = req.body;
 
-            if (!(await verifyCaptcha(secret, rtoken)))
+            if (!(await verifyCaptcha(RecaptchaSecret, rtoken)))
                 return res.code(429).send({ error: "Recaptcha token invalid." });
 
             const user = verifyUser(req.headers.authorization);

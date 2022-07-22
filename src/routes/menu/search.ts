@@ -60,7 +60,7 @@ export default (
                                 ...(!user && { category: { $nin: await hiddencats() } }),
                             },
                         },
-                        mode === 1 && {
+                        mode === 0 && {
                             $unionWith: {
                                 coll: "thread",
                                 pipeline: [

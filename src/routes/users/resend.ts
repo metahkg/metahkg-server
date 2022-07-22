@@ -1,4 +1,4 @@
-import { secret, verificationCl, limitCl } from "../../common";
+import { RecaptchaSecret, verificationCl, limitCl } from "../../common";
 import { verifyCaptcha } from "../../lib/recaptcha";
 import { Static, Type } from "@sinclair/typebox";
 import { ajv } from "../../lib/ajv";
@@ -8,7 +8,7 @@ import { mg, mgDomain, verifyMsg } from "../../lib/mailgun";
 
 export default (
     fastify: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
     const schema = Type.Object(
@@ -24,17 +24,14 @@ export default (
 
             const { email, rtoken } = req.body;
 
-            if (!(await verifyCaptcha(secret, rtoken)))
+            if (!(await verifyCaptcha(RecaptchaSecret, rtoken)))
                 return res.code(429).send({ error: "Recaptcha token invalid." });
 
             const verificationUserData = await verificationCl.findOne({
                 email,
             });
-            if (!verificationUserData) {
-                return res.code(404).send({
-                    error: "Email not found.",
-                });
-            }
+            if (!verificationUserData)
+                return res.code(404).send({ error: "Email not found." });
 
             if (
                 (await limitCl.countDocuments({

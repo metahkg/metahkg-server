@@ -7,7 +7,7 @@
   category : number
 }*/
 //only for human
-import { secret, categoryCl, LINKS_DOMAIN, linksCl, threadCl } from "../../common";
+import { RecaptchaSecret, categoryCl, LINKS_DOMAIN, linksCl, threadCl } from "../../common";
 import { verifyCaptcha } from "../../lib/recaptcha";
 import findImages from "../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
@@ -52,7 +52,7 @@ export default (
             const comment = sanitize(req.body.comment);
             const text = htmlToText(comment, { wordwrap: false });
 
-            if (!(await verifyCaptcha(secret, req.body.rtoken)))
+            if (!(await verifyCaptcha(RecaptchaSecret, req.body.rtoken)))
                 return res.code(429).send({ error: "Recaptcha token invalid." });
 
             const user = verifyUser(req.headers.authorization);

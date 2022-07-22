@@ -1,27 +1,37 @@
 import User from "../../models/user";
 import { threadCl, usersCl } from "../../common";
-import { ajv } from "../../lib/ajv";
-import { Type } from "@sinclair/typebox";
+import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
+import regex from "../../lib/regex";
 
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) {
+    const paramsSchema = Type.Object({ id: Type.RegEx(regex.integer) });
+    const querySchema = Type.Object({
+        nameonly: Type.Optional(
+            Type.Union(["1", "0"].map((item) => Type.Literal(item)))
+        ),
+    });
+
     fastify.get(
         "/profile/:id",
+        {
+            schema: {
+                params: paramsSchema,
+                querystring: querySchema,
+            },
+        },
         async (
             req: FastifyRequest<{
-                Params: { id: string };
-                Querystring: { nameonly?: string };
+                Params: Static<typeof paramsSchema>;
+                Querystring: Static<typeof querySchema>;
             }>,
             res
         ) => {
             const id = Number(req.params.id);
-
-            if (!ajv.validate(Type.Integer({ minimum: 1 }), id))
-                return res.code(400).send({ error: "Bad request." });
 
             const requestedUser = (await usersCl.findOne(
                 { id },

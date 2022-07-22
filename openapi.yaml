@@ -19,18 +19,18 @@ externalDocs:
   description: Server source code
 
 tags:
-  - name: thread
-    description: thread operations
-  - name: comment
-    description: comment operations
   - name: users
     description: users operations
   - name: me
     description: account operations
-  - name: menu
-    description: menu operations (get list of threads based on criteria)
   - name: category
     description: category operations
+  - name: menu
+    description: menu operations (get list of threads based on criteria)
+  - name: thread
+    description: thread operations
+  - name: comment
+    description: comment operations
 
 paths:
   /thread/{id}:
@@ -378,18 +378,17 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - comment
+                - rtoken
               properties:
                 comment:
                   $ref: "#/components/schemas/CommentC/properties/comment"
                 rtoken:
                   $ref: "#/components/schemas/rtoken"
                 quote:
-                  nullable: true
                   anyOf:
                     - $ref: "#/components/schemas/CommentC/properties/id"
-              required:
-                - comment
-                - rtoken
       responses:
         "200":
           description: "Success"
@@ -816,12 +815,91 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Category"
+        "400":
+          $ref: "#/components/responses/Invalid"
         "404":
           description: "Category not found"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /users/profile/{id}:
+    get:
+      tags:
+        - users
+      operationId: userProfile
+      summary: Get user profile
+      description: "Get user profile.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.0-dev/src/routes/users/profile.ts)"
+      parameters:
+        - name: id
+          in: path
+          description: user id
+          required: true
+          schema:
+            $ref: "#/components/schemas/User/properties/id"
+        - name: nameonly
+          in: query
+          description: only return user name
+          required: false
+          schema:
+            type: integer
+            format: int64
+            enum:
+              - 0
+              - 1
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - type: object
+                    properties:
+                      name:
+                        $ref: "#/components/schemas/User/properties/name"
+                  - allOf:
+                      - $ref: "#/components/schemas/User"
+                      - type: object
+                        properties:
+                          count:
+                            type: integer
+                            minimum: 0
+                            description: Number of threads created by user
+        "400":
+          $ref: "#/components/responses/Invalid"
+        "404":
+          description: "User not found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /users/avatars/{id}:
+    get:
+      tags:
+        - users
+      operationId: userAvatar
+      summary: Get user avatar
+      description: "Get user avatar. Returns either the avatar or a default avatar.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.0-dev/src/routes/users/avatar.ts)"
+      parameters:
+        - name: id
+          in: path
+          description: user id
+          required: true
+          schema:
+            $ref: "#/components/schemas/User/properties/id"
+      responses:
+        "200":
+          description: Success
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+        "400":
+          $ref: "#/components/responses/Invalid"
   /users/login:
     post:
       tags:
@@ -869,7 +947,8 @@ paths:
       tags:
         - users
       summary: Register
-      description: "Register an account. A verification email is sent to the email address after the request completes.
+      description:
+        "Register an account. A verification email is sent to the email address after the request completes.
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.0-dev/src/routes/users/register.ts)"
       operationId: register
       requestBody:
@@ -897,7 +976,6 @@ paths:
                 inviteCode:
                   description: "Invite code, required if admin set register=invite
                     See [register mode](https://docs.metahkg.org/docs/customize/registermode)"
-                  nullable: true
                   type: string
                   minLength: 1
       responses:
@@ -950,6 +1028,201 @@ paths:
           $ref: "#/components/responses/Invalid"
         "401":
           description: Code incorrect or expired / email not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /users/resend:
+    post:
+      tags:
+        - users
+      operationId: resend
+      summary: Resend verification email
+      description: "Resend verification email.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.0-dev/src/routes/users/resend.ts)"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - rtoken
+              properties:
+                email:
+                  $ref: "#/components/schemas/email"
+                rtoken:
+                  $ref: "#/components/schemas/rtoken"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OK"
+        "400":
+          $ref: "#/components/responses/Invalid"
+        "404":
+          description: Email not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: Too many requests / ReCAPTCHA token invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /users/forgot:
+    post:
+      tags:
+        - users
+      operationId: forgot
+      summary: Forgot password
+      description:
+        "Send a password reset email. A limit of two resets per day is enforced.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.0-dev/src/routes/users/forgot.ts)"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - rtoken
+              properties:
+                email:
+                  $ref: "#/components/schemas/email"
+                rtoken:
+                  $ref: "#/components/schemas/rtoken"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OK"
+        "400":
+          $ref: "#/components/responses/Invalid"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: Too many requests / ReCAPTCHA token invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /users/reset:
+    post:
+      tags:
+        - users
+      operationId: reset
+      summary: Reset password
+      description: "Reset password. A jwt token is returned.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.0-dev/src/routes/users/reset.ts)"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - code
+                - pwd
+              properties:
+                email:
+                  $ref: "#/components/schemas/email"
+                code:
+                  type: string
+                  minLength: 30
+                  maxLength: 30
+                  description: "Verification code sent to email"
+                pwd:
+                  $ref: "#/components/schemas/hashedPwd"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Token"
+        "400":
+          $ref: "#/components/responses/Invalid"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /menu/{category}:
+    get:
+      tags:
+        - menu
+      operationId: getMenu
+      summary: Get threads in a category
+      description: "Get threads in a category.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.0-dev/src/routes/menu/get.ts)"
+      parameters:
+        - name: category
+          in: path
+          description: category id
+          required: true
+          schema:
+            $ref: "#/components/schemas/Category/properties/id"
+        - name: sort
+          description: "Sort threads by `0: latest` or `1: viral`"
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int64
+            enum:
+              - 0
+              - 1
+            default: 0
+        - in: query
+          name: page
+          description: page number
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+            default: 1
+        - in: query
+          name: limit
+          description: limit per page
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+            maximum: 50
+            default: 25
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ThreadMeta"
+        "400":
+          $ref: "#/components/responses/Invalid"
+        "404":
+          description: Category not found
           content:
             application/json:
               schema:
@@ -1144,7 +1417,6 @@ components:
           description: shortened link to the comment
           example: "https://l.metahkg.org/p994Nw2"
         quote:
-          nullable: true
           description: The whole comment object of the quoted comment.
           anyOf:
             - $ref: "#/components/schemas/CommentC"
@@ -1164,21 +1436,26 @@ components:
         - $ref: "#/components/schemas/CommentC"
         - type: object
           description: Comment object
+          required:
+            - id
+            - user
+            - comment
+            - text
+            - images
+            - createdAt
+            - slink
           properties:
             D:
-              nullable: true
               type: integer
               format: int64
               minimum: 0
               description: number of downvotes
             U:
-              nullable: true
               type: integer
               format: int64
               minimum: 0
               description: number of upvotes
             replies:
-              nullable: true
               type: array
               items:
                 type: integer
@@ -1252,13 +1529,45 @@ components:
           example: "https://l.metahkg.org/1"
         pin:
           description: pinned comment
-          nullable: true
           anyOf:
             - $ref: "#/components/schemas/CommentC"
+    ThreadMeta:
+      type: object
+      description: Thread metadata (no comments, images and pinned comment)
+      required:
+        - id
+        - title
+        - category
+        - op
+        - c
+        - createdAt
+        - lastModified
+        - slink
+        - score
+      properties:
+        id:
+          $ref: "#/components/schemas/Thread/properties/id"
+        title:
+          $ref: "#/components/schemas/Thread/properties/title"
+        category:
+          $ref: "#/components/schemas/Thread/properties/category"
+        op:
+          $ref: "#/components/schemas/Thread/properties/op"
+        c:
+          $ref: "#/components/schemas/Thread/properties/c"
+        score:
+          $ref: "#/components/schemas/Thread/properties/score"
+        createdAt:
+          $ref: "#/components/schemas/Thread/properties/createdAt"
+        lastModified:
+          $ref: "#/components/schemas/Thread/properties/lastModified"
+        slink:
+          $ref: "#/components/schemas/Thread/properties/slink"
     rtoken:
       type: string
       description: Recaptcha token. See https://developers.google.com/recaptcha/docs/verify.
       example: "6LeIxAcTAAAAAJcZVRqd76R7tjHpI9u0tRwxV5ksM"
+
   securitySchemes:
     bearerAuth:
       type: http

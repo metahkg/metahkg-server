@@ -1,9 +1,9 @@
 import { Static, Type } from "@sinclair/typebox";
 import { randomBytes } from "crypto";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { limitCl, usersCl, verificationCl } from "../../common";
-import { ajv } from "../../lib/ajv";
+import { limitCl, RecaptchaSecret, usersCl, verificationCl } from "../../common";
 import { mg, mgDomain, resetMsg } from "../../lib/mailgun";
+import { verifyCaptcha } from "../../lib/recaptcha";
 import Limit from "../../models/limit";
 import User from "../../models/user";
 
@@ -13,17 +13,18 @@ export default (
     done: (e?: Error) => void
 ) => {
     const schema = Type.Object(
-        { email: Type.String({ format: "email" }) },
+        { email: Type.String({ format: "email" }), rtoken: Type.String() },
         { additionalProperties: false }
     );
 
     fastify.post(
         "/forgot",
+        { schema: { body: schema } },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            if (!ajv.validate(schema, req.body))
-                return res.code(400).send({ error: "Bad request." });
+            const { email, rtoken } = req.body;
 
-            const { email } = req.body;
+            if (!verifyCaptcha(RecaptchaSecret, rtoken))
+                return res.code(429).send({ error: "Recaptcha token invalid." });
 
             const hashedEmail = hash.sha256().update(email).digest("hex");
 
