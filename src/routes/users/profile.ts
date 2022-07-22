@@ -11,9 +11,7 @@ export default function (
 ) {
     const paramsSchema = Type.Object({ id: Type.RegEx(regex.integer) });
     const querySchema = Type.Object({
-        nameonly: Type.Optional(
-            Type.Union(["1", "0"].map((item) => Type.Literal(item)))
-        ),
+        nameonly: Type.Optional(Type.Union(["1", "0"].map((item) => Type.Literal(item)))),
     });
 
     fastify.get(
