@@ -39,7 +39,7 @@
     "is-sn-integer": "^0.3.0",
     "isomorphic-dompurify": "^0.20.0",
     "jsonwebtoken": "^8.5.1",
-    "mailgun.js": "^7.0.2",
+    "mailgun.js": "^7.0.3",
     "mongodb": "^4.7.0",
     "node-html-parser": "^5.3.3",
     "rimraf": "^3.0.2",
