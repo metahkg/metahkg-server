@@ -11,7 +11,7 @@ export default function (
 ) {
     const paramsSchema = Type.Object({ id: Type.RegEx(regex.integer) });
     const querySchema = Type.Object({
-        nameonly: Type.Optional(Type.Union(["1", "0"].map((item) => Type.Literal(item)))),
+        nameonly: Type.Optional(Type.RegEx(/^(0|1|true|false)$/)),
     });
 
     fastify.get(
@@ -30,11 +30,12 @@ export default function (
             res
         ) => {
             const id = Number(req.params.id);
+            const nameOnly = JSON.parse(req.query.nameonly || "false");
 
             const requestedUser = (await usersCl.findOne(
                 { id },
                 {
-                    projection: req.query.nameonly
+                    projection: nameOnly
                         ? { name: 1, _id: 0 }
                         : {
                               id: 1,

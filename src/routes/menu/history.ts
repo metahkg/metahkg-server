@@ -56,7 +56,7 @@ export default (
                 })
                 .skip(limit * (page - 1))
                 .limit(limit)
-                .project({ _id: 0, conversation: 0 })
+                .project({ _id: 0, conversation: 0, images: 0, pin: 0 })
                 .toArray()) as Thread[];
 
             res.send(history);

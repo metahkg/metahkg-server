@@ -216,6 +216,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - id
                 properties:
                   id:
                     $ref: "#/components/schemas/Thread/properties/id"
@@ -396,6 +398,8 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - id
                 properties:
                   id:
                     $ref: "#/components/schemas/CommentC/properties/id"
@@ -426,6 +430,8 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - vote
               properties:
                 vote:
                   $ref: "#/components/schemas/Vote"
@@ -562,6 +568,8 @@ paths:
               schema:
                 anyOf:
                   - type: object
+                    required:
+                      - active
                     properties:
                       active:
                         type: boolean
@@ -569,6 +577,10 @@ paths:
                         enum:
                           - false
                   - type: object
+                    required:
+                      - active
+                      - id
+                      - name
                     properties:
                       active:
                         type: boolean
@@ -699,6 +711,8 @@ paths:
           multipart/form-data:
             schema:
               type: object
+              required:
+                - avatar
               properties:
                 avatar:
                   type: string
@@ -751,6 +765,8 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - name
               properties:
                 name:
                   $ref: "#/components/schemas/User/properties/name"
@@ -840,14 +856,16 @@ paths:
             $ref: "#/components/schemas/User/properties/id"
         - name: nameonly
           in: query
-          description: only return user name
+          description: return user name only
           required: false
           schema:
-            type: integer
-            format: int64
-            enum:
-              - 0
-              - 1
+            oneOf:
+              - type: integer
+                format: int64
+                enum:
+                  - 0
+                  - 1
+              - type: boolean
       responses:
         "200":
           description: Success
@@ -855,18 +873,22 @@ paths:
             application/json:
               schema:
                 anyOf:
-                  - type: object
-                    properties:
-                      name:
-                        $ref: "#/components/schemas/User/properties/name"
                   - allOf:
                       - $ref: "#/components/schemas/User"
                       - type: object
+                        required:
+                          - count
                         properties:
                           count:
                             type: integer
                             minimum: 0
                             description: Number of threads created by user
+                  - type: object
+                    required:
+                      - name
+                    properties:
+                      name:
+                        $ref: "#/components/schemas/User/properties/name"
         "400":
           $ref: "#/components/responses/Invalid"
         "404":
@@ -913,6 +935,9 @@ paths:
           application/json:
             schema:
               type: object
+              required:
+                - name
+                - pwd
               properties:
                 name:
                   description: Username or email
@@ -1227,6 +1252,156 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+  /menu/search:
+    get:
+      tags:
+        - menu
+      operationId: searchMenu
+      summary: Search threads
+      description: "Search threads.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/menu/search.ts)"
+      parameters:
+        - name: q
+          description: "Search query"
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 100
+        - in: query
+          name: mode
+          description: "Search mode. `0: title` or `1: op`"
+          required: false
+          schema:
+            type: integer
+            format: int64
+            enum:
+              - 0
+              - 1
+            default: 0
+        - in: query
+          name: sort
+          description: "Sort threads by `0: latest` or `1: viral`"
+          required: false
+          schema:
+            type: integer
+            format: int64
+            enum:
+              - 0
+              - 1
+            default: 0
+        - in: query
+          name: page
+          description: page number
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+            default: 1
+        - in: query
+          name: limit
+          description: limit per page
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+            maximum: 50
+            default: 25
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ThreadMeta"
+        "400":
+          $ref: "#/components/responses/Invalid"
+  /menu/history/{id}:
+    get:
+      tags:
+        - menu
+      operationId: getHistory
+      summary: Get threads from a user
+      description: "Get threads from a user.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/menu/history.ts)"
+      parameters:
+        - name: id
+          in: path
+          description: user id
+          required: true
+          schema:
+            $ref: "#/components/schemas/User/properties/id"
+        - in: query
+          name: page
+          description: page number
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+            default: 1
+        - in: query
+          name: limit
+          description: limit per page
+          required: false
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+            maximum: 50
+            default: 25
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ThreadMeta"
+        "400":
+          $ref: "#/components/responses/Invalid"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+  /menu/threads:
+    get:
+      tags:
+        - menu
+      operationId: getThreads
+      summary: Get threads
+      description: "Get threads.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/menu/threads.ts)"
+      parameters:
+        - in: query
+          name: threads
+          description: "Thread ids"
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/Thread/properties/id"
+            minItems: 1
+            maxItems: 50
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ThreadMeta"
+        "400":
+          $ref: "#/components/responses/Invalid"
 
 servers:
   - url: https://dev.metahkg.org/api
@@ -1238,7 +1413,7 @@ components:
       content:
         application/json:
           schema:
-            $ref: "#/components/responses/OK"
+            $ref: "#/components/schemas/OK"
     Invalid:
       description: "Invalid request"
       content:
@@ -1272,6 +1447,8 @@ components:
   schemas:
     OK:
       type: object
+      required:
+        - response
       properties:
         response:
           type: string
@@ -1279,15 +1456,20 @@ components:
             - ok
     Token:
       type: object
+      required:
+        - token
       properties:
         token:
           type: string
     Error:
       type: object
+      required:
+        - error
       properties:
         error:
           type: string
           description: error message
+          example: "Error"
     Vote:
       type: string
       description: Vote. "U" means upvote. "D" means downvote.
@@ -1299,6 +1481,9 @@ components:
       description: User's votes in a thread
       items:
         type: object
+        required:
+          - cid
+          - vote
         properties:
           cid:
             $ref: "#/components/schemas/CommentC/properties/id"
@@ -1306,6 +1491,11 @@ components:
             $ref: "#/components/schemas/Vote"
     User:
       type: object
+      required:
+        - id
+        - name
+        - sex
+        - createdAt
       properties:
         id:
           type: integer
@@ -1341,6 +1531,9 @@ components:
       maxLength: 64
     Category:
       type: object
+      required:
+        - id
+        - name
       properties:
         id:
           type: integer
@@ -1353,6 +1546,9 @@ components:
           example: "Chit-chat"
     Image:
       type: object
+      required:
+        - cid
+        - src
       properties:
         cid:
           $ref: "#/components/schemas/CommentC/properties/id"
@@ -1368,6 +1564,9 @@ components:
         $ref: "#/components/schemas/Image"
     RemovedComment:
       type: object
+      required:
+        - id
+        - removed
       properties:
         id:
           $ref: "#/components/schemas/CommentC/properties/id"
@@ -1565,7 +1764,7 @@ components:
           $ref: "#/components/schemas/Thread/properties/slink"
     rtoken:
       type: string
-      description: Recaptcha token. See https://developers.google.com/recaptcha/docs/verify.
+      description: Recaptcha token. See [https://developers.google.com/recaptcha/docs/verify](https://developers.google.com/recaptcha/docs/verify).
       example: "6LeIxAcTAAAAAJcZVRqd76R7tjHpI9u0tRwxV5ksM"
 
   securitySchemes:
