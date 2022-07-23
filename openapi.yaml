@@ -1003,6 +1003,7 @@ paths:
                     See [register mode](https://docs.metahkg.org/docs/customize/registermode)"
                   type: string
                   minLength: 1
+                  example: "12345"
       responses:
         "200":
           description: Success, verification email sent.
@@ -1042,6 +1043,7 @@ paths:
                   minLength: 30
                   maxLength: 30
                   description: "Verification code sent to email"
+                  example: "12345678901234567890123456789012"
       responses:
         "200":
           description: Success
@@ -1167,6 +1169,7 @@ paths:
                   minLength: 30
                   maxLength: 30
                   description: "Verification code sent to email"
+                  example: "12345678901234567890123456789012"
                 pwd:
                   $ref: "#/components/schemas/hashedPwd"
       responses:
