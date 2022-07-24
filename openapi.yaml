@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  version: "3.3.1-dev"
+  version: "3.3.1"
   title: Metahkg Api
   description:
     "The Metahkg Api is a REST api written in fastify/typescript, with MongoDB as the database.
@@ -42,7 +42,7 @@ paths:
       summary: Get thread
       description: "Get a selection of comments and other data from a thread.
         Authentication required if thread is [hidden](https://docs.metahkg.org/docs/customize/categories/hide).
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/thread/thread.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/thread/thread.ts)"
       operationId: getThread
       parameters:
         - in: path
@@ -129,7 +129,7 @@ paths:
       operationId: checkThread
       summary: Check if a thread exists
       description: "Check if a thread exists.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/thread/checkExist.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/thread/checkExist.ts)"
       parameters:
         - in: query
           name: id
@@ -157,7 +157,7 @@ paths:
       description: "
         Get the images of a thread. Duplicated images not included.
         Authentication required if thread is [hidden](https://docs.metahkg.org/docs/customize/categories/hide).
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/thread/images.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/thread/images.ts)"
       parameters:
         - in: path
           name: id
@@ -189,7 +189,7 @@ paths:
       operationId: createThread
       summary: Create thread
       description: "Create a thread. Authentication is required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/thread/create.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/thread/create.ts)"
       requestBody:
         content:
           application/json:
@@ -243,7 +243,7 @@ paths:
       summary: Get comment
       description: "Get a comment from a thread with thread id and comment id.
         Authentication required if thread is [hidden](https://docs.metahkg.org/docs/customize/categories/hide).
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/thread/comment/comment.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/thread/comment/comment.ts)"
       parameters:
         - in: path
           name: id
@@ -282,7 +282,7 @@ paths:
       summary: Get replies
       description: "Get the full comment objects of replies to the specified comment.
         Authentication required if thread is [hidden](https://docs.metahkg.org/docs/customize/categories/hide).
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/thread/comment/replies.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/thread/comment/replies.ts)"
       parameters:
         - in: path
           name: id
@@ -326,7 +326,7 @@ paths:
       summary: Get comment images.
       description: "Get list of images from a comment.
         Authentication required if thread is [hidden](https://docs.metahkg.org/docs/customize/categories/hide).
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/thread/comment/images.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/thread/comment/images.ts)"
       parameters:
         - in: path
           name: id
@@ -367,7 +367,7 @@ paths:
       summary: Create comment
       description: "Create a new comment in the specified thread.
         Authentication is required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/thread/comment/create.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/thread/comment/create.ts)"
       parameters:
         - in: path
           name: id
@@ -424,7 +424,7 @@ paths:
         - bearerAuth: []
       summary: Vote on comment
       description: "Vote on a comment. Authentication is required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/thread/comment/vote.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/thread/comment/vote.ts)"
       requestBody:
         content:
           application/json:
@@ -477,7 +477,7 @@ paths:
       summary: Pin comment
       description: "Pin a comment in a thread. Authentication is required.
         Works only if the user is the original poster of the thread.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/thread/comment/pin.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/thread/comment/pin.ts)"
       parameters:
         - in: path
           name: id
@@ -516,7 +516,7 @@ paths:
       summary: Unpin comment
       description: "Unpin a pinned comment in a thread. Authentication is required.
         Works only if the user is the original poster of the thread.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/thread/comment/unpin.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/thread/comment/unpin.ts)"
       parameters:
         - in: path
           name: id
@@ -559,7 +559,7 @@ paths:
       summary: Get status
       description:
         "Get status (whether user is logged in, i.e. check if the token is valid).
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/me/status.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/me/status.ts)"
       responses:
         "200":
           description: Success
@@ -600,7 +600,7 @@ paths:
         - bearerAuth: []
       summary: Get blocked users
       description: "Get blocked users. Authentication is required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/me/blocked.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/me/blocked.ts)"
       responses:
         "200":
           description: Success
@@ -621,7 +621,7 @@ paths:
         - bearerAuth: []
       summary: Get votes
       description: "Get your votes in a thread. Authentication is required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/me/votes.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/me/votes.ts)"
       parameters:
         - name: id
           in: path
@@ -653,7 +653,7 @@ paths:
         - bearerAuth: []
       summary: Block user
       description: "Block user. Authentication is required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/me/block.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/me/block.ts)"
       responses:
         "200":
           $ref: "#/components/responses/OK"
@@ -682,7 +682,7 @@ paths:
         - bearerAuth: []
       summary: Unblock user
       description: "Unblock user. Authentication is required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/me/unblock.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/me/unblock.ts)"
       responses:
         "200":
           $ref: "#/components/responses/OK"
@@ -705,7 +705,7 @@ paths:
         - bearerAuth: []
       summary: Set avatar
       description: "Set avatar. Authentication is required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/me/avatar.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/me/avatar.ts)"
       requestBody:
         content:
           multipart/form-data:
@@ -759,7 +759,7 @@ paths:
         - bearerAuth: []
       summary: Rename
       description: "Rename yourself. Authentication is required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/me/rename.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/me/rename.ts)"
       requestBody:
         content:
           application/json:
@@ -796,7 +796,7 @@ paths:
       operationId: getCategories
       summary: Get categories
       description: "Get categories.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/categories.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/categories.ts)"
       responses:
         "200":
           description: Success
@@ -813,7 +813,7 @@ paths:
       operationId: getCategory
       summary: Get category
       description: "Get a category.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/category.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/category.ts)"
       parameters:
         - name: id
           in: path
@@ -846,7 +846,7 @@ paths:
       operationId: userProfile
       summary: Get user profile
       description: "Get user profile.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/users/profile.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/users/profile.ts)"
       parameters:
         - name: id
           in: path
@@ -904,7 +904,7 @@ paths:
       operationId: userAvatar
       summary: Get user avatar
       description: "Get user avatar. Returns either the avatar or a default avatar.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/users/avatar.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/users/avatar.ts)"
       parameters:
         - name: id
           in: path
@@ -929,7 +929,7 @@ paths:
       operationId: login
       summary: Login
       description: "Login with username/email and password. A jwt token is returned.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/users/login.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/users/login.ts)"
       requestBody:
         content:
           application/json:
@@ -974,7 +974,7 @@ paths:
       summary: Register
       description:
         "Register an account. A verification email is sent to the email address after the request completes.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/users/register.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/users/register.ts)"
       operationId: register
       requestBody:
         content:
@@ -1026,7 +1026,7 @@ paths:
       operationId: verify
       summary: Verify email
       description: "Verify email. A jwt token is returned.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/users/verify.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/users/verify.ts)"
       requestBody:
         content:
           application/json:
@@ -1066,7 +1066,7 @@ paths:
       operationId: resend
       summary: Resend verification email
       description: "Resend verification email.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/users/resend.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/users/resend.ts)"
       requestBody:
         content:
           application/json:
@@ -1109,7 +1109,7 @@ paths:
       summary: Forgot password
       description:
         "Send a password reset email. A limit of two resets per day is enforced.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/users/forgot.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/users/forgot.ts)"
       requestBody:
         content:
           application/json:
@@ -1151,7 +1151,7 @@ paths:
       operationId: reset
       summary: Reset password
       description: "Reset password. A jwt token is returned.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/users/reset.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/users/reset.ts)"
       requestBody:
         content:
           application/json:
@@ -1200,7 +1200,7 @@ paths:
       operationId: getMenu
       summary: Get threads in a category
       description: "Get threads in a category.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/menu/get.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/menu/get.ts)"
       parameters:
         - name: category
           in: path
@@ -1262,7 +1262,7 @@ paths:
       operationId: searchMenu
       summary: Search threads
       description: "Search threads.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/menu/search.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/menu/search.ts)"
       parameters:
         - name: q
           description: "Search query"
@@ -1331,7 +1331,7 @@ paths:
       operationId: getHistory
       summary: Get threads from a user
       description: "Get threads from a user.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/menu/history.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/menu/history.ts)"
       parameters:
         - name: id
           in: path
@@ -1382,7 +1382,7 @@ paths:
       operationId: getThreads
       summary: Get threads
       description: "Get threads.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1-dev/src/routes/menu/threads.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.3.1/src/routes/menu/threads.ts)"
       parameters:
         - in: query
           name: threads
