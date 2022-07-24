@@ -9,11 +9,12 @@ export default class Thread {
         public category: number,
         public c: number,
         public conversation: commentType[],
-        public vote: number,
+        public score: number,
         public lastModified: Date,
         public createdAt: Date,
         public slink: string,
-        public images?: { image: string; cid: number }[],
+        public images: { src: string; cid: number }[],
+        public pin?: commentType,
         public _id?: ObjectId
     ) {}
 }
@@ -40,6 +41,7 @@ export type commentType = {
     createdAt: Date;
     /** shortened link */
     slink: string;
+    images: string[];
     /** upvotes */
     U?: number;
     /** downvotes */
@@ -57,27 +59,4 @@ export type threadOpType = {
     role: userRole;
 };
 
-export interface threadType {
-    /** mongodb object id */
-    _id: string;
-    /** thread id */
-    id: number;
-    /** original poster */
-    op: threadOpType;
-    /** number of comments */
-    c: number;
-    /** conversation */
-    conversation: commentType[];
-    /** upvote - downvote  */
-    vote: number;
-    /** thread title */
-    title: string;
-    /** category id */
-    category: number;
-    /** date string */
-    lastModified: string;
-    /** date string */
-    createdAt: string;
-    /** shortened link */
-    slink: string;
-}
+export type threadType = Thread;

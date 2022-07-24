@@ -21,12 +21,27 @@ export default (
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const user = verifyUser(req.headers.authorization);
-
             if (!user) return res.code(401).send({ error: "Unauthorized." });
 
             const { userId } = req.body;
 
-            await usersCl.updateOne({ id: user.id }, { $push: { blocked: userId } });
+            if (!(await usersCl.findOne({ id: userId })))
+                return res.code(404).send({ error: "User not found." });
+
+            if (
+                !(
+                    await usersCl.updateOne(
+                        {
+                            id: user.id,
+                            blocked: {
+                                $not: userId,
+                            },
+                        },
+                        { $push: { blocked: userId } }
+                    )
+                ).matchedCount
+            )
+                return res.code(409).send({ error: "User already blocked." });
 
             return res.send({ response: "ok" });
         }

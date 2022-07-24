@@ -1,32 +1,41 @@
 import User from "../../models/user";
 import { threadCl, usersCl } from "../../common";
-import { ajv } from "../../lib/ajv";
-import { Type } from "@sinclair/typebox";
+import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
+import regex from "../../lib/regex";
 
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) {
+    const paramsSchema = Type.Object({ id: Type.RegEx(regex.integer) });
+    const querySchema = Type.Object({
+        nameonly: Type.Optional(Type.RegEx(/^(0|1|true|false)$/)),
+    });
+
     fastify.get(
-        "/:id",
+        "/profile/:id",
+        {
+            schema: {
+                params: paramsSchema,
+                querystring: querySchema,
+            },
+        },
         async (
             req: FastifyRequest<{
-                Params: { id: string };
-                Querystring: { nameonly?: string };
+                Params: Static<typeof paramsSchema>;
+                Querystring: Static<typeof querySchema>;
             }>,
             res
         ) => {
             const id = Number(req.params.id);
-
-            if (!ajv.validate(Type.Integer({ minimum: 1 }), id))
-                return res.code(400).send({ error: "Bad request." });
+            const nameOnly = JSON.parse(req.query.nameonly || "false");
 
             const requestedUser = (await usersCl.findOne(
                 { id },
                 {
-                    projection: req.query.nameonly
+                    projection: nameOnly
                         ? { name: 1, _id: 0 }
                         : {
                               id: 1,
@@ -39,7 +48,7 @@ export default function (
                 }
             )) as User;
 
-            if (!requestedUser) return res.code(400).send({ error: "User not found" });
+            if (!requestedUser) return res.code(404).send({ error: "User not found" });
 
             let count: number;
 

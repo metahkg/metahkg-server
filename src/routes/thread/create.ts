@@ -8,12 +8,11 @@
 }*/
 //only for human
 import {
-    secret,
+    RecaptchaSecret,
     categoryCl,
     LINKS_DOMAIN,
     linksCl,
     threadCl,
-    imagesCl,
 } from "../../common";
 import { verifyCaptcha } from "../../lib/recaptcha";
 import findImages from "../../lib/findimages";
@@ -59,11 +58,11 @@ export default (
             const comment = sanitize(req.body.comment);
             const text = htmlToText(comment, { wordwrap: false });
 
-            if (!(await verifyCaptcha(secret, req.body.rtoken)))
-                return res.code(400).send({ error: "recaptcha token invalid." });
+            if (!(await verifyCaptcha(RecaptchaSecret, req.body.rtoken)))
+                return res.code(429).send({ error: "Recaptcha token invalid." });
 
             const user = verifyUser(req.headers.authorization);
-            if (!user) return res.code(400).send({ error: "User not found." });
+            if (!user) return res.code(401).send({ error: "Unauthorized." });
 
             const category = await categoryCl.findOne({ id: req.body.category });
             if (!category) return res.code(404).send({ error: "Category not found." });
@@ -104,6 +103,8 @@ export default (
                 sex: user.sex,
             };
 
+            const images = findImages(comment);
+
             const threadData: Thread = {
                 id: newThreadId,
                 conversation: [
@@ -114,26 +115,23 @@ export default (
                         comment,
                         text,
                         createdAt: date,
+                        images,
                     },
                 ],
                 op: userData,
                 c: 1,
-                vote: 0,
+                score: 0,
                 slink: `https://${LINKS_DOMAIN}/${newThreadId}`,
                 title: req.body.title,
                 category: category.id,
                 lastModified: date,
                 createdAt: date,
+                images: images.map((item) => {
+                    return { src: item, cid: 1 };
+                }),
             };
 
             await threadCl.insertOne(threadData);
-
-            await imagesCl.insertOne({
-                id: newThreadId,
-                images: findImages(comment).map((item) => {
-                    return { image: item, cid: 1 };
-                }),
-            });
 
             res.send({ id: newThreadId });
         }

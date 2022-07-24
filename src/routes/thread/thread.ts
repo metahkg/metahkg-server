@@ -1,7 +1,5 @@
 import { threadCl } from "../../common";
-import { hiddencats } from "../../lib/hiddencats";
 import { Static, Type } from "@sinclair/typebox";
-import verifyUser from "../../lib/auth/verify";
 import Thread from "../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../lib/regex";
@@ -16,6 +14,7 @@ export default (
         start: Type.Optional(Type.RegEx(regex.integer)),
         end: Type.Optional(Type.RegEx(regex.integer)),
         sort: Type.Optional(Type.RegEx(/^(score|time|latest)$/)),
+        limit: Type.Optional(Type.RegEx(regex.oneTo50)),
     });
 
     const paramsSchema = Type.Object({
@@ -34,8 +33,9 @@ export default (
         ) => {
             const id = Number(req.params.id);
             const page = Number(req.query.page) || 1;
-            const start = Number(req.query.start) || (page - 1) * 25 + 1;
-            const end = Number(req.query.end) || page * 25;
+            const limit = Number(req.query.limit) || 25;
+            const start = Number(req.query.start) || (page - 1) * limit + 1;
+            const end = Number(req.query.end) || page * limit;
             const sort = (req.query.sort || "time") as "score" | "time" | "latest";
 
             if (end < start) return res.code(400).send({ error: "Bad request." });
@@ -124,13 +124,7 @@ export default (
             )[0] as Thread;
 
             if (!(await threadCl.findOne({ id })))
-                return res.code(404).send({ error: "Not Found" });
-
-            if (
-                !verifyUser(req.headers.authorization) &&
-                (await hiddencats()).includes(thread.category)
-            )
-                return res.code(403).send({ error: "Permission denied." });
+                return res.code(404).send({ error: "Thread not found" });
 
             res.send(thread);
         }

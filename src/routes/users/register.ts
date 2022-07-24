@@ -9,7 +9,7 @@
   sex: string
 }
 */
-import { secret, usersCl, verificationCl, inviteCl } from "../../common";
+import { RecaptchaSecret, usersCl, verificationCl, inviteCl } from "../../common";
 import { mg, mgDomain, verifyMsg } from "../../lib/mailgun";
 import EmailValidator from "email-validator";
 import { verifyCaptcha } from "../../lib/recaptcha";
@@ -49,8 +49,8 @@ export default (
 
             const { name, pwd, email, rtoken, sex, invitecode } = req.body;
 
-            if (!(await verifyCaptcha(secret, rtoken)))
-                return res.code(400).send({ error: "recaptcha token invalid." });
+            if (!(await verifyCaptcha(RecaptchaSecret, rtoken)))
+                return res.code(429).send({ error: "Recaptcha token invalid." });
 
             // register modes (process.env.register)
             const registerMode =
@@ -61,27 +61,24 @@ export default (
                 }[process.env.register || ""] || "normal";
 
             if (registerMode === "none")
-                return res.code(429).send({ error: "Registration not allowed." });
+                return res.code(400).send({ error: "Registration disabled." });
 
             // TODO: WARNING: frontend not implemented !!!
             if (
                 registerMode === "invite" &&
                 !(await inviteCl.findOne({ code: invitecode }))
             )
-                return res.code(409).send({ error: "Invalid invite code." });
+                return res.code(400).send({ error: "Invalid invite code." });
 
             if (
                 (await usersCl.findOne({
-                    $or: [
-                        { name: name },
-                        { email: hash.sha256().update(email).digest("hex") },
-                    ],
+                    $or: [{ name }, { email: hash.sha256().update(email).digest("hex") }],
                 })) ||
                 (await verificationCl.findOne({
-                    $or: [{ name: name }, { email: email }],
+                    $or: [{ name }, { email }],
                 }))
             )
-                return res.code(409).send({ error: "Username or email exists." });
+                return res.code(409).send({ error: "Username or email already in use." });
 
             const code = generate({
                 include: { numbers: true, upper: true, lower: true, special: false },

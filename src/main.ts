@@ -12,7 +12,7 @@ setInterval(updateVerificationCode, 3600 * 1000);
     await client.connect();
     await setup();
 
-    const app = await MetahkgServer();
+    const app = MetahkgServer();
 
     /**
      * The port can be modified in .env

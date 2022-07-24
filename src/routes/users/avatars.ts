@@ -1,7 +1,8 @@
-import isInteger from "is-sn-integer";
 import fs from "fs";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import dotenv from "dotenv";
+import { Static, Type } from "@sinclair/typebox";
+import regex from "../../lib/regex";
 
 dotenv.config();
 
@@ -10,12 +11,12 @@ export default function (
     _opts: FastifyPluginOptions,
     done: () => void
 ) {
+    const paramsSchema = Type.Object({ id: Type.RegEx(regex.integer) });
+
     fastify.get(
         "/avatars/:id",
-        (req: FastifyRequest<{ Params: { id: string } }>, res) => {
-            if (!isInteger(req.params.id))
-                return res.code(400).send({ error: "Bad request." });
-
+        { schema: { params: paramsSchema } },
+        (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
             const filename = `images/avatars/${req.params.id}.png`;
 
             fs.stat(filename, (err) => {

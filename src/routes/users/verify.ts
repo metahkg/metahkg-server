@@ -24,7 +24,7 @@ export default (
     const schema = Type.Object(
         {
             email: Type.String({ format: "email" }),
-            code: Type.String(),
+            code: Type.String({ maxLength: 30, minLength: 30 }),
         },
         { additionalProperties: false }
     );
@@ -35,9 +35,6 @@ export default (
             if (!ajv.validate(schema, req.body))
                 return res.code(400).send({ error: "Bad request." });
 
-            if (req.body.code?.length !== 30)
-                return res.code(400).send({ error: "Code must be of 30 digits." });
-
             const verificationData = await verificationCl.findOne({
                 type: "register",
                 email: req.body.email,
@@ -45,9 +42,9 @@ export default (
             });
 
             if (verificationData?.code !== req.body.code)
-                return res.code(401).send({
-                    error: "Code incorrect or email not found, your verfication code might have expired.",
-                });
+                return res
+                    .code(401)
+                    .send({ error: "Code incorrect or expired, or email not found." });
 
             const newUserId =
                 (await usersCl.find().sort({ id: -1 }).limit(1).toArray())[0]?.id + 1 ||

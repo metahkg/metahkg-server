@@ -1,12 +1,12 @@
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import history from "./menu/history";
-import menu from "./menu/menu";
-import search from "./menu/search";
-import threads from "./menu/threads";
+import history from "./history";
+import menu from "./menu";
+import search from "./search";
+import threads from "./threads";
 
 export default function (
     fastify: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) {
     fastify.register(history);

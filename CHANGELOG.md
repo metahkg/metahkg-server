@@ -1,5 +1,50 @@
 # Changelog
 
+## v3.3.0
+
+- filter out and disallow access through images or comment to hidden threads for not-logged-in users
+
+## v3.2.0
+
+- use array to store votes in each thread
+
+## v3.1.0
+
+- images list in comments
+- use `src` instead of `image` for image source url
+- rename vote to score
+
+## v3.0.0rc2
+
+- use blocked instead of blocklist
+
+## v3.0.0rc1
+
+- largely redesigned the api
+- remove images collection and merge it into thread collection
+- split /users path into /users and /me
+- move pin and unpin into /thread/{id}/comment/{cid}
+- /categories for categories, and /category/{id} for category
+- many other path changes
+
+## v2.8.0
+
+- use `/thread/:id/comment/:cid` for vote so as to unify the API
+
+## v2.7.2
+
+- add more errors if comment removed
+- filter out removed comments in replies
+
+## v2.7.1
+
+- error if comment removed
+- filter unwanted fileds ("U", "D", "replies") from pin and quote
+
+## v2.7.0
+
+- add limit option to menu and thread
+
 ## v2.6.0
 
 - blocklist sends the blocked users' info not just ids

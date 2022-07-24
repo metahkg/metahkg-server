@@ -1,13 +1,14 @@
 import { threadCl, votesCl } from "../../../common";
 import { Type, Static } from "@sinclair/typebox";
-import { ajv } from "../../../lib/ajv";
 import verifyUser from "../../../lib/auth/verify";
 import Thread from "../../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
+import regex from "../../../lib/regex";
+import Votes from "../../../models/votes";
 
 export default (
     fastify: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
     const schema = Type.Object(
@@ -17,45 +18,35 @@ export default (
         { additionalProperties: false }
     );
 
+    const paramsSchema = Type.Object({
+        id: Type.RegEx(regex.integer),
+        cid: Type.RegEx(regex.integer),
+    });
+
     fastify.post(
-        "/:id/vote/:cid",
+        "/:id/comment/:cid/vote",
+        { schema: { body: schema, params: paramsSchema } },
         async (
             req: FastifyRequest<{
                 Body: Static<typeof schema>;
-                Params: { id: string; cid: string };
+                Params: Static<typeof paramsSchema>;
             }>,
             res
         ) => {
-            const id = Number(req.params.id);
-            const cid = Number(req.params.cid);
-
-            if (
-                !(
-                    ajv.validate(schema, req.body) &&
-                    ajv.validate(
-                        Type.Object({
-                            id: Type.Integer({ minimum: 1 }),
-                            cid: Type.Integer({ minimum: 1 }),
-                        }),
-                        {
-                            id,
-                            cid,
-                        }
-                    )
-                )
-            )
-                return res.code(400).send({ error: "Bad request." });
+            const threadId = Number(req.params.id);
+            const commentId = Number(req.params.cid);
+            const { vote } = req.body;
 
             const user = verifyUser(req.headers.authorization);
-            if (!user) return res.code(400).send({ error: "User not found." });
+            if (!user) return res.code(401).send({ error: "Unauthorized." });
 
             const thread = (await threadCl.findOne(
-                { id, conversation: { $elemMatch: { id: cid } } },
+                { id: threadId, conversation: { $elemMatch: { id: commentId } } },
                 {
                     projection: {
                         _id: 0,
                         conversation: {
-                            $elemMatch: { id: cid },
+                            $elemMatch: { id: commentId },
                         },
                     },
                 }
@@ -64,36 +55,39 @@ export default (
             if (!thread)
                 return res.code(404).send({ error: "Thread or comment not found." });
 
-            const index = cid - 1;
-            const userVotes = await votesCl.findOne({ id: user.id });
+            if (thread.conversation[0].removed)
+                return res.code(410).send({ error: "Comment removed." });
 
-            if (!userVotes) {
+            const index = commentId - 1;
+            const votes = (await votesCl.findOne({ id: user.id })) as Votes;
+
+            if (!votes) {
                 await votesCl.insertOne({ id: user.id });
-            } else if (userVotes?.[id]?.[cid]) {
-                return res.code(403).send({ error: "You have already voted." });
+            } else if (votes?.[threadId]?.find((i) => i.cid === commentId)) {
+                return res.code(429).send({ error: "You have already voted." });
             }
 
             await votesCl.updateOne(
                 { id: user.id },
-                { $set: { [`${id}.${cid}`]: req.body.vote } }
+                { $push: { [`${threadId}`]: { cid: commentId, vote } } }
             );
 
-            if (!thread.conversation[0]?.[req.body.vote]) {
+            if (!thread.conversation[0]?.[vote]) {
                 await threadCl.updateOne(
-                    { id },
+                    { id: threadId },
                     { $set: { [`conversation.${index}.${req.body.vote}`]: 0 } }
                 );
             }
 
             await threadCl.updateOne(
-                { id },
+                { id: threadId },
                 { $inc: { [`conversation.${index}.${req.body.vote}`]: 1 } }
             );
 
-            if (cid === 1) {
+            if (commentId === 1) {
                 await threadCl.updateOne(
-                    { id },
-                    { $inc: { vote: req.body.vote === "U" ? 1 : -1 } }
+                    { id: threadId },
+                    { $inc: { score: { U: 1, D: -1 }[req.body.vote] } }
                 );
             }
 

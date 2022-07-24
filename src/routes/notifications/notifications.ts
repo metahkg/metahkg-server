@@ -4,7 +4,7 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 
 export default (
     fastify: FastifyInstance,
-    opts: FastifyPluginOptions,
+    _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
     fastify.get(
@@ -21,7 +21,7 @@ export default (
             res
         ) => {
             const user = verifyUser(req.headers.authorization);
-            if (!user) return res.code(404).send({ error: "User not found." });
+            if (!user) return res.code(401).send({ error: "Unauthorized." });
 
             const limit = Number(req.query.limit);
             const page = Number(req.query.page) || 1;

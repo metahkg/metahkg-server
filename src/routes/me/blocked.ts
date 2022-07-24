@@ -8,9 +8,9 @@ export default function (
     _opts: FastifyPluginOptions,
     done: (err?: Error) => void
 ) {
-    fastify.get("/blocklist", async (req, res) => {
+    fastify.get("/blocked", async (req, res) => {
         const user = verifyUser(req.headers.authorization);
-        if (!user) return res.code(404).send({ error: "User not found." });
+        if (!user) return res.code(401).send({ error: "Unauthorized." });
 
         const blocked = (
             await usersCl.findOne(

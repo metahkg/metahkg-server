@@ -1,6 +1,3 @@
-// get 20 neweat/hottezt threads in a category
-// note: category 1 returns all categories
-// Syntax: GET /api/menu/<category id>?sort=<0 | 1>&page=<number>
 import { categoryCl, threadCl } from "../../common";
 import { hiddencats as gethiddencats } from "../../lib/hiddencats";
 import { Static, Type } from "@sinclair/typebox";
@@ -23,6 +20,7 @@ export default (
         {
             sort: Type.Optional(Type.RegEx(/^(0|1)$/)),
             page: Type.Optional(Type.RegEx(regex.integer)),
+            limit: Type.Optional(Type.RegEx(regex.oneTo50)),
         },
         { additionalProperties: false }
     );
@@ -49,6 +47,7 @@ export default (
         ) => {
             const sort = Number(req.query.sort || 0);
             const page = Number(req.query.page) || 1;
+            const limit = Number(req.query.limit) || 25;
             let category = Number(req.params.category) || req.params.category;
 
             const hiddenCats = await gethiddencats();
@@ -60,17 +59,21 @@ export default (
                     },
                     { projection: { _id: 0, category: 1 } }
                 )) as Thread;
+
                 if (!thread || !thread.category)
-                    return res.code(404).send({ error: "Not found." });
+                    return res.code(404).send({ error: "Category not found." });
 
                 category = thread.category;
             }
 
-            if (!verifyUser(req.headers.authorization) && hiddenCats.includes(category))
-                return res.code(403).send({ error: "Permission denied." });
+            if (
+                !verifyUser(req.headers.authorization) &&
+                hiddenCats.includes(category as number)
+            )
+                return res.code(403).send({ error: "Forbidden." });
 
             if (!(await categoryCl.findOne({ id: category })))
-                return res.code(404).send({ error: "Not found." });
+                return res.code(404).send({ error: "Category not found." });
 
             const find =
                 category === 1 ? { category: { $nin: hiddenCats } } : { category };
@@ -107,17 +110,25 @@ export default (
                               },
                           },
                           { $sort: { newComments: -1, lastModified: -1 } },
-                          { $project: { _id: 0, conversation: 0, newComments: 0 } },
-                          { $skip: 25 * (page - 1) },
-                          { $limit: 25 },
+                          {
+                              $project: {
+                                  _id: 0,
+                                  conversation: 0,
+                                  newComments: 0,
+                                  images: 0,
+                                  pin: 0,
+                              },
+                          },
+                          { $skip: limit * (page - 1) },
+                          { $limit: limit },
                       ])
                       .toArray()) as Thread[])
                 : ((await threadCl
                       .find(find)
                       .sort({ lastModified: -1 })
-                      .skip(25 * (page - 1))
-                      .limit(25)
-                      .project({ _id: 0, conversation: 0 })
+                      .skip(limit * (page - 1))
+                      .limit(limit)
+                      .project({ _id: 0, conversation: 0, images: 0, pin: 0 })
                       .toArray()) as Thread[]);
 
             res.send(data);
