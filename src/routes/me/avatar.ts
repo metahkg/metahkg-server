@@ -29,7 +29,9 @@ export default function (
             //svg circle
             `<svg><circle cx="${r}" cy="${r}" r="${r}" /></svg>`
         );
-        fs.rmSync(`images/avatars/${id}.png`);
+        try {
+            fs.rmSync(`images/avatars/${id}.png`);
+        } catch {}
         //use sharp to resize
         fs.mkdirSync(`tmp/avatars`, { recursive: true });
         await sharp(filename)
@@ -96,7 +98,7 @@ export default function (
                 try {
                     //compress the file
                     await compress(`images/processing/avatars/${newFileName}`, user.id);
-                    fs.rmSync(`images/processing/avatars/${newFileName}`);
+                    //fs.rmSync(`images/processing/avatars/${newFileName}`);
                 } catch (err) {
                     console.error(err);
                     res.code(422).send({ error: "Could not process you file." });
