@@ -97,7 +97,8 @@ export default function (
                     //compress the file
                     await compress(`images/processing/avatars/${newFileName}`, user.id);
                     fs.rmSync(`images/processing/avatars/${newFileName}`);
-                } catch {
+                } catch (err) {
+                    console.error(err);
                     res.code(422).send({ error: "Could not process you file." });
                     fs.rm(`images/processing/avatars/${newFileName}`, (err) => {
                         console.error(err);
