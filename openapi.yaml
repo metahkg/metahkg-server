@@ -1407,7 +1407,7 @@ paths:
           $ref: "#/components/responses/Invalid"
 
 servers:
-  - url: https://dev.metahkg.org/api
+  - url: https://metahkg.org/api
 
 components:
   responses:
