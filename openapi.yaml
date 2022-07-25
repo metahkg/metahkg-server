@@ -1043,7 +1043,7 @@ paths:
                   minLength: 30
                   maxLength: 30
                   description: "Verification code sent to email"
-                  example: "12345678901234567890123456789012"
+                  example: "123456789012345678901234567890"
       responses:
         "200":
           description: Success
@@ -1169,7 +1169,7 @@ paths:
                   minLength: 30
                   maxLength: 30
                   description: "Verification code sent to email"
-                  example: "12345678901234567890123456789012"
+                  example: "123456789012345678901234567890"
                 pwd:
                   $ref: "#/components/schemas/hashedPwd"
       responses:
