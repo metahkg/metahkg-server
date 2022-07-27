@@ -5,6 +5,7 @@ stages:
   - deploy
   - review
   - dast
+  - fuzz
   - staging
   - canary
   - production
@@ -110,5 +111,13 @@ container_scanning:
     - if: "$CI_COMMIT_TAG"
       when: never
 
+apifuzzer_fuzz:
+  needs: []
+  before_script:
+    - export FUZZAPI_TARGET_URL="https://$(if [ \"$CI_COMMIT_BRANCH\" = \"dev\" ]; then echo 'dev.'; fi;)metahkg.org"
+    - export FUZZAPI_OPENAPI="https://gitlab.com/metahkg/metahkg-server/-/raw/${CI_COMMIT_BRANCH}/openapi.yaml"
+    - export FUZZAPI_PROFILE="Medium-20"
+
 include:
   - template: Auto-DevOps.gitlab-ci.yml
+  - template: Security/API-Fuzzing.gitlab-ci.yml
