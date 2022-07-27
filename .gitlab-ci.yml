@@ -114,7 +114,7 @@ container_scanning:
 apifuzzer_fuzz:
   needs: []
   before_script:
-    - export FUZZAPI_TARGET_URL="https://$(if [ \"$CI_COMMIT_BRANCH\" = \"dev\" ]; then echo \"dev.\"; else echo \"\"; fi;)metahkg.org/api"
+    - export FUZZAPI_TARGET_URL="https://$(if [ \"$CI_COMMIT_BRANCH\" = \"dev\" ]; then echo 'dev.'; fi;)metahkg.org/api"
     - export FUZZAPI_OPENAPI="https://gitlab.com/metahkg/metahkg-server/-/raw/${CI_COMMIT_BRANCH}/openapi.yaml"
     - export FUZZAPI_PROFILE="Medium-20"
 
