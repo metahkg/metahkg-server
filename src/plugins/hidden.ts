@@ -9,16 +9,19 @@ export default async (
     if (req.params.id) {
         const id = Number(req.params.id);
         if (!(Number.isInteger(id) && id > 0)) return;
+
+        const category = (
+            await threadCl.findOne({ id }, { projection: { _id: 0, category: 1 } })
+        )?.category;
+
+        if (!category) return;
+
         const hidden = (
             await categoryCl.findOne({
-                id: (
-                    await threadCl.findOne(
-                        { id },
-                        { projection: { _id: 0, category: 1 } }
-                    )
-                ).category,
+                id: category,
             })
-        ).hidden;
+        )?.hidden;
+
         if (hidden && !verifyUser(req.headers.authorization))
             return res.code(403).send({ error: "Forbidden." });
     }

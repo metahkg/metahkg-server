@@ -40,6 +40,9 @@ export default (
 
             if (end < start) return res.code(400).send({ error: "Bad request." });
 
+            if (!(await threadCl.findOne({ id })))
+                return res.code(404).send({ error: "Thread not found" });
+
             const thread = (
                 await threadCl
                     .aggregate([
@@ -122,9 +125,6 @@ export default (
                     ])
                     .toArray()
             )[0] as Thread;
-
-            if (!(await threadCl.findOne({ id })))
-                return res.code(404).send({ error: "Thread not found" });
 
             res.send(thread);
         }
