@@ -113,13 +113,11 @@ container_scanning:
 
 apifuzzer_fuzz:
   needs: []
+  before_script:
+    - export FUZZAPI_TARGET_URL="https://$(if [ \"$CI_COMMIT_BRANCH\" = \"dev\" ]; then echo \"dev.\"; else echo \"\"; fi;)metahkg.org/api"
+    - export FUZZAPI_OPENAPI="https://gitlab.com/metahkg/metahkg-server/-/raw/${CI_COMMIT_BRANCH}/openapi.yaml"
+    - export FUZZAPI_PROFILE="Medium-20"
 
 include:
   - template: Auto-DevOps.gitlab-ci.yml
   - template: Security/API-Fuzzing.gitlab-ci.yml
-
-# Tip: Insert the following variables anywhere below stages and include
-variables:
-  FUZZAPI_TARGET_URL: https://$(if [ "$CI_COMMIT_BRANCH" = "dev" ]; then echo "dev."; else echo ""; fi;)metahkg.org/api
-  FUZZAPI_OPENAPI: "https://gitlab.com/metahkg/metahkg-server/-/raw/${CI_COMMIT_BRANCH}/openapi.yaml"
-  FUZZAPI_PROFILE: Medium-20
