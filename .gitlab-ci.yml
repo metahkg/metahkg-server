@@ -5,6 +5,7 @@ stages:
   - deploy
   - review
   - dast
+  - fuzz
   - staging
   - canary
   - production
@@ -112,3 +113,10 @@ container_scanning:
 
 include:
   - template: Auto-DevOps.gitlab-ci.yml
+  - template: Security/API-Fuzzing.gitlab-ci.yml
+
+# Tip: Insert the following variables anywhere below stages and include
+variables:
+  FUZZAPI_TARGET_URL: https://$(if [ "$CI_COMMIT_BRANCH" = "dev" ]; then echo "dev."; else echo ""; fi;)metahkg.org/api
+  FUZZAPI_OPENAPI: /openapi.yaml
+  FUZZAPI_PROFILE: Medium-20
