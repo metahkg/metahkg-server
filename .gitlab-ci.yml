@@ -5,6 +5,7 @@ stages:
   - deploy
   - review
   - dast
+  - fuzz
   - staging
   - canary
   - production
