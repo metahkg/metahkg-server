@@ -1412,7 +1412,7 @@ paths:
       parameters:
         - in: query
           name: threads
-          description: "Thread ids"
+          description: array of thread ids
           required: true
           schema:
             type: array
@@ -1574,6 +1574,9 @@ components:
           type: string
           description: category name
           example: "Chit-chat"
+        hidden:
+          type: boolean
+          description: category is hidden
     Image:
       type: object
       required:
