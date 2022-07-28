@@ -1698,16 +1698,18 @@ components:
           type: array
           description: An array of comments. Comment ids must not be duplicated.
           items:
-            anyOf:
-              - $ref: "#/components/schemas/RemovedComment"
+            description: Comment or RemovedComment
+            oneOf:
               - allOf:
                   - $ref: "#/components/schemas/Comment"
                   - type: object
+                    description: Comment object with score
                     properties:
                       score:
                         type: integer
                         format: int64
                         description: score of the comment (`upvotes - downvotes`)
+              - $ref: "#/components/schemas/RemovedComment"
         score:
           type: integer
           format: int64
