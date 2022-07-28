@@ -851,6 +851,10 @@ paths:
                         type: integer
                         minimum: 0
                         description: Number of threads created by user
+                      createdAt:
+                        type: string
+                        format: date-time
+                        description: Date and time when user was created
         "400":
           $ref: "#/components/responses/Invalid"
         "404":
@@ -1509,7 +1513,7 @@ components:
         - id
         - name
         - sex
-        - createdAt
+        - role
       properties:
         id:
           type: integer
@@ -1528,10 +1532,11 @@ components:
           enum:
             - M
             - F
-        createdAt:
+        role:
           type: string
-          format: date-time
-          description: date when user was created
+          enum:
+            - admin
+            - user
     email:
       type: string
       format: email
