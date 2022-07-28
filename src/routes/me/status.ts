@@ -11,14 +11,8 @@ export default (
         if (!req.headers.authorization) return res.send({ active: false });
 
         const user = verifyUser(req.headers.authorization);
-        if (!user) return res.send({ active: false });
 
-        res.send({
-            /** whether the token is valid */
-            active: true,
-            id: user.id,
-            name: user.name,
-        });
+        res.send({ /** whether the token is valid */ active: Boolean(user) });
     });
     done();
 };

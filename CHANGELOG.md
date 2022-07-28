@@ -1,5 +1,12 @@
 # Changelog
 
+## v3.4.0
+
+- separate nameonly from profile to `/users/{id}/name`
+- move profile to `/users/{id}`
+- move get avatar to `/users/{id}/avatar`
+- status only return active or not
+
 ## v3.3.0
 
 - filter out and disallow access through images or comment to hidden threads for not-logged-in users
