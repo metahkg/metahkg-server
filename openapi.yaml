@@ -1201,10 +1201,13 @@ paths:
       parameters:
         - name: category
           in: path
-          description: category id
+          description: category id, or bytid<thread id>
           required: true
           schema:
-            $ref: "#/components/schemas/Category/properties/id"
+            anyOf:
+              - $ref: "#/components/schemas/Category/properties/id"
+              - type: string
+                pattern: ^bytid[1-9]\d*$
         - name: sort
           description: "Sort threads by `0: latest` or `1: viral`"
           in: query
@@ -1336,6 +1339,17 @@ paths:
           required: true
           schema:
             $ref: "#/components/schemas/User/properties/id"
+        - in: query
+          name: sort
+          description: "Sort threads by `0: Created time` or `1: Last comment time`"
+          required: false
+          schema:
+            type: integer
+            format: int64
+            enum:
+              - 0
+              - 1
+            default: 0
         - in: query
           name: page
           description: page number
