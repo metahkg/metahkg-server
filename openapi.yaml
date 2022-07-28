@@ -191,6 +191,7 @@ paths:
       description: "Create a thread. Authentication is required.
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.4.0-dev/src/routes/thread/create.ts)"
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -376,6 +377,7 @@ paths:
           schema:
             $ref: "#/components/schemas/Thread/properties/id"
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -425,6 +427,7 @@ paths:
       description: "Vote on a comment. Authentication is required.
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.4.0-dev/src/routes/thread/comment/vote.ts)"
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -688,6 +691,7 @@ paths:
       description: "Set avatar. Authentication is required.
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.4.0-dev/src/routes/me/avatar.ts)"
       requestBody:
+        required: true
         content:
           multipart/form-data:
             schema:
@@ -742,6 +746,7 @@ paths:
       description: "Rename yourself. Authentication is required.
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.4.0-dev/src/routes/me/rename.ts)"
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -932,6 +937,7 @@ paths:
       description: "Login with username/email and password. A jwt token is returned.
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.4.0-dev/src/routes/users/login.ts)"
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -978,6 +984,7 @@ paths:
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.4.0-dev/src/routes/users/register.ts)"
       operationId: usersRegister
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -1029,6 +1036,7 @@ paths:
       description: "Verify email. A jwt token is returned.
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.4.0-dev/src/routes/users/verify.ts)"
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -1069,6 +1077,7 @@ paths:
       description: "Resend verification email.
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.4.0-dev/src/routes/users/resend.ts)"
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -1112,6 +1121,7 @@ paths:
         "Send a password reset email. A limit of two resets per day is enforced.
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.4.0-dev/src/routes/users/forgot.ts)"
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -1154,6 +1164,7 @@ paths:
       description: "Reset password. A jwt token is returned.
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.4.0-dev/src/routes/users/reset.ts)"
       requestBody:
+        required: true
         content:
           application/json:
             schema:
