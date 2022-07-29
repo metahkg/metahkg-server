@@ -14,7 +14,7 @@ export default function (
     const paramsSchema = Type.Object({ id: Type.RegEx(regex.integer) });
 
     fastify.get(
-        "/avatars/:id",
+        "/:id/avatar",
         { schema: { params: paramsSchema } },
         (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
             const filename = `images/avatars/${req.params.id}.png`;
