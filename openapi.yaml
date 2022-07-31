@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  version: "3"
+  version: "3.4.0"
   title: Metahkg Api
   description:
     "The Metahkg Api is a REST api written in fastify/typescript, with MongoDB as the database.
