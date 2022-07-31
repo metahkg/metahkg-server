@@ -910,7 +910,7 @@ paths:
       operationId: usersProfileAvatar
       summary: Get user avatar
       description: "Get user avatar. Returns either the avatar or a default avatar.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.4.0/src/routes/users/avatar.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3.4.0/src/routes/users/avatars.ts)"
       parameters:
         - name: id
           in: path
