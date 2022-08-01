@@ -9,7 +9,7 @@ export default (
     done: (e?: Error) => void
 ) => {
     const schema = Type.Object({
-        userId: Type.Integer({ minimum: 1 }),
+        id: Type.Integer({ minimum: 1 }),
     });
 
     fastify.post(
@@ -23,7 +23,7 @@ export default (
             const user = verifyUser(req.headers.authorization);
             if (!user) return res.code(401).send({ error: "Unauthorized." });
 
-            const { userId } = req.body;
+            const { id: userId } = req.body;
 
             if (!(await usersCl.findOne({ id: userId })))
                 return res.code(404).send({ error: "User not found." });
