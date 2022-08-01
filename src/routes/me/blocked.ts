@@ -13,13 +13,10 @@ export default function (
         if (!user) return res.code(401).send({ error: "Unauthorized." });
 
         const blocked = ((
-            await usersCl.findOne(
-                { id: user.id },
-                { projection: { _id: 0, blocked: 1 } }
-            )
+            await usersCl.findOne({ id: user.id }, { projection: { _id: 0, blocked: 1 } })
         )?.blocked || []) as number[];
 
-        console.log(blocked)
+        console.log(blocked);
 
         const blocklist = (await usersCl
             .find({
