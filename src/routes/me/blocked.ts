@@ -12,18 +12,20 @@ export default function (
         const user = verifyUser(req.headers.authorization);
         if (!user) return res.code(401).send({ error: "Unauthorized." });
 
-        const blocked = (
+        const blocked = ((
             await usersCl.findOne(
-                { user: user.id },
+                { id: user.id },
                 { projection: { _id: 0, blocked: 1 } }
             )
-        ).blocked as number[];
+        )?.blocked || []) as number[];
+
+        console.log(blocked)
 
         const blocklist = (await usersCl
             .find({
                 id: { $in: blocked },
             })
-            .project({ _id: 0, id: 1, name: 1, sex: 1, createdAt: 1 })
+            .project({ _id: 0, id: 1, name: 1, sex: 1, role: 1 })
             .toArray()) as User[];
 
         res.send(

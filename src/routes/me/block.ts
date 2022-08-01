@@ -34,7 +34,9 @@ export default (
                         {
                             id: user.id,
                             blocked: {
-                                $not: userId,
+                                $not: {
+                                    $eq: userId,
+                                },
                             },
                         },
                         { $push: { blocked: userId } }
