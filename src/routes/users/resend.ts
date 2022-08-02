@@ -53,7 +53,7 @@ export default (
                 email,
                 createdAt: new Date(),
             } as Limit);
-            res.send({ response: "ok" });
+            res.send({ success: true });
         }
     );
     done();

@@ -1,5 +1,3 @@
-//check whether a thread exist
-//syntax: POST /api/check {id : number}
 import { threadCl } from "../../common";
 import { Type } from "@sinclair/typebox";
 import Thread from "../../models/thread";
@@ -28,7 +26,7 @@ export default (
             if (!((await threadCl.findOne({ id })) as Thread))
                 return res.code(404).send({ error: "Thread not found." });
 
-            res.send({ response: "ok" });
+            res.send({ success: true });
         }
     );
     done();

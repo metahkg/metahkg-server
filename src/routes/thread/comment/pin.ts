@@ -16,7 +16,7 @@ export default function (
     });
 
     fastify.put(
-        "/:id/comment/:cid/pin",
+        "/:cid/pin",
         {
             schema: {
                 params: paramsSchema,
@@ -67,7 +67,7 @@ export default function (
 
             await threadCl.updateOne({ id: threadId }, { $set: { pin: comment } });
 
-            res.send({ response: "ok" });
+            res.send({ success: true });
         }
     );
     done();

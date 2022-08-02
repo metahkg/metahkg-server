@@ -1,5 +1,9 @@
 # Changelog
 
+## v3.5.0
+
+- emotions (alpha)
+
 ## v3.4.0
 
 - separate nameonly from profile to `/users/{id}/name`

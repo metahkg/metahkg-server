@@ -16,6 +16,6 @@ export default (
     fastify.register(checkExist);
     fastify.register(images);
     fastify.register(create);
-    fastify.register(comment);
+    fastify.register(comment, { prefix: "/:id/comment" });
     done();
 };

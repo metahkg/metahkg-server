@@ -5,15 +5,14 @@ import pin from "./pin";
 import unpin from "./unpin";
 import vote from "./vote";
 import images from "./images";
+import emotion from "./emotion";
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import hidden from "../../../plugins/hidden";
 
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) {
-    fastify.addHook("preHandler", hidden);
     fastify.register(comment);
     fastify.register(replies);
     fastify.register(create);
@@ -21,5 +20,6 @@ export default function (
     fastify.register(unpin);
     fastify.register(vote);
     fastify.register(images);
+    fastify.register(emotion);
     done();
 }

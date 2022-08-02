@@ -10,7 +10,7 @@ export default (
     done: (e?: Error) => void
 ) => {
     fastify.get(
-        "/:id/comment/:cid/replies",
+        "/:cid/replies",
         async (req: FastifyRequest<{ Params: { id: string; cid: string } }>, res) => {
             const id = Number(req.params.id);
             const cid = Number(req.params.cid);

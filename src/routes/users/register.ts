@@ -98,7 +98,7 @@ export default (
                 type: "register",
             });
 
-            res.send({ response: "ok" });
+            res.send({ success: true });
         }
     );
     done();

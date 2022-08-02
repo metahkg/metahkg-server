@@ -30,7 +30,7 @@ export default (
             )
                 return res.code(409).send({ error: "User not blocked." });
 
-            return res.send({ response: "ok" });
+            return res.send({ success: true });
         }
     );
     done();
