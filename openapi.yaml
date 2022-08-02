@@ -1772,6 +1772,7 @@ components:
               description: list of comment ids that are replies to this comment
             emotions:
               type: array
+              description: list of emotions users have expressed
               items:
                 type: object
                 required:
