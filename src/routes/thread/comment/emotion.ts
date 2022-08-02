@@ -34,7 +34,7 @@ export default function (
             const cid = Number(req.params.cid);
 
             const { emotion } = req.body;
-            
+
             const thread = (
                 await threadCl
                     .aggregate([
