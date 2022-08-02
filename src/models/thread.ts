@@ -28,8 +28,8 @@ export type publicUserType = {
 };
 
 export const EmotionSchema = Type.Union(
-    ["sob", "joy", "smile", "sad", "sweatsmile", "heart", "grin", "good", "bad"].map((i) =>
-        Type.Literal(i)
+    ["sob", "joy", "smile", "sad", "sweatsmile", "heart", "grin", "good", "bad"].map(
+        (i) => Type.Literal(i)
     )
 );
 
