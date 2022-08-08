@@ -951,8 +951,8 @@ paths:
       operationId: categoryThreads
       summary: Get threads in a category
       description: "Get threads in a category,
-          Authentication required if thread is [hidden](https://docs.metahkg.org/docs/customize/categories/hide).
-          [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.0.0-dev/src/routes/category/threads.ts)"
+        Authentication required if thread is [hidden](https://docs.metahkg.org/docs/customize/categories/hide).
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.0.0-dev/src/routes/category/threads.ts)"
       parameters:
         - name: id
           in: path
@@ -1111,12 +1111,15 @@ paths:
           $ref: "#/components/responses/Invalid"
   /user/{id}/threads:
     get:
+      security:
+        - bearerAuth: []
       tags:
         - user
         - threads
       operationId: userThreads
       summary: Get threads created by a user
-      description: "Get threads created by a user.
+      description:
+        "Get threads created by a user. Authenticate to also get [hidden](https://docs.metahkg.org/docs/customize/categories/hide) threads.
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.0.0-dev/src/routes/user/threads.ts)"
       parameters:
         - name: id
@@ -1450,11 +1453,13 @@ paths:
                 $ref: "#/components/schemas/Error"
   /threads/search:
     get:
+      security:
+        - bearerAuth: []
       tags:
         - threads
       operationId: threadsSearch
       summary: Search threads
-      description: "Search threads.
+      description: "Search threads. Authenticate to include [hidden](https://docs.metahkg.org/docs/customize/categories/hide) threads.
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.0.0-dev/src/routes/threads/search.ts)"
       parameters:
         - name: q
@@ -1517,11 +1522,14 @@ paths:
           $ref: "#/components/responses/Invalid"
   /threads:
     get:
+      security:
+        - bearerAuth: []
       tags:
         - threads
       operationId: threads
       summary: Get threads
-      description: "Get threads by ids.
+      description: "Get threads by ids. Authenticate to get [hidden](https://docs.metahkg.org/docs/customize/categories/hide) threads.
+        Otherwise they would not be included in the response even if you specified the ids.
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.0.0-dev/src/routes/menu/threads.ts)"
       parameters:
         - in: query
