@@ -1052,7 +1052,7 @@ paths:
   /user/{id}/name:
     get:
       tags:
-        - users
+        - user
       operationId: userName
       summary: Get user name
       description: "Get user name.
