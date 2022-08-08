@@ -53,7 +53,9 @@ export default (
                     [
                         {
                             $match: {
-                                ...(mode === "op" ? { "op.name": regex } : { title: regex }),
+                                ...(mode === "op"
+                                    ? { "op.name": regex }
+                                    : { title: regex }),
                                 ...(!user && { category: { $nin: await hiddencats() } }),
                             },
                         },
@@ -83,8 +85,8 @@ export default (
                             },
                         },
                         {
-                            "created": { $sort: { createdAt: -1 } },
-                            "lastcomment": { $sort: { lastModified: -1 } },
+                            created: { $sort: { createdAt: -1 } },
+                            lastcomment: { $sort: { lastModified: -1 } },
                         }[sort],
                         { $skip: (page - 1) * limit },
                         { $limit: limit },

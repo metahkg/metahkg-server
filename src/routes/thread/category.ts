@@ -31,7 +31,7 @@ export default function (
                 ).id,
             })) as Category;
 
-            if (!category) return res.send("Not found.")
+            if (!category) return res.send("Not found.");
 
             res.send(category);
         }
