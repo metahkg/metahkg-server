@@ -1482,13 +1482,14 @@ paths:
             default: title
         - in: query
           name: sort
-          description: "Sort threads by latest or viral"
+          description: "Sort threads by relevance, created or lastcomment"
           required: false
           schema:
             type: string
             enum:
-              - latest
-              - viral
+              - relevance
+              - created
+              - lastcomment
             default: latest
         - in: query
           name: page
