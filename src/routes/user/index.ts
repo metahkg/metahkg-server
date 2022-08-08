@@ -1,17 +1,17 @@
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import history from "./history";
-import menu from "./menu";
-import search from "./search";
+import avatar from "./avatar";
 import threads from "./threads";
+import name from "./name";
+import profile from "./profile";
 
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (err?: Error) => void
 ) {
-    fastify.register(history);
-    fastify.register(menu);
-    fastify.register(search);
+    fastify.register(profile);
+    fastify.register(name);
+    fastify.register(avatar);
     fastify.register(threads);
     done();
 }

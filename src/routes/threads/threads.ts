@@ -1,28 +1,27 @@
 import Thread from "../../models/thread";
 import { threadCl } from "../../common";
 import { ajv } from "../../lib/ajv";
-import { Type } from "@sinclair/typebox";
+import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { hiddencats } from "../../lib/hiddencats";
 import verifyUser from "../../lib/auth/verify";
+import regex from "../../lib/regex";
 
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
-    fastify.get(
-        "/threads",
-        async (req: FastifyRequest<{ Querystring: { threads?: string } }>, res) => {
-            let threads = decodeURIComponent(String(req.query.threads));
-            const user = verifyUser(req.headers.authorization);
+    const querySchema = Type.Object({
+        id: Type.Array(Type.RegEx(regex.integer)),
+    });
 
-            try {
-                threads = JSON.parse(threads);
-                if (!Array.isArray(threads)) throw new Error("Not an array.");
-            } catch {
-                return res.code(400).send({ error: "Bad request." });
-            }
+    fastify.get(
+        "/",
+        { schema: { querystring: querySchema } },
+        async (req: FastifyRequest<{ Querystring: Static<typeof querySchema> }>, res) => {
+            const threads = req.query.id.map((id) => Number(id));
+            const user = verifyUser(req.headers.authorization);
 
             if (!ajv.validate(Type.Array(Type.Integer(), { maxItems: 50 }), threads))
                 return res.code(400).send({ error: "Bad request." });

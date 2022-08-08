@@ -1,5 +1,12 @@
 # Changelog
 
+## v4.0.0
+
+- separate originally /menu route to category threads (`/category/{id}/threads`), user threads (`/user/{id}/threads`), threads (`/threads`), and search (`/threads/search`)
+- remove all bytid syntax
+- add `/thread/{id}/category` for getting the category of a thread
+- move avatar, name, profile from `/users` to `/user`
+
 ## v3.5.0
 
 - emotions (alpha)
