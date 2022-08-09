@@ -1,5 +1,5 @@
 {
-  "name": "metahkg-server",
+  "name": "@metahkg/server",
   "version": "4.0.0-1",
   "main": "dist/app.js",
   "author": "wcyat",
