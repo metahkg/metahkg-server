@@ -1,6 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 .idea
 .env
+*.env
 # dependencies
 /node_modules
 /.pnp
@@ -26,10 +27,12 @@ yarn-error.log*
 # vscode
 .vscode/
 
-# internal
-deploy.sh
-.lh/
-package-lock.json
-
 # eslint
 /.eslintcache
+
+/src/
+/*Dockerfile
+/docker-compose*.yml
+/openapi.yaml
+/yarn.lock
+/*.sh
