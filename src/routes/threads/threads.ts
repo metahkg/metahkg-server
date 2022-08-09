@@ -13,7 +13,9 @@ export default (
     done: (e?: Error) => void
 ) => {
     const querySchema = Type.Object({
-        id: Type.Optional(Type.Union([Type.Array(Type.RegEx(regex.integer)), Type.RegEx(regex.integer)]))
+        id: Type.Optional(
+            Type.Union([Type.Array(Type.RegEx(regex.integer)), Type.RegEx(regex.integer)])
+        ),
     });
 
     fastify.get(
