@@ -13,14 +13,16 @@ export default (
     done: (e?: Error) => void
 ) => {
     const querySchema = Type.Object({
-        id: Type.Array(Type.RegEx(regex.integer)),
+        id: Type.Optional(Type.Union([Type.Array(Type.RegEx(regex.integer)), Type.RegEx(regex.integer)]))
     });
 
     fastify.get(
         "/",
         { schema: { querystring: querySchema } },
         async (req: FastifyRequest<{ Querystring: Static<typeof querySchema> }>, res) => {
-            const threads = req.query.id.map((id) => Number(id));
+            if (!req.query.id) return res.send([]);
+
+            const threads = [req.query.id].flat(Infinity).map((id) => Number(id));
             const user = verifyUser(req.headers.authorization);
 
             if (!ajv.validate(Type.Array(Type.Integer(), { maxItems: 50 }), threads))
