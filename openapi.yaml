@@ -576,7 +576,7 @@ paths:
       summary: Pin comment
       description: "Pin a comment in a thread. Authentication is required.
         Works only if the user is the original poster of the thread.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3-dev/src/routes/thread/comment/pin.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.0.1/src/routes/thread/comment/pin.ts)"
       parameters:
         - in: path
           name: id
@@ -738,7 +738,7 @@ paths:
         - bearerAuth: []
       summary: Block user
       description: "Block user. Authentication is required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3-dev/src/routes/me/block.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.0.1/src/routes/me/block.ts)"
       requestBody:
         required: true
         content:
@@ -1556,7 +1556,7 @@ paths:
           $ref: "#/components/responses/Invalid"
 
 servers:
-  - url: https://dev.metahkg.org/api
+  - url: https://metahkg.org/api
 
 components:
   responses:
