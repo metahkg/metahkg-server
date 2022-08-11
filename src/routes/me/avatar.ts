@@ -107,7 +107,7 @@ export default function (
                     });
                     return;
                 }
-                res.send({ response: "ok" });
+                res.send({ success: true });
             } catch (err) {
                 console.error(err);
                 res.code(500).send({ error: "Internal server error." });

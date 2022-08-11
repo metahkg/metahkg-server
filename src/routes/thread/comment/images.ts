@@ -16,7 +16,7 @@ export default (
     });
 
     fastify.get(
-        "/:id/comment/:cid/images",
+        "/:cid/images",
         { schema: { params: paramsSchema } },
         async (
             req: FastifyRequest<{

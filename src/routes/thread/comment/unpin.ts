@@ -16,7 +16,7 @@ export default (
     });
 
     fastify.put(
-        "/:id/comment/:cid/unpin",
+        "/:cid/unpin",
         { schema: { params: paramsSchema } },
         async (
             req: FastifyRequest<{
@@ -44,7 +44,7 @@ export default (
 
             await threadCl.updateOne({ id: threadId }, { $unset: { pin: 1 } });
 
-            return res.send({ response: "ok" });
+            return res.send({ success: true });
         }
     );
     done();

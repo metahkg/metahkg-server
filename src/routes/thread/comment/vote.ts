@@ -24,7 +24,7 @@ export default (
     });
 
     fastify.post(
-        "/:id/comment/:cid/vote",
+        "/:cid/vote",
         { schema: { body: schema, params: paramsSchema } },
         async (
             req: FastifyRequest<{
@@ -91,7 +91,7 @@ export default (
                 );
             }
 
-            res.send({ response: "ok" });
+            res.send({ success: true });
         }
     );
     done();

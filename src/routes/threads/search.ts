@@ -11,18 +11,15 @@ export default (
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
-    /**
-     * sort:
-     * 0: by relevance //default
-     * 1: by creation time
-     * 2: by last modification time
-     */
-
     const querySchema = Type.Object({
         page: Type.Optional(Type.RegEx(regex.integer)),
         q: Type.String({ maxLength: 100, minLength: 1 }),
-        sort: Type.Optional(Type.RegEx(/^[0-2]$/)),
-        mode: Type.Optional(Type.RegEx(/^[01]$/)),
+        sort: Type.Optional(
+            Type.Union(
+                ["relevance", "created", "lastcomment"].map((x) => Type.Literal(x))
+            )
+        ),
+        mode: Type.Optional(Type.Union(["title", "op"].map((x) => Type.Literal(x)))),
         limit: Type.Optional(Type.RegEx(regex.oneTo50)),
     });
 
@@ -41,8 +38,8 @@ export default (
         ) => {
             const page = Number(req.query.page) || 1;
             const query = decodeURIComponent(String(req.query.q));
-            const sort = Number(req.query.sort ?? 0);
-            const mode = Number(req.query.mode ?? 0);
+            const sort = req.query.sort || "relevance";
+            const mode = req.query.mode || "title";
             const limit = Number(req.query.limit) || 25;
             const user = verifyUser(req.headers.authorization);
 
@@ -56,11 +53,13 @@ export default (
                     [
                         {
                             $match: {
-                                ...(mode === 1 ? { "op.name": regex } : { title: regex }),
+                                ...(mode === "op"
+                                    ? { "op.name": regex }
+                                    : { title: regex }),
                                 ...(!user && { category: { $nin: await hiddencats() } }),
                             },
                         },
-                        mode === 0 && {
+                        mode === "title" && {
                             $unionWith: {
                                 coll: "thread",
                                 pipeline: [
@@ -86,9 +85,8 @@ export default (
                             },
                         },
                         {
-                            0: undefined,
-                            1: { $sort: { createdAt: -1 } },
-                            2: { $sort: { lastModified: -1 } },
+                            created: { $sort: { createdAt: -1 } },
+                            lastcomment: { $sort: { lastModified: -1 } },
                         }[sort],
                         { $skip: (page - 1) * limit },
                         { $limit: limit },

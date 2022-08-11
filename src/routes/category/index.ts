@@ -1,17 +1,13 @@
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import history from "./history";
-import menu from "./menu";
-import search from "./search";
+import category from "./category";
 import threads from "./threads";
 
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (err?: Error) => void
 ) {
-    fastify.register(history);
-    fastify.register(menu);
-    fastify.register(search);
+    fastify.register(category);
     fastify.register(threads);
     done();
 }

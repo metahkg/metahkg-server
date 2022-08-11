@@ -1,3 +1,4 @@
+import { Static, Type } from "@sinclair/typebox";
 import { ObjectId } from "mongodb";
 import type { userSex, userRole } from "../types/user";
 
@@ -26,6 +27,14 @@ export type publicUserType = {
     sex: userSex;
 };
 
+export const EmotionSchema = Type.Union(
+    ["sob", "joy", "smile", "sad", "sweatsmile", "heart", "grin", "good", "bad"].map(
+        (i) => Type.Literal(i)
+    )
+);
+
+export type Emotion = Static<typeof EmotionSchema>;
+
 export type commentType = {
     /** comment id */
     id: number;
@@ -50,6 +59,7 @@ export type commentType = {
     replies?: number[];
     /** quote **/
     quote?: commentType;
+    emotions?: { user: number; emotion: Emotion }[];
 };
 
 export type threadOpType = {

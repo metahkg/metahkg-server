@@ -1,10 +1,10 @@
 {
-  "name": "metahkg-server",
-  "version": "3.4.2",
+  "name": "@metahkg/server",
+  "version": "4.0.1",
   "main": "dist/app.js",
   "author": "wcyat",
   "homepage": "https://metahkg.org",
-  "repository": "https://github.com/metahkg/metahkg-server",
+  "repository": "https://gitlab.com/metahkg/metahkg-server",
   "license": "AGPL-3.0-or-later",
   "keywords": [
     "forum",

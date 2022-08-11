@@ -20,7 +20,7 @@ setInterval(updateVerificationCode, 3600 * 1000);
     app.listen(
         { port: Number(process.env.port) || 3200, host: "0.0.0.0" },
         (err: Error) => {
-            if (err) console.log(err);
+            if (err) throw err;
             console.log(`listening at port ${process.env.port || 3200}`);
         }
     );

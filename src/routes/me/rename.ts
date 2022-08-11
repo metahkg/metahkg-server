@@ -32,7 +32,7 @@ export default (
             await usersCl.updateOne({ id: user.id }, { $set: { name: newName } });
 
             res.send({
-                response: "ok",
+                success: true,
                 token: createToken({ ...user, name: newName }),
             });
         }

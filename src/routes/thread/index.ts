@@ -4,6 +4,7 @@ import images from "./images";
 import thread from "./thread";
 import create from "./create";
 import comment from "./comment";
+import category from "./category";
 import hidden from "../../plugins/hidden";
 
 export default (
@@ -16,6 +17,7 @@ export default (
     fastify.register(checkExist);
     fastify.register(images);
     fastify.register(create);
-    fastify.register(comment);
+    fastify.register(category);
+    fastify.register(comment, { prefix: "/:id/comment" });
     done();
 };

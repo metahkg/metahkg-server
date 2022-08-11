@@ -32,7 +32,7 @@ export default (
      * client must have a cookie "key"
      */
     fastify.post(
-        "/:id/comment/create",
+        "/create",
         {
             schema: {
                 body: schema,

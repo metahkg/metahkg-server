@@ -13,8 +13,10 @@ export default (
     done: (e?: Error) => void
 ) => {
     const querySchema = Type.Object({
-        sort: Type.Optional(Type.RegEx(/^(0|1)$/)),
-        page: Type.Optional(Type.RegEx(/^[1-9]\d*$/)),
+        sort: Type.Optional(
+            Type.Union([Type.Literal("created"), Type.Literal("lastcomment")])
+        ),
+        page: Type.Optional(Type.RegEx(regex.integer)),
         limit: Type.Optional(Type.RegEx(regex.oneTo50)),
     });
 
@@ -23,7 +25,7 @@ export default (
     });
 
     fastify.get(
-        "/history/:id",
+        "/:id/threads",
         { schema: { params: paramsSchema, querystring: querySchema } },
         async (
             req: FastifyRequest<{
@@ -34,14 +36,11 @@ export default (
         ) => {
             const id = Number(req.params.id) || req.params.id;
             const page = Number(req.query.page) || 1;
-            const sort = Number(req.query.sort || 0);
+            const sort = req.query.sort || "created";
             const limit = Number(req.query.limit) || 25;
             const user = verifyUser(req.headers.authorization);
 
-            const requestedUser =
-                req.params.id === "self"
-                    ? user
-                    : ((await usersCl.findOne({ id })) as User);
+            const requestedUser = (await usersCl.findOne({ id })) as User;
 
             if (!requestedUser) return res.code(404).send({ error: "User not found." });
 
@@ -51,8 +50,8 @@ export default (
                     ...(!user && { category: { $nin: await hiddencats() } }),
                 })
                 .sort({
-                    ...(sort === 0 && { createdAt: -1 }),
-                    ...(sort === 1 && { lastModified: -1 }),
+                    ...(sort === "created" && { createdAt: -1 }),
+                    ...(sort === "lastcomment" && { lastModified: -1 }),
                 })
                 .skip(limit * (page - 1))
                 .limit(limit)
