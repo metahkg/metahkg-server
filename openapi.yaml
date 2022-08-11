@@ -1752,7 +1752,6 @@ components:
         - user
         - comment
         - text
-        - images
         - createdAt
         - slink
       properties:
