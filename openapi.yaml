@@ -18,6 +18,9 @@ externalDocs:
   url: https://gitlab.com/metahkg/metahkg-server
   description: Server source code
 
+servers:
+  - url: https://dev.metahkg.org/api
+
 tags:
   - name: users
     description: users operations
@@ -576,7 +579,7 @@ paths:
       summary: Pin comment
       description: "Pin a comment in a thread. Authentication is required.
         Works only if the user is the original poster of the thread.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3-dev/src/routes/thread/comment/pin.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.0.1-dev/src/routes/thread/comment/pin.ts)"
       parameters:
         - in: path
           name: id
@@ -738,7 +741,7 @@ paths:
         - bearerAuth: []
       summary: Block user
       description: "Block user. Authentication is required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/3-dev/src/routes/me/block.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.0.1-dev/src/routes/me/block.ts)"
       requestBody:
         required: true
         content:
@@ -1555,8 +1558,6 @@ paths:
         "400":
           $ref: "#/components/responses/Invalid"
 
-servers:
-  - url: https://dev.metahkg.org/api
 
 components:
   responses:
