@@ -5,7 +5,7 @@ import me from "./me";
 import categories from "./categories";
 import category from "./category";
 import notifications from "./notifications/notifications";
-import threads from "./threads/threads";
+import threads from "./threads";
 import user from "./user";
 
 export default (
