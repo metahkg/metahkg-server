@@ -44,6 +44,7 @@ export default function sanitize(html: string) {
             "div",
         ],
         allowedAttributes: {
+            p: ["style"],
             a: ["href", "name", "target", "rel"],
             img: ["src", "alt", "height", "width", "style"],
             video: ["src", "poster", "controls", "preload", "width", "height", "style"],
