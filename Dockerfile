@@ -16,7 +16,9 @@ RUN if [ "${env}" = "dev" ]; then mkdir -p dist; else yarn build; fi;
 
 FROM node:18-alpine
 
-WORKDIR /usr/src/app
+RUN adduser user -D
+WORKDIR /home/user
+USER user
 
 COPY ./package.json ./yarn.lock ./tsconfig.json ./tsconfig.build.json ./start.js ./
 
