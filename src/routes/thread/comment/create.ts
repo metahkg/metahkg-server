@@ -141,12 +141,25 @@ export default (
                     )) as Images
                 ).images;
 
-                imagesInComment.forEach((item, index) => {
-                    if (imagesData.findIndex((i) => i.src === item) === -1)
-                        imagesInComment.splice(index, 1);
-                });
-
-                await threadCl.updateOne({ id }, { $push: { images: imagesInComment } });
+                await threadCl.updateOne(
+                    { id },
+                    {
+                        $push: {
+                            images: {
+                                $each: imagesInComment
+                                    .filter(
+                                        (item) =>
+                                            imagesData.findIndex(
+                                                (i) => i.src === item
+                                            ) === -1
+                                    )
+                                    .map((item) => {
+                                        return { src: item, cid: newCommentId };
+                                    }),
+                            },
+                        },
+                    }
+                );
             }
 
             res.send({ id: newCommentId });
