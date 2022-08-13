@@ -18,12 +18,15 @@ FROM node:18-alpine
 
 RUN adduser user -D
 WORKDIR /home/user
-USER user
 
 COPY ./package.json ./yarn.lock ./tsconfig.json ./tsconfig.build.json ./start.js ./
 
 COPY ./static ./static
 COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/node_modules ./node_modules
+
+RUN mkdir images && chown user:user images
+
+USER user
 
 CMD touch .env && if [ "${env}" = "dev" ]; then yarn dev; else yarn start; fi;

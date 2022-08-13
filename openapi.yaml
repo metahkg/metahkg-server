@@ -31,7 +31,6 @@ info:
     ```
     <br><br>
     Also see [a frontend implmentation using axios](https://gitlab.com/metahkg/metahkg-web/-/blob/dev/src/lib/api.ts).
-    
 
     # Metahkg api client
 
