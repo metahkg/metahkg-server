@@ -1098,6 +1098,8 @@ paths:
       summary: Block user
       description: "Block user. Authentication is required.
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/user/actions/block.ts)"
+      parameters:
+        - $ref: "#/components/parameters/UserId"
       requestBody:
         required: true
         content:
@@ -1105,8 +1107,11 @@ paths:
             schema:
               type: object
               properties:
-                id:
-                  $ref: "#/components/schemas/User/properties/id"
+                reason:
+                  type: string
+                  minLength: 0
+                  maxLength: 50
+                  description: Reason for blocking user
       responses:
         "200":
           $ref: "#/components/responses/OK"
@@ -1137,15 +1142,8 @@ paths:
       summary: Unblock user
       description: "Unblock user. Authentication is required.
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/user/actions/unblock.ts)"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                id:
-                  $ref: "#/components/schemas/User/properties/id"
+      parameters:
+        - $ref: "#/components/parameters/UserId"
       responses:
         "200":
           $ref: "#/components/responses/OK"

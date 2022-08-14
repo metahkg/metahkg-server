@@ -18,7 +18,10 @@ async function migrate() {
         (
             await usersCl.find().toArray()
         ).map(async (data) => {
-            if (data.blocked && data.blocked.every((i: number) => typeof i === "number")) {
+            if (
+                data.blocked &&
+                data.blocked.every((i: number) => typeof i === "number")
+            ) {
                 await usersCl.updateOne(
                     {
                         _id: data._id,
