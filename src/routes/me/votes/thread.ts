@@ -1,8 +1,8 @@
-import { votesCl } from "../../common";
-import verifyUser from "../../lib/auth/verify";
+import { votesCl } from "../../../common";
+import verifyUser from "../../../lib/auth/verify";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { Static, Type } from "@sinclair/typebox";
-import regex from "../../lib/regex";
+import regex from "../../../lib/regex";
 
 export default (
     fastify: FastifyInstance,
@@ -14,7 +14,7 @@ export default (
     });
 
     fastify.get(
-        "/votes/:id",
+        "/thread/:id",
         {
             schema: {
                 params: paramsSchema,

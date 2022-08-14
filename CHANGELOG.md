@@ -1,5 +1,9 @@
 # Changelog
 
+## v4.2.0
+
+- move get thread votes to /me/votes/thread/{id}
+
 ## v4.1.0
 
 - move block and unblock to /user/{id}/block and /user/{id}/unblock

@@ -14,8 +14,8 @@ export default function (
     fastify.register(status);
     fastify.register(rename);
     fastify.register(avatar);
-    fastify.register(votes);
     fastify.register(blocked);
     fastify.register(starred);
+    fastify.register(votes, { prefix: "/votes" });
     done();
 }
