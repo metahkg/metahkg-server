@@ -25,8 +25,6 @@ COPY ./static ./static
 COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/node_modules ./node_modules
 
-RUN mkdir images && chown user:user images
+RUN touch .env && mkdir images && chown user:user -R images .env
 
-USER user
-
-CMD touch .env && if [ "${env}" = "dev" ]; then yarn dev; else yarn start; fi;
+CMD chown user:user -R images && su user -c 'if [ "${env}" = "dev" ]; then yarn dev; else yarn start; fi;'

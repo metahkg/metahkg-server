@@ -1,5 +1,13 @@
 # Changelog
 
+## v4.1.0
+
+- move block and unblock to /user/{id}/block and /user/{id}/unblock
+- add date and reason to block
+- add star and unstar threads
+- add starred
+- rootless docker
+
 ## v4.0.0
 
 - separate originally /menu route to category threads (`/category/{id}/threads`), user threads (`/user/{id}/threads`), threads (`/threads`), and search (`/threads/search`)
