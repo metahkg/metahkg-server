@@ -39,7 +39,7 @@ export default function (
                         {
                             $push: {
                                 starred: {
-                                    $each: [{ id: threadId, date: Date.now() }],
+                                    $each: [{ id: threadId, date: new Date() }],
                                     $position: 0,
                                 },
                             },

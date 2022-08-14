@@ -29,7 +29,7 @@ async function migrate() {
                     {
                         $set: {
                             blocked: data.blocked.map((i: number) => ({
-                                date: Date.now(),
+                                date: new Date(),
                                 reason: "",
                                 id: i,
                             })),

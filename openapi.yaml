@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  version: "4.2.3-dev"
+  version: "4.2.4-dev"
   title: Metahkg Api
   description: "# Introduction
 
@@ -75,7 +75,7 @@ paths:
       summary: Get thread
       description: "Get a selection of comments and other data from a thread.
         Authentication required if thread is [hidden](https://docs.metahkg.org/docs/customize/categories/hide).
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/thread/thread.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/thread/thread.ts)"
       operationId: thread
       parameters:
         - $ref: "#/components/parameters/ThreadId"
@@ -157,7 +157,7 @@ paths:
       operationId: threadCheck
       summary: Check if a thread exists
       description: "Check if a thread exists.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/thread/checkExist.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/thread/checkExist.ts)"
       parameters:
         - $ref: "#/components/parameters/ThreadId"
       responses:
@@ -180,7 +180,7 @@ paths:
       description: "
         Get the images of a thread. Duplicated images not included.
         Authentication required if thread is [hidden](https://docs.metahkg.org/docs/customize/categories/hide).
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/thread/images.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/thread/images.ts)"
       parameters:
         - $ref: "#/components/parameters/ThreadId"
       responses:
@@ -211,7 +211,7 @@ paths:
       description: "
         Get the category of a thread.
         Authentication required if thread is [hidden](https://docs.metahkg.org/docs/customize/categories/hide).
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/thread/category.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/thread/category.ts)"
       parameters:
         - $ref: "#/components/parameters/ThreadId"
       responses:
@@ -240,7 +240,7 @@ paths:
       operationId: threadCreate
       summary: Create thread
       description: "Create a thread. Authentication is required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/thread/create.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/thread/create.ts)"
       requestBody:
         required: true
         content:
@@ -297,7 +297,7 @@ paths:
       operationId: threadStar
       summary: Star thread
       description: "Star a thread. Authentication is required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/thread/actions/star.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/thread/actions/star.ts)"
       parameters:
         - $ref: "#/components/parameters/ThreadId"
       responses:
@@ -331,7 +331,7 @@ paths:
       operationId: threadUnstar
       summary: Unstar thread
       description: "Unstar a thread. Authentication is required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/thread/actions/unstar.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/thread/actions/unstar.ts)"
       parameters:
         - $ref: "#/components/parameters/ThreadId"
       responses:
@@ -365,7 +365,7 @@ paths:
       summary: Get comment
       description: "Get a comment from a thread with thread id and comment id.
         Authentication required if thread is [hidden](https://docs.metahkg.org/docs/customize/categories/hide).
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/thread/comment/comment.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/thread/comment/comment.ts)"
       parameters:
         - $ref: "#/components/parameters/ThreadId"
         - $ref: "#/components/parameters/CommentId"
@@ -396,7 +396,7 @@ paths:
       summary: Get replies
       description: "Get the full comment objects of replies to the specified comment.
         Authentication required if thread is [hidden](https://docs.metahkg.org/docs/customize/categories/hide).
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/thread/comment/replies.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/thread/comment/replies.ts)"
       parameters:
         - $ref: "#/components/parameters/ThreadId"
         - $ref: "#/components/parameters/CommentId"
@@ -432,7 +432,7 @@ paths:
       summary: Get comment images.
       description: "Get list of images from a comment.
         Authentication required if thread is [hidden](https://docs.metahkg.org/docs/customize/categories/hide).
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/thread/comment/images.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/thread/comment/images.ts)"
       parameters:
         - $ref: "#/components/parameters/ThreadId"
         - $ref: "#/components/parameters/CommentId"
@@ -465,7 +465,7 @@ paths:
       summary: Create comment
       description: "Create a new comment in the specified thread.
         Authentication is required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/thread/comment/create.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/thread/comment/create.ts)"
       parameters:
         - $ref: "#/components/parameters/ThreadId"
       requestBody:
@@ -517,7 +517,7 @@ paths:
         - bearerAuth: []
       summary: Vote on comment
       description: "Vote on a comment. Authentication is required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/thread/comment/vote.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/thread/comment/vote.ts)"
       requestBody:
         required: true
         content:
@@ -560,7 +560,7 @@ paths:
         - bearerAuth: []
       summary: "Emotion on comment"
       description: "Emotion on comment. Authentication is required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/thread/comment/emotion.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/thread/comment/emotion.ts)"
       parameters:
         - $ref: "#/components/parameters/ThreadId"
         - $ref: "#/components/parameters/CommentId"
@@ -598,7 +598,7 @@ paths:
       summary: Pin comment
       description: "Pin a comment in a thread. Authentication is required.
         Works only if the user is the original poster of the thread.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/thread/comment/pin.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/thread/comment/pin.ts)"
       parameters:
         - $ref: "#/components/parameters/ThreadId"
         - $ref: "#/components/parameters/CommentId"
@@ -629,7 +629,7 @@ paths:
       summary: Unpin comment
       description: "Unpin a pinned comment in a thread. Authentication is required.
         Works only if the user is the original poster of the thread.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/thread/comment/unpin.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/thread/comment/unpin.ts)"
       parameters:
         - $ref: "#/components/parameters/ThreadId"
         - $ref: "#/components/parameters/CommentId"
@@ -664,7 +664,7 @@ paths:
       summary: Get status
       description:
         "Get status (whether user is logged in, i.e. check if the token is valid).
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/me/status.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/me/status.ts)"
       responses:
         "200":
           description: Success
@@ -691,7 +691,7 @@ paths:
         - bearerAuth: []
       summary: Get blocked users
       description: "Get blocked users. Authentication is required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/me/blocked.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/me/blocked.ts)"
       responses:
         "200":
           description: Success
@@ -716,7 +716,7 @@ paths:
         - bearerAuth: []
       summary: Get starred threads
       description: "Get starred threads. Authentication is required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/me/starred.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/me/starred.ts)"
       responses:
         "200":
           description: Success
@@ -741,7 +741,7 @@ paths:
         - bearerAuth: []
       summary: Get votes in thread
       description: "Get user's votes in a thread. Authentication is required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/me/votes.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/me/votes.ts)"
       parameters:
         - $ref: "#/components/parameters/ThreadId"
       responses:
@@ -768,7 +768,7 @@ paths:
         - bearerAuth: []
       summary: Set avatar
       description: "Set avatar. Authentication is required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/me/avatar.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/me/avatar.ts)"
       requestBody:
         required: true
         content:
@@ -827,7 +827,7 @@ paths:
         - bearerAuth: []
       summary: Rename
       description: "Rename yourself. Authentication is required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/me/rename.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/me/rename.ts)"
       requestBody:
         required: true
         content:
@@ -869,7 +869,7 @@ paths:
       operationId: categories
       summary: Get categories
       description: "Get categories.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/categories.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/categories.ts)"
       responses:
         "200":
           description: Success
@@ -886,7 +886,7 @@ paths:
       operationId: category
       summary: Get category
       description: "Get a category by id.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/category/category.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/category/category.ts)"
       parameters:
         - $ref: "#/components/parameters/CategoryId"
       responses:
@@ -915,7 +915,7 @@ paths:
       summary: Get threads in a category
       description: "Get threads in a category,
         Authentication required if thread is [hidden](https://docs.metahkg.org/docs/customize/categories/hide).
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/category/threads.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/category/threads.ts)"
       parameters:
         - name: id
           in: path
@@ -959,7 +959,7 @@ paths:
       operationId: userProfile
       summary: Get user profile
       description: "Get user profile.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/user/profile.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/user/profile.ts)"
       parameters:
         - $ref: "#/components/parameters/UserId"
       responses:
@@ -997,7 +997,7 @@ paths:
       operationId: userName
       summary: Get user name
       description: "Get user name.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/user/name.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/user/name.ts)"
       parameters:
         - $ref: "#/components/parameters/UserId"
       responses:
@@ -1027,7 +1027,7 @@ paths:
       operationId: userAvatar
       summary: Get user avatar
       description: "Get user avatar. Returns either the avatar or a default avatar.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/user/avatar.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/user/avatar.ts)"
       parameters:
         - $ref: "#/components/parameters/UserId"
       responses:
@@ -1055,7 +1055,7 @@ paths:
       summary: Get threads created by a user
       description:
         "Get threads created by a user. Authenticate to also get [hidden](https://docs.metahkg.org/docs/customize/categories/hide) threads.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/user/threads.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/user/threads.ts)"
       parameters:
         - $ref: "#/components/parameters/UserId"
         - in: query
@@ -1097,7 +1097,7 @@ paths:
         - bearerAuth: []
       summary: Block user
       description: "Block user. Authentication is required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/user/actions/block.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/user/actions/block.ts)"
       parameters:
         - $ref: "#/components/parameters/UserId"
       requestBody:
@@ -1141,7 +1141,7 @@ paths:
         - bearerAuth: []
       summary: Unblock user
       description: "Unblock user. Authentication is required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/user/actions/unblock.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/user/actions/unblock.ts)"
       parameters:
         - $ref: "#/components/parameters/UserId"
       responses:
@@ -1168,7 +1168,7 @@ paths:
       operationId: usersLogin
       summary: Login
       description: "Login with username/email and password. A jwt token is returned.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/users/login.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/users/login.ts)"
       requestBody:
         required: true
         content:
@@ -1214,7 +1214,7 @@ paths:
       summary: Register
       description:
         "Register an account. A verification email is sent to the email address after the request completes.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/users/register.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/users/register.ts)"
       operationId: usersRegister
       requestBody:
         required: true
@@ -1271,7 +1271,7 @@ paths:
       operationId: usersVerify
       summary: Verify email
       description: "Verify email. A jwt token is returned.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/users/verify.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/users/verify.ts)"
       requestBody:
         required: true
         content:
@@ -1312,7 +1312,7 @@ paths:
       operationId: usersResend
       summary: Resend verification email
       description: "Resend verification email.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/users/resend.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/users/resend.ts)"
       requestBody:
         required: true
         content:
@@ -1354,7 +1354,7 @@ paths:
       summary: Forgot password
       description:
         "Send a password reset email. A limit of two resets per day is enforced.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/users/forgot.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/users/forgot.ts)"
       requestBody:
         required: true
         content:
@@ -1391,7 +1391,7 @@ paths:
       operationId: usersReset
       summary: Reset password
       description: "Reset password. A jwt token is returned.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/users/reset.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/users/reset.ts)"
       requestBody:
         required: true
         content:
@@ -1434,7 +1434,7 @@ paths:
       summary: Search threads
       description:
         "Search threads. Authenticate to include [hidden](https://docs.metahkg.org/docs/customize/categories/hide) threads.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/threads/search.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/threads/search.ts)"
       parameters:
         - name: q
           description: "Search query"
@@ -1493,7 +1493,7 @@ paths:
       description:
         "Get threads by ids. Authenticate to get [hidden](https://docs.metahkg.org/docs/customize/categories/hide) threads.
         Otherwise they would not be included in the response even if you specified the ids.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.3-dev/src/routes/menu/threads.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.2.4-dev/src/routes/menu/threads.ts)"
       parameters:
         - in: query
           name: id

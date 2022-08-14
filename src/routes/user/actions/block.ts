@@ -57,7 +57,7 @@ export default (
                         },
                         {
                             $push: {
-                                blocked: { id: userId, date: Date.now(), reason },
+                                blocked: { id: userId, date: new Date(), reason },
                             },
                         }
                     )
