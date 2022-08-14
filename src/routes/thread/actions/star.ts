@@ -13,7 +13,7 @@ export default function (
         id: Type.RegEx(regex.integer),
     });
 
-    fastify.get(
+    fastify.post(
         "/:id/star",
         { schema: { params: paramsSchema } },
         async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
