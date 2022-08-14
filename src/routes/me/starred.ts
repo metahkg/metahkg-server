@@ -11,10 +11,9 @@ export default function (
         const user = verifyUser(req.headers.authorization);
         if (!user) return res.status(401).send({ error: "Unauthorized" });
 
-        const starred = (await usersCl.findOne(
-            { id: user.id },
-            { projection: { starred: 1, _id: 0 } }
-        ))?.starred;
+        const starred = (
+            await usersCl.findOne({ id: user.id }, { projection: { starred: 1, _id: 0 } })
+        )?.starred;
 
         return res.send(starred || []);
     });
