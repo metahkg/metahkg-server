@@ -26,7 +26,7 @@ export default (
                 !(
                     await usersCl.updateOne(
                         { id: user.id, blocked: { $elemMatch: { id: userId } } },
-                        { $pull: { blocked: { $elemMatch: { id: userId } } } }
+                        { $pull: { blocked: { id: userId } } }
                     )
                 ).matchedCount
             )

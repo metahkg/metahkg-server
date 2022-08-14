@@ -29,7 +29,7 @@ export default function (
                 !(
                     await usersCl.updateOne(
                         { id: user.id, starred: { $elemMatch: { id: threadId } } },
-                        { $pull: { starred: { $elemMatch: { id: threadId } } } }
+                        { $pull: { starred: { id: threadId } } }
                     )
                 ).matchedCount
             )
