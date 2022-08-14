@@ -18,17 +18,17 @@ async function migrate() {
         (
             await usersCl.find().toArray()
         ).map(async (data) => {
-            if (data.blocked) {
+            if (data.blocked && data.blocked.every((i: number) => typeof i === "number")) {
                 await usersCl.updateOne(
                     {
                         _id: data._id,
                     },
                     {
                         $set: {
-                            blocked: data.blocked.map((i: any) => ({
+                            blocked: data.blocked.map((i: number) => ({
                                 date: Date.now(),
                                 reason: "",
-                                ...i,
+                                id: i,
                             })),
                         },
                     }
