@@ -5,6 +5,8 @@
 - move block and unblock to /user/{id}/block and /user/{id}/unblock
 - add date and reason to block
 - add star and unstar threads
+- add starred
+- rootless docker
 
 ## v4.0.0
 

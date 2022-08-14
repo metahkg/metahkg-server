@@ -2,8 +2,7 @@ openapi: 3.0.0
 info:
   version: "4.1.0-dev"
   title: Metahkg Api
-  description:
-    "# Introduction
+  description: "# Introduction
 
     The Metahkg Api is a REST api written in fastify/typescript, with MongoDB as the database.
     <br>
@@ -286,6 +285,74 @@ paths:
                 $ref: "#/components/schemas/Error"
         "429":
           $ref: "#/components/responses/RecaptchaInvalidOrTooManyRequests"
+        "502":
+          $ref: "#/components/responses/BadGateway"
+  /thread/{id}/star:
+    post:
+      tags:
+        - thread
+        - me
+      security:
+        - bearerAuth: []
+      operationId: threadStar
+      summary: Star thread
+      description: "Star a thread. Authentication is required.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.1.0-dev/src/routes/thread/star.ts)"
+      parameters:
+        - $ref: "#/components/parameters/ThreadId"
+      responses:
+        "200":
+          $ref: "#/components/responses/OK"
+        "400":
+          $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/ThreadNotFound"
+        "409":
+          description: Thread already starred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "502":
+          $ref: "#/components/responses/BadGateway"
+  /thread/{id}/unstar:
+    post:
+      tags:
+        - thread
+        - me
+      security:
+        - bearerAuth: []
+      operationId: threadUnstar
+      summary: Unstar thread
+      description: "Unstar a thread. Authentication is required.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.1.0-dev/src/routes/thread/unstar.ts)"
+      parameters:
+        - $ref: "#/components/parameters/ThreadId"
+      responses:
+        "200":
+          $ref: "#/components/responses/OK"
+        "400":
+          $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/ThreadNotFound"
+        "409":
+          description: Thread not starred
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
         "502":
           $ref: "#/components/responses/BadGateway"
   /thread/{id}/comment/{cid}:
@@ -634,6 +701,31 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/BlockedUser"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "502":
+          $ref: "#/components/responses/BadGateway"
+  /me/starred:
+    get:
+      tags:
+        - me
+      operationId: meStarred
+      security:
+        - bearerAuth: []
+      summary: Get starred threads
+      description: "Get starred threads. Authentication is required.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.1.0-dev/src/routes/me/starred.ts)"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Star"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "429":
@@ -1944,6 +2036,19 @@ components:
           $ref: "#/components/schemas/Thread/properties/lastModified"
         slink:
           $ref: "#/components/schemas/Thread/properties/slink"
+    Star:
+      type: object
+      description: star thread record
+      required:
+        - id
+        - date
+      properties:
+        id:
+          $ref: "#/components/schemas/Thread/properties/id"
+        date:
+          type: string
+          format: date-time
+          description: date when star was created
     rtoken:
       type: string
       description: Recaptcha token. See [https://developers.google.com/recaptcha/docs/verify](https://developers.google.com/recaptcha/docs/verify).
