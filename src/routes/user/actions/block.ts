@@ -1,29 +1,45 @@
 import { Static, Type } from "@sinclair/typebox";
-import verifyUser from "../../lib/auth/verify";
-import { usersCl } from "../../common";
+import verifyUser from "../../../lib/auth/verify";
+import { usersCl } from "../../../common";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
+import regex from "../../../lib/regex";
 
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
-    const schema = Type.Object({
-        id: Type.Integer({ minimum: 1 }),
+    const paramsSchema = Type.Object({
+        id: Type.RegEx(regex.integer),
     });
 
+    const schema = Type.Object(
+        {
+            reason: Type.String({ minLength: 0, maxLength: 50 }),
+        },
+        { additionalProperties: false }
+    );
+
     fastify.post(
-        "/block",
+        "/:id/block",
         {
             schema: {
+                params: paramsSchema,
                 body: schema,
             },
         },
-        async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
+        async (
+            req: FastifyRequest<{
+                Params: Static<typeof paramsSchema>;
+                Body: Static<typeof schema>;
+            }>,
+            res
+        ) => {
             const user = verifyUser(req.headers.authorization);
             if (!user) return res.code(401).send({ error: "Unauthorized." });
 
-            const { id: userId } = req.body;
+            const userId = Number(req.params.id);
+            const { reason } = req.body;
 
             if (!(await usersCl.findOne({ id: userId })))
                 return res.code(404).send({ error: "User not found." });
@@ -35,11 +51,15 @@ export default (
                             id: user.id,
                             blocked: {
                                 $not: {
-                                    $eq: userId,
+                                    $elemMatch: { id: userId },
                                 },
                             },
                         },
-                        { $push: { blocked: userId } }
+                        {
+                            $push: {
+                                blocked: { id: userId, date: new Date(), reason },
+                            },
+                        }
                     )
                 ).matchedCount
             )

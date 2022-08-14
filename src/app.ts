@@ -7,6 +7,7 @@ import multipart from "@fastify/multipart";
 import fastifyRateLimit from "@fastify/rate-limit";
 import fastifyCors from "@fastify/cors";
 import { ajv } from "./lib/ajv";
+import sitemap from "./sitemap";
 
 dotenv.config();
 
@@ -53,6 +54,7 @@ export default function MetahkgServer() {
     fastify.register(updateToken);
     fastify.register(refreshToken);
 
+    fastify.register(sitemap);
     fastify.register(routes, { prefix: "/api" });
 
     return fastify;

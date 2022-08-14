@@ -16,7 +16,8 @@ RUN if [ "${env}" = "dev" ]; then mkdir -p dist; else yarn build; fi;
 
 FROM node:18-alpine
 
-WORKDIR /usr/src/app
+RUN adduser user -D
+WORKDIR /home/user
 
 COPY ./package.json ./yarn.lock ./tsconfig.json ./tsconfig.build.json ./start.js ./
 
@@ -24,4 +25,6 @@ COPY ./static ./static
 COPY --from=build /usr/src/app/dist ./dist
 COPY --from=build /usr/src/app/node_modules ./node_modules
 
-CMD touch .env && if [ "${env}" = "dev" ]; then yarn dev; else yarn start; fi;
+RUN touch .env && mkdir images && chown user:user -R images .env
+
+CMD chown user:user -R images && su user -c 'if [ "${env}" = "dev" ]; then yarn dev; else yarn start; fi;'
