@@ -10,6 +10,9 @@
     "forum",
     "lihkg"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "@fastify/cors": "^8.1.0",
     "@fastify/multipart": "^7.1.0",
