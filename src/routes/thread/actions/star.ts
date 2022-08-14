@@ -36,7 +36,14 @@ export default function (
                                 },
                             },
                         },
-                        { $push: { starred: { id: threadId, date: Date.now() } } }
+                        {
+                            $push: {
+                                starred: {
+                                    $each: [{ id: threadId, date: Date.now() }],
+                                    $position: 0,
+                                },
+                            },
+                        }
                     )
                 ).matchedCount
             )
