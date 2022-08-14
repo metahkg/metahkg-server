@@ -1695,7 +1695,9 @@ components:
         - token
       properties:
         token:
+          description: jwt token
           type: string
+          example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWQwZjMwZjEtZjQwMC
     Error:
       type: object
       required:
