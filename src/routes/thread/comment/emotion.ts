@@ -15,7 +15,11 @@ export default function (
         cid: Type.RegEx(regex.integer),
     });
 
-    const schema = Type.Object({ emotion: Type.RegEx(/^\p{Emoji}$/u) });
+    const schema = Type.Object({
+        emotion: Type.RegEx(
+            /^\p{Emoji}|\p{Emoji_Presentation}|\p{Extended_Pictographic}$/u
+        ),
+    });
 
     fastify.post(
         "/:cid/emotion",
@@ -59,27 +63,29 @@ export default function (
             const index = thread?.index;
             if (index === -1) return res.code(404).send({ error: "Comment not found." });
 
-            if (
-                !(
-                    await threadCl.updateOne(
-                        {
-                            id,
-                            [`conversation.${index}.emotions`]: {
-                                $not: { $elemMatch: { user: user.id } },
-                            },
+            // remove previous value first
+            await threadCl.updateOne(
+                { id },
+                {
+                    $pull: {
+                        [`conversation.${index}.emotions`]: {
+                            user: user.id,
                         },
-                        {
-                            $push: {
-                                [`conversation.${index}.emotions`]: {
-                                    user: user.id,
-                                    emotion,
-                                },
-                            },
-                        }
-                    )
-                ).matchedCount
-            )
-                return res.code(409).send({ error: "Emotion already exists." });
+                    },
+                }
+            );
+
+            await threadCl.updateOne(
+                { id },
+                {
+                    $push: {
+                        [`conversation.${index}.emotions`]: {
+                            user: user.id,
+                            emotion,
+                        },
+                    },
+                }
+            );
 
             return res.send({ success: true });
         }
