@@ -1,5 +1,4 @@
 import { Static, Type } from "@sinclair/typebox";
-import emojiRegex from "emoji-regex";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { threadCl } from "../../../common";
 import verifyUser from "../../../lib/auth/verify";
@@ -16,7 +15,7 @@ export default function (
         cid: Type.RegEx(regex.integer),
     });
 
-    const schema = Type.Object({ emotion: Type.RegEx(emojiRegex()) });
+    const schema = Type.Object({ emotion: Type.RegEx(/^\p{Emoji}$/u) });
 
     fastify.post(
         "/:cid/emotion",
@@ -48,7 +47,9 @@ export default function (
                         {
                             $project: {
                                 _id: 0,
-                                index: { $indexOfArray: ["$conversation", { id: cid }] },
+                                index: {
+                                    $indexOfArray: ["$conversation.id", cid],
+                                },
                             },
                         },
                     ])
@@ -56,8 +57,7 @@ export default function (
             )[0] as Thread & { index: number };
 
             const index = thread?.index;
-
-            if (!index) return res.code(404).send({ error: "Comment not found." });
+            if (index === -1) return res.code(404).send({ error: "Comment not found." });
 
             if (
                 !(
@@ -81,7 +81,7 @@ export default function (
             )
                 return res.code(409).send({ error: "Emotion already exists." });
 
-            res.send({ success: true });
+            return res.send({ success: true });
         }
     );
 
@@ -111,7 +111,9 @@ export default function (
                         {
                             $project: {
                                 _id: 0,
-                                index: { $indexOfArray: ["$conversation", { id: cid }] },
+                                index: {
+                                    $indexOfArray: ["$conversation.id", cid],
+                                },
                             },
                         },
                     ])
@@ -120,7 +122,7 @@ export default function (
 
             const index = thread?.index;
 
-            if (!index) return res.code(404).send({ error: "Comment not found." });
+            if (index === -1) return res.code(404).send({ error: "Comment not found." });
 
             if (
                 !(
@@ -141,7 +143,7 @@ export default function (
             )
                 return res.code(409).send({ error: "Emotion doesn't exist." });
 
-            res.send({ success: true });
+            return res.send({ success: true });
         }
     );
     done();
