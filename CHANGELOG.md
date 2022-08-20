@@ -1,5 +1,9 @@
 # Changelog
 
+## v4.3.0
+
+- allow any emoji for emotions
+
 ## v4.2.0
 
 - move get thread votes to /me/votes/thread/{id}

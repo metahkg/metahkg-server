@@ -1,9 +1,10 @@
 import { Static, Type } from "@sinclair/typebox";
+import emojiRegex from "emoji-regex";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { threadCl } from "../../../common";
 import verifyUser from "../../../lib/auth/verify";
 import regex from "../../../lib/regex";
-import Thread, { EmotionSchema } from "../../../models/thread";
+import Thread from "../../../models/thread";
 
 export default function (
     fastify: FastifyInstance,
@@ -15,7 +16,7 @@ export default function (
         cid: Type.RegEx(regex.integer),
     });
 
-    const schema = Type.Object({ emotion: EmotionSchema });
+    const schema = Type.Object({ emotion: Type.RegEx(emojiRegex()) });
 
     fastify.post(
         "/:cid/emotion",
@@ -47,7 +48,6 @@ export default function (
                         {
                             $project: {
                                 _id: 0,
-                                conversation: { $elemMatch: { id: cid } },
                                 index: { $indexOfArray: ["$conversation", { id: cid }] },
                             },
                         },
@@ -56,21 +56,92 @@ export default function (
             )[0] as Thread & { index: number };
 
             const index = thread?.index;
-            const comment = thread?.conversation?.[0];
 
-            if (!comment || !index)
-                return res.code(404).send({ error: "Comment not found." });
+            if (!index) return res.code(404).send({ error: "Comment not found." });
 
-            await threadCl.updateOne(
-                { id },
-                {
-                    $push: {
-                        [`conversation.${index}.emotions`]: { user: user.id, emotion },
-                    },
-                }
-            );
+            if (
+                !(
+                    await threadCl.updateOne(
+                        {
+                            id,
+                            [`conversation.${index}.emotions`]: {
+                                $not: { $elemMatch: { user: user.id } },
+                            },
+                        },
+                        {
+                            $push: {
+                                [`conversation.${index}.emotions`]: {
+                                    user: user.id,
+                                    emotion,
+                                },
+                            },
+                        }
+                    )
+                ).matchedCount
+            )
+                return res.code(409).send({ error: "Emotion already exists." });
 
-            return res.send({ success: true });
+            res.send({ success: true });
+        }
+    );
+
+    fastify.delete(
+        "/:cid/emotion",
+        {
+            schema: {
+                params: paramsSchema,
+            },
+        },
+        async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
+            const id = Number(req.params.id);
+            const cid = Number(req.params.cid);
+            const user = verifyUser(req.headers.authorization);
+
+            if (!user) return res.code(401).send({ error: "Unauthorized." });
+
+            const thread = (
+                await threadCl
+                    .aggregate([
+                        {
+                            $match: {
+                                id,
+                                conversation: { $elemMatch: { id: cid } },
+                            },
+                        },
+                        {
+                            $project: {
+                                _id: 0,
+                                index: { $indexOfArray: ["$conversation", { id: cid }] },
+                            },
+                        },
+                    ])
+                    .toArray()
+            )?.[0] as Thread & { index: number };
+
+            const index = thread?.index;
+
+            if (!index) return res.code(404).send({ error: "Comment not found." });
+
+            if (
+                !(
+                    await threadCl.updateOne(
+                        {
+                            id,
+                            [`conversation.${index}.emotions`]: {
+                                $elemMatch: { user: user.id },
+                            },
+                        },
+                        {
+                            $pull: {
+                                [`conversation.${index}.emotions`]: { user: user.id },
+                            },
+                        }
+                    )
+                ).matchedCount
+            )
+                return res.code(409).send({ error: "Emotion doesn't exist." });
+
+            res.send({ success: true });
         }
     );
     done();

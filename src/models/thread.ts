@@ -1,23 +1,20 @@
-import { Static, Type } from "@sinclair/typebox";
 import { ObjectId } from "mongodb";
 import type { userSex, userRole } from "../types/user";
 
-export default class Thread {
-    constructor(
-        public id: number,
-        public title: string,
-        public op: threadOpType,
-        public category: number,
-        public c: number,
-        public conversation: commentType[],
-        public score: number,
-        public lastModified: Date,
-        public createdAt: Date,
-        public slink: string,
-        public images: { src: string; cid: number }[],
-        public pin?: commentType,
-        public _id?: ObjectId
-    ) {}
+export default interface Thread {
+    id: number;
+    title: string;
+    op: threadOpType;
+    category: number;
+    c: number;
+    conversation: commentType[];
+    score: number;
+    lastModified: Date;
+    createdAt: Date;
+    slink: string;
+    images: { src: string; cid: number }[];
+    pin?: commentType;
+    _id?: ObjectId;
 }
 
 export type publicUserType = {
@@ -26,14 +23,6 @@ export type publicUserType = {
     role: userRole;
     sex: userSex;
 };
-
-export const EmotionSchema = Type.Union(
-    ["sob", "joy", "smile", "sad", "sweatsmile", "heart", "grin", "good", "bad"].map(
-        (i) => Type.Literal(i)
-    )
-);
-
-export type Emotion = Static<typeof EmotionSchema>;
 
 export type commentType = {
     /** comment id */
@@ -59,7 +48,7 @@ export type commentType = {
     replies?: number[];
     /** quote **/
     quote?: commentType;
-    emotions?: { user: number; emotion: Emotion }[];
+    emotions?: { user: number; emotion: string /* must be emoji */ }[];
 };
 
 export type threadOpType = {
