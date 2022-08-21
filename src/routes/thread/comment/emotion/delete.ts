@@ -5,7 +5,11 @@ import verifyUser from "../../../../lib/auth/verify";
 import regex from "../../../../lib/regex";
 import Thread from "../../../../models/thread";
 
-export default function (fastify: FastifyInstance, _opts: FastifyPluginOptions, done: (err?: Error) => void) {
+export default function (
+    fastify: FastifyInstance,
+    _opts: FastifyPluginOptions,
+    done: (err?: Error) => void
+) {
     const paramsSchema = Type.Object({
         id: Type.RegEx(regex.integer),
         cid: Type.RegEx(regex.integer),
