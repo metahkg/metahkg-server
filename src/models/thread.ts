@@ -48,8 +48,10 @@ export type commentType = {
     replies?: number[];
     /** quote **/
     quote?: commentType;
-    emotions?: { user: number; emotion: string /* must be emoji */ }[];
+    emotions?: Emotion[];
 };
+
+export interface Emotion { user: number; emotion: string /* must be emoji */ }
 
 export type threadOpType = {
     id: number;

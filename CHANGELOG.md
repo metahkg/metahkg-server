@@ -1,5 +1,10 @@
 # Changelog
 
+## v4.4.0
+
+- emotion users
+- get emotions and votes directly (no longer need to refetch the whole comment)
+
 ## v4.3.0
 
 - allow any emoji for emotions

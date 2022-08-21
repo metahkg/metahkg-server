@@ -43,9 +43,6 @@ export default (
             if (!result)
                 return res.code(404).send({ error: "Thread or comment not found." });
 
-            if (result.conversation?.[0]?.removed)
-                return res.code(410).send({ error: "Comment removed." });
-
             res.send(result?.conversation?.[0]?.images);
         }
     );
