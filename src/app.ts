@@ -24,7 +24,7 @@ export default function MetahkgServer() {
         try {
             reply.code(statusCode).send({ statusCode, error: errormsg });
         } catch (err) {
-            reply.code(500).send({ statusCode, error: errormsg });
+            reply.code(502).send({ statusCode });
         }
     });
 

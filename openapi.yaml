@@ -1702,6 +1702,8 @@ components:
     Emotion:
       type: string
       description: a single emoji
+      minLength: 1
+      maxLength: 1
     OK:
       type: object
       required:
