@@ -35,7 +35,7 @@ export default (
                 body: schema,
                 params: paramsSchema,
             },
-            preHandler: [checkMuted]
+            preHandler: [checkMuted],
         },
         async (
             req: FastifyRequest<{

@@ -46,7 +46,8 @@ export default function (
 
             const index = thread?.index;
 
-            if (!index || index === -1) return res.code(404).send({ error: "Comment not found." });
+            if (!index || index === -1)
+                return res.code(404).send({ error: "Comment not found." });
 
             if (
                 !(

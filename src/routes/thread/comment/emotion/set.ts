@@ -53,7 +53,8 @@ export default function (
             )) as Thread & { index: number };
 
             const index = thread?.index;
-            if (!index || index === -1) return res.code(404).send({ error: "Comment not found." });
+            if (!index || index === -1)
+                return res.code(404).send({ error: "Comment not found." });
 
             // remove previous value first
             await threadCl.updateOne(
