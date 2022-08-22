@@ -431,6 +431,9 @@ paths:
       summary: Delete comment
       description: "Delete comment. Admin privilege required.
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.5.0-dev/src/routes/thread/comment/actions/delete.ts)"
+      parameters:
+        - $ref: "#/components/parameters/ThreadId"
+        - $ref: "#/components/parameters/CommentId"
       responses:
         "200":
           $ref: "#/components/responses/OK"
