@@ -37,29 +37,23 @@ export default function (
 
             const { emotion } = req.body;
 
-            const thread = (
-                await threadCl
-                    .aggregate([
-                        {
-                            $match: {
-                                id,
-                                conversation: { $elemMatch: { id: cid } },
-                            },
+            const thread = (await threadCl.findOne(
+                {
+                    id,
+                    conversation: { $elemMatch: { id: cid } },
+                },
+                {
+                    projection: {
+                        _id: 0,
+                        index: {
+                            $indexOfArray: ["$conversation.id", cid],
                         },
-                        {
-                            $project: {
-                                _id: 0,
-                                index: {
-                                    $indexOfArray: ["$conversation.id", cid],
-                                },
-                            },
-                        },
-                    ])
-                    .toArray()
-            )[0] as Thread & { index: number };
+                    },
+                }
+            )) as Thread & { index: number };
 
             const index = thread?.index;
-            if (index === -1) return res.code(404).send({ error: "Comment not found." });
+            if (!index || index === -1) return res.code(404).send({ error: "Comment not found." });
 
             // remove previous value first
             await threadCl.updateOne(

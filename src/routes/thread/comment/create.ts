@@ -10,6 +10,7 @@ import Thread, { commentType } from "../../../models/thread";
 import { htmlToText } from "html-to-text";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../lib/regex";
+import checkMuted from "../../../plugins/checkMuted";
 
 export default (
     fastify: FastifyInstance,
@@ -27,10 +28,6 @@ export default (
 
     const paramsSchema = Type.Object({ id: Type.RegEx(regex.integer) });
 
-    /** add a comment
-     * Syntax: POST /api/comment {id (thread id) : number, comment : string}
-     * client must have a cookie "key"
-     */
     fastify.post(
         "/create",
         {
@@ -38,6 +35,7 @@ export default (
                 body: schema,
                 params: paramsSchema,
             },
+            preHandler: [checkMuted]
         },
         async (
             req: FastifyRequest<{
@@ -92,7 +90,7 @@ export default (
                     ((quoteIndex !== -1 &&
                         Object.fromEntries(
                             Object.entries(thread.conversation[quoteIndex]).filter(
-                                (i) => !["replies", "U", "D"].includes(i[0])
+                                (i) => !["emotions", "replies", "U", "D"].includes(i[0])
                             )
                         )) as commentType) || undefined;
 

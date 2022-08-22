@@ -1,12 +1,3 @@
-//Create a topic
-/*Syntax: POST /api/create
-{
-  icomment (initial comment) : string,
-  rtoken (recaptcha token) : string,
-  title : string,
-  category : number
-}*/
-//only for human
 import {
     RecaptchaSecret,
     categoryCl,
@@ -23,6 +14,7 @@ import sanitize from "../../lib/sanitize";
 import Thread from "../../models/thread";
 import { htmlToText } from "html-to-text";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
+import checkMuted from "../../plugins/checkMuted";
 
 export default (
     fastify: FastifyInstance,
@@ -42,10 +34,13 @@ export default (
     fastify.post(
         "/create",
         {
-            preHandler: fastify.rateLimit({
-                max: 10,
-                timeWindow: 1000 * 60 * 60,
-            }),
+            preHandler: [
+                checkMuted,
+                fastify.rateLimit({
+                    max: 10,
+                    timeWindow: 1000 * 60 * 60,
+                }),
+            ],
             schema: { body: schema },
         },
         async (

@@ -5,7 +5,11 @@ import verifyUser from "../../../../lib/auth/verify";
 import regex from "../../../../lib/regex";
 import Thread from "../../../../models/thread";
 
-export default function (fastify: FastifyInstance, _opts: FastifyPluginOptions, done: (err?: Error) => void) {
+export default function (
+    fastify: FastifyInstance,
+    _opts: FastifyPluginOptions,
+    done: (err?: Error) => void
+) {
     const paramsSchema = Type.Object({
         id: Type.RegEx(regex.integer),
         cid: Type.RegEx(regex.integer),
@@ -25,30 +29,24 @@ export default function (fastify: FastifyInstance, _opts: FastifyPluginOptions, 
 
             if (!user) return res.code(401).send({ error: "Unauthorized." });
 
-            const thread = (
-                await threadCl
-                    .aggregate([
-                        {
-                            $match: {
-                                id,
-                                conversation: { $elemMatch: { id: cid } },
-                            },
+            const thread = (await threadCl.findOne(
+                {
+                    id,
+                    conversation: { $elemMatch: { id: cid } },
+                },
+                {
+                    projection: {
+                        _id: 0,
+                        index: {
+                            $indexOfArray: ["$conversation.id", cid],
                         },
-                        {
-                            $project: {
-                                _id: 0,
-                                index: {
-                                    $indexOfArray: ["$conversation.id", cid],
-                                },
-                            },
-                        },
-                    ])
-                    .toArray()
-            )?.[0] as Thread & { index: number };
+                    },
+                }
+            )) as Thread & { index: number };
 
             const index = thread?.index;
 
-            if (index === -1) return res.code(404).send({ error: "Comment not found." });
+            if (!index || index === -1) return res.code(404).send({ error: "Comment not found." });
 
             if (
                 !(

@@ -8,6 +8,7 @@ import images from "./images";
 import emotion from "./emotion";
 import emotions from "./emotions";
 import votes from "./votes";
+import deleteComment from "./actions/delete";
 import checkRemoved from "../../../plugins/checkComment";
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
 
@@ -26,6 +27,7 @@ export default function (
     fastify.register(images);
     fastify.register(emotions);
     fastify.register(votes);
+    fastify.register(deleteComment);
     fastify.register(emotion, { prefix: "/:cid/emotion" });
     done();
 }

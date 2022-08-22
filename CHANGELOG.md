@@ -1,8 +1,12 @@
 # Changelog
 
+## v4.5.0
+
+- admin api
+
 ## v4.4.0
 
-- emotion users
+- get emotion users
 - get emotions and votes directly (no longer need to refetch the whole comment)
 
 ## v4.3.0

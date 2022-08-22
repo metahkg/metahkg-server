@@ -15,7 +15,7 @@ export default (
         { additionalProperties: false }
     );
 
-    fastify.put(
+    fastify.post(
         "/rename",
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             if (!ajv.validate(schema, req.body) || !Object.keys(req.body).length)

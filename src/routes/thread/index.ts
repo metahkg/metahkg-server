@@ -5,9 +5,10 @@ import thread from "./thread";
 import create from "./create";
 import comment from "./comment";
 import category from "./category";
-import checkHidden from "../../plugins/checkHidden";
+import deleteThread from "./actions/delete";
 import star from "./actions/star";
 import unstar from "./actions/unstar";
+import checkHidden from "../../plugins/checkHidden";
 
 export default (
     fastify: FastifyInstance,
@@ -22,6 +23,7 @@ export default (
     fastify.register(category);
     fastify.register(star);
     fastify.register(unstar);
+    fastify.register(deleteThread);
     fastify.register(comment, { prefix: "/:id/comment" });
     done();
 };

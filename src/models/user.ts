@@ -17,4 +17,5 @@ export default interface User {
     sex: userSex;
     role: userRole;
     blocked?: BlockedUser[];
+    muted?: boolean;
 }

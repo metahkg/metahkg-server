@@ -1,10 +1,9 @@
 import { ObjectId } from "mongodb";
 
-export default class Category {
-    constructor(
-        public id: number,
-        public name: string,
-        public hidden?: boolean,
-        public _id?: ObjectId
-    ) {}
+export default interface Category {
+    id: number;
+    name: string;
+    hidden?: boolean;
+    tags?: string[];
+    _id?: ObjectId;
 }
