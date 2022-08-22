@@ -34,7 +34,8 @@ export default function (
                 )) as Thread & { index: number }
             )?.index;
 
-            if (!index || index === -1)
+            // index can be 0
+            if (index === undefined || index === -1)
                 return res.code(404).send({ error: "Thread or comment not found." });
 
             await threadCl.updateOne(
