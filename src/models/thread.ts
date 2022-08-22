@@ -51,7 +51,10 @@ export type commentType = {
     emotions?: Emotion[];
 };
 
-export interface Emotion { user: number; emotion: string /* must be emoji */ }
+export interface Emotion {
+    user: number;
+    emotion: string /* must be emoji */;
+}
 
 export type threadOpType = {
     id: number;
