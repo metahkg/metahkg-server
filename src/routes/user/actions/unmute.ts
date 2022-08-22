@@ -24,8 +24,7 @@ export default function (
 
             if (!reqUser) return res.status(404).send({ error: "User not found." });
 
-            if (!reqUser.muted)
-                return res.code(409).send({ error: "User not muted." });
+            if (!reqUser.muted) return res.code(409).send({ error: "User not muted." });
 
             await usersCl.updateOne({ id }, { $unset: { muted: 1 } });
 
