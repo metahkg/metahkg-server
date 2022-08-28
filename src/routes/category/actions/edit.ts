@@ -22,7 +22,7 @@ export default function (
         { additionalProperties: false, minProperties: 1 }
     );
 
-    fastify.put(
+    fastify.patch(
         "/:id",
         { schema: { params: paramsSchema, body: schema }, preHandler: [requireAdmin] },
         async (

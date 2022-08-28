@@ -1,5 +1,11 @@
 # Changelog
 
+## v4.7.0
+
+- move some put requests to patch requests to more comply with standards
+- deprecate `POST /me/rename` in favor of `PATCH /user/{id}`
+- pin / unpin should be post not put
+
 ## v4.6.0
 
 - schedule tasks with agenda

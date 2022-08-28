@@ -15,7 +15,7 @@ export default (
         cid: Type.RegEx(regex.integer),
     });
 
-    fastify.put(
+    fastify.post(
         "/:cid/unpin",
         { schema: { params: paramsSchema } },
         async (

@@ -26,7 +26,7 @@ export default function (
         { minProperties: 2, additionalProperties: false }
     );
 
-    fastify.put(
+    fastify.patch(
         "/:cid",
         { schema: { params: paramsSchema }, preHandler: [requireAdmin, checkComment] },
         async (

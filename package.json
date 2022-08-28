@@ -1,6 +1,6 @@
 {
   "name": "@metahkg/server",
-  "version": "4.6.2",
+  "version": "4.7.0",
   "main": "dist/app.js",
   "author": "wcyat",
   "homepage": "https://metahkg.org",

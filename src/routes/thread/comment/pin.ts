@@ -15,7 +15,7 @@ export default function (
         cid: Type.RegEx(regex.integer),
     });
 
-    fastify.put(
+    fastify.post(
         "/:cid/pin",
         {
             schema: {

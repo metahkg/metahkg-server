@@ -24,7 +24,7 @@ export default function (
         { additionalProperties: false, minProperties: 2 }
     );
 
-    fastify.put(
+    fastify.patch(
         "/:id",
         {
             schema: { params: paramsSchema, body: schema },

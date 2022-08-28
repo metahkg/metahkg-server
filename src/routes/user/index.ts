@@ -7,6 +7,7 @@ import block from "./actions/block";
 import unblock from "./actions/unblock";
 import mute from "./actions/mute";
 import unmute from "./actions/unmute";
+import edit from "./actions/edit";
 
 export default function (
     fastify: FastifyInstance,
@@ -21,5 +22,6 @@ export default function (
     fastify.register(unblock);
     fastify.register(mute);
     fastify.register(unmute);
+    fastify.register(edit)
     done();
 }
