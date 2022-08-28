@@ -18,13 +18,20 @@ export default function MetahkgServer() {
     });
 
     fastify.setValidatorCompiler((opt) => ajv.compile(opt.schema));
+
     fastify.setErrorHandler((error, _request, reply) => {
         console.error(error);
         const { statusCode, message: errormsg } = error;
+
+        if (error.validation) {
+            reply.status(400).send({ error: "Bad request." });
+        }
+
         if (statusCode && statusCode < 500 && statusCode >= 400)
             try {
                 reply.code(statusCode).send({ error: errormsg });
             } catch {}
+
         reply.code(500).send({ error: "Internal Server Error." });
     });
 
