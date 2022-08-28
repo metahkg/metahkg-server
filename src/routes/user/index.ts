@@ -22,6 +22,6 @@ export default function (
     fastify.register(unblock);
     fastify.register(mute);
     fastify.register(unmute);
-    fastify.register(edit)
+    fastify.register(edit);
     done();
 }
