@@ -14,8 +14,8 @@ async function migrate() {
     const db = client.db("metahkg");
     const threadCl = db.collection("thread");
 
-    await threadCl.updateMany({}, [{ $set: { count: "$c" } }]);
-    await threadCl.updateMany({}, { $unset: { c: 1 } });
+    await threadCl.updateMany({ c: { $exists: true } }, [{ $set: { count: "$c" } }]);
+    await threadCl.updateMany({ count: { $exists: true } }, { $unset: { c: 1 } });
 }
 
 migrate().then(() => {
