@@ -3,7 +3,7 @@ import { threadCl } from "../common";
 import Thread from "../models/thread";
 
 export default async function (
-    req: FastifyRequest<{ Params: { id: string; } }>,
+    req: FastifyRequest<{ Params: { id: string } }>,
     res: FastifyReply
 ) {
     const id = Number(req.params.id);
