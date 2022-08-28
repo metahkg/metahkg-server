@@ -57,6 +57,7 @@ export default function (
                         "admin.edits": {
                             admin: user,
                             reason,
+                            date: new Date(),
                         },
                     },
                 }

@@ -68,6 +68,7 @@ export default function (
                         [`conversation.${index}.admin.edits`]: {
                             admin: user,
                             reason,
+                            date: new Date()
                         },
                     },
                 }
