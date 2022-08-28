@@ -92,7 +92,7 @@ export default (
                 "1 day",
                 "updateVerificationCode",
                 { email },
-                { startDate: new Date(new Date().getTime() + 86400) }
+                { startDate: new Date(new Date().getTime() + 86400 * 1000) }
             );
 
             res.send({ success: true });
