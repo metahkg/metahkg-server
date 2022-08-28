@@ -36,14 +36,14 @@ export default (
                 }
             )) as Thread;
 
-            if ("removed" in thread) return;
-
-            const targetComment = thread?.conversation?.[0];
-
-            if (!targetComment)
+            if (!thread)
                 return res.code(404).send({ error: "Thread or comment not found." });
 
-            if ("removed" in targetComment) return;
+            if ("removed" in thread) return;
+
+            const comment = thread?.conversation?.[0];
+
+            if ("removed" in comment) return;
 
             const replies = (
                 await threadCl.findOne(
@@ -59,7 +59,7 @@ export default (
                                             {
                                                 $in: [
                                                     "$$this.id",
-                                                    targetComment?.replies || [],
+                                                    comment?.replies || [],
                                                 ],
                                             },
                                             { $not: { $eq: ["$$this.removed", true] } },

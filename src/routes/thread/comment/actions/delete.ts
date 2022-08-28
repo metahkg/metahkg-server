@@ -46,13 +46,13 @@ export default function (
                 }
             )) as Thread & { index: number };
 
-            if ("removed" in thread) return;
-
             const index = thread?.index;
 
             // index can be 0
             if (index === undefined || index === -1)
                 return res.code(404).send({ error: "Thread or comment not found." });
+
+            if ("removed" in thread) return;
 
             await removedCl.insertOne({
                 comment: thread.conversation[0],
