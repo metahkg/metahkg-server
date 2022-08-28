@@ -15,7 +15,7 @@ export default (
     });
 
     fastify.delete(
-        "/pin",
+        "/:id/pin",
         { schema: { params: paramsSchema } },
         async (
             req: FastifyRequest<{

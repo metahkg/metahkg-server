@@ -19,7 +19,7 @@ export default function (
     });
 
     fastify.put(
-        "/pin",
+        "/:id/pin",
         {
             schema: {
                 params: paramsSchema,
