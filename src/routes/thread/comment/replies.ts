@@ -1,27 +1,24 @@
-import { Type } from "@sinclair/typebox";
+import { Static, Type } from "@sinclair/typebox";
 import { threadCl } from "../../../common";
-import { ajv } from "../../../lib/ajv";
 import Thread from "../../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
+import regex from "../../../lib/regex";
 
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
+    const paramsSchema = Type.Object({
+        id: Type.RegEx(regex.integer),
+        cid: Type.RegEx(regex.integer),
+    });
     fastify.get(
         "/:cid/replies",
-        async (req: FastifyRequest<{ Params: { id: string; cid: string } }>, res) => {
+        { schema: { params: paramsSchema } },
+        async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
             const id = Number(req.params.id);
             const cid = Number(req.params.cid);
-
-            const schema = Type.Object({
-                id: Type.Integer({ minimum: 1 }),
-                cid: Type.Integer({ minimum: 1 }),
-            });
-
-            if (!ajv.validate(schema, { id, cid }))
-                return res.code(400).send({ error: "Bad request." });
 
             const thread = (await threadCl.findOne(
                 {

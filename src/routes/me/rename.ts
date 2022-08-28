@@ -1,5 +1,4 @@
 import { Static, Type } from "@sinclair/typebox";
-import { ajv } from "../../lib/ajv";
 import { usersCl } from "../../common";
 import verifyUser from "../../lib/auth/verify";
 import { createToken } from "../../lib/auth/createtoken";
@@ -17,10 +16,8 @@ export default (
 
     fastify.post(
         "/rename",
+        {schema: {body: schema}},
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            if (!ajv.validate(schema, req.body) || !Object.keys(req.body).length)
-                return res.code(400).send({ error: "Bad request." });
-
             const user = verifyUser(req.headers.authorization);
             if (!user) return res.code(401).send({ error: "Unauthorized." });
 

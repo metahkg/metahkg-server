@@ -2,7 +2,6 @@ import dotenv from "dotenv";
 import { usersCl, verificationCl } from "../../common";
 import bcrypt from "bcrypt";
 import { Static, Type } from "@sinclair/typebox";
-import { ajv } from "../../lib/ajv";
 import { createToken } from "../../lib/auth/createtoken";
 import User from "../../models/user";
 import hash from "hash.js";
@@ -35,11 +34,9 @@ export default (
                 ban: 5,
                 timeWindow: 1000 * 60 * 5,
             }),
+            schema: { body: schema },
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            if (!ajv.validate(schema, req.body))
-                return res.code(400).send({ error: "Bad request." });
-
             const { name, pwd } = req.body;
 
             const user = (await usersCl.findOne({
