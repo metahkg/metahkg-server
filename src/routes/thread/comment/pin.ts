@@ -53,12 +53,14 @@ export default function (
 
             if (!thread) return res.code(404).send({ error: "Thread not found." });
 
+            if ("removed" in thread) return;
+
             if (thread?.op?.id !== user.id)
                 return res.code(403).send({ error: "Forbidden." });
 
             const comment = Object.fromEntries(
                 Object.entries(thread.conversation?.[0]).filter(
-                    (i) => !["replies", "U", "D"].includes(i[0])
+                    (i) => !["replies", "U", "D", "admin"].includes(i[0])
                 )
             ) as commentType;
 

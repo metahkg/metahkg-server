@@ -1,6 +1,6 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { categoryCl } from "../../../common";
+import { categoryCl, removedCl } from "../../../common";
 import regex from "../../../lib/regex";
 import requireAdmin from "../../../plugins/requireAdmin";
 
@@ -33,8 +33,13 @@ export default function (
         ) => {
             const id = Number(req.params.id);
 
-            if (!(await categoryCl.deleteOne({ id })).deletedCount)
-                return res.code(404).send({ error: "Category not found." });
+            const category = await categoryCl.findOne({ id }, { projection: { _id: 0 } });
+
+            if (!category) return res.code(404).send({ error: "Category not found." });
+
+            await removedCl.insertOne({ type: "category", category });
+
+            await categoryCl.deleteOne({ id });
 
             return res.send({ success: true });
         }

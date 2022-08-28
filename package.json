@@ -1,6 +1,6 @@
 {
   "name": "@metahkg/server",
-  "version": "4.5.0",
+  "version": "4.6.0",
   "main": "dist/app.js",
   "author": "wcyat",
   "homepage": "https://metahkg.org",
@@ -27,6 +27,7 @@
     "@types/sanitize-html": "^2.6.2",
     "@types/sharp": "^0.30.5",
     "@types/valid-url": "^1.0.3",
+    "agenda": "^4.3.0",
     "ajv": "^8.11.0",
     "ajv-formats": "^2.1.1",
     "axios": "^0.27.2",

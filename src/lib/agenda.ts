@@ -1,0 +1,29 @@
+import { Agenda, Job } from "agenda";
+import { randomBytes } from "crypto";
+import { client, usersCl, verificationCl } from "../common";
+
+export const agenda = new Agenda({ mongo: client.db("agenda") });
+
+agenda.define("updateVerificationCode", async (job: Job) => {
+    const { email } = job.attrs.data;
+
+    await verificationCl.updateOne(
+        { email },
+        {
+            $set: { code: randomBytes(15).toString("hex") },
+            $currentDate: { lastModified: true },
+        }
+    );
+});
+
+agenda.define("unmuteUser", async (job: Job) => {
+    const { userId } = job.attrs.data;
+
+    await usersCl.updateOne({ id: userId }, { $unset: { mute: 1 } });
+});
+
+agenda.define("unbanUser", async (job: Job) => {
+    const { userId } = job.attrs.data;
+
+    await usersCl.updateOne({ id: userId }, { $unset: { ban: 1 } });
+});

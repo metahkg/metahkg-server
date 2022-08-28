@@ -1,14 +1,3 @@
-//register for an account
-//humans only
-/*Syntax: POST /api/register
-{
-  user (username): string,
-  pwd (password, sha256 hashed): string,
-  email: string,
-  rtoken (recaptcha token): string,
-  sex: string
-}
-*/
 import { RecaptchaSecret, usersCl, verificationCl, inviteCl } from "../../common";
 import { mg, mgDomain, verifyMsg } from "../../lib/mailgun";
 import EmailValidator from "email-validator";
@@ -20,6 +9,7 @@ import { ajv } from "../../lib/ajv";
 import hash from "hash.js";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import dotenv from "dotenv";
+import { agenda } from "../../lib/agenda";
 
 dotenv.config();
 
@@ -97,6 +87,13 @@ export default (
                 sex,
                 type: "register",
             });
+
+            await agenda.every(
+                "1 day",
+                "updateVerificationCode",
+                { email },
+                { startDate: new Date(new Date().getTime() + 86400) }
+            );
 
             res.send({ success: true });
         }

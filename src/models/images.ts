@@ -7,6 +7,8 @@ export type imageType = {
     cid: number;
 };
 
-export default class Images {
-    constructor(public id: number, public images: imageType[], public _id?: ObjectId) {}
+export default interface Images {
+    id: number;
+    images: imageType[];
+    _id?: ObjectId;
 }

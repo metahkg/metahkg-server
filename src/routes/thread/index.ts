@@ -1,5 +1,4 @@
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import checkExist from "./checkExist";
 import images from "./images";
 import thread from "./thread";
 import create from "./create";
@@ -9,21 +8,24 @@ import deleteThread from "./actions/delete";
 import star from "./actions/star";
 import unstar from "./actions/unstar";
 import checkHidden from "../../plugins/checkHidden";
+import edit from "./actions/edit";
+import checkThread from "../../plugins/checkThread";
 
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
+    fastify.register(comment, { prefix: "/:id/comment" });
     fastify.addHook("preHandler", checkHidden);
+    fastify.addHook("preHandler", checkThread);
     fastify.register(thread);
-    fastify.register(checkExist);
     fastify.register(images);
     fastify.register(create);
     fastify.register(category);
     fastify.register(star);
     fastify.register(unstar);
     fastify.register(deleteThread);
-    fastify.register(comment, { prefix: "/:id/comment" });
+    fastify.register(edit);
     done();
 };

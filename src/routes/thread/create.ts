@@ -25,8 +25,8 @@ export default (
         {
             comment: Type.String(),
             rtoken: Type.String(),
-            title: Type.String(),
-            category: Type.Integer(),
+            title: Type.String({ maxLength: 100 }),
+            category: Type.Integer({ minimum: 1 }),
         },
         { additionalProperties: false }
     );
@@ -52,6 +52,7 @@ export default (
         ) => {
             const comment = sanitize(req.body.comment);
             const text = htmlToText(comment, { wordwrap: false });
+            const title = req.body.title.trim();
 
             if (!(await verifyCaptcha(RecaptchaSecret, req.body.rtoken)))
                 return res.code(429).send({ error: "Recaptcha token invalid." });
@@ -61,6 +62,9 @@ export default (
 
             const category = await categoryCl.findOne({ id: req.body.category });
             if (!category) return res.code(404).send({ error: "Category not found." });
+
+            if (await threadCl.findOne({ title }, { projection: { _id: 0, id: 1 } }))
+                return res.code(409).send({ error: "Title already exists." });
 
             const newThreadId =
                 (
@@ -102,6 +106,7 @@ export default (
 
             const threadData: Thread = {
                 id: newThreadId,
+                count: 1,
                 conversation: [
                     {
                         id: 1,
@@ -114,10 +119,9 @@ export default (
                     },
                 ],
                 op: userData,
-                c: 1,
                 score: 0,
                 slink: `https://${LINKS_DOMAIN}/${newThreadId}`,
-                title: req.body.title,
+                title,
                 category: category.id,
                 lastModified: date,
                 createdAt: date,

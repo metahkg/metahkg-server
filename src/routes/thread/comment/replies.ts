@@ -36,10 +36,14 @@ export default (
                 }
             )) as Thread;
 
+            if ("removed" in thread) return;
+
             const targetComment = thread?.conversation?.[0];
 
             if (!targetComment)
                 return res.code(404).send({ error: "Thread or comment not found." });
+
+            if ("removed" in targetComment) return;
 
             const replies = (
                 await threadCl.findOne(

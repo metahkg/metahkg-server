@@ -69,6 +69,8 @@ export default (
                 { $push: { [`${threadId}`]: { cid: commentId, vote } } }
             );
 
+            if ("removed" in thread || "removed" in thread.conversation[0]) return;
+
             if (!thread.conversation[0]?.[vote]) {
                 await threadCl.updateOne(
                     { id: threadId },

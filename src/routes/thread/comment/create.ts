@@ -60,15 +60,19 @@ export default (
             const comment = sanitize(req.body.comment);
             const text = htmlToText(comment, { wordwrap: false });
 
-            const newCommentId = ((await threadCl.findOne({ id })) as Thread)?.c + 1;
-            await threadCl.updateOne(
+            const thread = (await threadCl.findOne(
                 { id },
-                { $inc: { c: 1 }, $currentDate: { lastModified: true } }
-            );
+                { projection: { count: 1 } }
+            )) as Thread;
+
+            if ("removed" in thread) return;
+            const newCommentId = thread?.count + 1;
+
             let slinkId = generate({
                 include: { numbers: true, lower: true, upper: true, special: false },
                 digits: 7,
             });
+
             while (await linksCl.findOne({ id: slinkId })) {
                 slinkId = generate({
                     include: { numbers: true, lower: true, upper: true, special: false },
@@ -85,16 +89,20 @@ export default (
 
             if (quote) {
                 const thread = (await threadCl.findOne({ id })) as Thread;
+                if ("removed" in thread) return;
                 quoteIndex = thread?.conversation?.findIndex((i) => i?.id === quote);
                 quotedComment =
                     ((quoteIndex !== -1 &&
                         Object.fromEntries(
                             Object.entries(thread.conversation[quoteIndex]).filter(
-                                (i) => !["emotions", "replies", "U", "D"].includes(i[0])
+                                (i) =>
+                                    !["emotions", "replies", "U", "D", "admin"].includes(
+                                        i[0]
+                                    )
                             )
                         )) as commentType) || undefined;
 
-                if (quotedComment.removed) quotedComment = undefined;
+                if ("removed" in quotedComment) quotedComment = undefined;
             }
 
             const imagesInComment = findImages(comment);
@@ -120,6 +128,7 @@ export default (
                         },
                     },
                     $currentDate: { lastModified: true },
+                    $inc: { count: 1 },
                 }
             );
 
@@ -132,9 +141,7 @@ export default (
             if (imagesInComment.length) {
                 const imagesData = (
                     (await threadCl.findOne(
-                        {
-                            id,
-                        },
+                        { id },
                         { projection: { _id: 0, images: 1 } }
                     )) as Images
                 ).images;

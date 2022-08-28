@@ -34,7 +34,9 @@ export default (
                 { projection: { _id: 0, op: 1, pin: 1 } }
             )) as Thread;
 
+
             if (!thread) return res.code(404).send({ error: "Thread not found." });
+            if ("removed" in thread) return;
 
             const authorized = user && thread?.op?.id === user.id;
             if (!authorized) return res.code(403).send({ error: "Forbidden." });

@@ -1,16 +1,15 @@
 import dotenv from "dotenv";
-import updateVerificationCode from "./lib/updateVerificationCode";
 import { client } from "./common";
 import { setup } from "./mongo/setupmongo";
 import MetahkgServer from "./app";
+import { agenda } from "./lib/agenda";
 
 dotenv.config();
-
-setInterval(updateVerificationCode, 3600 * 1000);
 
 (async () => {
     await client.connect();
     await setup();
+    await agenda.start();
 
     const app = MetahkgServer();
 

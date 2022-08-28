@@ -35,6 +35,8 @@ export default (
                 }
             )) as Thread;
 
+            if ("removed" in thread) return;
+
             const comment = thread?.conversation?.[0];
 
             if (!comment)

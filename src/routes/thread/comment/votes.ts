@@ -21,23 +21,27 @@ export default function emotions(
             const id = Number(req.params.id);
             const cid = Number(req.params.cid);
 
-            const comment = (
-                (await threadCl.findOne(
-                    {
-                        id,
+            const thread = (await threadCl.findOne(
+                {
+                    id,
+                    conversation: { $elemMatch: { id: cid } },
+                },
+                {
+                    projection: {
+                        _id: 1,
                         conversation: { $elemMatch: { id: cid } },
                     },
-                    {
-                        projection: {
-                            _id: 1,
-                            conversation: { $elemMatch: { id: cid } },
-                        },
-                    }
-                )) as Thread
-            )?.conversation?.[0];
+                }
+            )) as Thread;
+
+            if ("removed" in thread) return;
+
+            const comment = thread?.conversation?.[0];
 
             if (!comment)
                 return res.code(404).send({ error: "Thread or comment not found." });
+
+            if ("removed" in comment) return;
 
             const { U, D } = comment;
 

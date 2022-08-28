@@ -2,7 +2,7 @@ import { FastifyInstance, FastifyPluginOptions } from "fastify";
 import category from "./category";
 import threads from "./threads";
 import create from "./create";
-import modify from "./actions/modify";
+import edit from "./actions/edit";
 import deleteCategory from "./actions/delete";
 
 export default function (
@@ -13,7 +13,7 @@ export default function (
     fastify.register(category);
     fastify.register(threads);
     fastify.register(create);
-    fastify.register(modify);
+    fastify.register(edit);
     fastify.register(deleteCategory);
     done();
 }

@@ -1,5 +1,6 @@
 import { ObjectId } from "mongodb";
 import { userRole, userSex } from "../types/user";
+import { AdminUser } from "./thread";
 
 export interface BlockedUser {
     id: number;
@@ -17,5 +18,6 @@ export default interface User {
     sex: userSex;
     role: userRole;
     blocked?: BlockedUser[];
-    muted?: boolean;
+    mute?: { admin: AdminUser; reason: string; exp?: Date };
+    ban?: { admin: AdminUser; reason: string; exp?: Date };
 }

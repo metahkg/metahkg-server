@@ -1,5 +1,12 @@
 # Changelog
 
+## v4.6.0
+
+- schedule tasks with agenda
+- move deleted documents to removed collection (store admin info and reasoning)
+- enhanced edit of thread / comment (store the admin info and reasoning for each edit)
+- enhanced mute user and added optional expiration
+
 ## v4.5.0
 
 - admin api
