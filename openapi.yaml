@@ -1424,9 +1424,11 @@ paths:
       security:
         - bearerAuth: []
       summary: Edit user info
-      description: "Edit user info. Authentication is required. 
+      description: "Edit user info. Authentication is required.
         The user requesting editing must have the same user id as the user info.
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/4.7.0-dev/src/routes/user/actions/edit.ts)"
+      parameters:
+        - $ref: "#/components/parameters/UserId"
       requestBody:
         required: true
         content:
