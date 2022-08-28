@@ -2636,7 +2636,7 @@ components:
         - title
         - category
         - op
-        - c
+        - count
         - createdAt
         - lastModified
         - slink
