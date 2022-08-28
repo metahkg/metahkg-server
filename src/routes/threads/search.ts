@@ -57,6 +57,7 @@ export default (
                                     ? { "op.name": regex }
                                     : { title: regex }),
                                 ...(!user && { category: { $nin: await hiddencats() } }),
+                                removed: { $ne: true },
                             },
                         },
                         mode === "title" && {

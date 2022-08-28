@@ -64,6 +64,7 @@ export default (
                                 ...(sort === "viral" && {
                                     lastModified: { $gte: viralLimit },
                                 }),
+                                removed: { $ne: true },
                             },
                         },
                         sort === "viral" && {
