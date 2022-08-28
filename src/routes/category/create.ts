@@ -9,18 +9,20 @@ export default function (
     _opts: FastifyPluginOptions,
     done: (err?: Error) => void
 ) {
-    const schema = Type.Object({
-        name: Type.String({ maxLength: 15 }),
-        hidden: Type.Optional(Type.Boolean()),
-        tags: Type.Optional(Type.Array(Type.String({ maxLength: 15 }))),
-    });
+    const schema = Type.Object(
+        {
+            name: Type.String({ maxLength: 15 }),
+            hidden: Type.Optional(Type.Boolean()),
+            pinned: Type.Optional(Type.Boolean()),
+            tags: Type.Optional(Type.Array(Type.String({ maxLength: 15 }))),
+        },
+        { additionalProperties: false }
+    );
 
     fastify.post(
         "/create",
         { schema: { body: schema }, preHandler: [requireAdmin] },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            const { name, hidden, tags } = req.body;
-
             if (await categoryCl.findOne({ name }))
                 return res.status(409).send({ error: "Category already exists." });
 
@@ -34,7 +36,9 @@ export default function (
                         .toArray()) as Category[]
                 )[0]?.id + 1 || 1;
 
-            await categoryCl.insertOne({ id, name, hidden, tags });
+            await categoryCl.insertOne({ id, ...req.body });
+
+            return res.send({ success: true });
         }
     );
     done();

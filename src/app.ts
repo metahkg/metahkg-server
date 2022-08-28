@@ -28,19 +28,7 @@ export default function MetahkgServer() {
         }
     });
 
-    process.env.cors && fastify.register(fastifyCors);
-
-    /**
-     * Set content security policy
-     */
-    fastify.addHook("preHandler", (_req, res, done) => {
-        res.header(
-            "Content-Security-Policy",
-            // eslint-disable-next-line max-len
-            "script-src 'self' https://www.gstatic.com/recaptcha/ https://www.google.com/recaptcha/ https://sa.metahkg.org https://static.cloudflareinsights.com https://cdnjs.cloudflare.com"
-        );
-        done();
-    });
+    JSON.parse(process.env.cors) && fastify.register(fastifyCors);
 
     fastify.register(multipart);
 

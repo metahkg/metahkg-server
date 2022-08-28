@@ -1248,6 +1248,8 @@ paths:
                   $ref: "#/components/schemas/Category/properties/name"
                 tags:
                   $ref: "#/components/schemas/Category/properties/tags"
+                pinned:
+                  $ref: "#/components/schemas/Category/properties/pinned"
       responses:
         "200":
           $ref: "#/components/responses/OK"
@@ -1357,6 +1359,8 @@ paths:
                   $ref: "#/components/schemas/Category/properties/hidden"
                 tags:
                   $ref: "#/components/schemas/Category/properties/tags"
+                pinned:
+                  $ref: "#/components/schemas/Category/properties/pinned"
       responses:
         "200":
           $ref: "#/components/responses/OK"
@@ -2347,6 +2351,9 @@ components:
         hidden:
           type: boolean
           description: category is hidden
+        pinned:
+          type: boolean
+          description: category is pinned
     Image:
       type: object
       required:

@@ -17,8 +17,9 @@ export default function (
         {
             name: Type.Optional(Type.String({ maxLength: 15 })),
             tags: Type.Optional(Type.Array(Type.String({ maxLength: 15 }))),
+            pinned: Type.Optional(Type.Boolean()),
         },
-        { additionalProperties: false }
+        { additionalProperties: false, minProperties: 1 }
     );
 
     fastify.put(
