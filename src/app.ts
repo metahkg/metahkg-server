@@ -21,11 +21,11 @@ export default function MetahkgServer() {
     fastify.setErrorHandler((error, _request, reply) => {
         console.error(error);
         const { statusCode, message: errormsg } = error;
-        try {
-            reply.code(statusCode).send({ statusCode, error: errormsg });
-        } catch (err) {
-            reply.code(502).send({ statusCode });
-        }
+        if (statusCode && statusCode < 500 && statusCode >= 400)
+            try {
+                reply.code(statusCode).send({ error: errormsg });
+            } catch {}
+        reply.code(500).send({ error: "Internal Server Error." });
     });
 
     JSON.parse(process.env.cors) && fastify.register(fastifyCors);

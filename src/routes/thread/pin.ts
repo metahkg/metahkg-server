@@ -1,9 +1,9 @@
 import { Static, Type } from "@sinclair/typebox";
-import { threadCl } from "../../../common";
-import verifyUser from "../../../lib/auth/verify";
-import Thread, { commentType } from "../../../models/thread";
+import { threadCl } from "../../common";
+import verifyUser from "../../lib/auth/verify";
+import Thread, { commentType } from "../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import regex from "../../../lib/regex";
+import regex from "../../lib/regex";
 
 export default function (
     fastify: FastifyInstance,
@@ -12,19 +12,29 @@ export default function (
 ) {
     const paramsSchema = Type.Object({
         id: Type.RegEx(regex.integer),
-        cid: Type.RegEx(regex.integer),
     });
 
-    fastify.post(
-        "/:cid/pin",
+    const schema = Type.Object({
+        cid: Type.Integer({ minimum: 1 }),
+    });
+
+    fastify.put(
+        "/pin",
         {
             schema: {
                 params: paramsSchema,
+                body: schema,
             },
         },
-        async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
+        async (
+            req: FastifyRequest<{
+                Params: Static<typeof paramsSchema>;
+                Body: Static<typeof schema>;
+            }>,
+            res
+        ) => {
             const threadId = Number(req.params.id);
-            const commentId = Number(req.params.cid);
+            const { cid: commentId } = req.body;
 
             const user = verifyUser(req.headers.authorization);
             if (!user) return res.code(401).send({ error: "Unauthorized." });

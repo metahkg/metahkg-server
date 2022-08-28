@@ -10,6 +10,8 @@ import unstar from "./actions/unstar";
 import checkHidden from "../../plugins/checkHidden";
 import edit from "./actions/edit";
 import checkThread from "../../plugins/checkThread";
+import pin from "./pin";
+import unpin from "./unpin";
 
 export default (
     fastify: FastifyInstance,
@@ -27,5 +29,7 @@ export default (
     fastify.register(unstar);
     fastify.register(deleteThread);
     fastify.register(edit);
+    fastify.register(pin);
+    fastify.register(unpin);
     done();
 };

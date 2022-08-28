@@ -1,9 +1,9 @@
 import { Static, Type } from "@sinclair/typebox";
-import { threadCl } from "../../../common";
-import Thread from "../../../models/thread";
-import verifyUser from "../../../lib/auth/verify";
+import { threadCl } from "../../common";
+import Thread from "../../models/thread";
+import verifyUser from "../../lib/auth/verify";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import regex from "../../../lib/regex";
+import regex from "../../lib/regex";
 
 export default (
     fastify: FastifyInstance,
@@ -12,11 +12,10 @@ export default (
 ) => {
     const paramsSchema = Type.Object({
         id: Type.RegEx(regex.integer),
-        cid: Type.RegEx(regex.integer),
     });
 
-    fastify.post(
-        "/:cid/unpin",
+    fastify.delete(
+        "/pin",
         { schema: { params: paramsSchema } },
         async (
             req: FastifyRequest<{
@@ -25,7 +24,6 @@ export default (
             res
         ) => {
             const threadId = Number(req.params.id);
-            const commentId = Number(req.params.cid);
 
             const user = verifyUser(req.headers.authorization);
 
@@ -40,8 +38,8 @@ export default (
             const authorized = user && thread?.op?.id === user.id;
             if (!authorized) return res.code(403).send({ error: "Forbidden." });
 
-            if (thread?.pin?.id !== commentId)
-                return res.code(409).send({ error: "Comment is not pinned." });
+            if (!thread.pin)
+                return res.code(409).send({ error: "No comment is pinned." });
 
             await threadCl.updateOne({ id: threadId }, { $unset: { pin: 1 } });
 

@@ -5,7 +5,6 @@ import { verifyCaptcha } from "../../lib/recaptcha";
 import bcrypt from "bcrypt";
 import { generate } from "wcyat-rg";
 import { Static, Type } from "@sinclair/typebox";
-import { ajv } from "../../lib/ajv";
 import hash from "hash.js";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import dotenv from "dotenv";
@@ -33,8 +32,9 @@ export default (
 
     fastify.post(
         "/register",
+        { schema: { body: schema } },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            if (!ajv.validate(schema, req.body) || EmailValidator.validate(req.body.name))
+            if (EmailValidator.validate(req.body.name))
                 return res.code(400).send({ error: "Bad request." });
 
             const { name, pwd, email, rtoken, sex, invitecode } = req.body;

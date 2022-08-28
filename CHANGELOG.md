@@ -1,5 +1,9 @@
 # Changelog
 
+## v4.8.0
+
+- move pin and unpin to `PUT` and `DELETE` `/thread/{id}/pin`
+
 ## v4.7.0
 
 - move some put requests to patch requests to more comply with standards
