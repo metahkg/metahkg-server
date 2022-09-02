@@ -17,7 +17,7 @@
     "@fastify/cors": "^8.1.0",
     "@fastify/multipart": "^7.1.0",
     "@fastify/rate-limit": "^7.3.0",
-    "@sinclair/typebox": "0.24.27",
+    "@sinclair/typebox": "0.24.28",
     "@types/bcrypt": "^5.0.0",
     "@types/fs-extra": "^9.0.13",
     "@types/html-to-text": "^8.1.0",
