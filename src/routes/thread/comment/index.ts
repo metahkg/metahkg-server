@@ -7,7 +7,7 @@ import emotion from "./emotion";
 import emotions from "./emotions";
 import votes from "./votes";
 import deleteComment from "./actions/delete";
-import edit from "../actions/edit";
+import edit from "./actions/edit";
 import checkRemoved from "../../../plugins/checkComment";
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
 
