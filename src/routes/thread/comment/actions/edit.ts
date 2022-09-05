@@ -28,7 +28,10 @@ export default function (
 
     fastify.patch(
         "/:cid",
-        { schema: { params: paramsSchema }, preHandler: [requireAdmin, checkComment] },
+        {
+            schema: { params: paramsSchema, body: schema },
+            preHandler: [requireAdmin, checkComment],
+        },
         async (
             req: FastifyRequest<{
                 Params: Static<typeof paramsSchema>;
