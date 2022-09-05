@@ -1,7 +1,6 @@
 import { usersCl, verificationCl } from "../../common";
 import hash from "hash.js";
 import { Static, Type } from "@sinclair/typebox";
-import { ajv } from "../../lib/ajv";
 import User from "../../models/user";
 import bcrypt from "bcrypt";
 import { createToken } from "../../lib/auth/createtoken";
@@ -23,10 +22,8 @@ export default (
 
     fastify.post(
         "/reset",
+        { schema: { body: schema } },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            if (!ajv.validate(schema, req.body))
-                return res.code(400).send({ error: "Bad request." });
-
             const { email, code, pwd } = req.body;
 
             const hashedEmail = hash.sha256().update(email).digest("hex");

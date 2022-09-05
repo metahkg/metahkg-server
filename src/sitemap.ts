@@ -45,14 +45,18 @@ export default function (
                     .sort({ id: 1 })
                     .project({ _id: 0, id: 1, lastModified: 1 })
                     .toArray()) as Thread[]
-            ).map(
-                (thread) => /*xml*/ `<url>
+            )
+                .map(
+                    (thread) =>
+                        !("removed" in thread) &&
+                        /*xml*/ `<url>
                     <loc>https://${domain}/thread/${thread.id}</loc>
                     <changefreq>daily</changefreq>
                     <lastmod>${thread.lastModified.toISOString()}</lastmod>
                     <priority>0.8</priority>
                 </url>`
-            )}
+                )
+                .filter((x) => x)}
             ${(
                 (await usersCl
                     .find()

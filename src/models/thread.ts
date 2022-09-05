@@ -1,24 +1,24 @@
-import { Static, Type } from "@sinclair/typebox";
 import { ObjectId } from "mongodb";
 import type { userSex, userRole } from "../types/user";
 
-export default class Thread {
-    constructor(
-        public id: number,
-        public title: string,
-        public op: threadOpType,
-        public category: number,
-        public c: number,
-        public conversation: commentType[],
-        public score: number,
-        public lastModified: Date,
-        public createdAt: Date,
-        public slink: string,
-        public images: { src: string; cid: number }[],
-        public pin?: commentType,
-        public _id?: ObjectId
-    ) {}
-}
+export type Thread =
+    | { id: number; removed: true }
+    | {
+          id: number;
+          title: string;
+          op: publicUserType;
+          category: number;
+          count: number;
+          conversation: commentType[];
+          score: number;
+          lastModified: Date;
+          createdAt: Date;
+          slink: string;
+          images: { src: string; cid: number }[];
+          pin?: commentType;
+          _id?: ObjectId;
+          admin?: Admin;
+      };
 
 export type publicUserType = {
     id: number;
@@ -27,46 +27,46 @@ export type publicUserType = {
     sex: userSex;
 };
 
-export const EmotionSchema = Type.Union(
-    ["sob", "joy", "smile", "sad", "sweatsmile", "heart", "grin", "good", "bad"].map(
-        (i) => Type.Literal(i)
-    )
-);
+export type commentType =
+    /** if removed */
+    | { id: number; removed: true }
+    | {
+          /** comment id */
+          id: number;
+          /** user id */
+          user: publicUserType;
+          /** html string */
+          comment: string;
+          /** comment converted to text */
+          text: string;
+          /** date string */
+          createdAt: Date;
+          /** shortened link */
+          slink: string;
+          images: string[];
+          /** upvotes */
+          U?: number;
+          /** downvotes */
+          D?: number;
+          /** replies */
+          replies?: number[];
+          /** quote **/
+          quote?: commentType;
+          emotions?: Emotion[];
+          admin?: Admin;
+      };
 
-export type Emotion = Static<typeof EmotionSchema>;
+export interface Emotion {
+    user: number;
+    emotion: string /* must be emoji */;
+}
 
-export type commentType = {
-    /** comment id */
-    id: number;
-    /** if removed all below attributes doesn't exist!!! */
-    removed?: true;
-    /** user id */
-    user: publicUserType;
-    /** html string */
-    comment: string;
-    /** comment converted to text */
-    text: string;
-    /** date string */
-    createdAt: Date;
-    /** shortened link */
-    slink: string;
-    images: string[];
-    /** upvotes */
-    U?: number;
-    /** downvotes */
-    D?: number;
-    /** replies */
-    replies?: number[];
-    /** quote **/
-    quote?: commentType;
-    emotions?: { user: number; emotion: Emotion }[];
-};
+export interface Admin {
+    edits?: [{ admin: AdminUser; reason: string; date: Date }];
+    replies?: [{ admin: AdminUser; reply: string; date: Date }];
+}
 
-export type threadOpType = {
-    id: number;
-    name: string;
-    sex: userSex;
-    role: userRole;
-};
+export type AdminUser = publicUserType & { role: "admin" };
 
+export default Thread;
 export type threadType = Thread;

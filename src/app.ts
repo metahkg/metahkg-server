@@ -18,29 +18,24 @@ export default function MetahkgServer() {
     });
 
     fastify.setValidatorCompiler((opt) => ajv.compile(opt.schema));
+
     fastify.setErrorHandler((error, _request, reply) => {
         console.error(error);
         const { statusCode, message: errormsg } = error;
-        try {
-            reply.code(statusCode).send({ statusCode, error: errormsg });
-        } catch (err) {
-            reply.code(500).send({ statusCode, error: errormsg });
+
+        if (error.validation) {
+            reply.status(400).send({ error: "Bad request." });
         }
+
+        if (statusCode && statusCode < 500 && statusCode >= 400)
+            try {
+                reply.code(statusCode).send({ error: errormsg });
+            } catch {}
+
+        reply.code(500).send({ error: "Internal Server Error." });
     });
 
-    process.env.cors && fastify.register(fastifyCors);
-
-    /**
-     * Set content security policy
-     */
-    fastify.addHook("preHandler", (_req, res, done) => {
-        res.header(
-            "Content-Security-Policy",
-            // eslint-disable-next-line max-len
-            "script-src 'self' https://www.gstatic.com/recaptcha/ https://www.google.com/recaptcha/ https://sa.metahkg.org https://static.cloudflareinsights.com https://cdnjs.cloudflare.com"
-        );
-        done();
-    });
+    JSON.parse(process.env.cors) && fastify.register(fastifyCors);
 
     fastify.register(multipart);
 

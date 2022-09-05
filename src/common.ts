@@ -86,3 +86,4 @@ export const votesCl = db.collection("votes");
 export const linksCl = db.collection("links");
 export const notificationsCl = db.collection("notifications");
 export const inviteCl = db.collection("invite");
+export const removedCl = db.collection("removed");

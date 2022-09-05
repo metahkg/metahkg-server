@@ -1,27 +1,25 @@
 import Thread from "../../../models/thread";
 import { threadCl } from "../../../common";
 import { Type } from "@sinclair/typebox";
-import { ajv } from "../../../lib/ajv";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
+import regex from "../../../lib/regex";
 
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
+    const paramsSchema = Type.Object({
+        id: Type.RegEx(regex.integer),
+        cid: Type.RegEx(regex.integer),
+    });
+
     fastify.get(
         "/:cid",
+        { schema: paramsSchema },
         async (req: FastifyRequest<{ Params: { id: string; cid: string } }>, res) => {
             const id = Number(req.params.id);
             const cid = Number(req.params.cid);
-
-            const schema = Type.Object({
-                id: Type.Integer({ minimum: 1 }),
-                cid: Type.Integer({ minimum: 1 }),
-            });
-
-            if (!ajv.validate(schema, { id, cid }))
-                return res.code(400).send({ error: "Bad request." });
 
             const thread = (await threadCl.findOne(
                 { id, conversation: { $elemMatch: { id: cid } } },
@@ -35,14 +33,14 @@ export default (
                         },
                     },
                 }
-            )) as Thread;
+            )) as Thread | null;
 
-            const comment = thread?.conversation?.[0];
-
-            if (!comment)
+            if (!thread)
                 return res.code(404).send({ error: "Thread or comment not found." });
 
-            if (comment.removed) return res.code(410).send({ error: "Comment removed." });
+            if ("removed" in thread) return;
+
+            const comment = thread?.conversation?.[0];
 
             res.send(comment);
         }

@@ -1,5 +1,35 @@
 # Changelog
 
+## v4.8.0
+
+- move pin and unpin to `PUT` and `DELETE` `/thread/{id}/pin`
+
+## v4.7.0
+
+- move some put requests to patch requests to more comply with standards
+- deprecate `POST /me/rename` in favor of `PATCH /user/{id}`
+- pin / unpin should be post not put
+
+## v4.6.0
+
+- schedule tasks with agenda
+- move deleted documents to removed collection (store admin info and reasoning)
+- enhanced edit of thread / comment (store the admin info and reasoning for each edit)
+- enhanced mute user and added optional expiration
+
+## v4.5.0
+
+- admin api
+
+## v4.4.0
+
+- get emotion users
+- get emotions and votes directly (no longer need to refetch the whole comment)
+
+## v4.3.0
+
+- allow any emoji for emotions
+
 ## v4.2.0
 
 - move get thread votes to /me/votes/thread/{id}

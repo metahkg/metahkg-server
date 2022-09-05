@@ -48,6 +48,7 @@ export default (
                 .find({
                     "op.id": requestedUser.id,
                     ...(!user && { category: { $nin: await hiddencats() } }),
+                    removed: { $ne: true },
                 })
                 .sort({
                     ...(sort === "created" && { createdAt: -1 }),

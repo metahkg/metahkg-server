@@ -1,9 +1,9 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { threadCl } from "../../../common";
-import verifyUser from "../../../lib/auth/verify";
-import regex from "../../../lib/regex";
-import Thread, { EmotionSchema } from "../../../models/thread";
+import { threadCl } from "../../../../common";
+import verifyUser from "../../../../lib/auth/verify";
+import regex from "../../../../lib/regex";
+import Thread from "../../../../models/thread";
 
 export default function (
     fastify: FastifyInstance,
@@ -15,10 +15,12 @@ export default function (
         cid: Type.RegEx(regex.integer),
     });
 
-    const schema = Type.Object({ emotion: EmotionSchema });
+    const schema = Type.Object({
+        emotion: Type.RegEx(regex.emoji),
+    });
 
     fastify.post(
-        "/:cid/emotion",
+        "/",
         { schema: { params: paramsSchema, body: schema } },
         async function (
             req: FastifyRequest<{
@@ -35,37 +37,47 @@ export default function (
 
             const { emotion } = req.body;
 
-            const thread = (
-                await threadCl
-                    .aggregate([
-                        {
-                            $match: {
-                                id,
-                                conversation: { $elemMatch: { id: cid } },
-                            },
+            const thread = (await threadCl.findOne(
+                {
+                    id,
+                    conversation: { $elemMatch: { id: cid } },
+                },
+                {
+                    projection: {
+                        _id: 0,
+                        index: {
+                            $indexOfArray: ["$conversation.id", cid],
                         },
-                        {
-                            $project: {
-                                _id: 0,
-                                conversation: { $elemMatch: { id: cid } },
-                                index: { $indexOfArray: ["$conversation", { id: cid }] },
-                            },
-                        },
-                    ])
-                    .toArray()
-            )[0] as Thread & { index: number };
+                    },
+                }
+            )) as Thread & { index: number };
 
             const index = thread?.index;
-            const comment = thread?.conversation?.[0];
 
-            if (!comment || !index)
+            // index can be 0
+            if (index === undefined || index === -1)
                 return res.code(404).send({ error: "Comment not found." });
+
+            // remove previous value first
+            await threadCl.updateOne(
+                { id },
+                {
+                    $pull: {
+                        [`conversation.${index}.emotions`]: {
+                            user: user.id,
+                        },
+                    },
+                }
+            );
 
             await threadCl.updateOne(
                 { id },
                 {
                     $push: {
-                        [`conversation.${index}.emotions`]: { user: user.id, emotion },
+                        [`conversation.${index}.emotions`]: {
+                            user: user.id,
+                            emotion,
+                        },
                     },
                 }
             );
@@ -73,5 +85,6 @@ export default function (
             return res.send({ success: true });
         }
     );
+
     done();
 }

@@ -1,14 +1,3 @@
-//register for an account
-//humans only
-/*Syntax: POST /api/register
-{
-  user (username): string,
-  pwd (password, sha256 hashed): string,
-  email: string,
-  rtoken (recaptcha token): string,
-  sex: string
-}
-*/
 import { RecaptchaSecret, usersCl, verificationCl, inviteCl } from "../../common";
 import { mg, mgDomain, verifyMsg } from "../../lib/mailgun";
 import EmailValidator from "email-validator";
@@ -16,10 +5,10 @@ import { verifyCaptcha } from "../../lib/recaptcha";
 import bcrypt from "bcrypt";
 import { generate } from "wcyat-rg";
 import { Static, Type } from "@sinclair/typebox";
-import { ajv } from "../../lib/ajv";
 import hash from "hash.js";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import dotenv from "dotenv";
+import { agenda } from "../../lib/agenda";
 
 dotenv.config();
 
@@ -43,8 +32,9 @@ export default (
 
     fastify.post(
         "/register",
+        { schema: { body: schema } },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            if (!ajv.validate(schema, req.body) || EmailValidator.validate(req.body.name))
+            if (EmailValidator.validate(req.body.name))
                 return res.code(400).send({ error: "Bad request." });
 
             const { name, pwd, email, rtoken, sex, invitecode } = req.body;
@@ -97,6 +87,13 @@ export default (
                 sex,
                 type: "register",
             });
+
+            await agenda.every(
+                "1 day",
+                "updateVerificationCode",
+                { email },
+                { startDate: new Date(new Date().getTime() + 86400 * 1000) }
+            );
 
             res.send({ success: true });
         }

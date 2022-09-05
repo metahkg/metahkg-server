@@ -10,6 +10,7 @@ import Thread, { commentType } from "../../../models/thread";
 import { htmlToText } from "html-to-text";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../lib/regex";
+import checkMuted from "../../../plugins/checkMuted";
 
 export default (
     fastify: FastifyInstance,
@@ -27,10 +28,6 @@ export default (
 
     const paramsSchema = Type.Object({ id: Type.RegEx(regex.integer) });
 
-    /** add a comment
-     * Syntax: POST /api/comment {id (thread id) : number, comment : string}
-     * client must have a cookie "key"
-     */
     fastify.post(
         "/create",
         {
@@ -38,6 +35,7 @@ export default (
                 body: schema,
                 params: paramsSchema,
             },
+            preHandler: [checkMuted],
         },
         async (
             req: FastifyRequest<{
@@ -62,15 +60,20 @@ export default (
             const comment = sanitize(req.body.comment);
             const text = htmlToText(comment, { wordwrap: false });
 
-            const newCommentId = ((await threadCl.findOne({ id })) as Thread)?.c + 1;
-            await threadCl.updateOne(
+            const thread = (await threadCl.findOne(
                 { id },
-                { $inc: { c: 1 }, $currentDate: { lastModified: true } }
-            );
+                { projection: { count: 1 } }
+            )) as Thread;
+
+            if ("removed" in thread) return;
+
+            const newcid = thread?.count + 1;
+
             let slinkId = generate({
                 include: { numbers: true, lower: true, upper: true, special: false },
                 digits: 7,
             });
+
             while (await linksCl.findOne({ id: slinkId })) {
                 slinkId = generate({
                     include: { numbers: true, lower: true, upper: true, special: false },
@@ -80,23 +83,37 @@ export default (
 
             await linksCl.insertOne({
                 id: slinkId,
-                url: `/thread/${id}?c=${newCommentId}`,
+                url: `/thread/${id}?c=${newcid}`,
             });
 
             let quotedComment: commentType | undefined, quoteIndex: number;
 
             if (quote) {
-                const thread = (await threadCl.findOne({ id })) as Thread;
-                quoteIndex = thread?.conversation?.findIndex((i) => i?.id === quote);
-                quotedComment =
-                    ((quoteIndex !== -1 &&
-                        Object.fromEntries(
-                            Object.entries(thread.conversation[quoteIndex]).filter(
-                                (i) => !["replies", "U", "D"].includes(i[0])
-                            )
-                        )) as commentType) || undefined;
+                const thread = (await threadCl.findOne(
+                    { id, conversation: { $elemMatch: { id: quote } } },
+                    {
+                        projection: {
+                            _id: 0,
+                            conversation: { $elemMatch: { id: quote } },
+                            index: { $indexOfArray: ["$conversation.id", quote] },
+                        },
+                    }
+                )) as (Thread & { index: number }) | null;
 
-                if (quotedComment.removed) quotedComment = undefined;
+                if (thread && !("removed" in thread)) {
+                    quotedComment =
+                        (Object.fromEntries(
+                            Object.entries(thread.conversation[0]).filter(
+                                (i) =>
+                                    !["emotions", "replies", "U", "D", "admin"].includes(
+                                        i[0]
+                                    )
+                            )
+                        ) as commentType) || undefined;
+                    if ("removed" in quotedComment) quotedComment = undefined;
+
+                    if (quotedComment) quoteIndex = thread?.index;
+                }
             }
 
             const imagesInComment = findImages(comment);
@@ -106,7 +123,7 @@ export default (
                 {
                     $push: {
                         conversation: {
-                            id: newCommentId,
+                            id: newcid,
                             user: {
                                 id: user.id,
                                 name: user.name,
@@ -122,21 +139,20 @@ export default (
                         },
                     },
                     $currentDate: { lastModified: true },
+                    $inc: { count: 1 },
                 }
             );
 
             quotedComment &&
                 (await threadCl.updateOne(
                     { id },
-                    { $push: { [`conversation.${quoteIndex}.replies`]: newCommentId } }
+                    { $push: { [`conversation.${quoteIndex}.replies`]: newcid } }
                 ));
 
             if (imagesInComment.length) {
                 const imagesData = (
                     (await threadCl.findOne(
-                        {
-                            id,
-                        },
+                        { id },
                         { projection: { _id: 0, images: 1 } }
                     )) as Images
                 ).images;
@@ -154,7 +170,7 @@ export default (
                                             ) === -1
                                     )
                                     .map((item) => {
-                                        return { src: item, cid: newCommentId };
+                                        return { src: item, cid: newcid };
                                     }),
                             },
                         },
@@ -162,7 +178,7 @@ export default (
                 );
             }
 
-            res.send({ id: newCommentId });
+            res.send({ id: newcid });
         }
     );
     done();

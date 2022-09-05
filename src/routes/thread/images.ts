@@ -34,6 +34,7 @@ export default (
             )) as Thread;
 
             if (!result) return res.code(404).send({ error: "Thread not found." });
+            if ("removed" in result) return;
 
             res.send(result.images);
         }

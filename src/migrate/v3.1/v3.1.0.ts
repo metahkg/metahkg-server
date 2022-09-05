@@ -43,7 +43,7 @@ async function migrate() {
             );
             await Promise.all(
                 data.conversation.map(async (comment: commentType, index: number) => {
-                    if (comment && !comment?.removed)
+                    if (comment && !("removed" in comment))
                         await threadCl.updateOne(
                             {
                                 id: data.id,

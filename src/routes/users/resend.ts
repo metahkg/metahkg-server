@@ -1,7 +1,6 @@
 import { RecaptchaSecret, verificationCl, limitCl } from "../../common";
 import { verifyCaptcha } from "../../lib/recaptcha";
 import { Static, Type } from "@sinclair/typebox";
-import { ajv } from "../../lib/ajv";
 import Limit from "../../models/limit";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { mg, mgDomain, verifyMsg } from "../../lib/mailgun";
@@ -18,10 +17,8 @@ export default (
 
     fastify.post(
         "/resend",
+        { schema: { body: schema } },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            if (!ajv.validate(schema, req.body))
-                return res.code(400).send({ error: "Bad request." });
-
             const { email, rtoken } = req.body;
 
             if (!(await verifyCaptcha(RecaptchaSecret, rtoken)))
