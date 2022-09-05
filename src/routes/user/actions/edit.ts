@@ -4,6 +4,7 @@ import verifyUser from "../../../lib/auth/verify";
 import { createToken } from "../../../lib/auth/createtoken";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../lib/regex";
+import EmailValidator from "email-validator";
 
 export default (
     fastify: FastifyInstance,
@@ -40,6 +41,9 @@ export default (
 
             if (name && name !== user.name && (await usersCl.findOne({ name })))
                 return res.code(409).send({ error: "Name already taken." });
+
+            if (EmailValidator.validate(name))
+                return res.code(400).send({ error: "Name must not be a email." });
 
             await usersCl.updateOne({ id: user.id }, { $set: req.body });
 
