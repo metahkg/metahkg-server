@@ -44,7 +44,7 @@
     "isomorphic-dompurify": "^0.20.0",
     "jsonwebtoken": "^8.5.1",
     "mailgun.js": "^8.0.0",
-    "mongodb": "^4.8.1",
+    "mongodb": "^4.9.0",
     "node-html-parser": "^5.4.1",
     "rimraf": "^3.0.2",
     "sanitize-html": "^2.7.1",
