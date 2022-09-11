@@ -1,5 +1,13 @@
 # Changelog
 
+## v5.0.0
+
+- redesign rest api (reduce redundancy and more rest)
+  - merge /user to /users
+  - merge /thread to /threads
+  - move /category to /categories
+  - no longer use `POST /create`, instead `POST /`
+
 ## v4.8.0
 
 - move pin and unpin to `PUT` and `DELETE` `/thread/{id}/pin`
