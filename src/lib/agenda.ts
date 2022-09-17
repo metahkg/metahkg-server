@@ -8,7 +8,7 @@ agenda.define("updateVerificationCode", async (job: Job) => {
     const { email } = job.attrs.data;
 
     await verificationCl.updateOne(
-        { email },
+        { email, createdAt: { $lte: new Date(new Date().getTime() - 86400 * 1000) } },
         {
             $set: { code: randomBytes(15).toString("hex") },
             $currentDate: { lastModified: true },

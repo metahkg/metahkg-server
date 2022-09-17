@@ -3,7 +3,7 @@ import { mg, mgDomain, verifyMsg } from "../../lib/mailgun";
 import EmailValidator from "email-validator";
 import { verifyCaptcha } from "../../lib/recaptcha";
 import bcrypt from "bcrypt";
-import { generate } from "wcyat-rg";
+import { generate } from "generate-password";
 import { Static, Type } from "@sinclair/typebox";
 import hash from "hash.js";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
@@ -71,8 +71,12 @@ export default (
                 return res.code(409).send({ error: "Username or email already in use." });
 
             const code = generate({
-                include: { numbers: true, upper: true, lower: true, special: false },
-                digits: 30,
+                length: 30,
+                numbers: true,
+                lowercase: true,
+                uppercase: true,
+                symbols: false,
+                strict: true,
             });
 
             await mg.messages.create(mgDomain, verifyMsg({ email, code }));

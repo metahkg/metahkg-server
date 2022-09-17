@@ -3,7 +3,7 @@ import { verifyCaptcha } from "../../../../lib/recaptcha";
 import findImages from "../../../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
 import verifyUser from "../../../../lib/auth/verify";
-import { generate } from "wcyat-rg";
+import { generate } from "generate-password";
 import sanitize from "../../../../lib/sanitize";
 import Images from "../../../../models/images";
 import Thread, { commentType } from "../../../../models/thread";
@@ -70,14 +70,20 @@ export default (
             const newcid = thread?.count + 1;
 
             let slinkId = generate({
-                include: { numbers: true, lower: true, upper: true, special: false },
-                digits: 7,
+                numbers: true,
+                lowercase: true,
+                uppercase: true,
+                symbols: false,
+                length: 7,
             });
 
             while (await linksCl.findOne({ id: slinkId })) {
                 slinkId = generate({
-                    include: { numbers: true, lower: true, upper: true, special: false },
-                    digits: 7,
+                    numbers: true,
+                    lowercase: true,
+                    uppercase: true,
+                    symbols: false,
+                    length: 7,
                 });
             }
 

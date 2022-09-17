@@ -9,7 +9,7 @@ import { verifyCaptcha } from "../../lib/recaptcha";
 import findImages from "../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
 import verifyUser from "../../lib/auth/verify";
-import { generate } from "wcyat-rg";
+import { generate } from "generate-password";
 import sanitize from "../../lib/sanitize";
 import Thread from "../../models/thread";
 import { htmlToText } from "html-to-text";
@@ -79,14 +79,20 @@ export default (
             const date = new Date();
 
             let commentSlinkId = generate({
-                include: { numbers: true, upper: true, lower: true, special: false },
-                digits: 7,
+                numbers: true,
+                uppercase: true,
+                lowercase: true,
+                symbols: false,
+                length: 7,
             });
 
             while (await linksCl.findOne({ id: commentSlinkId })) {
                 commentSlinkId = generate({
-                    include: { numbers: true, upper: true, lower: true, special: false },
-                    digits: 7,
+                    numbers: true,
+                    uppercase: true,
+                    lowercase: true,
+                    symbols: false,
+                    length: 7,
                 });
             }
 

@@ -2508,6 +2508,11 @@ gauge@^3.0.0:
     strip-ansi "^6.0.1"
     wide-align "^1.1.2"
 
+generate-password@^1.7.0:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/generate-password/-/generate-password-1.7.0.tgz#00ba4eb1e71f89a72307b0d6604ee0d4e7f5770c"
+  integrity sha512-WPCtlfy0jexf7W5IbwxGUgpIDvsZIohbI2DAq2Q6TSlKKis+G4GT9sxvPxrZUGL8kP6WUXMWNqYnxY6DDKAdFA==
+
 gensync@^1.0.0-beta.2:
   version "1.0.0-beta.2"
   resolved "https://registry.yarnpkg.com/gensync/-/gensync-1.0.0-beta.2.tgz#32a6ee76c3d7f52d46b2b1ae5d93fea8580a25e0"
@@ -5198,11 +5203,6 @@ walker@^1.0.8:
   integrity sha512-ts/8E8l5b7kY0vlWLewOkDXMmPdLcVV4GmOQLyxuSswIJsweeFZtAsMF7k1Nszz+TYBQrlYRmzOnr398y1JemQ==
   dependencies:
     makeerror "1.0.12"
-
-wcyat-rg@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/wcyat-rg/-/wcyat-rg-1.0.1.tgz#2385bc91388cc5e4fc67ced14c572505191cbe15"
-  integrity sha512-RLD0HMzjaPM1OoSzp1yHzm++l1N+xOc8JJwlNVugb0pT1uftZShCbuuzKFEn9FSPoHz2XCBkvsXWtfPGqzdw/Q==
 
 webidl-conversions@^3.0.0:
   version "3.0.1"
