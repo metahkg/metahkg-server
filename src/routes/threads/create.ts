@@ -78,22 +78,19 @@ export default (
 
             const date = new Date();
 
-            let commentSlinkId = generate({
+            const genOpts = {
                 numbers: true,
                 uppercase: true,
                 lowercase: true,
                 symbols: false,
                 length: 7,
-            });
+                strict: true
+            }
+
+            let commentSlinkId = generate(genOpts);
 
             while (await linksCl.findOne({ id: commentSlinkId })) {
-                commentSlinkId = generate({
-                    numbers: true,
-                    uppercase: true,
-                    lowercase: true,
-                    symbols: false,
-                    length: 7,
-                });
+                commentSlinkId = generate(genOpts);
             }
 
             await linksCl.insertOne({

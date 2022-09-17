@@ -69,22 +69,19 @@ export default (
 
             const newcid = thread?.count + 1;
 
-            let slinkId = generate({
+            const genOpts = {
                 numbers: true,
                 lowercase: true,
                 uppercase: true,
                 symbols: false,
                 length: 7,
-            });
+                strict: true
+            }
+
+            let slinkId = generate(genOpts);
 
             while (await linksCl.findOne({ id: slinkId })) {
-                slinkId = generate({
-                    numbers: true,
-                    lowercase: true,
-                    uppercase: true,
-                    symbols: false,
-                    length: 7,
-                });
+                slinkId = generate(genOpts);
             }
 
             await linksCl.insertOne({
