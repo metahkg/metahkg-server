@@ -75,8 +75,8 @@ export default (
                 uppercase: true,
                 symbols: false,
                 length: 7,
-                strict: true
-            }
+                strict: true,
+            };
 
             let slinkId = generate(genOpts);
 
