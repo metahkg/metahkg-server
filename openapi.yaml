@@ -1607,8 +1607,10 @@ paths:
       security:
         - bearerAuth: []
       summary: Upload avatar
-      description: "Upload avatar. Authentication is required.
+      description: "Upload avatar. Authentication is required. The user requesting must have the same user id.
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/5.1.0-dev/src/routes/me/avatar.ts)"
+      parameters:
+        - $ref: "#/components/parameters/UserId"
       requestBody:
         required: true
         content:
