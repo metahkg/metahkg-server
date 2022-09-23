@@ -84,8 +84,8 @@ export default (
                 lowercase: true,
                 symbols: false,
                 length: 7,
-                strict: true
-            }
+                strict: true,
+            };
 
             let commentSlinkId = generate(genOpts);
 
