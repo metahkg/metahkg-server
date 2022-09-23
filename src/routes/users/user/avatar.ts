@@ -20,9 +20,10 @@ export default function (
             const filename = `images/avatars/${req.params.id}.png`;
 
             fs.stat(filename, (err) => {
-                const path = `${process.env.root}/${
-                    err ? "static/images/noavatar.png" : filename
-                }`;
+                if (err)
+                    return res.code(404).send({ error: "User or avatar not found." });
+
+                const path = `${process.env.root}/${filename}`;
                 res.header("Content-Type", "image/png").send(fs.readFileSync(path));
             });
         }

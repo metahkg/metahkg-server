@@ -1,5 +1,11 @@
 # Changelog
 
+## v5.1.0
+
+- remove `POST /me/rename`
+- move `POST /me/avatar` to `PUT /users/{id}/avatar`
+- return 404 error if avatar not found
+
 ## v5.0.0
 
 - redesign rest api (reduce redundancy and more rest)

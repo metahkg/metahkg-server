@@ -36,3 +36,5 @@ package-lock.json
 
 # eslint
 /.eslintcache
+
+/config.json

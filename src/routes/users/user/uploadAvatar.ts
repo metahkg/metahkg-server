@@ -4,8 +4,8 @@ import multer from "fastify-multer"; // handle image uploads
 import fs from "fs";
 import { move } from "fs-extra";
 import sharp from "sharp"; // reshape images to circle
-import verifyUser from "../../lib/auth/verify";
-import RequireAuth from "../../plugins/requireAuth";
+import verifyUser from "../../../lib/auth/verify";
+import RequireSameUser from "../../../plugins/requireSameUser";
 
 dotenv.config();
 
@@ -56,9 +56,9 @@ export default function (
      * only jpg, svg, png and jpeg are allowed
      * Image is renamed to <user-id>.<png/svg/jpg/jpeg>
      */
-    fastify.post(
+    fastify.put(
         "/avatar",
-        { preHandler: [RequireAuth, upload.single("avatar")] },
+        { preHandler: [RequireSameUser, upload.single("avatar")] },
         async (req, res) => {
             try {
                 const file = req.file as unknown as Express.Multer.File;
