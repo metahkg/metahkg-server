@@ -1487,6 +1487,7 @@ paths:
           $ref: "#/components/responses/BadGateway"
     patch:
       tags:
+        - user
         - me
       operationId: userEdit
       security:
@@ -1601,6 +1602,7 @@ paths:
     put:
       tags:
         - user
+        - me
       operationId: userUploadAvatar
       security:
         - bearerAuth: []
