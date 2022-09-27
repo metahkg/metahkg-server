@@ -345,8 +345,7 @@ paths:
                 category:
                   $ref: "#/components/schemas/Category/properties/id"
                 reason:
-                  description: Reason for editing
-                  type: string
+                  $ref: "#/components/schemas/Admin/properties/edits/items/properties/reason"
       responses:
         "200":
           $ref: "#/components/responses/OK"
@@ -2396,6 +2395,7 @@ components:
             required:
               - admin
               - reason
+              - date
             properties:
               admin:
                 $ref: "#/components/schemas/User"
@@ -2413,6 +2413,7 @@ components:
             required:
               - admin
               - reply
+              - date
             properties:
               admin:
                 $ref: "#/components/schemas/User"
