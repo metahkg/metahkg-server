@@ -43,13 +43,13 @@ See [api](https://docs.metahkg.org/docs/category/api) in [metahkg docs](https://
 ### Install
 
 ```bash
-yarn add metahkg-server
+yarn add @metahkg/server
 ```
 
 ### Usage
 
 ```typescript
-import MetahkgServer from "metahkg-server";
+import MetahkgServer from "@metahkg/server";
 
 (async () => {
     await client.connect();
