@@ -14,7 +14,7 @@ export default (
     });
 
     fastify.get(
-        "/thread/:id",
+        "/threads/:id",
         {
             schema: {
                 params: paramsSchema,
