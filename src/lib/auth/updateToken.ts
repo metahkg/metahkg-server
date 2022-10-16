@@ -14,7 +14,7 @@ export default function (
 
         if (user) {
             const userData = (await usersCl.findOne({ id: user.id })) as User;
-            if (userData.name !== user.name) {
+            if (userData.name !== user.name || userData.sex !== user.sex) {
                 const newToken = createToken(user);
                 req.headers.authorization = `Bearer ${newToken}`;
                 res.header("token", newToken);
