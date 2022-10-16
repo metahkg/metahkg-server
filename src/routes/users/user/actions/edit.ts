@@ -5,6 +5,7 @@ import { createToken } from "../../../../lib/auth/createtoken";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../../lib/regex";
 import EmailValidator from "email-validator";
+import { userSex } from "../../../../types/user";
 
 export default (
     fastify: FastifyInstance,
@@ -37,7 +38,7 @@ export default (
             if (!user || user?.id !== id)
                 return res.code(403).send({ error: "Forbidden." });
 
-            const { name } = req.body;
+            const { name, sex } = req.body as { name?: string; sex?: userSex };
 
             if (name && name !== user.name && (await usersCl.findOne({ name })))
                 return res.code(409).send({ error: "Name already taken." });
@@ -47,9 +48,15 @@ export default (
 
             await usersCl.updateOne({ id: user.id }, { $set: req.body });
 
-            res.send({
+            const token = createToken({
+                ...user,
+                ...(name && { name }),
+                ...(sex && { sex }),
+            });
+
+            res.header("token", token).send({
                 success: true,
-                token: createToken({ ...user, ...(name && { name }) }),
+                token,
             });
         }
     );
