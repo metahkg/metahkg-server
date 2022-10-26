@@ -25,7 +25,7 @@ export default (
             email: Type.String({ format: "email" }),
             rtoken: Type.String(),
             sex: Type.Union([Type.Literal("M"), Type.Literal("F")]),
-            invitecode: Type.Optional(Type.String()),
+            inviteCode: Type.Optional(Type.String()),
         },
         { additionalProperties: false }
     );
@@ -37,7 +37,7 @@ export default (
             if (EmailValidator.validate(req.body.name))
                 return res.code(400).send({ error: "Bad request." });
 
-            const { name, pwd, email, rtoken, sex, invitecode } = req.body;
+            const { name, pwd, email, rtoken, sex, inviteCode } = req.body;
 
             if (!(await verifyCaptcha(RecaptchaSecret, rtoken)))
                 return res.code(429).send({ error: "Recaptcha token invalid." });
@@ -56,7 +56,7 @@ export default (
             // TODO: WARNING: frontend not implemented !!!
             if (
                 registerMode === "invite" &&
-                !(await inviteCl.findOne({ code: invitecode }))
+                !(await inviteCl.findOne({ code: inviteCode }))
             )
                 return res.code(400).send({ error: "Invalid invite code." });
 
