@@ -6,6 +6,7 @@ import { createToken } from "../../lib/auth/createtoken";
 import User from "../../models/user";
 import hash from "hash.js";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
+import { createSession } from "../../lib/sessions/createSession";
 
 dotenv.config();
 
@@ -21,7 +22,8 @@ export default (
                 Type.String({ format: "email" }),
             ]),
             // check if password is a sha256 hash
-            pwd: Type.RegEx(/^[a-f0-9]{64}$/i),
+            password: Type.RegEx(/^[a-f0-9]{64}$/i),
+            sameIp: Type.Optional(Type.Boolean()),
         },
         { additionalProperties: false }
     );
@@ -37,7 +39,7 @@ export default (
             schema: { body: schema },
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            const { name, pwd } = req.body;
+            const { name, password, sameIp } = req.body;
 
             const user = (await usersCl.findOne({
                 $or: [{ name }, { email: hash.sha256().update(name).digest("hex") }],
@@ -48,16 +50,26 @@ export default (
                     $or: [{ name }, { email: hash.sha256().update(name).digest("hex") }],
                 });
 
-                if (verifyUser && (await bcrypt.compare(pwd, verifyUser.pwd)))
+                if (verifyUser && (await bcrypt.compare(password, verifyUser.pwd)))
                     return res.code(409).send({ error: "Please verify your email." });
 
                 return res.code(401).send({ error: "Login failed." });
             }
 
-            const pwdMatch = await bcrypt.compare(pwd, user.pwd);
+            const pwdMatch = await bcrypt.compare(password, user.password);
             if (!pwdMatch) return res.code(401).send({ error: "Login failed." });
 
-            res.send({ token: createToken(user) });
+            const token = createToken(user);
+
+            await createSession(
+                user.id,
+                token,
+                req.headers["user-agent"],
+                req.ip,
+                sameIp
+            );
+
+            res.send({ token });
         }
     );
     done();

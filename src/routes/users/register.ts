@@ -5,10 +5,10 @@ import { verifyCaptcha } from "../../lib/recaptcha";
 import bcrypt from "bcrypt";
 import { generate } from "generate-password";
 import { Static, Type } from "@sinclair/typebox";
-import hash from "hash.js";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import dotenv from "dotenv";
 import { agenda } from "../../lib/agenda";
+import { sha256 } from "../../lib/sha256";
 
 dotenv.config();
 
@@ -21,7 +21,7 @@ export default (
         {
             name: Type.RegEx(/^\S{1,15}$/),
             // check if password is a sha256 hash
-            pwd: Type.RegEx(/^[a-f0-9]{64}$/i),
+            password: Type.RegEx(/^[a-f0-9]{64}$/i),
             email: Type.String({ format: "email" }),
             rtoken: Type.String(),
             sex: Type.Union([Type.Literal("M"), Type.Literal("F")]),
@@ -37,7 +37,7 @@ export default (
             if (EmailValidator.validate(req.body.name))
                 return res.code(400).send({ error: "Bad request." });
 
-            const { name, pwd, email, rtoken, sex, inviteCode } = req.body;
+            const { name, password, email, rtoken, sex, inviteCode } = req.body;
 
             if (!(await verifyCaptcha(RecaptchaSecret, rtoken)))
                 return res.code(429).send({ error: "Recaptcha token invalid." });
@@ -62,7 +62,7 @@ export default (
 
             if (
                 (await usersCl.findOne({
-                    $or: [{ name }, { email: hash.sha256().update(email).digest("hex") }],
+                    $or: [{ name }, { email: sha256(email) }],
                 })) ||
                 (await verificationCl.findOne({
                     $or: [{ name }, { email }],
@@ -81,12 +81,12 @@ export default (
 
             await mg.messages.create(mgDomain, verifyMsg({ email, code }));
 
-            const hashedPwd = await bcrypt.hash(pwd, 10);
+            const hashedPwd = await bcrypt.hash(password, 10);
             await verificationCl.insertOne({
                 createdAt: new Date(),
                 code,
                 email,
-                pwd: hashedPwd,
+                password: hashedPwd,
                 name,
                 sex,
                 type: "register",

@@ -35,7 +35,7 @@ export default (
             }>,
             res
         ) => {
-            const user = verifyUser(req.headers.authorization);
+            const user = await verifyUser(req.headers.authorization, req.ip);
             if (!user) return res.code(401).send({ error: "Unauthorized." });
 
             const userId = Number(req.params.id);

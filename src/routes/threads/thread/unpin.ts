@@ -25,7 +25,7 @@ export default (
         ) => {
             const threadId = Number(req.params.id);
 
-            const user = verifyUser(req.headers.authorization);
+            const user = await verifyUser(req.headers.authorization, req.ip);
 
             const thread = (await threadCl.findOne(
                 { id: threadId },

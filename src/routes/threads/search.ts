@@ -41,7 +41,7 @@ export default (
             const sort = req.query.sort || "relevance";
             const mode = req.query.mode || "title";
             const limit = Number(req.query.limit) || 25;
-            const user = verifyUser(req.headers.authorization);
+            const user = await verifyUser(req.headers.authorization, req.ip);
 
             const regex = new RegExp(
                 query.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"),

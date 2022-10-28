@@ -32,7 +32,7 @@ export default function (
             res
         ) => {
             const id = Number(req.params.id);
-            const admin = verifyUser(req.headers.authorization);
+            const admin = await verifyUser(req.headers.authorization, req.ip);
             const { reason, exp } = req.body;
 
             const reqUser = (await usersCl.findOne({ id })) as User;

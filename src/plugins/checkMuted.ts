@@ -4,7 +4,7 @@ import verifyUser from "../lib/auth/verify";
 import User from "../models/user";
 
 export default async function checkMuted(req: FastifyRequest, res: FastifyReply) {
-    const user = verifyUser(req.headers.authorization);
+    const user = await verifyUser(req.headers.authorization, req.ip);
     if (!user) return;
 
     const muted = Boolean(

@@ -39,7 +39,7 @@ export default function (
         ) => {
             const id = Number(req.params.id);
 
-            const user = verifyUser(req.headers.authorization);
+            const user = await verifyUser(req.headers.authorization, req.ip);
 
             const { category, title, reason } = req.body;
 

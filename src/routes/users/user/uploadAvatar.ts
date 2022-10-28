@@ -77,7 +77,7 @@ export default function (
                     });
                     return res.code(415).send({ error: "File type not supported." });
                 }
-                const user = verifyUser(req.headers.authorization);
+                const user = await verifyUser(req.headers.authorization, req.ip);
                 if (!user) {
                     fs.rm(`${process.env.root}/uploads/${file?.filename}`, (err) => {
                         console.error(err);

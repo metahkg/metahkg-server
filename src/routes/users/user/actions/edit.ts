@@ -6,6 +6,7 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../../lib/regex";
 import EmailValidator from "email-validator";
 import { userSex } from "../../../../types/user";
+import { updateSessionByToken } from "../../../../lib/sessions/updateSession";
 
 export default (
     fastify: FastifyInstance,
@@ -34,7 +35,7 @@ export default (
         ) => {
             const id = Number(req.params.id);
 
-            const user = verifyUser(req.headers.authorization);
+            const user = await verifyUser(req.headers.authorization, req.ip);
             if (!user || user?.id !== id)
                 return res.code(403).send({ error: "Forbidden." });
 
@@ -48,15 +49,20 @@ export default (
 
             await usersCl.updateOne({ id: user.id }, { $set: req.body });
 
-            const token = createToken({
+            const newToken = createToken({
                 ...user,
                 ...(name && { name }),
                 ...(sex && { sex }),
             });
 
-            res.header("token", token).send({
-                success: true,
-                token,
+            await updateSessionByToken(
+                user.id,
+                req.headers.authorization.slice(7),
+                newToken
+            );
+
+            res.header("token", newToken).send({
+                token: newToken,
             });
         }
     );

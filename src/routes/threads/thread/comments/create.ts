@@ -51,7 +51,7 @@ export default (
             if (!(await verifyCaptcha(RecaptchaSecret, rtoken)))
                 return res.code(429).send({ error: "Recaptcha token invalid." });
 
-            const user = verifyUser(req.headers.authorization);
+            const user = await verifyUser(req.headers.authorization, req.ip);
             if (!user) return res.code(401).send({ error: "Unauthorized." });
 
             if (!((await threadCl.findOne({ id })) as Thread))

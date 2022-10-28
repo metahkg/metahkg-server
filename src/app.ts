@@ -1,6 +1,9 @@
 import dotenv from "dotenv";
 import routes from "./routes";
 import Fastify from "fastify";
+import { client } from "./common";
+import { setup } from "./mongo/setupmongo";
+import { agenda } from "./lib/agenda";
 import refreshToken from "./lib/auth/refreshToken";
 import updateToken from "./lib/auth/updateToken";
 import multipart from "@fastify/multipart";
@@ -11,7 +14,15 @@ import sitemap from "./sitemap";
 
 dotenv.config();
 
-export default function MetahkgServer() {
+export default async function MetahkgServer() {
+    await client.connect();
+    await setup();
+    await agenda.start();
+
+    if (!(await agenda.jobs({ name: "removeExpiredSessions" })).length) {
+        await agenda.every("5 minutes", "removeExpiredSessions");
+    }
+
     const fastify = Fastify({
         logger: true,
         trustProxy: true,

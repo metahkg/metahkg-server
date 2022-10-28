@@ -6,6 +6,7 @@ import { createToken } from "../../lib/auth/createtoken";
 import User from "../../models/user";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { agenda } from "../../lib/agenda";
+import { createSession } from "../../lib/sessions/createSession";
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ export default (
         {
             email: Type.String({ format: "email" }),
             code: Type.String({ maxLength: 30, minLength: 30 }),
+            sameIp: Type.Optional(Type.Boolean())
         },
         { additionalProperties: false }
     );
@@ -26,7 +28,7 @@ export default (
         "/verify",
         { schema: { body: schema } },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            const { email, code } = req.body;
+            const { email, code, sameIp } = req.body;
 
             const verificationData = await verificationCl.findOne({
                 type: "register",
@@ -39,7 +41,7 @@ export default (
                     .code(401)
                     .send({ error: "Code incorrect or expired, or email not found." });
 
-            const { name, pwd, sex } = verificationData;
+            const { name, password, sex } = verificationData;
 
             const newUserId =
                 (await usersCl.find().sort({ id: -1 }).limit(1).toArray())[0]?.id + 1 ||
@@ -49,7 +51,7 @@ export default (
                 name,
                 id: newUserId,
                 email: hash.sha256().update(email).digest("hex"),
-                pwd,
+                password,
                 role: "user",
                 createdAt: new Date(),
                 sex,
@@ -61,6 +63,8 @@ export default (
             await agenda.cancel({ name: "updateVerificationCode", data: { email } });
 
             const token = createToken(newUser);
+
+            await createSession(newUser.id, token, req.headers["user-agent"], req.ip, sameIp);
 
             res.send({ token });
         }

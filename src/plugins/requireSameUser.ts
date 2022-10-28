@@ -6,7 +6,7 @@ export default async function RequireSameUser(
     res: FastifyReply
 ) {
     const userId = Number(req.params.id);
-    const user = verifyUser(req.headers.authorization);
+    const user = await verifyUser(req.headers.authorization, req.ip);
 
     if (!user) return res.code(401).send({ error: "Unauthorized." });
     if (user.id !== userId) return res.code(403).send({ error: "Forbidden." });

@@ -27,7 +27,7 @@ export default (
             if (!req.query.id) return res.send([]);
 
             const threads = [req.query.id].flat(Infinity).map((id) => Number(id));
-            const user = verifyUser(req.headers.authorization);
+            const user = await verifyUser(req.headers.authorization, req.ip);
 
             const result = (await threadCl
                 .find({

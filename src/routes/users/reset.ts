@@ -5,6 +5,7 @@ import User from "../../models/user";
 import bcrypt from "bcrypt";
 import { createToken } from "../../lib/auth/createtoken";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
+import { createSession } from "../../lib/sessions/createSession";
 
 export default (
     fastify: FastifyInstance,
@@ -15,7 +16,7 @@ export default (
         {
             email: Type.String({ format: "email" }),
             code: Type.String({ minLength: 30, maxLength: 30 }),
-            pwd: Type.RegEx(/^[a-f0-9]{64}$/i),
+            password: Type.RegEx(/^[a-f0-9]{64}$/i),
         },
         { additionalProperties: false }
     );
@@ -24,7 +25,7 @@ export default (
         "/reset",
         { schema: { body: schema } },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            const { email, code, pwd } = req.body;
+            const { email, code, password } = req.body;
 
             const hashedEmail = hash.sha256().update(email).digest("hex");
 
@@ -44,7 +45,7 @@ export default (
 
             await usersCl.updateOne(
                 { email: hashedEmail },
-                { $set: { pwd: bcrypt.hashSync(pwd, 10) } }
+                { $set: { password: bcrypt.hashSync(password, 10) } }
             );
 
             await verificationCl.deleteOne({
@@ -53,7 +54,11 @@ export default (
                 code: code,
             });
 
-            return res.send({ token: createToken(user) });
+            const token = createToken(user);
+
+            await createSession(user.id, token, req.headers["user-agent"], req.ip);
+
+            return res.send({ token });
         }
     );
     done();

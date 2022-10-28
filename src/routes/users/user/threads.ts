@@ -38,7 +38,7 @@ export default (
             const page = Number(req.query.page) || 1;
             const sort = req.query.sort || "created";
             const limit = Number(req.query.limit) || 25;
-            const user = verifyUser(req.headers.authorization);
+            const user = await verifyUser(req.headers.authorization, req.ip);
 
             const requestedUser = (await usersCl.findOne({ id })) as User;
 

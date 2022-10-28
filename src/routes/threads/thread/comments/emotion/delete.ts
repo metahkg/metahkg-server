@@ -25,7 +25,7 @@ export default function (
         async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
             const id = Number(req.params.id);
             const cid = Number(req.params.cid);
-            const user = verifyUser(req.headers.authorization);
+            const user = await verifyUser(req.headers.authorization, req.ip);
 
             if (!user) return res.code(401).send({ error: "Unauthorized." });
 

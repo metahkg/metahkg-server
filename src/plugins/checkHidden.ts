@@ -22,7 +22,7 @@ export default async (
             })
         )?.hidden;
 
-        if (hidden && !verifyUser(req.headers.authorization))
+        if (hidden && !(await verifyUser(req.headers.authorization, req.ip)))
             return res.code(403).send({ error: "Forbidden." });
     }
     return;

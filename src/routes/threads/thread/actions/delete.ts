@@ -30,7 +30,7 @@ export default function (
         ) => {
             const id = Number(req.params.id);
             const { reason } = req.body;
-            const admin = verifyUser(req.headers.authorization);
+            const admin = await verifyUser(req.headers.authorization, req.ip);
 
             const thread = await threadCl.findOne({ id }, { projection: { _id: 0 } });
             if (!thread) return res.code(404).send({ error: "Thread not found." });

@@ -1,5 +1,12 @@
 # Changelog
 
+## v5.2.0
+
+- implement sessions
+- option to restrict a session to same ip
+- remove `/me/status` in favor of `/me/session`
+- change all `pwd` to `password`
+
 ## v5.1.0
 
 - remove `POST /me/rename`

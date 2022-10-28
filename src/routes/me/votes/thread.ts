@@ -23,7 +23,7 @@ export default (
         async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
             const threadId = Number(req.params.id);
 
-            const user = verifyUser(req.headers.authorization);
+            const user = await verifyUser(req.headers.authorization, req.ip);
             if (!user) return res.code(401).send({ error: "Unauthorized." });
 
             const votes = await votesCl.findOne(

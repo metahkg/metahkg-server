@@ -33,7 +33,7 @@ export default function (
             const id = Number(req.params.id);
             const cid = Number(req.params.cid);
             const { reason } = req.body;
-            const admin = verifyUser(req.headers.authorization);
+            const admin = await verifyUser(req.headers.authorization, req.ip);
 
             const thread = (await threadCl.findOne(
                 { id, conversation: { $elemMatch: { id: cid } } },
