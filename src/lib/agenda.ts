@@ -30,5 +30,8 @@ agenda.define("unbanUser", async (job: Job) => {
 
 agenda.define("removeExpiredSessions", async () => {
     // probably bug from mongodb side that $pull only accepts never
-    await usersCl.updateMany({}, { $pull: { "sessions.exp": { $lt: new Date() } as never } });
+    await usersCl.updateMany(
+        {},
+        { $pull: { "sessions.exp": { $lt: new Date() } as never } }
+    );
 });

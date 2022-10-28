@@ -46,7 +46,10 @@ export default (
 
             const hiddenCats = await gethiddencats();
 
-            if (!(await verifyUser(req.headers.authorization, req.ip)) && hiddenCats.includes(category))
+            if (
+                !(await verifyUser(req.headers.authorization, req.ip)) &&
+                hiddenCats.includes(category)
+            )
                 return res.code(403).send({ error: "Forbidden." });
 
             if (!(await categoryCl.findOne({ id: category })))

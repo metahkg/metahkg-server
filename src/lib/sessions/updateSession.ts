@@ -2,7 +2,11 @@ import { usersCl } from "../../common";
 import User from "../../models/user";
 import { sha256 } from "../sha256";
 
-export async function updateSessionById(userId: number, sessionId: string, newToken: string) {
+export async function updateSessionById(
+    userId: number,
+    sessionId: string,
+    newToken: string
+) {
     const user = (await usersCl.findOne(
         { id: userId, sessions: { $elemMatch: { id: sessionId } } },
         {
@@ -25,7 +29,7 @@ export async function updateSessionById(userId: number, sessionId: string, newTo
                 [`sessions.${index}`]: {
                     ...session,
                     exp: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7),
-                    token: newToken
+                    token: newToken,
                 },
             },
         }
@@ -34,8 +38,12 @@ export async function updateSessionById(userId: number, sessionId: string, newTo
     return true;
 }
 
-export async function updateSessionByToken(userId: number, token: string, newToken: string) {
-    const hashedToken = sha256(token)
+export async function updateSessionByToken(
+    userId: number,
+    token: string,
+    newToken: string
+) {
+    const hashedToken = sha256(token);
     const user = (await usersCl.findOne(
         { id: userId, sessions: { $elemMatch: { token: hashedToken } } },
         {
@@ -58,7 +66,7 @@ export async function updateSessionByToken(userId: number, token: string, newTok
                 [`sessions.${index}`]: {
                     ...session,
                     exp: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 7),
-                    token: newToken
+                    token: newToken,
                 },
             },
         }

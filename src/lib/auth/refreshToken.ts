@@ -20,7 +20,11 @@ export default function (
             ) {
                 const newToken = createToken(user);
 
-                await updateSessionByToken(user.id, req.headers.authorization?.slice(7), newToken);
+                await updateSessionByToken(
+                    user.id,
+                    req.headers.authorization?.slice(7),
+                    newToken
+                );
 
                 res.header("token", newToken);
             }

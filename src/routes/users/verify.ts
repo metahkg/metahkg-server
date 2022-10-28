@@ -19,7 +19,7 @@ export default (
         {
             email: Type.String({ format: "email" }),
             code: Type.String({ maxLength: 30, minLength: 30 }),
-            sameIp: Type.Optional(Type.Boolean())
+            sameIp: Type.Optional(Type.Boolean()),
         },
         { additionalProperties: false }
     );
@@ -64,7 +64,13 @@ export default (
 
             const token = createToken(newUser);
 
-            await createSession(newUser.id, token, req.headers["user-agent"], req.ip, sameIp);
+            await createSession(
+                newUser.id,
+                token,
+                req.headers["user-agent"],
+                req.ip,
+                sameIp
+            );
 
             res.send({ token });
         }
