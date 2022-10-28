@@ -12,10 +12,23 @@ export default function sessions(
         const user = await verifyUser(req.headers.authorization, req.ip);
         if (!user) return res.code(401).send({ error: "Unauthorized" });
 
-        const sessions = (await usersCl.findOne(
-            { id: user.id },
-            { projection: { _id: 0, sessions: { id: 1, createdAt: 1, exp: 1, sameIp: 1, userAgent: 1 } } }
-        ) as User)?.sessions;
+        const sessions = (
+            (await usersCl.findOne(
+                { id: user.id },
+                {
+                    projection: {
+                        _id: 0,
+                        sessions: {
+                            id: 1,
+                            createdAt: 1,
+                            exp: 1,
+                            sameIp: 1,
+                            userAgent: 1,
+                        },
+                    },
+                }
+            )) as User
+        )?.sessions;
 
         return res.send(sessions);
     });

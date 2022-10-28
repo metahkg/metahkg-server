@@ -18,7 +18,11 @@ export default function (
             if (userData.name !== user.name || userData.sex !== user.sex) {
                 const newToken = createToken(user);
 
-                await updateSessionByToken(user.id, req.headers.authorization?.slice(7), newToken);
+                await updateSessionByToken(
+                    user.id,
+                    req.headers.authorization?.slice(7),
+                    newToken
+                );
 
                 req.headers.authorization = `Bearer ${newToken}`;
                 res.header("token", newToken);
