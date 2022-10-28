@@ -1,5 +1,9 @@
 # Changelog
 
+## v5.2.1
+
+- openapi: disable additional properties
+
 ## v5.2.0
 
 - implement sessions
