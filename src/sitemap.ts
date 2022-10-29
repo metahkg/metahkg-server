@@ -41,7 +41,7 @@ export default function (
             )}
             ${(
                 (await threadCl
-                    .find()
+                    .find({ removed: { $exists: false } })
                     .sort({ id: 1 })
                     .project({ _id: 0, id: 1, lastModified: 1 })
                     .toArray()) as Thread[]
