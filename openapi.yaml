@@ -1927,7 +1927,7 @@ paths:
               properties:
                 name:
                   description: Username or email
-                  anyOf:
+                  oneOf:
                     - $ref: "#/components/schemas/User/properties/name"
                     - $ref: "#/components/schemas/email"
                 password:
