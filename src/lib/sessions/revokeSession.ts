@@ -1,7 +1,7 @@
 import { usersCl } from "../../common";
 import { sha256 } from "../sha256";
 
-export async function revokeSessionByToken(userId: number, token: string) {
+export async function revokeSessionByToken(userId: number, token: string): Promise<null | true> {
     if (
         !(
             await usersCl.updateOne(

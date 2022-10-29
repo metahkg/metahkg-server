@@ -1,14 +1,14 @@
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { usersCl } from "../../common";
-import verifyUser from "../../lib/auth/verify";
-import User from "../../models/user";
+import { usersCl } from "../../../common";
+import verifyUser from "../../../lib/auth/verify";
+import User from "../../../models/user";
 
 export default function sessions(
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
     done: (err?: Error) => void
 ) {
-    fastify.get("/sessions", async (req: FastifyRequest, res) => {
+    fastify.get("/", async (req: FastifyRequest, res) => {
         const user = await verifyUser(req.headers.authorization, req.ip);
         if (!user) return res.code(401).send({ statusCode: 401, error: "Unauthorized" });
 

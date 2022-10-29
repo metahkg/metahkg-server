@@ -1,5 +1,11 @@
 # Changelog
 
+## v5.4.0
+
+- revoke sessions
+- get individual sessions
+- logout
+
 ## v5.3.0
 
 - add statusCode to errors

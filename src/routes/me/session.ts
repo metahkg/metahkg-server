@@ -18,11 +18,11 @@ export default (
             req.headers.authorization?.slice(7)
         );
 
-        res.send({
-            session: objectFilter(session, (key) =>
+        res.send(
+            objectFilter(session, (key) =>
                 ["id", "createdAt", "exp", "sameIp", "userAgent"].includes(key)
             ),
-        });
+        );
     });
     done();
 };
