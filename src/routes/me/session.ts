@@ -21,7 +21,7 @@ export default (
         res.send(
             objectFilter(session, (key) =>
                 ["id", "createdAt", "exp", "sameIp", "userAgent"].includes(key)
-            ),
+            )
         );
     });
     done();
