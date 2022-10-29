@@ -44,7 +44,9 @@ export default function (
             const { category, title, reason } = req.body;
 
             if (category && !(await categoryCl.findOne({ id: category })))
-                return res.code(404).send({ error: "Category not found" });
+                return res
+                    .code(404)
+                    .send({ statusCode: 404, error: "Category not found" });
 
             await threadCl.updateOne(
                 { id },

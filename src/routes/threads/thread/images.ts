@@ -24,7 +24,7 @@ export default (
             res
         ) => {
             if (!isInteger(req.params.id))
-                return res.code(400).send({ error: "Bad request." });
+                return res.code(400).send({ statusCode: 400, error: "Bad request." });
 
             const id = Number(req.params.id);
 
@@ -33,7 +33,10 @@ export default (
                 { projection: { _id: 0, images: 1 } }
             )) as Thread;
 
-            if (!result) return res.code(404).send({ error: "Thread not found." });
+            if (!result)
+                return res
+                    .code(404)
+                    .send({ statusCode: 404, error: "Thread not found." });
             if ("removed" in result) return;
 
             res.send(result.images);

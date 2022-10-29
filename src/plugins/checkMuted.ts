@@ -17,7 +17,9 @@ export default async function checkMuted(req: FastifyRequest, res: FastifyReply)
     );
 
     if (muted)
-        return res.code(403).send({ error: "Forbidden. You are muted by an admin." });
+        return res
+            .code(403)
+            .send({ statusCode: 403, error: "Forbidden. You are muted by an admin." });
 
     return;
 }

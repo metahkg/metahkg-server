@@ -49,13 +49,18 @@ export default (
             const { rtoken, quote } = req.body;
 
             if (!(await verifyCaptcha(RecaptchaSecret, rtoken)))
-                return res.code(429).send({ error: "Recaptcha token invalid." });
+                return res
+                    .code(429)
+                    .send({ statusCode: 429, error: "Recaptcha token invalid." });
 
             const user = await verifyUser(req.headers.authorization, req.ip);
-            if (!user) return res.code(401).send({ error: "Unauthorized." });
+            if (!user)
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
             if (!((await threadCl.findOne({ id })) as Thread))
-                return res.code(404).send({ error: "Thread not found." });
+                return res
+                    .code(404)
+                    .send({ statusCode: 404, error: "Thread not found." });
 
             const comment = sanitize(req.body.comment);
             const text = htmlToText(comment, { wordwrap: false });

@@ -19,7 +19,8 @@ export default function (
 
             const category = await categoryCl.findOne({ id }, { projection: { _id: 0 } });
 
-            if (!category) return res.code(404).send({ error: "Not found." });
+            if (!category)
+                return res.code(404).send({ statusCode: 404, error: "Not found." });
 
             res.send(category);
         }

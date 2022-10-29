@@ -18,7 +18,8 @@ export default (
         { schema: { params: paramsSchema } },
         async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
             const user = await verifyUser(req.headers.authorization, req.ip);
-            if (!user) return res.code(401).send({ error: "Unauthorized" });
+            if (!user)
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized" });
 
             const userId = Number(req.params.id);
 
@@ -30,7 +31,9 @@ export default (
                     )
                 ).matchedCount
             )
-                return res.code(409).send({ error: "User not blocked." });
+                return res
+                    .code(409)
+                    .send({ statusCode: 409, error: "User not blocked." });
 
             return res.send({ success: true });
         }

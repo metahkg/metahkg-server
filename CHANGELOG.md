@@ -1,5 +1,9 @@
 # Changelog
 
+## v5.3.0
+
+- add statusCode to errors
+
 ## v5.2.1
 
 - openapi: disable additional properties

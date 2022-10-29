@@ -37,10 +37,13 @@ export default function (
 
             const reqUser = (await usersCl.findOne({ id })) as User;
 
-            if (!reqUser) return res.status(404).send({ error: "User not found." });
+            if (!reqUser)
+                return res.code(404).send({ statusCode: 404, error: "User not found." });
 
             if (reqUser.role === "admin")
-                return res.code(409).send({ error: "Cannot mute an admin." });
+                return res
+                    .code(409)
+                    .send({ statusCode: 409, error: "Cannot mute an admin." });
 
             await usersCl.updateOne(
                 { id },

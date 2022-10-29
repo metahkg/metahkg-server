@@ -62,27 +62,34 @@ export default function (
         async (req, res) => {
             try {
                 const file = req.file as unknown as Express.Multer.File;
-                if (!file) return res.code(400).send({ error: "Bad request." });
+                if (!file)
+                    return res.code(400).send({ statusCode: 400, error: "Bad request." });
 
                 if (file?.size > maxSize) {
                     fs.rm(file?.path, (err) => {
                         console.error(err);
                     });
-                    return res.code(413).send({ error: "File too large." });
+                    return res
+                        .code(413)
+                        .send({ statusCode: 413, error: "File too large." });
                 }
                 if (!file.mimetype.match(/^image\/(png|svg|jpg|jpeg|jfif|gif|webp)$/i)) {
                     //remove the file
                     fs.rm(file?.path, (err) => {
                         console.error(err);
                     });
-                    return res.code(415).send({ error: "File type not supported." });
+                    return res
+                        .code(415)
+                        .send({ statusCode: 415, error: "File type not supported." });
                 }
                 const user = await verifyUser(req.headers.authorization, req.ip);
                 if (!user) {
                     fs.rm(`${process.env.root}/uploads/${file?.filename}`, (err) => {
                         console.error(err);
                     });
-                    return res.code(401).send({ error: "Unauthorized." });
+                    return res
+                        .code(401)
+                        .send({ statusCode: 401, error: "Unauthorized." });
                 }
 
                 //rename file to <user-id>.<extension>
@@ -101,7 +108,10 @@ export default function (
                     //fs.rmSync(`images/processing/avatars/${newFileName}`);
                 } catch (err) {
                     console.error(err);
-                    res.code(422).send({ error: "Could not process you file." });
+                    res.code(422).send({
+                        statusCode: 422,
+                        error: "Could not process you file.",
+                    });
                     fs.rm(`images/processing/avatars/${newFileName}`, (err) => {
                         console.error(err);
                     });
@@ -110,7 +120,7 @@ export default function (
                 res.send({ success: true });
             } catch (err) {
                 console.error(err);
-                res.code(500).send({ error: "Internal server error." });
+                res.code(500).send({ statusCode: 500, error: "Internal server error." });
             }
         }
     );

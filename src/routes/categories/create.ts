@@ -23,8 +23,12 @@ export default function (
         "/",
         { schema: { body: schema }, preHandler: [requireAdmin] },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
+            const { name } = req.body;
+
             if (await categoryCl.findOne({ name }))
-                return res.status(409).send({ error: "Category already exists." });
+                return res
+                    .code(409)
+                    .send({ statusCode: 409, error: "Category already exists." });
 
             const id =
                 (

@@ -37,7 +37,8 @@ export default function (
             const { cid: commentId } = req.body;
 
             const user = await verifyUser(req.headers.authorization, req.ip);
-            if (!user) return res.code(401).send({ error: "Unauthorized." });
+            if (!user)
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
             const thread = (await threadCl.findOne(
                 {
@@ -61,12 +62,15 @@ export default function (
                 }
             )) as Thread;
 
-            if (!thread) return res.code(404).send({ error: "Thread not found." });
+            if (!thread)
+                return res
+                    .code(404)
+                    .send({ statusCode: 404, error: "Thread not found." });
 
             if ("removed" in thread) return;
 
             if (thread?.op?.id !== user.id)
-                return res.code(403).send({ error: "Forbidden." });
+                return res.code(403).send({ statusCode: 403, error: "Forbidden." });
 
             const comment = Object.fromEntries(
                 Object.entries(thread.conversation?.[0]).filter(
@@ -74,7 +78,10 @@ export default function (
                 )
             ) as commentType;
 
-            if (!comment) return res.code(404).send({ error: "Comment not found." });
+            if (!comment)
+                return res
+                    .code(404)
+                    .send({ statusCode: 404, error: "Comment not found." });
 
             await threadCl.updateOne({ id: threadId }, { $set: { pin: comment } });
 

@@ -36,13 +36,14 @@ export default (
             res
         ) => {
             const user = await verifyUser(req.headers.authorization, req.ip);
-            if (!user) return res.code(401).send({ error: "Unauthorized." });
+            if (!user)
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
             const userId = Number(req.params.id);
             const { reason } = req.body;
 
             if (!(await usersCl.findOne({ id: userId })))
-                return res.code(404).send({ error: "User not found." });
+                return res.code(404).send({ statusCode: 404, error: "User not found." });
 
             if (
                 !(
@@ -63,7 +64,9 @@ export default (
                     )
                 ).matchedCount
             )
-                return res.code(409).send({ error: "User already blocked." });
+                return res
+                    .code(409)
+                    .send({ statusCode: 409, error: "User already blocked." });
 
             return res.send({ success: true });
         }

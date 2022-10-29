@@ -18,12 +18,15 @@ export default function (
         { schema: { params: paramsSchema } },
         async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
             const user = await verifyUser(req.headers.authorization, req.ip);
-            if (!user) return res.code(401).send({ error: "Unauthorized." });
+            if (!user)
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
             const threadId = Number(req.params.id);
 
             if (!(await threadCl.findOne({ id: threadId })))
-                return res.code(404).send({ error: "Thread not found." });
+                return res
+                    .code(404)
+                    .send({ statusCode: 404, error: "Thread not found." });
 
             if (
                 !(
@@ -33,7 +36,9 @@ export default function (
                     )
                 ).matchedCount
             )
-                return res.code(409).send({ error: "Thread not starred." });
+                return res
+                    .code(409)
+                    .send({ statusCode: 409, error: "Thread not starred." });
 
             return res.send({ success: true });
         }

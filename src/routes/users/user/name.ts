@@ -32,7 +32,8 @@ export default function (
                 { projection: { name: 1, _id: 0 } }
             )) as User;
 
-            if (!requestedUser) return res.code(404).send({ error: "User not found" });
+            if (!requestedUser)
+                return res.code(404).send({ statusCode: 404, error: "User not found" });
 
             res.send(requestedUser);
         }

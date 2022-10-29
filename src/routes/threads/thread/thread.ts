@@ -38,10 +38,11 @@ export default (
             const end = Number(req.query.end) || page * limit;
             const sort = (req.query.sort || "time") as "score" | "time" | "latest";
 
-            if (end < start) return res.code(400).send({ error: "Bad request." });
+            if (end < start)
+                return res.code(400).send({ statusCode: 400, error: "Bad request." });
 
             if (!(await threadCl.findOne({ id })))
-                return res.code(404).send({ error: "Thread not found" });
+                return res.code(404).send({ statusCode: 404, error: "Thread not found" });
 
             const thread = (
                 await threadCl

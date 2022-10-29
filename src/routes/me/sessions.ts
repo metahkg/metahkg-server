@@ -10,7 +10,7 @@ export default function sessions(
 ) {
     fastify.get("/sessions", async (req: FastifyRequest, res) => {
         const user = await verifyUser(req.headers.authorization, req.ip);
-        if (!user) return res.code(401).send({ error: "Unauthorized" });
+        if (!user) return res.code(401).send({ statusCode: 401, error: "Unauthorized" });
 
         const sessions = (
             (await usersCl.findOne(

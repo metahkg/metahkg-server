@@ -37,11 +37,13 @@ export default (
                 }))
             )
                 return res.code(401).send({
+                    statusCode: 401,
                     error: "Token incorrect, or expired, or you have not requested reset password.",
                 });
 
             const user = (await usersCl.findOne({ email: hashedEmail })) as User;
-            if (!user) return res.code(404).send({ error: "User not found." });
+            if (!user)
+                return res.code(404).send({ statusCode: 404, error: "User not found." });
 
             await usersCl.updateOne(
                 { email: hashedEmail },

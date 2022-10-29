@@ -33,7 +33,10 @@ export default function (
             const admin = await verifyUser(req.headers.authorization, req.ip);
 
             const thread = await threadCl.findOne({ id }, { projection: { _id: 0 } });
-            if (!thread) return res.code(404).send({ error: "Thread not found." });
+            if (!thread)
+                return res
+                    .code(404)
+                    .send({ statusCode: 404, error: "Thread not found." });
 
             await removedCl.insertOne({ thread, type: "thread", admin, reason });
 

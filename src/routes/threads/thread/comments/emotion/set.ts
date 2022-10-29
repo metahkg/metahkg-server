@@ -30,7 +30,8 @@ export default function (
             res
         ) {
             const user = await verifyUser(req.headers.authorization, req.ip);
-            if (!user) return res.code(401).send({ error: "Unauthorized." });
+            if (!user)
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
             const id = Number(req.params.id);
             const cid = Number(req.params.cid);
@@ -56,7 +57,9 @@ export default function (
 
             // index can be 0
             if (index === undefined || index === -1)
-                return res.code(404).send({ error: "Comment not found." });
+                return res
+                    .code(404)
+                    .send({ statusCode: 404, error: "Comment not found." });
 
             // remove previous value first
             await threadCl.updateOne(

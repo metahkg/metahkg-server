@@ -35,12 +35,14 @@ export default (
         { schema: { body: schema } },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             if (EmailValidator.validate(req.body.name))
-                return res.code(400).send({ error: "Bad request." });
+                return res.code(400).send({ statusCode: 400, error: "Bad request." });
 
             const { name, password, email, rtoken, sex, inviteCode } = req.body;
 
             if (!(await verifyCaptcha(RecaptchaSecret, rtoken)))
-                return res.code(429).send({ error: "Recaptcha token invalid." });
+                return res
+                    .code(429)
+                    .send({ statusCode: 429, error: "Recaptcha token invalid." });
 
             // register modes (process.env.register)
             const registerMode =
@@ -51,14 +53,18 @@ export default (
                 }[process.env.register || ""] || "normal";
 
             if (registerMode === "none")
-                return res.code(400).send({ error: "Registration disabled." });
+                return res
+                    .code(400)
+                    .send({ statusCode: 400, error: "Registration disabled." });
 
             // TODO: WARNING: frontend not implemented !!!
             if (
                 registerMode === "invite" &&
                 !(await inviteCl.findOne({ code: inviteCode }))
             )
-                return res.code(400).send({ error: "Invalid invite code." });
+                return res
+                    .code(400)
+                    .send({ statusCode: 400, error: "Invalid invite code." });
 
             if (
                 (await usersCl.findOne({
@@ -68,7 +74,10 @@ export default (
                     $or: [{ name }, { email }],
                 }))
             )
-                return res.code(409).send({ error: "Username or email already in use." });
+                return res.code(409).send({
+                    statusCode: 409,
+                    error: "Username or email already in use.",
+                });
 
             const code = generate({
                 length: 30,

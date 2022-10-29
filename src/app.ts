@@ -30,20 +30,20 @@ export default async function MetahkgServer() {
 
     fastify.setValidatorCompiler((opt) => ajv.compile(opt.schema));
 
-    fastify.setErrorHandler((error, _request, reply) => {
+    fastify.setErrorHandler((error, _request, res) => {
         console.error(error);
         const { statusCode, message: errormsg } = error;
 
         if (error.validation) {
-            reply.status(400).send({ error: "Bad request." });
+            res.code(400).send({ statusCode: 400, error: "Bad request." });
         }
 
         if (statusCode && statusCode < 500 && statusCode >= 400)
             try {
-                reply.code(statusCode).send({ error: errormsg });
+                res.code(statusCode).send({ statusCode, error: errormsg });
             } catch {}
 
-        reply.code(500).send({ error: "Internal Server Error." });
+        res.code(500).send({ statusCode: 500, error: "Internal Server Error." });
     });
 
     JSON.parse(process.env.cors) && fastify.register(fastifyCors);

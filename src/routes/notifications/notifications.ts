@@ -21,7 +21,8 @@ export default (
             res
         ) => {
             const user = await verifyUser(req.headers.authorization, req.ip);
-            if (!user) return res.code(401).send({ error: "Unauthorized." });
+            if (!user)
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
             const limit = Number(req.query.limit);
             const page = Number(req.query.page) || 1;

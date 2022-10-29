@@ -22,13 +22,15 @@ export default (
             const { email, rtoken } = req.body;
 
             if (!(await verifyCaptcha(RecaptchaSecret, rtoken)))
-                return res.code(429).send({ error: "Recaptcha token invalid." });
+                return res
+                    .code(429)
+                    .send({ statusCode: 429, error: "Recaptcha token invalid." });
 
             const verificationUserData = await verificationCl.findOne({
                 email,
             });
             if (!verificationUserData)
-                return res.code(404).send({ error: "Email not found." });
+                return res.code(404).send({ statusCode: 404, error: "Email not found." });
 
             if (
                 (await limitCl.countDocuments({

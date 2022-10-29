@@ -51,13 +51,16 @@ export default (
                 });
 
                 if (verifyUser && (await bcrypt.compare(password, verifyUser.pwd)))
-                    return res.code(409).send({ error: "Please verify your email." });
+                    return res
+                        .code(409)
+                        .send({ statusCode: 409, error: "Please verify your email." });
 
-                return res.code(401).send({ error: "Login failed." });
+                return res.code(401).send({ statusCode: 401, error: "Login failed." });
             }
 
             const pwdMatch = await bcrypt.compare(password, user.password);
-            if (!pwdMatch) return res.code(401).send({ error: "Login failed." });
+            if (!pwdMatch)
+                return res.code(401).send({ statusCode: 401, error: "Login failed." });
 
             const token = createToken(user);
 

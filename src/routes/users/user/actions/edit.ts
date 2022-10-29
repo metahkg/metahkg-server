@@ -37,15 +37,19 @@ export default (
 
             const user = await verifyUser(req.headers.authorization, req.ip);
             if (!user || user?.id !== id)
-                return res.code(403).send({ error: "Forbidden." });
+                return res.code(403).send({ statusCode: 403, error: "Forbidden." });
 
             const { name, sex } = req.body as { name?: string; sex?: userSex };
 
             if (name && name !== user.name && (await usersCl.findOne({ name })))
-                return res.code(409).send({ error: "Name already taken." });
+                return res
+                    .code(409)
+                    .send({ statusCode: 409, error: "Name already taken." });
 
             if (EmailValidator.validate(name))
-                return res.code(400).send({ error: "Name must not be a email." });
+                return res
+                    .code(400)
+                    .send({ statusCode: 400, error: "Name must not be a email." });
 
             await usersCl.updateOne({ id: user.id }, { $set: req.body });
 

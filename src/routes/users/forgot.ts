@@ -24,17 +24,21 @@ export default (
             const { email, rtoken } = req.body;
 
             if (!verifyCaptcha(RecaptchaSecret, rtoken))
-                return res.code(429).send({ error: "Recaptcha token invalid." });
+                return res
+                    .code(429)
+                    .send({ statusCode: 429, error: "Recaptcha token invalid." });
 
             const hashedEmail = hash.sha256().update(email).digest("hex");
 
             const userData = (await usersCl.findOne({ email: hashedEmail })) as User;
-            if (!userData) return res.code(404).send({ error: "User not found." });
+            if (!userData)
+                return res.code(404).send({ statusCode: 404, error: "User not found." });
 
             if (
                 (await limitCl.countDocuments({ type: "reset", email: hashedEmail })) >= 2
             )
                 return res.code(429).send({
+                    statusCode: 429,
                     error: "You can only request reset password 2 times a day.",
                 });
 

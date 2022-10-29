@@ -35,7 +35,9 @@ export default function (
             const id = Number(req.params.id);
 
             if (!(await categoryCl.updateOne({ id }, { $set: req.body })).matchedCount)
-                return res.code(404).send({ error: "Category not found." });
+                return res
+                    .code(404)
+                    .send({ statusCode: 404, error: "Category not found." });
 
             return res.send({ success: true });
         }

@@ -35,7 +35,10 @@ export default function (
 
             const category = await categoryCl.findOne({ id }, { projection: { _id: 0 } });
 
-            if (!category) return res.code(404).send({ error: "Category not found." });
+            if (!category)
+                return res
+                    .code(404)
+                    .send({ statusCode: 404, error: "Category not found." });
 
             await removedCl.insertOne({ type: "category", category });
 

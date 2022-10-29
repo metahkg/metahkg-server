@@ -10,7 +10,7 @@ export default function (
 ) {
     fastify.get("/blocked", async (req, res) => {
         const user = await verifyUser(req.headers.authorization, req.ip);
-        if (!user) return res.code(401).send({ error: "Unauthorized." });
+        if (!user) return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
         const blocked = ((
             await usersCl.findOne({ id: user.id }, { projection: { _id: 0, blocked: 1 } })

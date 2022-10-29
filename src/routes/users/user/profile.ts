@@ -40,7 +40,8 @@ export default function (
                 }
             )) as User;
 
-            if (!requestedUser) return res.code(404).send({ error: "User not found" });
+            if (!requestedUser)
+                return res.code(404).send({ statusCode: 404, error: "User not found" });
 
             const count = await threadCl.countDocuments({
                 "op.id": requestedUser.id,
