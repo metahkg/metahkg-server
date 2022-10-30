@@ -3,6 +3,7 @@ import { domain, usersCl, vapidKeys } from "../../common";
 import User, { Notification } from "../../models/user";
 
 export async function sendNotification(userId: number, data: Notification) {
+    webPush.setGCMAPIKey(process.env.GCM_API_KEY);
     webPush.setVapidDetails(`https://${domain}`, vapidKeys.public, vapidKeys.private);
     const sessions = (
         (await usersCl.findOne(
