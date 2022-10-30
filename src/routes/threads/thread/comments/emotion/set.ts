@@ -47,6 +47,7 @@ export default function (
                 {
                     projection: {
                         _id: 0,
+                        id: 1,
                         index: {
                             $indexOfArray: ["$conversation.id", cid],
                         },

@@ -75,7 +75,7 @@ export default (
 
             const thread = (await threadCl.findOne(
                 { id },
-                { projection: { count: 1 } }
+                { projection: { count: 1, op: 1, id: 1, title: 1 } }
             )) as Thread;
 
             if ("removed" in thread) return;
