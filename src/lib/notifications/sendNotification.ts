@@ -1,10 +1,7 @@
 import { usersCl, webpush } from "../../common";
 import User, { Notification } from "../../models/user";
 
-export async function sendNotification(
-    userId: number,
-    data: Notification
-) {
+export async function sendNotification(userId: number, data: Notification) {
     const sessions = (
         (await usersCl.findOne(
             { id: userId },

@@ -12,15 +12,17 @@ export default (
         const user = await verifyUser(req.headers.authorization, req.ip);
         if (!user) return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
-        const notifications = (await usersCl.findOne(
-            { id: user.id },
-            {
-                projection: {
-                    _id: 0,
-                    notifications: 1,
-                },
-            }
-        ) as User)?.notifications;
+        const notifications = (
+            (await usersCl.findOne(
+                { id: user.id },
+                {
+                    projection: {
+                        _id: 0,
+                        notifications: 1,
+                    },
+                }
+            )) as User
+        )?.notifications;
 
         res.send(notifications || []);
     });
