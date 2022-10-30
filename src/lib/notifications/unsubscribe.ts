@@ -1,10 +1,7 @@
 import { usersCl } from "../../common";
 import { sha256 } from "../sha256";
 
-export async function unSubscribeById(
-    userId: number,
-    sessionId: string,
-) {
+export async function unSubscribeById(userId: number, sessionId: string) {
     if (
         !(
             await usersCl.updateOne(
@@ -19,10 +16,7 @@ export async function unSubscribeById(
     return true;
 }
 
-export async function unSubscribeByToken(
-    userId: number,
-    token: string
-) {
+export async function unSubscribeByToken(userId: number, token: string) {
     const hashedToken = sha256(token);
     if (
         !(
