@@ -2606,6 +2606,10 @@ components:
     Notification:
       type: object
       additionalProperties: false
+      required:
+        - title
+        - createdAt
+        - options
       properties:
         title:
           type: string
@@ -2617,6 +2621,9 @@ components:
         options:
           type: object
           additionalProperties: false
+          required:
+            - body
+            - data
           properties:
             body:
               type: string
@@ -2624,6 +2631,9 @@ components:
             data:
               type: object
               additionalProperties: false
+              required:
+                - type
+                - url
               properties:
                 type:
                   type: string
