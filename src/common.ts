@@ -74,7 +74,7 @@ export const vapidKeys = {
     private: process.env.VAPID_PRIVATE_KEY || "",
 };
 
-webPush.setVapidDetails(domain, vapidKeys.public, vapidKeys.private);
+webPush.setVapidDetails(`https://${domain}`, vapidKeys.public, vapidKeys.private);
 export const webpush = webPush;
 
 export function allequal(arr: any[]) {
