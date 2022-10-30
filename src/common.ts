@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import { MongoClient } from "mongodb";
+import webPush from "web-push"
 
 dotenv.config();
 
@@ -67,6 +68,14 @@ export function objtoarr(obj: any): any[] {
 export const domain = process.env.domain?.startsWith(".")
     ? process.env.domain?.replace(".", "")
     : process.env.domain;
+
+export const vapidKeys = {
+    public: process.env.VAPID_PUBLIC_KEY || "",
+    private: process.env.VAPID_PRIVATE_KEY || "",
+}
+
+webPush.setVapidDetails(domain, vapidKeys.public, vapidKeys.private);
+export const webpush = webPush;
 
 export function allequal(arr: any[]) {
     const first = arr[0];

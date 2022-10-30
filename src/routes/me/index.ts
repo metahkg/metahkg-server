@@ -5,6 +5,7 @@ import votes from "./votes";
 import starred from "./starred";
 import sessions from "./sessions";
 import logout from "./logout";
+import notifications from "./notifications";
 
 export default function (
     fastify: FastifyInstance,
@@ -17,5 +18,6 @@ export default function (
     fastify.register(votes, { prefix: "/votes" });
     fastify.register(blocked);
     fastify.register(starred);
+    fastify.register(notifications, { prefix: "/notifications" });
     done();
 }

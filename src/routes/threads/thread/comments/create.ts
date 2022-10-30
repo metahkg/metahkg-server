@@ -1,4 +1,11 @@
-import { linksCl, RecaptchaSecret, LINKS_DOMAIN, threadCl } from "../../../../common";
+import {
+    linksCl,
+    RecaptchaSecret,
+    LINKS_DOMAIN,
+    threadCl,
+    domain,
+    usersCl,
+} from "../../../../common";
 import { verifyCaptcha } from "../../../../lib/recaptcha";
 import findImages from "../../../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
@@ -11,6 +18,7 @@ import { htmlToText } from "html-to-text";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../../lib/regex";
 import checkMuted from "../../../../plugins/checkMuted";
+import { sendNotification } from "../../../../lib/notifications/sendNotification";
 
 export default (
     fastify: FastifyInstance,
@@ -151,11 +159,25 @@ export default (
                 }
             );
 
-            quotedComment &&
-                (await threadCl.updateOne(
+            if (quotedComment) {
+                await threadCl.updateOne(
                     { id },
                     { $push: { [`conversation.${quoteIndex}.replies`]: newcid } }
-                ));
+                );
+                if (!("removed" in quotedComment)) {
+                    sendNotification(quotedComment.user.id, {
+                        title: "New reply",
+                        createdAt: new Date(),
+                        options: {
+                            body: `${user.name} replied to your comment in thread #${thread.id} ${thread.title}`,
+                            data: {
+                                type: "reply",
+                                url: `https://${domain}/thread/${thread.id}?c=${newcid}`,
+                            },
+                        },
+                    });
+                }
+            }
 
             if (imagesInComment.length) {
                 const imagesData = (
@@ -185,6 +207,33 @@ export default (
                     }
                 );
             }
+
+            (
+                usersCl
+                    .find({
+                        starred: { $elemMatch: { id: thread.id } },
+                        sessions: { $elemMatch: { subscription: { $exists: true } } },
+                    })
+                    .project({ _id: 0, id: 1 })
+                    .toArray() as Promise<{ id: number }[]>
+            ).then((users) => {
+                if (!users.find((i) => i.id === thread.op.id))
+                    users.push({ id: thread.op.id });
+
+                users.forEach(({ id }) => {
+                    sendNotification(id, {
+                        title: "New comment",
+                        createdAt: new Date(),
+                        options: {
+                            body: `${user.name} commented in thread #${thread.id} ${thread.title}`,
+                            data: {
+                                type: "comment",
+                                url: `https://${domain}/thread/${thread.id}?c=${newcid}`,
+                            },
+                        },
+                    });
+                });
+            });
 
             res.send({ id: newcid });
         }

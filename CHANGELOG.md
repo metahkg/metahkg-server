@@ -1,5 +1,9 @@
 # Changelog
 
+## v5.5.0
+
+- implement push notifications backend
+
 ## v5.4.0
 
 - revoke sessions

@@ -35,3 +35,17 @@ agenda.define("removeExpiredSessions", async () => {
         { $pull: { "sessions.exp": { $lt: new Date() } as never } }
     );
 });
+
+agenda.define("removeOldNotifications", async () => {
+    // probably bug from mongodb side that $pull only accepts never
+    await usersCl.updateMany(
+        {},
+        {
+            $pull: {
+                "notifications.createdAt": {
+                    $lt: new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 7),
+                } as never,
+            },
+        }
+    );
+});

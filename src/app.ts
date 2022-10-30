@@ -23,6 +23,10 @@ export default async function MetahkgServer() {
         await agenda.every("5 minutes", "removeExpiredSessions");
     }
 
+    if (!(await agenda.jobs({ name: "removeOldNotifications" })).length) {
+        await agenda.every("5 minutes", "removeOldNotifications");
+    }
+
     const fastify = Fastify({
         logger: true,
         trustProxy: true,

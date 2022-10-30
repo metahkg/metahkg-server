@@ -1,7 +1,8 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { threadCl } from "../../../../../common";
+import { domain, threadCl } from "../../../../../common";
 import verifyUser from "../../../../../lib/auth/verify";
+import { sendNotification } from "../../../../../lib/notifications/sendNotification";
 import regex from "../../../../../lib/regex";
 import Thread from "../../../../../models/thread";
 
@@ -49,6 +50,7 @@ export default function (
                         index: {
                             $indexOfArray: ["$conversation.id", cid],
                         },
+                        conversation: { $elemMatch: { id: cid } },
                     },
                 }
             )) as Thread & { index: number };
@@ -84,6 +86,19 @@ export default function (
                     },
                 }
             );
+
+            if (!("removed" in thread) && !("removed" in thread.conversation?.[0]))
+                sendNotification(thread?.conversation[0].user.id, {
+                    title: "New reaction",
+                    createdAt: new Date(),
+                    options: {
+                        body: `${user.name} reacted to your comment in thread #${thread.id}: ${emotion}`,
+                        data: {
+                            type: "emotion",
+                            url: `https://${domain}/thread/${thread.id}?c=${thread.conversation[0].id}`,
+                        },
+                    },
+                });
 
             return res.send({ success: true });
         }

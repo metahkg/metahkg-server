@@ -8,6 +8,23 @@ export interface BlockedUser {
     reason: string;
 }
 
+export interface Subscription {
+    endpoint: string;
+    keys: {
+        auth: string;
+        p256dh: string;
+    };
+}
+
+export interface Notification {
+    title: string;
+    createdAt: Date;
+    options: {
+        body: string;
+        data: { type: "thread" | "comment" | "reply" | "emotion"; url: string };
+    };
+}
+
 export interface Session {
     /** 30-digit random id */
     id: string;
@@ -19,6 +36,7 @@ export interface Session {
     /** hashed (sha256) ip */
     ip: string;
     sameIp?: boolean;
+    subscription?: Subscription;
 }
 
 export default interface User {
@@ -30,7 +48,9 @@ export default interface User {
     password: string;
     sex: userSex;
     role: userRole;
+    starred?: { id: number; date: Date };
     sessions?: Session[];
+    notifications?: Notification[];
     blocked?: BlockedUser[];
     mute?: { admin: AdminUser; reason: string; exp?: Date };
     ban?: { admin: AdminUser; reason: string; exp?: Date };
