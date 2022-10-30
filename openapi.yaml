@@ -1334,6 +1334,8 @@ paths:
       tags:
         - category
         - admin
+      security:
+        - bearerAuth: []
       operationId: categoryEdit
       summary: Edit a category
       description: "Edit a category. Admin privilege required.
@@ -1373,6 +1375,8 @@ paths:
       tags:
         - category
         - admin
+      security:
+        - bearerAuth: []
       operationId: categoryDelete
       summary: Delete a category
       description: "Delete a category. Admin privilege required.
