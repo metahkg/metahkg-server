@@ -1,7 +1,9 @@
-import { usersCl, webpush } from "../../common";
+import webPush from "web-push";
+import { domain, usersCl, vapidKeys } from "../../common";
 import User, { Notification } from "../../models/user";
 
 export async function sendNotification(userId: number, data: Notification) {
+    webPush.setVapidDetails(`https://${domain}`, vapidKeys.public, vapidKeys.private);
     const sessions = (
         (await usersCl.findOne(
             { id: userId },
@@ -28,7 +30,7 @@ export async function sendNotification(userId: number, data: Notification) {
 
     sessions.forEach(async (session) => {
         try {
-            await webpush.sendNotification(session.subscription, JSON.stringify(data));
+            await webPush.sendNotification(session.subscription, JSON.stringify(data));
         } catch (err) {
             console.log(err);
         }
