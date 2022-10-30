@@ -165,17 +165,18 @@ export default (
                     { $push: { [`conversation.${quoteIndex}.replies`]: newcid } }
                 );
                 if (!("removed" in quotedComment)) {
-                    sendNotification(quotedComment.user.id, {
-                        title: "New reply",
-                        createdAt: new Date(),
-                        options: {
-                            body: `${user.name} replied to your comment in thread #${thread.id} ${thread.title}`,
-                            data: {
-                                type: "reply",
-                                url: `https://${domain}/thread/${thread.id}?c=${newcid}`,
+                    if (quotedComment.user.id !== user.id)
+                        sendNotification(quotedComment.user.id, {
+                            title: "New reply",
+                            createdAt: new Date(),
+                            options: {
+                                body: `${user.name} replied to your comment in thread #${thread.id} ${thread.title}`,
+                                data: {
+                                    type: "reply",
+                                    url: `https://${domain}/thread/${thread.id}?c=${newcid}`,
+                                },
                             },
-                        },
-                    });
+                        });
                 }
             }
 
@@ -221,17 +222,18 @@ export default (
                     users.push({ id: thread.op.id });
 
                 users.forEach(({ id }) => {
-                    sendNotification(id, {
-                        title: "New comment",
-                        createdAt: new Date(),
-                        options: {
-                            body: `${user.name} commented in thread #${thread.id} ${thread.title}`,
-                            data: {
-                                type: "comment",
-                                url: `https://${domain}/thread/${thread.id}?c=${newcid}`,
+                    if (id !== user.id)
+                        sendNotification(id, {
+                            title: "New comment",
+                            createdAt: new Date(),
+                            options: {
+                                body: `${user.name} commented in thread #${thread.id} ${thread.title}`,
+                                data: {
+                                    type: "comment",
+                                    url: `https://${domain}/thread/${thread.id}?c=${newcid}`,
+                                },
                             },
-                        },
-                    });
+                        });
                 });
             });
 

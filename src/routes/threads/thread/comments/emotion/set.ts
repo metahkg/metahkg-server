@@ -87,7 +87,11 @@ export default function (
                 }
             );
 
-            if (!("removed" in thread) && !("removed" in thread.conversation?.[0]))
+            if (
+                !("removed" in thread) &&
+                !("removed" in thread.conversation?.[0]) &&
+                thread.conversation[0]?.user.id !== user.id
+            )
                 sendNotification(thread?.conversation[0].user.id, {
                     title: "New reaction",
                     createdAt: new Date(),
