@@ -164,20 +164,6 @@ export default (
                     { id },
                     { $push: { [`conversation.${quoteIndex}.replies`]: newcid } }
                 );
-                if (!("removed" in quotedComment)) {
-                    if (quotedComment.user.id !== user.id)
-                        sendNotification(quotedComment.user.id, {
-                            title: "New reply",
-                            createdAt: new Date(),
-                            options: {
-                                body: `${user.name} replied to your comment in thread #${thread.id} ${thread.title}`,
-                                data: {
-                                    type: "reply",
-                                    url: `https://${domain}/thread/${thread.id}?c=${newcid}`,
-                                },
-                            },
-                        });
-                }
             }
 
             if (imagesInComment.length) {
@@ -224,18 +210,41 @@ export default (
                 users.forEach(({ id }) => {
                     if (id !== user.id)
                         sendNotification(id, {
-                            title: "New comment",
+                            title: `New comment (${thread.title})`,
                             createdAt: new Date(),
                             options: {
-                                body: `${user.name} commented in thread #${thread.id} ${thread.title}`,
+                                body: `${user.name} (#${user.id}): ${
+                                    text.length < 200 ? text : `${text.slice(0, 200)}...`
+                                }`,
                                 data: {
                                     type: "comment",
+                                    threadId: thread.id,
+                                    commentId: newcid,
                                     url: `https://${domain}/thread/${thread.id}?c=${newcid}`,
                                 },
                             },
                         });
                 });
             });
+
+            if (quotedComment && !("removed" in quotedComment)) {
+                if (quotedComment.user.id !== user.id)
+                    sendNotification(quotedComment.user.id, {
+                        title: `New reply (${thread.title})`,
+                        createdAt: new Date(),
+                        options: {
+                            body: `${user.name} (#${user.id}): ${
+                                text.length < 200 ? text : `${text.slice(0, 200)}...`
+                            }`,
+                            data: {
+                                type: "reply",
+                                threadId: thread.id,
+                                commentId: newcid,
+                                url: `https://${domain}/thread/${thread.id}?c=${newcid}`,
+                            },
+                        },
+                    });
+            }
 
             res.send({ id: newcid });
         }

@@ -91,15 +91,17 @@ export default function (
             if (
                 !("removed" in thread) &&
                 !("removed" in thread.conversation?.[0]) &&
-                thread.conversation[0]?.user.id !== user.id
+                thread.conversation[0]?.user?.id !== user.id
             )
                 sendNotification(thread?.conversation[0].user.id, {
-                    title: "New reaction",
+                    title: `New reaction (${thread.title})`,
                     createdAt: new Date(),
                     options: {
-                        body: `${user.name} reacted to your comment in thread #${thread.id}: ${emotion}`,
+                        body: `${user.name} (#${user.id}): ${emotion}`,
                         data: {
                             type: "emotion",
+                            threadId: thread.id,
+                            commentId: thread.conversation[0].id,
                             url: `https://${domain}/thread/${thread.id}?c=${thread.conversation[0].id}`,
                         },
                     },

@@ -1,8 +1,16 @@
 # Changelog
 
+## v5.5.1
+
+- add threadId and commentId properties to Notification
+
 ## v5.5.0
 
 - implement push notifications backend
+- send push notifications on:
+  - emotions
+  - comments (on starred threads or threads created by the user)
+  - replies
 
 ## v5.4.0
 

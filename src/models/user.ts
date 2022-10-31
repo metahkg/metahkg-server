@@ -21,7 +21,12 @@ export interface Notification {
     createdAt: Date;
     options: {
         body: string;
-        data: { type: "thread" | "comment" | "reply" | "emotion"; url: string };
+        data: {
+            type: "thread" | "comment" | "reply" | "emotion";
+            threadId: number;
+            commentId?: number;
+            url: string;
+        };
     };
 }
 
