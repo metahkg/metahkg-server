@@ -4,6 +4,7 @@ import verifyUser from "../../../lib/auth/verify";
 import Thread, { commentType } from "../../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../lib/regex";
+import { IntegerSchema } from "../../../lib/schemas";
 
 export default function (
     fastify: FastifyInstance,
@@ -14,9 +15,12 @@ export default function (
         id: Type.RegEx(regex.integer),
     });
 
-    const schema = Type.Object({
-        cid: Type.Integer({ minimum: 1 }),
-    });
+    const schema = Type.Object(
+        {
+            cid: IntegerSchema,
+        },
+        { additionalProperties: false }
+    );
 
     fastify.put(
         "/pin",

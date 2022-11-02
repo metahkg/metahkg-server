@@ -6,6 +6,7 @@ import verifyUser from "../../../../lib/auth/verify";
 import regex from "../../../../lib/regex";
 import User from "../../../../models/user";
 import RequireAdmin from "../../../../plugins/requireAdmin";
+import { ReasonSchemaAdmin, DateSchema } from "../../../../lib/schemas";
 
 export default function (
     fastify: FastifyInstance,
@@ -16,10 +17,13 @@ export default function (
         id: Type.RegEx(regex.integer),
     });
 
-    const schema = Type.Object({
-        reason: Type.String(),
-        exp: Type.Optional(Type.String({ format: "date-time" })),
-    });
+    const schema = Type.Object(
+        {
+            reason: ReasonSchemaAdmin,
+            exp: Type.Optional(DateSchema),
+        },
+        { additionalProperties: false }
+    );
 
     fastify.post(
         "/ban",

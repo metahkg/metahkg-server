@@ -10,11 +10,14 @@ export default function (
 ) {
     const schema = Type.Object(
         {
-            endpoint: Type.String({ format: "uri" }),
-            keys: Type.Object({
-                auth: Type.String(),
-                p256dh: Type.String(),
-            }),
+            endpoint: Type.String({ format: "uri", maxLength: 1000 }),
+            keys: Type.Object(
+                {
+                    auth: Type.String({ minLength: 22, maxLength: 22 }),
+                    p256dh: Type.String({ minLength: 87, maxLength: 87 }),
+                },
+                { additionalProperties: false }
+            ),
         },
         { additionalProperties: false }
     );

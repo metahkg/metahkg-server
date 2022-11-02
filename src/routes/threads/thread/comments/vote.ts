@@ -6,6 +6,7 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../../lib/regex";
 import Votes from "../../../../models/votes";
 import { sendNotification } from "../../../../lib/notifications/sendNotification";
+import { VoteSchema } from "../../../../lib/schemas";
 
 export default (
     fastify: FastifyInstance,
@@ -14,7 +15,7 @@ export default (
 ) => {
     const schema = Type.Object(
         {
-            vote: Type.Union([Type.Literal("U"), Type.Literal("D")]),
+            vote: VoteSchema,
         },
         { additionalProperties: false }
     );

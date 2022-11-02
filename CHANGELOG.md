@@ -1,5 +1,9 @@
 # Changelog
 
+## v5.6.1
+
+- resolve [issue #2](https://gitlab.com/metahkg/metahkg-server/-/issues/2) by implementing stricter schemas
+
 ## v5.6.0
 
 - delete avatar

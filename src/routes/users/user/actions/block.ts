@@ -3,6 +3,7 @@ import verifyUser from "../../../../lib/auth/verify";
 import { usersCl } from "../../../../lib/common";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../../lib/regex";
+import { ReasonSchemaUser } from "../../../../lib/schemas";
 
 export default (
     fastify: FastifyInstance,
@@ -15,7 +16,7 @@ export default (
 
     const schema = Type.Object(
         {
-            reason: Type.String({ minLength: 0, maxLength: 50 }),
+            reason: ReasonSchemaUser,
         },
         { additionalProperties: false }
     );

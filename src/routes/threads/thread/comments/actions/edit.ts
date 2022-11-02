@@ -7,6 +7,7 @@ import verifyUser from "../../../../../lib/auth/verify";
 import regex from "../../../../../lib/regex";
 import checkComment from "../../../../../plugins/checkComment";
 import RequireAdmin from "../../../../../plugins/requireAdmin";
+import { ReasonSchemaAdmin, CommentSchema } from "../../../../../lib/schemas";
 
 export default function (
     fastify: FastifyInstance,
@@ -20,8 +21,8 @@ export default function (
 
     const schema = Type.Object(
         {
-            comment: Type.String(),
-            reason: Type.String(),
+            comment: CommentSchema,
+            reason: ReasonSchemaAdmin,
         },
         { minProperties: 2, additionalProperties: false }
     );

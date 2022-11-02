@@ -9,13 +9,16 @@ export default (
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
-    const querySchema = Type.Object({
-        page: Type.Optional(Type.RegEx(regex.integer)),
-        start: Type.Optional(Type.RegEx(regex.integer)),
-        end: Type.Optional(Type.RegEx(regex.integer)),
-        sort: Type.Optional(Type.RegEx(/^(score|time|latest)$/)),
-        limit: Type.Optional(Type.RegEx(regex.oneTo50)),
-    });
+    const querySchema = Type.Object(
+        {
+            page: Type.Optional(Type.RegEx(regex.integer)),
+            start: Type.Optional(Type.RegEx(regex.integer)),
+            end: Type.Optional(Type.RegEx(regex.integer)),
+            sort: Type.Optional(Type.RegEx(/^(score|time|latest)$/)),
+            limit: Type.Optional(Type.RegEx(regex.oneTo50)),
+        },
+        { additionalProperties: false }
+    );
 
     const paramsSchema = Type.Object({
         id: Type.RegEx(regex.integer),

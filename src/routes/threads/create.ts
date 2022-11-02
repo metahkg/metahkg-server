@@ -15,6 +15,7 @@ import Thread from "../../models/thread";
 import { htmlToText } from "html-to-text";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import checkMuted from "../../plugins/checkMuted";
+import { CommentSchema, IntegerSchema, RTokenSchema, TitleSchema } from "../../lib/schemas";
 
 export default (
     fastify: FastifyInstance,
@@ -23,10 +24,10 @@ export default (
 ) => {
     const schema = Type.Object(
         {
-            comment: Type.String(),
-            rtoken: Type.String(),
-            title: Type.String({ maxLength: 100 }),
-            category: Type.Integer({ minimum: 1 }),
+            comment: CommentSchema,
+            rtoken: RTokenSchema,
+            title: TitleSchema,
+            category: IntegerSchema,
         },
         { additionalProperties: false }
     );

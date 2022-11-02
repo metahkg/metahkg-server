@@ -4,6 +4,7 @@ import { Static, Type } from "@sinclair/typebox";
 import Limit from "../../models/limit";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { mg, mgDomain, verifyMsg } from "../../lib/mailgun";
+import { EmailSchema, RTokenSchema } from "../../lib/schemas";
 
 export default (
     fastify: FastifyInstance,
@@ -11,7 +12,7 @@ export default (
     done: (e?: Error) => void
 ) => {
     const schema = Type.Object(
-        { email: Type.String({ format: "email" }), rtoken: Type.String() },
+        { email: EmailSchema, rtoken: RTokenSchema },
         { additionalProperties: false }
     );
 

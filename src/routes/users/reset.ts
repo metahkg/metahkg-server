@@ -6,6 +6,7 @@ import bcrypt from "bcrypt";
 import { createToken } from "../../lib/auth/createToken";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { createSession } from "../../lib/sessions/createSession";
+import { CodeSchema, EmailSchema, PasswordSchema } from "../../lib/schemas";
 
 export default (
     fastify: FastifyInstance,
@@ -14,9 +15,9 @@ export default (
 ) => {
     const schema = Type.Object(
         {
-            email: Type.String({ format: "email" }),
-            code: Type.String({ minLength: 30, maxLength: 30 }),
-            password: Type.RegEx(/^[a-f0-9]{64}$/i),
+            email: EmailSchema,
+            code: CodeSchema,
+            password: PasswordSchema,
         },
         { additionalProperties: false }
     );

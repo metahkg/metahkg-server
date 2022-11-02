@@ -2,6 +2,7 @@ import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import verifyUser from "../../../lib/auth/verify";
 import { objectFilter } from "../../../lib/objectFilter";
+import { SessionIdSchema } from "../../../lib/schemas";
 import { getSessionById } from "../../../lib/sessions/getSession";
 
 export default function (
@@ -10,7 +11,7 @@ export default function (
     done: (err?: Error) => void
 ) {
     const paramsSchema = Type.Object({
-        id: Type.String({ minLength: 30, maxLength: 30 }),
+        id: SessionIdSchema,
     });
 
     fastify.get(

@@ -9,6 +9,14 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import dotenv from "dotenv";
 import { agenda } from "../../lib/agenda";
 import { sha256 } from "../../lib/sha256";
+import {
+    EmailSchema,
+    UserNameSchema,
+    PasswordSchema,
+    RTokenSchema,
+    SexSchema,
+    InviteCodeSchema,
+} from "../../lib/schemas";
 
 dotenv.config();
 
@@ -19,13 +27,13 @@ export default (
 ) => {
     const schema = Type.Object(
         {
-            name: Type.RegEx(/^\S{1,15}$/),
+            name: UserNameSchema,
             // check if password is a sha256 hash
-            password: Type.RegEx(/^[a-f0-9]{64}$/i),
-            email: Type.String({ format: "email" }),
-            rtoken: Type.String(),
-            sex: Type.Union([Type.Literal("M"), Type.Literal("F")]),
-            inviteCode: Type.Optional(Type.String()),
+            password: PasswordSchema,
+            email: EmailSchema,
+            rtoken: RTokenSchema,
+            sex: SexSchema,
+            inviteCode: Type.Optional(InviteCodeSchema),
         },
         { additionalProperties: false }
     );

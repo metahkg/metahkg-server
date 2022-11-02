@@ -7,6 +7,7 @@ import regex from "../../../../lib/regex";
 import EmailValidator from "email-validator";
 import { userSex } from "../../../../types/user";
 import { updateSessionByToken } from "../../../../lib/sessions/updateSession";
+import { SexSchema, UserNameSchema } from "../../../../lib/schemas";
 
 export default (
     fastify: FastifyInstance,
@@ -15,8 +16,8 @@ export default (
 ) => {
     const schema = Type.Object(
         {
-            name: Type.Optional(Type.RegEx(/^\S{1,15}$/)),
-            sex: Type.Optional(Type.Union(["M", "F"].map((x) => Type.Literal(x)))),
+            name: Type.Optional(UserNameSchema),
+            sex: Type.Optional(SexSchema),
         },
         { additionalProperties: false, minProperties: 1 }
     );

@@ -2,10 +2,10 @@ import dotenv from "dotenv";
 import routes from "./routes";
 import Fastify from "fastify";
 import { client } from "./lib/common";
-import { setup } from "./mongo/setupmongo";
+import { setup } from "./mongo/setupMongo";
 import { agenda } from "./lib/agenda";
-import refreshToken from "./lib/auth/refreshToken";
-import updateToken from "./lib/auth/updateToken";
+import refreshToken from "./plugins/refreshToken";
+import updateToken from "./plugins/updateToken";
 import multipart from "@fastify/multipart";
 import fastifyRateLimit from "@fastify/rate-limit";
 import fastifyCors from "@fastify/cors";
@@ -34,6 +34,9 @@ export default async function MetahkgServer() {
     const fastify = Fastify({
         logger: true,
         trustProxy: true,
+        maxParamLength: 100,
+        // 1 MB
+        bodyLimit: 1024 * 1024,
     });
 
     fastify.setValidatorCompiler((opt) => ajv.compile(opt.schema));

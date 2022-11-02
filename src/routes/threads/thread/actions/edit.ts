@@ -5,6 +5,7 @@ import verifyUser from "../../../../lib/auth/verify";
 import regex from "../../../../lib/regex";
 import checkThread from "../../../../plugins/checkThread";
 import RequireAdmin from "../../../../plugins/requireAdmin";
+import { IntegerSchema, ReasonSchemaAdmin, TitleSchema } from "../../../../lib/schemas";
 
 export default function (
     fastify: FastifyInstance,
@@ -17,9 +18,9 @@ export default function (
 
     const schema = Type.Object(
         {
-            title: Type.Optional(Type.String({ maxLength: 100 })),
-            category: Type.Optional(Type.Integer({ minimum: 1 })),
-            reason: Type.String(),
+            title: Type.Optional(TitleSchema),
+            category: Type.Optional(IntegerSchema),
+            reason: ReasonSchemaAdmin,
         },
         { additionalProperties: false, minProperties: 2 }
     );

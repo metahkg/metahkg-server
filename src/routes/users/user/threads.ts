@@ -12,16 +12,19 @@ export default (
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
-    const querySchema = Type.Object({
-        sort: Type.Optional(
-            Type.Union([Type.Literal("created"), Type.Literal("lastcomment")])
-        ),
-        page: Type.Optional(Type.RegEx(regex.integer)),
-        limit: Type.Optional(Type.RegEx(regex.oneTo50)),
-    });
+    const querySchema = Type.Object(
+        {
+            sort: Type.Optional(
+                Type.Union([Type.Literal("created"), Type.Literal("lastcomment")])
+            ),
+            page: Type.Optional(Type.RegEx(regex.integer)),
+            limit: Type.Optional(Type.RegEx(regex.oneTo50)),
+        },
+        { additionalProperties: false }
+    );
 
     const paramsSchema = Type.Object({
-        id: Type.RegEx(/^([1-9]\d*|self)$/),
+        id: Type.RegEx(regex.integer),
     });
 
     fastify.get(

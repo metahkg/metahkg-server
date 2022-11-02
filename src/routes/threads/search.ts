@@ -11,17 +11,20 @@ export default (
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
-    const querySchema = Type.Object({
-        page: Type.Optional(Type.RegEx(regex.integer)),
-        q: Type.String({ maxLength: 100, minLength: 1 }),
-        sort: Type.Optional(
-            Type.Union(
-                ["relevance", "created", "lastcomment"].map((x) => Type.Literal(x))
-            )
-        ),
-        mode: Type.Optional(Type.Union(["title", "op"].map((x) => Type.Literal(x)))),
-        limit: Type.Optional(Type.RegEx(regex.oneTo50)),
-    });
+    const querySchema = Type.Object(
+        {
+            page: Type.Optional(Type.RegEx(regex.integer)),
+            q: Type.String({ maxLength: 100, minLength: 1 }),
+            sort: Type.Optional(
+                Type.Union(
+                    ["relevance", "created", "lastcomment"].map((x) => Type.Literal(x))
+                )
+            ),
+            mode: Type.Optional(Type.Union(["title", "op"].map((x) => Type.Literal(x)))),
+            limit: Type.Optional(Type.RegEx(regex.oneTo50)),
+        },
+        { additionalProperties: false }
+    );
 
     fastify.get(
         "/search",

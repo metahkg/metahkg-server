@@ -2,6 +2,7 @@ import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { categoryCl } from "../../../lib/common";
 import regex from "../../../lib/regex";
+import { CategoryNameSchema, CategoryTagsSchema } from "../../../lib/schemas";
 import RequireAdmin from "../../../plugins/requireAdmin";
 
 export default function (
@@ -15,8 +16,8 @@ export default function (
 
     const schema = Type.Object(
         {
-            name: Type.Optional(Type.String({ maxLength: 15 })),
-            tags: Type.Optional(Type.Array(Type.String({ maxLength: 15 }))),
+            name: Type.Optional(CategoryNameSchema),
+            tags: Type.Optional(CategoryTagsSchema),
             pinned: Type.Optional(Type.Boolean()),
         },
         { additionalProperties: false, minProperties: 1 }

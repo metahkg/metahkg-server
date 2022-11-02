@@ -7,6 +7,7 @@ import User from "../../models/user";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { agenda } from "../../lib/agenda";
 import { createSession } from "../../lib/sessions/createSession";
+import { CodeSchema, EmailSchema } from "../../lib/schemas";
 
 dotenv.config();
 
@@ -17,8 +18,8 @@ export default (
 ) => {
     const schema = Type.Object(
         {
-            email: Type.String({ format: "email" }),
-            code: Type.String({ maxLength: 30, minLength: 30 }),
+            email: EmailSchema,
+            code: CodeSchema,
             sameIp: Type.Optional(Type.Boolean()),
         },
         { additionalProperties: false }

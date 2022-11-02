@@ -19,6 +19,7 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../../lib/regex";
 import checkMuted from "../../../../plugins/checkMuted";
 import { sendNotification } from "../../../../lib/notifications/sendNotification";
+import { CommentSchema, IntegerSchema, RTokenSchema } from "../../../../lib/schemas";
 
 export default (
     fastify: FastifyInstance,
@@ -27,9 +28,9 @@ export default (
 ) => {
     const schema = Type.Object(
         {
-            comment: Type.String(),
-            rtoken: Type.String(),
-            quote: Type.Optional(Type.Integer({ minimum: 1 })),
+            comment: CommentSchema,
+            rtoken: RTokenSchema,
+            quote: Type.Optional(IntegerSchema),
         },
         { additionalProperties: false }
     );

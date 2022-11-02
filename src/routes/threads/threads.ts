@@ -11,14 +11,17 @@ export default (
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
-    const querySchema = Type.Object({
-        id: Type.Optional(
-            Type.Union([
-                Type.Array(Type.RegEx(regex.integer), { maxItems: 50 }),
-                Type.RegEx(regex.integer),
-            ])
-        ),
-    });
+    const querySchema = Type.Object(
+        {
+            id: Type.Optional(
+                Type.Union([
+                    Type.Array(Type.RegEx(regex.integer), { maxItems: 50 }),
+                    Type.RegEx(regex.integer),
+                ])
+            ),
+        },
+        { additionalProperties: false }
+    );
 
     fastify.get(
         "/",

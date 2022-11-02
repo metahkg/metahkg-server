@@ -7,6 +7,7 @@ import User from "../../models/user";
 import hash from "hash.js";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { createSession } from "../../lib/sessions/createSession";
+import { EmailSchema, PasswordSchema, UserNameSchema } from "../../lib/schemas";
 
 dotenv.config();
 
@@ -18,11 +19,11 @@ export default (
     const schema = Type.Object(
         {
             name: Type.Union([
-                Type.RegEx(/^\S{1,15}$/),
-                Type.String({ format: "email" }),
+                UserNameSchema,
+                EmailSchema,
             ]),
             // check if password is a sha256 hash
-            password: Type.RegEx(/^[a-f0-9]{64}$/i),
+            password: PasswordSchema,
             sameIp: Type.Optional(Type.Boolean()),
         },
         { additionalProperties: false }

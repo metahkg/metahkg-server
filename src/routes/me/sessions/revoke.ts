@@ -1,6 +1,7 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import verifyUser from "../../../lib/auth/verify";
+import { SessionIdSchema } from "../../../lib/schemas";
 import { getSessionById, getSessionByToken } from "../../../lib/sessions/getSession";
 import { revokeSessionById } from "../../../lib/sessions/revokeSession";
 
@@ -10,7 +11,7 @@ export default function (
     done: (err?: Error) => void
 ) {
     const paramsSchema = Type.Object({
-        id: Type.String({ minLength: 30, maxLength: 30 }),
+        id: SessionIdSchema,
     });
 
     fastify.delete(

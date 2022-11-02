@@ -1,9 +1,9 @@
-import verifyUser from "./verify";
-import { usersCl } from "../common";
-import User from "../../models/user";
-import { createToken } from "./createToken";
+import verifyUser from "../lib/auth/verify";
+import { usersCl } from "../lib/common";
+import User from "../models/user";
+import { createToken } from "../lib/auth/createToken";
 import { FastifyReply, FastifyRequest } from "fastify";
-import { updateSessionByToken } from "../sessions/updateSession";
+import { updateSessionByToken } from "../lib/sessions/updateSession";
 
 export default async function (req: FastifyRequest, res: FastifyReply) {
     const user = await verifyUser(req.headers.authorization, req.ip);

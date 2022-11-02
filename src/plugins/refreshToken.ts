@@ -1,7 +1,7 @@
-import { createToken } from "./createToken";
-import verifyUser from "./verify";
-import { jwtTokenType } from "../../types/jwt/user";
-import { updateSessionByToken } from "../sessions/updateSession";
+import { createToken } from "../lib/auth/createToken";
+import verifyUser from "../lib/auth/verify";
+import { jwtTokenType } from "../types/jwt/user";
+import { updateSessionByToken } from "../lib/sessions/updateSession";
 import { FastifyReply, FastifyRequest } from "fastify";
 
 export default async function (req: FastifyRequest, res: FastifyReply) {

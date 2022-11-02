@@ -16,9 +16,12 @@ export default function (
         cid: Type.RegEx(regex.integer),
     });
 
-    const schema = Type.Object({
-        emotion: Type.RegEx(regex.emoji),
-    });
+    const schema = Type.Object(
+        {
+            emotion: Type.RegEx(regex.emoji),
+        },
+        { additionalProperties: false }
+    );
 
     fastify.post(
         "/",

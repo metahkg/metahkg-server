@@ -1,6 +1,7 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { categoryCl } from "../../lib/common";
+import { CategoryNameSchema, CategoryTagsSchema } from "../../lib/schemas";
 import Category from "../../models/category";
 import RequireAdmin from "../../plugins/requireAdmin";
 
@@ -11,10 +12,10 @@ export default function (
 ) {
     const schema = Type.Object(
         {
-            name: Type.String({ maxLength: 15 }),
+            name: CategoryNameSchema,
             hidden: Type.Optional(Type.Boolean()),
             pinned: Type.Optional(Type.Boolean()),
-            tags: Type.Optional(Type.Array(Type.String({ maxLength: 15 }))),
+            tags: Type.Optional(CategoryTagsSchema),
         },
         { additionalProperties: false }
     );

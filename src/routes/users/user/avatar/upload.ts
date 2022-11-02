@@ -14,7 +14,7 @@ export default function (
     _opts: FastifyPluginOptions,
     done: () => void
 ) {
-    const maxSize = 2048000;
+    const maxSize = 1048576;
     const upload = multer({ dest: "uploads/", limits: { fileSize: maxSize } });
 
     /**

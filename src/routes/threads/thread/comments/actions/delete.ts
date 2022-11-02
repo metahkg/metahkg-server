@@ -5,6 +5,7 @@ import verifyUser from "../../../../../lib/auth/verify";
 import regex from "../../../../../lib/regex";
 import Thread from "../../../../../models/thread";
 import RequireAdmin from "../../../../../plugins/requireAdmin";
+import { ReasonSchemaAdmin } from "../../../../../lib/schemas";
 
 export default function (
     fastify: FastifyInstance,
@@ -16,9 +17,12 @@ export default function (
         cid: Type.RegEx(regex.integer),
     });
 
-    const schema = Type.Object({
-        reason: Type.String(),
-    });
+    const schema = Type.Object(
+        {
+            reason: ReasonSchemaAdmin,
+        },
+        { additionalProperties: false }
+    );
 
     fastify.delete(
         "/:cid",
