@@ -43,11 +43,11 @@ export default function (
                 },
             ])
             .toFormat("png")
-            .toFile(`${process.env.root}/tmp/avatars/${id}.png`)
+            .toFile(`tmp/avatars/${id}.png`)
             .catch((err) => console.log(err));
         await move(
-            `${process.env.root}/tmp/avatars/${id}.png`,
-            `${process.env.root}/images/avatars/${id}.png`,
+            `tmp/avatars/${id}.png`,
+            `images/avatars/${id}.png`,
             { overwrite: true }
         );
     }
@@ -84,7 +84,7 @@ export default function (
                 }
                 const user = await verifyUser(req.headers.authorization, req.ip);
                 if (!user) {
-                    fs.rm(`${process.env.root}/uploads/${file?.filename}`, (err) => {
+                    fs.rm(`uploads/${file?.filename}`, (err) => {
                         console.error(err);
                     });
                     return res
@@ -98,8 +98,8 @@ export default function (
                 fs.mkdirSync("images/avatars", { recursive: true });
                 //move file to processing folder
                 await move(
-                    `${process.env.root}/${file?.path}`,
-                    `${process.env.root}/images/processing/avatars/${newFileName}`,
+                    `${file?.path}`,
+                    `images/processing/avatars/${newFileName}`,
                     { overwrite: true }
                 );
                 try {

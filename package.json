@@ -74,7 +74,7 @@
     "prebuild": "rimraf dist",
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "node start.js && node dist/main",
+    "start": "node dist/main",
     "start:dev": "yarn dev",
     "start:prod": "yarn start",
     "test": "jest --passWithNoTests",

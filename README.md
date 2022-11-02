@@ -66,9 +66,3 @@ import MetahkgServer from "@metahkg/server";
     });
 })();
 ```
-
-## quick start for dev
-
-ensure you have .env in root and have docker installed.
-
-docker-compose -f docker-compose-dev.yml up --build

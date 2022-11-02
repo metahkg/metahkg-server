@@ -25,7 +25,7 @@ export default function (
                         .code(404)
                         .send({ statusCode: 404, error: "User or avatar not found." });
 
-                const path = `${process.env.root}/${filename}`;
+                const path = `${filename}`;
                 res.header("Content-Type", "image/png").send(fs.readFileSync(path));
             });
         }
