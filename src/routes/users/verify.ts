@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 import { usersCl, verificationCl } from "../../lib/common";
-import hash from "hash.js";
 import { Static, Type } from "@sinclair/typebox";
 import { createToken } from "../../lib/auth/createToken";
 import User from "../../models/user";
@@ -8,6 +7,7 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { agenda } from "../../lib/agenda";
 import { createSession } from "../../lib/sessions/createSession";
 import { CodeSchema, EmailSchema } from "../../lib/schemas";
+import { sha256 } from "../../lib/sha256";
 
 dotenv.config();
 
@@ -51,7 +51,7 @@ export default (
             const newUser: User = {
                 name,
                 id: newUserId,
-                email: hash.sha256().update(email).digest("hex"),
+                email: sha256(email),
                 password,
                 role: "user",
                 createdAt: new Date(),

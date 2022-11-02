@@ -1,5 +1,4 @@
 import { usersCl, verificationCl } from "../../lib/common";
-import hash from "hash.js";
 import { Static, Type } from "@sinclair/typebox";
 import User from "../../models/user";
 import bcrypt from "bcrypt";
@@ -7,6 +6,7 @@ import { createToken } from "../../lib/auth/createToken";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { createSession } from "../../lib/sessions/createSession";
 import { CodeSchema, EmailSchema, PasswordSchema } from "../../lib/schemas";
+import { sha256 } from "../../lib/sha256";
 
 export default (
     fastify: FastifyInstance,
@@ -28,7 +28,7 @@ export default (
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const { email, code, password } = req.body;
 
-            const hashedEmail = hash.sha256().update(email).digest("hex");
+            const hashedEmail = sha256(email);
 
             if (
                 !(await verificationCl.findOne({

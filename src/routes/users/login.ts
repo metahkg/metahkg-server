@@ -4,10 +4,10 @@ import bcrypt from "bcrypt";
 import { Static, Type } from "@sinclair/typebox";
 import { createToken } from "../../lib/auth/createToken";
 import User from "../../models/user";
-import hash from "hash.js";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { createSession } from "../../lib/sessions/createSession";
 import { EmailSchema, PasswordSchema, UserNameSchema } from "../../lib/schemas";
+import { sha256 } from "../../lib/sha256";
 
 dotenv.config();
 
@@ -40,12 +40,12 @@ export default (
             const { name, password, sameIp } = req.body;
 
             const user = (await usersCl.findOne({
-                $or: [{ name }, { email: hash.sha256().update(name).digest("hex") }],
+                $or: [{ name }, { email: sha256(name) }],
             })) as User;
 
             if (!user) {
                 const verifyUser = await verificationCl.findOne({
-                    $or: [{ name }, { email: hash.sha256().update(name).digest("hex") }],
+                    $or: [{ name }, { email: sha256(name) }],
                 });
 
                 if (verifyUser && (await bcrypt.compare(password, verifyUser.pwd)))

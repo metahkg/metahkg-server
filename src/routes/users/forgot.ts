@@ -5,6 +5,7 @@ import { limitCl, RecaptchaSecret, usersCl, verificationCl } from "../../lib/com
 import { mg, mgDomain, resetMsg } from "../../lib/mailgun";
 import { verifyCaptcha } from "../../lib/recaptcha";
 import { EmailSchema, RTokenSchema } from "../../lib/schemas";
+import { sha256 } from "../../lib/sha256";
 import Limit from "../../models/limit";
 import User from "../../models/user";
 
@@ -29,7 +30,7 @@ export default (
                     .code(429)
                     .send({ statusCode: 429, error: "Recaptcha token invalid." });
 
-            const hashedEmail = hash.sha256().update(email).digest("hex");
+            const hashedEmail = sha256(email);
 
             const userData = (await usersCl.findOne({ email: hashedEmail })) as User;
             if (!userData)
