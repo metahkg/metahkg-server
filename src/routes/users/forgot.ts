@@ -6,6 +6,7 @@ import { mg, mgDomain, resetMsg } from "../../lib/mailgun";
 import { verifyCaptcha } from "../../lib/recaptcha";
 import Limit from "../../models/limit";
 import User from "../../models/user";
+import hash from "hash.js";
 
 export default (
     fastify: FastifyInstance,
