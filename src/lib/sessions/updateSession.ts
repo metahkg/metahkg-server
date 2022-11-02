@@ -15,7 +15,7 @@ export async function updateSessionById(
                         "sessions.$.exp": new Date(
                             new Date().getTime() + 1000 * 60 * 60 * 24 * 7
                         ),
-                        "sessions.$.token": newToken,
+                        "sessions.$.token": sha256(newToken),
                     },
                 }
             )
@@ -41,7 +41,7 @@ export async function updateSessionByToken(
                         "sessions.$.exp": new Date(
                             new Date().getTime() + 1000 * 60 * 60 * 24 * 7
                         ),
-                        "sessions.$.token": newToken,
+                        "sessions.$.token": sha256(newToken),
                     },
                 }
             )
