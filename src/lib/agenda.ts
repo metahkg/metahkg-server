@@ -36,10 +36,7 @@ agenda.define("autoUnmuteUsers", async () => {
 });
 
 agenda.define("autoUnbanUsers", async () => {
-    await usersCl.updateMany(
-        { "ban.exp": { $lte: new Date() } },
-        { $unset: { ban: 1 } }
-    );
+    await usersCl.updateMany({ "ban.exp": { $lte: new Date() } }, { $unset: { ban: 1 } });
 });
 
 agenda.define("removeExpiredSessions", async () => {
