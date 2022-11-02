@@ -45,11 +45,9 @@ export default function (
             .toFormat("png")
             .toFile(`tmp/avatars/${id}.png`)
             .catch((err) => console.log(err));
-        await move(
-            `tmp/avatars/${id}.png`,
-            `images/avatars/${id}.png`,
-            { overwrite: true }
-        );
+        await move(`tmp/avatars/${id}.png`, `images/avatars/${id}.png`, {
+            overwrite: true,
+        });
     }
     /**
      * Image is saved to uploads/ upon uploading
@@ -97,11 +95,9 @@ export default function (
                 fs.mkdirSync("images/processing/avatars", { recursive: true });
                 fs.mkdirSync("images/avatars", { recursive: true });
                 //move file to processing folder
-                await move(
-                    `${file?.path}`,
-                    `images/processing/avatars/${newFileName}`,
-                    { overwrite: true }
-                );
+                await move(`${file?.path}`, `images/processing/avatars/${newFileName}`, {
+                    overwrite: true,
+                });
                 try {
                     //compress the file
                     await compress(`images/processing/avatars/${newFileName}`, user.id);
