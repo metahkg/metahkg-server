@@ -21,7 +21,7 @@ ENV env $env
 RUN adduser user -D
 WORKDIR /home/user
 
-COPY ./package.json ./yarn.lock ./tsconfig.json ./tsconfig.build.json ./start.js ./
+COPY ./package.json ./yarn.lock ./tsconfig.json ./tsconfig.build.json ./
 
 COPY --from=build /usr/src/app/dist ./dist
 
