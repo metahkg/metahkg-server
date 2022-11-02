@@ -7,7 +7,7 @@ ENV env $env
 
 COPY ./package.json ./yarn.lock ./tsconfig.json ./tsconfig.build.json ./
 
-RUN if [ "${env}" = "dev" ]; then yarn install; else yarn install --production; fi;
+RUN yarn install
 
 COPY ./src ./src
 
