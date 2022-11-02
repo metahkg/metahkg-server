@@ -24,7 +24,10 @@ export async function revokeSessionByToken(
     return true;
 }
 
-export async function revokeSessionById(userId: number, sessionId: string) {
+export async function revokeSessionById(
+    userId: number,
+    sessionId: string
+): Promise<null | true> {
     if (
         !(
             await usersCl.updateOne(

@@ -1,7 +1,7 @@
 import { Static, Type } from "@sinclair/typebox";
 import { usersCl } from "../../../../lib/common";
 import verifyUser from "../../../../lib/auth/verify";
-import { createToken } from "../../../../lib/auth/createtoken";
+import { createToken } from "../../../../lib/auth/createToken";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../../lib/regex";
 import EmailValidator from "email-validator";

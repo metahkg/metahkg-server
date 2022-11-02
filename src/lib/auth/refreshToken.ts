@@ -1,4 +1,4 @@
-import { createToken } from "./createtoken";
+import { createToken } from "./createToken";
 import verifyUser from "./verify";
 import { jwtTokenType } from "../../types/jwt/user";
 import { updateSessionByToken } from "../sessions/updateSession";
@@ -10,7 +10,8 @@ export default async function (req: FastifyRequest, res: FastifyReply) {
     if (user) {
         const { exp } = user;
         if (
-            new Date(exp).getTime() - 60 * 60 * 24 * 7 <
+            // jwt expiration is in seconds
+            new Date(exp * 1000).getTime() - 60 * 60 * 24 * 7 <
             new Date().getTime() - 60 * 60 * 24 * 2
         ) {
             const newToken = createToken(user);

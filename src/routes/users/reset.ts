@@ -3,7 +3,7 @@ import hash from "hash.js";
 import { Static, Type } from "@sinclair/typebox";
 import User from "../../models/user";
 import bcrypt from "bcrypt";
-import { createToken } from "../../lib/auth/createtoken";
+import { createToken } from "../../lib/auth/createToken";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { createSession } from "../../lib/sessions/createSession";
 

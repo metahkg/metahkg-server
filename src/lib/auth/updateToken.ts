@@ -1,7 +1,7 @@
 import verifyUser from "./verify";
 import { usersCl } from "../common";
 import User from "../../models/user";
-import { createToken } from "./createtoken";
+import { createToken } from "./createToken";
 import { FastifyReply, FastifyRequest } from "fastify";
 import { updateSessionByToken } from "../sessions/updateSession";
 

@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import { usersCl, verificationCl } from "../../lib/common";
 import bcrypt from "bcrypt";
 import { Static, Type } from "@sinclair/typebox";
-import { createToken } from "../../lib/auth/createtoken";
+import { createToken } from "../../lib/auth/createToken";
 import User from "../../models/user";
 import hash from "hash.js";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
