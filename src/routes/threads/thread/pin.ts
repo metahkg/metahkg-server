@@ -1,5 +1,5 @@
 import { Static, Type } from "@sinclair/typebox";
-import { threadCl } from "../../../common";
+import { threadCl } from "../../../lib/common";
 import verifyUser from "../../../lib/auth/verify";
 import Thread, { commentType } from "../../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";

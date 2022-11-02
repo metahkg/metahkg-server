@@ -1,8 +1,8 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { categoryCl } from "../../common";
+import { categoryCl } from "../../lib/common";
 import Category from "../../models/category";
-import requireAdmin from "../../plugins/requireAdmin";
+import RequireAdmin from "../../plugins/requireAdmin";
 
 export default function (
     fastify: FastifyInstance,
@@ -21,7 +21,7 @@ export default function (
 
     fastify.post(
         "/",
-        { schema: { body: schema }, preHandler: [requireAdmin] },
+        { schema: { body: schema }, preHandler: [RequireAdmin] },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const { name } = req.body;
 

@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 import routes from "./routes";
 import Fastify from "fastify";
-import { client } from "./common";
+import { client } from "./lib/common";
 import { setup } from "./mongo/setupmongo";
 import { agenda } from "./lib/agenda";
 import refreshToken from "./lib/auth/refreshToken";
@@ -11,6 +11,7 @@ import fastifyRateLimit from "@fastify/rate-limit";
 import fastifyCors from "@fastify/cors";
 import { ajv } from "./lib/ajv";
 import sitemap from "./sitemap";
+import checkBanned from "./plugins/checkBanned";
 
 dotenv.config();
 
@@ -19,13 +20,16 @@ export default async function MetahkgServer() {
     await setup();
     await agenda.start();
 
-    if (!(await agenda.jobs({ name: "removeExpiredSessions" })).length) {
-        await agenda.every("5 minutes", "removeExpiredSessions");
-    }
-
-    if (!(await agenda.jobs({ name: "removeOldNotifications" })).length) {
-        await agenda.every("5 minutes", "removeOldNotifications");
-    }
+    [
+        "removeExpiredSessions",
+        "removeOldNotifications",
+        "autoUnmuteUsers",
+        "autoUnbanUsers",
+    ].forEach(async (name) => {
+        if (!(await agenda.jobs({ name })).length) {
+            await agenda.every("5 minutes", name);
+        }
+    });
 
     const fastify = Fastify({
         logger: true,
@@ -61,8 +65,9 @@ export default async function MetahkgServer() {
         timeWindow: 1000 * 30,
     });
 
-    fastify.register(updateToken);
-    fastify.register(refreshToken);
+    fastify.addHook("preHandler", checkBanned);
+    fastify.addHook("preHandler", updateToken);
+    fastify.addHook("preHandler", refreshToken);
 
     fastify.register(sitemap);
     fastify.register(routes, { prefix: "/api" });

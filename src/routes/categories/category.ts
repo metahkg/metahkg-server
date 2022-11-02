@@ -1,4 +1,4 @@
-import { categoryCl } from "../../common";
+import { categoryCl } from "../../lib/common";
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../lib/regex";

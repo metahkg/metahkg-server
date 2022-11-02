@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { usersCl, verificationCl } from "../../common";
+import { usersCl, verificationCl } from "../../lib/common";
 import bcrypt from "bcrypt";
 import { Static, Type } from "@sinclair/typebox";
 import { createToken } from "../../lib/auth/createtoken";
@@ -61,6 +61,14 @@ export default (
             const pwdMatch = await bcrypt.compare(password, user.password);
             if (!pwdMatch)
                 return res.code(401).send({ statusCode: 401, error: "Login failed." });
+
+            if (user.ban) {
+                return res.code(403).send({
+                    statusCode: 403,
+                    error: "Forbidden. You are banned by an admin.",
+                    ...(user.ban.exp && { exp: user.ban.exp }),
+                });
+            }
 
             const token = createToken(user);
 

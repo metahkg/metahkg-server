@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import { usersCl } from "../../common";
+import { usersCl } from "../../lib/common";
 import verifyUser from "../../lib/auth/verify";
 import User, { BlockedUser } from "../../models/user";
 

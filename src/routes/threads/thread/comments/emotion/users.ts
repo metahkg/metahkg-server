@@ -1,6 +1,6 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { threadCl, usersCl } from "../../../../../common";
+import { threadCl, usersCl } from "../../../../../lib/common";
 import regex from "../../../../../lib/regex";
 import { Emotion } from "../../../../../models/thread";
 

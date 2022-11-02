@@ -1,4 +1,4 @@
-import { usersCl } from "../../common";
+import { usersCl } from "../common";
 import User from "../../models/user";
 import { sha256 } from "../sha256";
 

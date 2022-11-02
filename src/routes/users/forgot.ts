@@ -1,7 +1,7 @@
 import { Static, Type } from "@sinclair/typebox";
 import { randomBytes } from "crypto";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { limitCl, RecaptchaSecret, usersCl, verificationCl } from "../../common";
+import { limitCl, RecaptchaSecret, usersCl, verificationCl } from "../../lib/common";
 import { mg, mgDomain, resetMsg } from "../../lib/mailgun";
 import { verifyCaptcha } from "../../lib/recaptcha";
 import Limit from "../../models/limit";

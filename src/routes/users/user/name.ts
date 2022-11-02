@@ -1,5 +1,5 @@
 import User from "../../../models/user";
-import { usersCl } from "../../../common";
+import { usersCl } from "../../../lib/common";
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../lib/regex";

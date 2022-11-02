@@ -1,9 +1,9 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { removedCl, threadCl } from "../../../../common";
+import { removedCl, threadCl } from "../../../../lib/common";
 import verifyUser from "../../../../lib/auth/verify";
 import regex from "../../../../lib/regex";
-import requireAdmin from "../../../../plugins/requireAdmin";
+import RequireAdmin from "../../../../plugins/requireAdmin";
 
 export default function (
     fastify: FastifyInstance,
@@ -20,7 +20,7 @@ export default function (
 
     fastify.delete(
         "/",
-        { schema: { params: paramsSchema, body: schema }, preHandler: [requireAdmin] },
+        { schema: { params: paramsSchema, body: schema }, preHandler: [RequireAdmin] },
         async (
             req: FastifyRequest<{
                 Params: Static<typeof paramsSchema>;

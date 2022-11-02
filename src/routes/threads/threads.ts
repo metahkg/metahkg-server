@@ -1,5 +1,5 @@
 import Thread from "../../models/thread";
-import { threadCl } from "../../common";
+import { threadCl } from "../../lib/common";
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { hiddencats } from "../../lib/hiddencats";

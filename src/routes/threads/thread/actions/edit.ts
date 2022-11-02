@@ -1,10 +1,10 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { categoryCl, threadCl } from "../../../../common";
+import { categoryCl, threadCl } from "../../../../lib/common";
 import verifyUser from "../../../../lib/auth/verify";
 import regex from "../../../../lib/regex";
 import checkThread from "../../../../plugins/checkThread";
-import requireAdmin from "../../../../plugins/requireAdmin";
+import RequireAdmin from "../../../../plugins/requireAdmin";
 
 export default function (
     fastify: FastifyInstance,
@@ -28,7 +28,7 @@ export default function (
         "/",
         {
             schema: { params: paramsSchema, body: schema },
-            preHandler: [requireAdmin, checkThread],
+            preHandler: [RequireAdmin, checkThread],
         },
         async (
             req: FastifyRequest<{

@@ -1,4 +1,4 @@
-import { usersCl } from "../../common";
+import { usersCl } from "../common";
 import { sha256 } from "../sha256";
 
 export async function updateSessionById(

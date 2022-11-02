@@ -1,4 +1,4 @@
-import { threadCl } from "../../../common";
+import { threadCl } from "../../../lib/common";
 import { Static, Type } from "@sinclair/typebox";
 import Thread from "../../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";

@@ -4,8 +4,8 @@ import multer from "fastify-multer"; // handle image uploads
 import fs from "fs";
 import { move } from "fs-extra";
 import sharp from "sharp"; // reshape images to circle
-import verifyUser from "../../../lib/auth/verify";
-import RequireSameUser from "../../../plugins/requireSameUser";
+import verifyUser from "../../../../lib/auth/verify";
+import RequireSameUser from "../../../../plugins/requireSameUser";
 
 dotenv.config();
 
@@ -57,7 +57,7 @@ export default function (
      * Image is renamed to <user-id>.<png/svg/jpg/jpeg>
      */
     fastify.put(
-        "/avatar",
+        "/",
         { preHandler: [RequireSameUser, upload.single("avatar")] },
         async (req, res) => {
             try {

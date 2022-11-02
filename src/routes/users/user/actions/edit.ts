@@ -1,5 +1,5 @@
 import { Static, Type } from "@sinclair/typebox";
-import { usersCl } from "../../../../common";
+import { usersCl } from "../../../../lib/common";
 import verifyUser from "../../../../lib/auth/verify";
 import { createToken } from "../../../../lib/auth/createtoken";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";

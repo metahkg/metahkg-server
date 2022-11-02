@@ -1,5 +1,11 @@
 # Changelog
 
+## v5.6.0
+
+- delete avatar
+- push notifications on 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000 upvotes
+- admin: ban and unban users
+
 ## v5.5.1
 
 - add threadId and commentId properties to Notification

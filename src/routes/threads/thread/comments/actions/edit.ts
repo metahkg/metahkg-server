@@ -2,11 +2,11 @@ import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { htmlToText } from "html-to-text";
 import { ObjectId } from "mongodb";
-import { threadCl } from "../../../../../common";
+import { threadCl } from "../../../../../lib/common";
 import verifyUser from "../../../../../lib/auth/verify";
 import regex from "../../../../../lib/regex";
 import checkComment from "../../../../../plugins/checkComment";
-import requireAdmin from "../../../../../plugins/requireAdmin";
+import RequireAdmin from "../../../../../plugins/requireAdmin";
 
 export default function (
     fastify: FastifyInstance,
@@ -30,7 +30,7 @@ export default function (
         "/:cid",
         {
             schema: { params: paramsSchema, body: schema },
-            preHandler: [requireAdmin, checkComment],
+            preHandler: [RequireAdmin, checkComment],
         },
         async (
             req: FastifyRequest<{

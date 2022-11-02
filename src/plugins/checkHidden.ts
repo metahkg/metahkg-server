@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { categoryCl, threadCl } from "../common";
+import { categoryCl, threadCl } from "../lib/common";
 import verifyUser from "../lib/auth/verify";
 
 export default async (

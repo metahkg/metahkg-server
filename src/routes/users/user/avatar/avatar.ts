@@ -2,7 +2,7 @@ import fs from "fs";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import dotenv from "dotenv";
 import { Static, Type } from "@sinclair/typebox";
-import regex from "../../../lib/regex";
+import regex from "../../../../lib/regex";
 
 dotenv.config();
 
@@ -14,7 +14,7 @@ export default function (
     const paramsSchema = Type.Object({ id: Type.RegEx(regex.integer) });
 
     fastify.get(
-        "/avatar",
+        "/",
         { schema: { params: paramsSchema } },
         (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
             const filename = `images/avatars/${req.params.id}.png`;

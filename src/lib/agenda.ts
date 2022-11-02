@@ -1,6 +1,6 @@
 import { Agenda, Job } from "agenda";
 import { randomBytes } from "crypto";
-import { client, usersCl, verificationCl } from "../common";
+import { client, usersCl, verificationCl } from "./common";
 
 export const agenda = new Agenda({ mongo: client.db("agenda") });
 
@@ -26,6 +26,20 @@ agenda.define("unbanUser", async (job: Job) => {
     const { userId } = job.attrs.data;
 
     await usersCl.updateOne({ id: userId }, { $unset: { ban: 1 } });
+});
+
+agenda.define("autoUnmuteUsers", async () => {
+    await usersCl.updateMany(
+        { "mute.exp": { $lte: new Date() } },
+        { $unset: { mute: 1 } }
+    );
+});
+
+agenda.define("autoUnbanUsers", async () => {
+    await usersCl.updateMany(
+        { "ban.exp": { $lte: new Date() } },
+        { $unset: { ban: 1 } }
+    );
 });
 
 agenda.define("removeExpiredSessions", async () => {

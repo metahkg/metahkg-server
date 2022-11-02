@@ -1,5 +1,5 @@
 import { Static, Type } from "@sinclair/typebox";
-import { threadCl } from "../../common";
+import { threadCl } from "../../lib/common";
 import Thread from "../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../lib/regex";

@@ -5,7 +5,7 @@ import {
     threadCl,
     usersCl,
     linksCl,
-} from "../common";
+} from "../lib/common";
 import { categories } from "./category";
 export async function setup() {
     await threadCl.createIndex({ id: 1 });

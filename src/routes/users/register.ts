@@ -1,4 +1,4 @@
-import { RecaptchaSecret, usersCl, verificationCl, inviteCl } from "../../common";
+import { RecaptchaSecret, usersCl, verificationCl, inviteCl } from "../../lib/common";
 import { mg, mgDomain, verifyMsg } from "../../lib/mailgun";
 import EmailValidator from "email-validator";
 import { verifyCaptcha } from "../../lib/recaptcha";

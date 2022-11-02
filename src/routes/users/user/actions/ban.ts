@@ -22,7 +22,7 @@ export default function (
     });
 
     fastify.post(
-        "/mute",
+        "/ban",
         { schema: { params: paramsSchema, body: schema }, preHandler: [RequireAdmin] },
         async (
             req: FastifyRequest<{
@@ -43,13 +43,13 @@ export default function (
             if (reqUser.role === "admin")
                 return res
                     .code(409)
-                    .send({ statusCode: 409, error: "Cannot mute an admin." });
+                    .send({ statusCode: 409, error: "Cannot ban an admin." });
 
             await usersCl.updateOne(
                 { id },
                 {
                     $set: {
-                        mute: {
+                        ban: {
                             admin,
                             reason,
                             ...(exp && { exp: new Date(exp) }),
@@ -58,8 +58,8 @@ export default function (
                 }
             );
 
-            await agenda.cancel({ name: "unmuteUser", data: { userId: id } });
-            if (exp) await agenda.schedule(new Date(exp), "unmuteUser", { userId: id });
+            await agenda.cancel({ name: "unbanUser", data: { userId: id } });
+            if (exp) await agenda.schedule(new Date(exp), "unbanUser", { userId: id });
 
             return res.send({ success: true });
         }

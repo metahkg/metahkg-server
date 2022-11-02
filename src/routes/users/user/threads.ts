@@ -1,5 +1,5 @@
 import User from "../../../models/user";
-import { threadCl, usersCl } from "../../../common";
+import { threadCl, usersCl } from "../../../lib/common";
 import verifyUser from "../../../lib/auth/verify";
 import Thread from "../../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";

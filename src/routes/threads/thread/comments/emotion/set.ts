@@ -1,6 +1,6 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { domain, threadCl } from "../../../../../common";
+import { domain, threadCl } from "../../../../../lib/common";
 import verifyUser from "../../../../../lib/auth/verify";
 import { sendNotification } from "../../../../../lib/notifications/sendNotification";
 import regex from "../../../../../lib/regex";

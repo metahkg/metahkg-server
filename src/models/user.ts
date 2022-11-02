@@ -22,7 +22,7 @@ export interface Notification {
     options: {
         body: string;
         data: {
-            type: "thread" | "comment" | "reply" | "emotion";
+            type: "thread" | "comment" | "reply" | "emotion" | "votes";
             threadId: number;
             commentId?: number;
             url: string;

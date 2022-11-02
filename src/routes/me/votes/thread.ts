@@ -1,4 +1,4 @@
-import { votesCl } from "../../../common";
+import { votesCl } from "../../../lib/common";
 import verifyUser from "../../../lib/auth/verify";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { Static, Type } from "@sinclair/typebox";

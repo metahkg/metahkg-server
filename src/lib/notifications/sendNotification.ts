@@ -1,5 +1,5 @@
 import webPush from "web-push";
-import { domain, usersCl, vapidKeys } from "../../common";
+import { domain, usersCl, vapidKeys } from "../common";
 import User, { Notification } from "../../models/user";
 
 export async function sendNotification(userId: number, data: Notification) {

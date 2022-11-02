@@ -5,7 +5,7 @@ import {
     threadCl,
     domain,
     usersCl,
-} from "../../../../common";
+} from "../../../../lib/common";
 import { verifyCaptcha } from "../../../../lib/recaptcha";
 import findImages from "../../../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";

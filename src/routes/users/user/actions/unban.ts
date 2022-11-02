@@ -16,7 +16,7 @@ export default function (
     });
 
     fastify.post(
-        "/unmute",
+        "/unban",
         { schema: { params: paramsSchema }, preHandler: [RequireAdmin] },
         async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
             const id = Number(req.params.id);
@@ -26,12 +26,12 @@ export default function (
             if (!reqUser)
                 return res.code(404).send({ statusCode: 404, error: "User not found." });
 
-            if (!reqUser.mute)
-                return res.code(409).send({ statusCode: 409, error: "User not muted." });
+            if (!reqUser.ban)
+                return res.code(409).send({ statusCode: 409, error: "User not banned." });
 
-            await usersCl.updateOne({ id }, { $unset: { mute: 1 } });
+            await usersCl.updateOne({ id }, { $unset: { ban: 1 } });
 
-            await agenda.cancel({ name: "unmuteUser", data: { userId: id } });
+            await agenda.cancel({ name: "unbanUser", data: { userId: id } });
 
             return res.send({ success: true });
         }

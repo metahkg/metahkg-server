@@ -1,4 +1,4 @@
-import { RecaptchaSecret, verificationCl, limitCl } from "../../common";
+import { RecaptchaSecret, verificationCl, limitCl } from "../../lib/common";
 import { verifyCaptcha } from "../../lib/recaptcha";
 import { Static, Type } from "@sinclair/typebox";
 import Limit from "../../models/limit";

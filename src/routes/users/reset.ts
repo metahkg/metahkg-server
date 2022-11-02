@@ -1,4 +1,4 @@
-import { usersCl, verificationCl } from "../../common";
+import { usersCl, verificationCl } from "../../lib/common";
 import hash from "hash.js";
 import { Static, Type } from "@sinclair/typebox";
 import User from "../../models/user";

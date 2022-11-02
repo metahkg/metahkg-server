@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { usersCl, verificationCl } from "../../common";
+import { usersCl, verificationCl } from "../../lib/common";
 import hash from "hash.js";
 import { Static, Type } from "@sinclair/typebox";
 import { createToken } from "../../lib/auth/createtoken";

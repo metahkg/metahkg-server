@@ -1,5 +1,5 @@
 import isInteger from "is-sn-integer";
-import { threadCl } from "../../../common";
+import { threadCl } from "../../../lib/common";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { Static, Type } from "@sinclair/typebox";
 import regex from "../../../lib/regex";

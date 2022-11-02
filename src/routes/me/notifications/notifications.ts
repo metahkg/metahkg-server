@@ -1,4 +1,4 @@
-import { usersCl } from "../../../common";
+import { usersCl } from "../../../lib/common";
 import verifyUser from "../../../lib/auth/verify";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import User from "../../../models/user";

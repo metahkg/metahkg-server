@@ -1,7 +1,7 @@
 import Mailgun from "mailgun.js";
 import formData from "form-data";
 import dotenv from "dotenv";
-import { domain } from "../common";
+import { domain } from "./common";
 
 dotenv.config();
 

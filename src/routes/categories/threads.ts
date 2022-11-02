@@ -1,4 +1,4 @@
-import { categoryCl, threadCl } from "../../common";
+import { categoryCl, threadCl } from "../../lib/common";
 import { hiddencats as gethiddencats } from "../../lib/hiddencats";
 import { Static, Type } from "@sinclair/typebox";
 import verifyUser from "../../lib/auth/verify";

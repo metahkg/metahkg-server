@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { threadCl } from "../common";
+import { threadCl } from "../lib/common";
 import Thread from "../models/thread";
 
 export default async function (
