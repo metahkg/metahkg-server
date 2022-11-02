@@ -10,7 +10,7 @@ export async function createSession(
     ip: string,
     sameIp?: boolean
 ) {
-    const exp = (jwt.decode(token) as JwtPayload)?.exp * 1000
+    const exp = (jwt.decode(token) as JwtPayload)?.exp * 1000;
     if (!exp) return null;
 
     const session = {
