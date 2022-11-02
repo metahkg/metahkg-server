@@ -18,10 +18,7 @@ export default (
 ) => {
     const schema = Type.Object(
         {
-            name: Type.Union([
-                UserNameSchema,
-                EmailSchema,
-            ]),
+            name: Type.Union([UserNameSchema, EmailSchema]),
             // check if password is a sha256 hash
             password: PasswordSchema,
             sameIp: Type.Optional(Type.Boolean()),

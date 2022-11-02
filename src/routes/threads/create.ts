@@ -15,7 +15,12 @@ import Thread from "../../models/thread";
 import { htmlToText } from "html-to-text";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import checkMuted from "../../plugins/checkMuted";
-import { CommentSchema, IntegerSchema, RTokenSchema, TitleSchema } from "../../lib/schemas";
+import {
+    CommentSchema,
+    IntegerSchema,
+    RTokenSchema,
+    TitleSchema,
+} from "../../lib/schemas";
 
 export default (
     fastify: FastifyInstance,
