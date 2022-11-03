@@ -9,7 +9,7 @@ export const ReasonSchemaAdmin = Type.String({
     maxLength: 100,
 });
 
-export const RTokenSchema = Type.RegEx(/^[a-zA-Z0-9!@#\$%\^&*\)\(+=\._-]{1,100}$/);
+export const RTokenSchema = Type.String({ minLength: 1, maxLength: 100 });
 
 export const TitleSchema = Type.String({ minLength: 1, maxLength: 100 });
 export const CommentSchema = Type.String({ minLength: 1, maxLength: 10000 });
