@@ -2,11 +2,12 @@ import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { htmlToText } from "html-to-text";
 import { ObjectId } from "mongodb";
-import { threadCl } from "../../../../../common";
+import { threadCl } from "../../../../../lib/common";
 import verifyUser from "../../../../../lib/auth/verify";
 import regex from "../../../../../lib/regex";
 import checkComment from "../../../../../plugins/checkComment";
-import requireAdmin from "../../../../../plugins/requireAdmin";
+import RequireAdmin from "../../../../../plugins/requireAdmin";
+import { ReasonSchemaAdmin, CommentSchema } from "../../../../../lib/schemas";
 
 export default function (
     fastify: FastifyInstance,
@@ -20,8 +21,8 @@ export default function (
 
     const schema = Type.Object(
         {
-            comment: Type.String(),
-            reason: Type.String(),
+            comment: CommentSchema,
+            reason: ReasonSchemaAdmin,
         },
         { minProperties: 2, additionalProperties: false }
     );
@@ -30,7 +31,7 @@ export default function (
         "/:cid",
         {
             schema: { params: paramsSchema, body: schema },
-            preHandler: [requireAdmin, checkComment],
+            preHandler: [RequireAdmin, checkComment],
         },
         async (
             req: FastifyRequest<{
@@ -42,7 +43,7 @@ export default function (
             const id = Number(req.params.id);
             const cid = Number(req.params.cid);
 
-            const user = verifyUser(req.headers.authorization);
+            const user = await verifyUser(req.headers.authorization, req.ip);
 
             const { comment, reason } = req.body;
 

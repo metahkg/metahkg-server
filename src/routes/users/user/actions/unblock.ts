@@ -1,6 +1,6 @@
 import { Static, Type } from "@sinclair/typebox";
 import verifyUser from "../../../../lib/auth/verify";
-import { usersCl } from "../../../../common";
+import { usersCl } from "../../../../lib/common";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../../lib/regex";
 
@@ -17,8 +17,9 @@ export default (
         "/unblock",
         { schema: { params: paramsSchema } },
         async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
-            const user = verifyUser(req.headers.authorization);
-            if (!user) return res.code(401).send({ error: "Unauthorized" });
+            const user = await verifyUser(req.headers.authorization, req.ip);
+            if (!user)
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized" });
 
             const userId = Number(req.params.id);
 
@@ -30,7 +31,9 @@ export default (
                     )
                 ).matchedCount
             )
-                return res.code(409).send({ error: "User not blocked." });
+                return res
+                    .code(409)
+                    .send({ statusCode: 409, error: "User not blocked." });
 
             return res.send({ success: true });
         }

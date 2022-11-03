@@ -1,9 +1,10 @@
-import { RecaptchaSecret, verificationCl, limitCl } from "../../common";
+import { RecaptchaSecret, verificationCl, limitCl } from "../../lib/common";
 import { verifyCaptcha } from "../../lib/recaptcha";
 import { Static, Type } from "@sinclair/typebox";
 import Limit from "../../models/limit";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { mg, mgDomain, verifyMsg } from "../../lib/mailgun";
+import { EmailSchema, RTokenSchema } from "../../lib/schemas";
 
 export default (
     fastify: FastifyInstance,
@@ -11,7 +12,7 @@ export default (
     done: (e?: Error) => void
 ) => {
     const schema = Type.Object(
-        { email: Type.String({ format: "email" }), rtoken: Type.String() },
+        { email: EmailSchema, rtoken: RTokenSchema },
         { additionalProperties: false }
     );
 
@@ -22,13 +23,15 @@ export default (
             const { email, rtoken } = req.body;
 
             if (!(await verifyCaptcha(RecaptchaSecret, rtoken)))
-                return res.code(429).send({ error: "Recaptcha token invalid." });
+                return res
+                    .code(429)
+                    .send({ statusCode: 429, error: "Recaptcha token invalid." });
 
             const verificationUserData = await verificationCl.findOne({
                 email,
             });
             if (!verificationUserData)
-                return res.code(404).send({ error: "Email not found." });
+                return res.code(404).send({ statusCode: 404, error: "Email not found." });
 
             if (
                 (await limitCl.countDocuments({

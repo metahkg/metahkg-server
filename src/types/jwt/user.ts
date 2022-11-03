@@ -1,13 +1,14 @@
 import { Static, Type } from "@sinclair/typebox";
 import dotenv from "dotenv";
+import { SexSchema, UserNameSchema, UserRoleSchema } from "../../lib/schemas";
 
 dotenv.config();
 
 export const jwtTokenSchema = Type.Object({
-    id: Type.Integer(),
-    name: Type.String(),
-    sex: Type.Union([Type.Literal("M"), Type.Literal("F")]),
-    role: Type.Union([Type.Literal("admin"), Type.Literal("user")]),
+    id: Type.Integer({ minimum: 1 }),
+    name: UserNameSchema,
+    sex: SexSchema,
+    role: UserRoleSchema,
     iss: Type.Literal(process.env.domain || ""),
     aud: Type.Literal(process.env.domain || ""),
 });

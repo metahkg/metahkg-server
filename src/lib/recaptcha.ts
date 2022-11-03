@@ -7,8 +7,18 @@ import axios from "axios";
  * @returns The `verify` function returns a promise that resolves to a boolean.
  */
 export async function verifyCaptcha(secret: string, token: string) {
-    const verify = await axios.get(
-        `https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${token}`
-    );
-    return verify.data.success;
+    try {
+        const { data } = await axios.get<{
+            success: boolean;
+            /** timestamp */
+            challenge_ts: string;
+            hostname: string;
+            error_codes?: number[];
+        }>(
+            `https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${token}`
+        );
+        return data.success;
+    } catch {
+        return false;
+    }
 }

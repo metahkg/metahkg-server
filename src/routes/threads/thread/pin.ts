@@ -1,9 +1,10 @@
 import { Static, Type } from "@sinclair/typebox";
-import { threadCl } from "../../../common";
+import { threadCl } from "../../../lib/common";
 import verifyUser from "../../../lib/auth/verify";
 import Thread, { commentType } from "../../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../lib/regex";
+import { IntegerSchema } from "../../../lib/schemas";
 
 export default function (
     fastify: FastifyInstance,
@@ -14,9 +15,12 @@ export default function (
         id: Type.RegEx(regex.integer),
     });
 
-    const schema = Type.Object({
-        cid: Type.Integer({ minimum: 1 }),
-    });
+    const schema = Type.Object(
+        {
+            cid: IntegerSchema,
+        },
+        { additionalProperties: false }
+    );
 
     fastify.put(
         "/pin",
@@ -36,8 +40,9 @@ export default function (
             const threadId = Number(req.params.id);
             const { cid: commentId } = req.body;
 
-            const user = verifyUser(req.headers.authorization);
-            if (!user) return res.code(401).send({ error: "Unauthorized." });
+            const user = await verifyUser(req.headers.authorization, req.ip);
+            if (!user)
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
             const thread = (await threadCl.findOne(
                 {
@@ -61,12 +66,15 @@ export default function (
                 }
             )) as Thread;
 
-            if (!thread) return res.code(404).send({ error: "Thread not found." });
+            if (!thread)
+                return res
+                    .code(404)
+                    .send({ statusCode: 404, error: "Thread not found." });
 
             if ("removed" in thread) return;
 
             if (thread?.op?.id !== user.id)
-                return res.code(403).send({ error: "Forbidden." });
+                return res.code(403).send({ statusCode: 403, error: "Forbidden." });
 
             const comment = Object.fromEntries(
                 Object.entries(thread.conversation?.[0]).filter(
@@ -74,7 +82,10 @@ export default function (
                 )
             ) as commentType;
 
-            if (!comment) return res.code(404).send({ error: "Comment not found." });
+            if (!comment)
+                return res
+                    .code(404)
+                    .send({ statusCode: 404, error: "Comment not found." });
 
             await threadCl.updateOne({ id: threadId }, { $set: { pin: comment } });
 

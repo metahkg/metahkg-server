@@ -1,6 +1,6 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { threadCl, usersCl } from "../../../../common";
+import { threadCl, usersCl } from "../../../../lib/common";
 import verifyUser from "../../../../lib/auth/verify";
 import regex from "../../../../lib/regex";
 
@@ -17,13 +17,16 @@ export default function (
         "/star",
         { schema: { params: paramsSchema } },
         async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
-            const user = verifyUser(req.headers.authorization);
-            if (!user) return res.code(401).send({ error: "Unauthorized." });
+            const user = await verifyUser(req.headers.authorization, req.ip);
+            if (!user)
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
             const threadId = Number(req.params.id);
 
             if (!(await threadCl.findOne({ id: threadId })))
-                return res.code(404).send({ error: "Thread not found." });
+                return res
+                    .code(404)
+                    .send({ statusCode: 404, error: "Thread not found." });
 
             if (
                 !(
@@ -47,7 +50,9 @@ export default function (
                     )
                 ).matchedCount
             )
-                return res.code(409).send({ error: "Thread already starred." });
+                return res
+                    .code(409)
+                    .send({ statusCode: 409, error: "Thread already starred." });
 
             return res.send({ success: true });
         }

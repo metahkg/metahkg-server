@@ -1,8 +1,9 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { categoryCl } from "../../common";
+import { categoryCl } from "../../lib/common";
+import { CategoryNameSchema, CategoryTagsSchema } from "../../lib/schemas";
 import Category from "../../models/category";
-import requireAdmin from "../../plugins/requireAdmin";
+import RequireAdmin from "../../plugins/requireAdmin";
 
 export default function (
     fastify: FastifyInstance,
@@ -11,20 +12,24 @@ export default function (
 ) {
     const schema = Type.Object(
         {
-            name: Type.String({ maxLength: 15 }),
+            name: CategoryNameSchema,
             hidden: Type.Optional(Type.Boolean()),
             pinned: Type.Optional(Type.Boolean()),
-            tags: Type.Optional(Type.Array(Type.String({ maxLength: 15 }))),
+            tags: Type.Optional(CategoryTagsSchema),
         },
         { additionalProperties: false }
     );
 
     fastify.post(
         "/",
-        { schema: { body: schema }, preHandler: [requireAdmin] },
+        { schema: { body: schema }, preHandler: [RequireAdmin] },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
+            const { name } = req.body;
+
             if (await categoryCl.findOne({ name }))
-                return res.status(409).send({ error: "Category already exists." });
+                return res
+                    .code(409)
+                    .send({ statusCode: 409, error: "Category already exists." });
 
             const id =
                 (

@@ -1,5 +1,5 @@
 import { Static, Type } from "@sinclair/typebox";
-import { threadCl } from "../../../../common";
+import { threadCl } from "../../../../lib/common";
 import Thread from "../../../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../../lib/regex";
@@ -34,7 +34,9 @@ export default (
             )) as Thread;
 
             if (!thread)
-                return res.code(404).send({ error: "Thread or comment not found." });
+                return res
+                    .code(404)
+                    .send({ statusCode: 404, error: "Thread or comment not found." });
 
             if ("removed" in thread) return;
 

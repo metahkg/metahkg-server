@@ -68,6 +68,11 @@ export const domain = process.env.domain?.startsWith(".")
     ? process.env.domain?.replace(".", "")
     : process.env.domain;
 
+export const vapidKeys = {
+    public: process.env.VAPID_PUBLIC_KEY || "",
+    private: process.env.VAPID_PRIVATE_KEY || "",
+};
+
 export function allequal(arr: any[]) {
     const first = arr[0];
     for (const i of arr) {
@@ -84,6 +89,5 @@ export const verificationCl = db.collection("verification");
 export const categoryCl = db.collection("category");
 export const votesCl = db.collection("votes");
 export const linksCl = db.collection("links");
-export const notificationsCl = db.collection("notifications");
 export const inviteCl = db.collection("invite");
 export const removedCl = db.collection("removed");

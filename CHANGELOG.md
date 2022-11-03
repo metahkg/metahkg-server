@@ -1,5 +1,48 @@
 # Changelog
 
+## v5.6.1
+
+- resolve [issue #2](https://gitlab.com/metahkg/metahkg-server/-/issues/2) by implementing stricter schemas
+
+## v5.6.0
+
+- delete avatar
+- push notifications on 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000 upvotes
+- admin: ban and unban users
+
+## v5.5.1
+
+- add threadId and commentId properties to Notification
+
+## v5.5.0
+
+- implement push notifications backend
+- send push notifications on:
+  - emotions
+  - comments (on starred threads or threads created by the user)
+  - replies
+
+## v5.4.0
+
+- revoke sessions
+- get individual sessions
+- logout
+
+## v5.3.0
+
+- add statusCode to errors
+
+## v5.2.1
+
+- openapi: disable additional properties
+
+## v5.2.0
+
+- implement sessions
+- option to restrict a session to same ip
+- remove `/me/status` in favor of `/me/session`
+- change all `pwd` to `password`
+
 ## v5.1.0
 
 - remove `POST /me/rename`

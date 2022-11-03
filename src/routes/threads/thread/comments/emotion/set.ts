@@ -1,7 +1,8 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { threadCl } from "../../../../../common";
+import { domain, threadCl } from "../../../../../lib/common";
 import verifyUser from "../../../../../lib/auth/verify";
+import { sendNotification } from "../../../../../lib/notifications/sendNotification";
 import regex from "../../../../../lib/regex";
 import Thread from "../../../../../models/thread";
 
@@ -15,9 +16,12 @@ export default function (
         cid: Type.RegEx(regex.integer),
     });
 
-    const schema = Type.Object({
-        emotion: Type.RegEx(regex.emoji),
-    });
+    const schema = Type.Object(
+        {
+            emotion: Type.RegEx(regex.emoji),
+        },
+        { additionalProperties: false }
+    );
 
     fastify.post(
         "/",
@@ -29,8 +33,9 @@ export default function (
             }>,
             res
         ) {
-            const user = verifyUser(req.headers.authorization);
-            if (!user) return res.code(401).send({ error: "Unauthorized." });
+            const user = await verifyUser(req.headers.authorization, req.ip);
+            if (!user)
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
             const id = Number(req.params.id);
             const cid = Number(req.params.cid);
@@ -45,9 +50,12 @@ export default function (
                 {
                     projection: {
                         _id: 0,
+                        id: 1,
+                        title: 1,
                         index: {
                             $indexOfArray: ["$conversation.id", cid],
                         },
+                        conversation: { $elemMatch: { id: cid } },
                     },
                 }
             )) as Thread & { index: number };
@@ -56,7 +64,9 @@ export default function (
 
             // index can be 0
             if (index === undefined || index === -1)
-                return res.code(404).send({ error: "Comment not found." });
+                return res
+                    .code(404)
+                    .send({ statusCode: 404, error: "Comment not found." });
 
             // remove previous value first
             await threadCl.updateOne(
@@ -81,6 +91,25 @@ export default function (
                     },
                 }
             );
+
+            if (
+                !("removed" in thread) &&
+                !("removed" in thread.conversation?.[0]) &&
+                thread.conversation[0]?.user?.id !== user.id
+            )
+                sendNotification(thread?.conversation[0].user.id, {
+                    title: `New reaction (${thread.title})`,
+                    createdAt: new Date(),
+                    options: {
+                        body: `${user.name} (#${user.id}): ${emotion}`,
+                        data: {
+                            type: "emotion",
+                            threadId: thread.id,
+                            commentId: thread.conversation[0].id,
+                            url: `https://${domain}/thread/${thread.id}?c=${thread.conversation[0].id}`,
+                        },
+                    },
+                });
 
             return res.send({ success: true });
         }

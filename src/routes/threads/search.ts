@@ -1,5 +1,5 @@
 import { Static, Type } from "@sinclair/typebox";
-import { threadCl } from "../../common";
+import { threadCl } from "../../lib/common";
 import Thread from "../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../lib/regex";
@@ -11,17 +11,20 @@ export default (
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
-    const querySchema = Type.Object({
-        page: Type.Optional(Type.RegEx(regex.integer)),
-        q: Type.String({ maxLength: 100, minLength: 1 }),
-        sort: Type.Optional(
-            Type.Union(
-                ["relevance", "created", "lastcomment"].map((x) => Type.Literal(x))
-            )
-        ),
-        mode: Type.Optional(Type.Union(["title", "op"].map((x) => Type.Literal(x)))),
-        limit: Type.Optional(Type.RegEx(regex.oneTo50)),
-    });
+    const querySchema = Type.Object(
+        {
+            page: Type.Optional(Type.RegEx(regex.integer)),
+            q: Type.String({ maxLength: 100, minLength: 1 }),
+            sort: Type.Optional(
+                Type.Union(
+                    ["relevance", "created", "lastcomment"].map((x) => Type.Literal(x))
+                )
+            ),
+            mode: Type.Optional(Type.Union(["title", "op"].map((x) => Type.Literal(x)))),
+            limit: Type.Optional(Type.RegEx(regex.oneTo50)),
+        },
+        { additionalProperties: false }
+    );
 
     fastify.get(
         "/search",
@@ -41,7 +44,7 @@ export default (
             const sort = req.query.sort || "relevance";
             const mode = req.query.mode || "title";
             const limit = Number(req.query.limit) || 25;
-            const user = verifyUser(req.headers.authorization);
+            const user = await verifyUser(req.headers.authorization, req.ip);
 
             const regex = new RegExp(
                 query.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"),

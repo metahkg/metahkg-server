@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import { usersCl } from "../../common";
+import { usersCl } from "../../lib/common";
 import verifyUser from "../../lib/auth/verify";
 
 export default function (
@@ -8,8 +8,8 @@ export default function (
     done: (err?: Error) => void
 ) {
     fastify.get("/starred", async (req, res) => {
-        const user = verifyUser(req.headers.authorization);
-        if (!user) return res.status(401).send({ error: "Unauthorized" });
+        const user = await verifyUser(req.headers.authorization, req.ip);
+        if (!user) return res.code(401).send({ statusCode: 401, error: "Unauthorized" });
 
         const starred = (
             await usersCl.findOne({ id: user.id }, { projection: { starred: 1, _id: 0 } })

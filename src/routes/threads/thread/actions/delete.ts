@@ -1,9 +1,10 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { removedCl, threadCl } from "../../../../common";
+import { removedCl, threadCl } from "../../../../lib/common";
 import verifyUser from "../../../../lib/auth/verify";
 import regex from "../../../../lib/regex";
-import requireAdmin from "../../../../plugins/requireAdmin";
+import RequireAdmin from "../../../../plugins/requireAdmin";
+import { ReasonSchemaAdmin } from "../../../../lib/schemas";
 
 export default function (
     fastify: FastifyInstance,
@@ -14,13 +15,16 @@ export default function (
         id: Type.RegEx(regex.integer),
     });
 
-    const schema = Type.Object({
-        reason: Type.String(),
-    });
+    const schema = Type.Object(
+        {
+            reason: ReasonSchemaAdmin,
+        },
+        { additionalProperties: false }
+    );
 
     fastify.delete(
         "/",
-        { schema: { params: paramsSchema, body: schema }, preHandler: [requireAdmin] },
+        { schema: { params: paramsSchema, body: schema }, preHandler: [RequireAdmin] },
         async (
             req: FastifyRequest<{
                 Params: Static<typeof paramsSchema>;
@@ -30,10 +34,13 @@ export default function (
         ) => {
             const id = Number(req.params.id);
             const { reason } = req.body;
-            const admin = verifyUser(req.headers.authorization);
+            const admin = await verifyUser(req.headers.authorization, req.ip);
 
             const thread = await threadCl.findOne({ id }, { projection: { _id: 0 } });
-            if (!thread) return res.code(404).send({ error: "Thread not found." });
+            if (!thread)
+                return res
+                    .code(404)
+                    .send({ statusCode: 404, error: "Thread not found." });
 
             await removedCl.insertOne({ thread, type: "thread", admin, reason });
 

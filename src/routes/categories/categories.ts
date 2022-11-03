@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import { categoryCl } from "../../common";
+import { categoryCl } from "../../lib/common";
 
 export default function (
     fastify: FastifyInstance,

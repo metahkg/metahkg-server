@@ -1,10 +1,11 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { categoryCl, threadCl } from "../../../../common";
+import { categoryCl, threadCl } from "../../../../lib/common";
 import verifyUser from "../../../../lib/auth/verify";
 import regex from "../../../../lib/regex";
 import checkThread from "../../../../plugins/checkThread";
-import requireAdmin from "../../../../plugins/requireAdmin";
+import RequireAdmin from "../../../../plugins/requireAdmin";
+import { IntegerSchema, ReasonSchemaAdmin, TitleSchema } from "../../../../lib/schemas";
 
 export default function (
     fastify: FastifyInstance,
@@ -17,9 +18,9 @@ export default function (
 
     const schema = Type.Object(
         {
-            title: Type.Optional(Type.String({ maxLength: 100 })),
-            category: Type.Optional(Type.Integer({ minimum: 1 })),
-            reason: Type.String(),
+            title: Type.Optional(TitleSchema),
+            category: Type.Optional(IntegerSchema),
+            reason: ReasonSchemaAdmin,
         },
         { additionalProperties: false, minProperties: 2 }
     );
@@ -28,7 +29,7 @@ export default function (
         "/",
         {
             schema: { params: paramsSchema, body: schema },
-            preHandler: [requireAdmin, checkThread],
+            preHandler: [RequireAdmin, checkThread],
         },
         async (
             req: FastifyRequest<{
@@ -39,12 +40,14 @@ export default function (
         ) => {
             const id = Number(req.params.id);
 
-            const user = verifyUser(req.headers.authorization);
+            const user = await verifyUser(req.headers.authorization, req.ip);
 
             const { category, title, reason } = req.body;
 
             if (category && !(await categoryCl.findOne({ id: category })))
-                return res.code(404).send({ error: "Category not found" });
+                return res
+                    .code(404)
+                    .send({ statusCode: 404, error: "Category not found" });
 
             await threadCl.updateOne(
                 { id },

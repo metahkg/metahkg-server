@@ -1,5 +1,5 @@
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import { categoryCl, domain, threadCl, usersCl } from "./common";
+import { categoryCl, domain, threadCl, usersCl } from "./lib/common";
 import Category from "./models/category";
 import Thread from "./models/thread";
 import User from "./models/user";

@@ -1,5 +1,5 @@
 import Thread from "../../models/thread";
-import { threadCl } from "../../common";
+import { threadCl } from "../../lib/common";
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { hiddencats } from "../../lib/hiddencats";
@@ -11,14 +11,17 @@ export default (
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
-    const querySchema = Type.Object({
-        id: Type.Optional(
-            Type.Union([
-                Type.Array(Type.RegEx(regex.integer), { maxItems: 50 }),
-                Type.RegEx(regex.integer),
-            ])
-        ),
-    });
+    const querySchema = Type.Object(
+        {
+            id: Type.Optional(
+                Type.Union([
+                    Type.Array(Type.RegEx(regex.integer), { maxItems: 50 }),
+                    Type.RegEx(regex.integer),
+                ])
+            ),
+        },
+        { additionalProperties: false }
+    );
 
     fastify.get(
         "/",
@@ -27,7 +30,7 @@ export default (
             if (!req.query.id) return res.send([]);
 
             const threads = [req.query.id].flat(Infinity).map((id) => Number(id));
-            const user = verifyUser(req.headers.authorization);
+            const user = await verifyUser(req.headers.authorization, req.ip);
 
             const result = (await threadCl
                 .find({

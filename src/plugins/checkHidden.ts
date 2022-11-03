@@ -1,5 +1,5 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { categoryCl, threadCl } from "../common";
+import { categoryCl, threadCl } from "../lib/common";
 import verifyUser from "../lib/auth/verify";
 
 export default async (
@@ -22,8 +22,8 @@ export default async (
             })
         )?.hidden;
 
-        if (hidden && !verifyUser(req.headers.authorization))
-            return res.code(403).send({ error: "Forbidden." });
+        if (hidden && !(await verifyUser(req.headers.authorization, req.ip)))
+            return res.code(403).send({ statusCode: 403, error: "Forbidden." });
     }
     return;
 };

@@ -1,10 +1,12 @@
-import { threadCl, votesCl } from "../../../../common";
+import { domain, threadCl, votesCl } from "../../../../lib/common";
 import { Type, Static } from "@sinclair/typebox";
 import verifyUser from "../../../../lib/auth/verify";
 import Thread from "../../../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../../lib/regex";
 import Votes from "../../../../models/votes";
+import { sendNotification } from "../../../../lib/notifications/sendNotification";
+import { VoteSchema } from "../../../../lib/schemas";
 
 export default (
     fastify: FastifyInstance,
@@ -13,7 +15,7 @@ export default (
 ) => {
     const schema = Type.Object(
         {
-            vote: Type.Union([Type.Literal("U"), Type.Literal("D")]),
+            vote: VoteSchema,
         },
         { additionalProperties: false }
     );
@@ -37,8 +39,9 @@ export default (
             const commentId = Number(req.params.cid);
             const { vote } = req.body;
 
-            const user = verifyUser(req.headers.authorization);
-            if (!user) return res.code(401).send({ error: "Unauthorized." });
+            const user = await verifyUser(req.headers.authorization, req.ip);
+            if (!user)
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
             const thread = (await threadCl.findOne(
                 { id: threadId, conversation: { $elemMatch: { id: commentId } } },
@@ -53,15 +56,18 @@ export default (
             )) as Thread;
 
             if (!thread)
-                return res.code(404).send({ error: "Thread or comment not found." });
+                return res
+                    .code(404)
+                    .send({ statusCode: 404, error: "Thread or comment not found." });
 
-            const index = commentId - 1;
             const votes = (await votesCl.findOne({ id: user.id })) as Votes;
 
             if (!votes) {
                 await votesCl.insertOne({ id: user.id });
             } else if (votes?.[threadId]?.find((i) => i.cid === commentId)) {
-                return res.code(429).send({ error: "You have already voted." });
+                return res
+                    .code(429)
+                    .send({ statusCode: 429, error: "You have already voted." });
             }
 
             await votesCl.updateOne(
@@ -73,14 +79,14 @@ export default (
 
             if (!thread.conversation[0]?.[vote]) {
                 await threadCl.updateOne(
-                    { id: threadId },
-                    { $set: { [`conversation.${index}.${req.body.vote}`]: 0 } }
+                    { id: threadId, conversation: { $elemMatch: { id: commentId } } },
+                    { $set: { [`conversation.$.${req.body.vote}`]: 0 } }
                 );
             }
 
             await threadCl.updateOne(
-                { id: threadId },
-                { $inc: { [`conversation.${index}.${req.body.vote}`]: 1 } }
+                { id: threadId, conversation: { $elemMatch: { id: commentId } } },
+                { $inc: { [`conversation.$.${req.body.vote}`]: 1 } }
             );
 
             if (commentId === 1) {
@@ -88,6 +94,33 @@ export default (
                     { id: threadId },
                     { $inc: { score: { U: 1, D: -1 }[req.body.vote] } }
                 );
+            }
+
+            if (
+                vote === "U" &&
+                [5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000].includes(
+                    thread.conversation[0]?.[vote] + 1
+                )
+            ) {
+                sendNotification(thread.conversation[0]?.user?.id, {
+                    title: `${thread.conversation[0]?.[vote] + 1} upvotes!`,
+                    createdAt: new Date(),
+                    options: {
+                        body: `Your ${
+                            commentId === 1 ? "thread" : "comment"
+                        } has received ${thread.conversation[0]?.[vote] + 1} upvotes: ${
+                            thread.conversation[0]?.text?.length < 200
+                                ? thread.conversation[0]?.text
+                                : `${thread.conversation[0]?.text?.slice(0, 200)}...`
+                        }`,
+                        data: {
+                            type: "votes",
+                            threadId,
+                            commentId,
+                            url: `https://${domain}/thread/${threadId}?c=${commentId}`,
+                        },
+                    },
+                });
             }
 
             res.send({ success: true });

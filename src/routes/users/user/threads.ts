@@ -1,5 +1,5 @@
 import User from "../../../models/user";
-import { threadCl, usersCl } from "../../../common";
+import { threadCl, usersCl } from "../../../lib/common";
 import verifyUser from "../../../lib/auth/verify";
 import Thread from "../../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
@@ -12,16 +12,19 @@ export default (
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
-    const querySchema = Type.Object({
-        sort: Type.Optional(
-            Type.Union([Type.Literal("created"), Type.Literal("lastcomment")])
-        ),
-        page: Type.Optional(Type.RegEx(regex.integer)),
-        limit: Type.Optional(Type.RegEx(regex.oneTo50)),
-    });
+    const querySchema = Type.Object(
+        {
+            sort: Type.Optional(
+                Type.Union([Type.Literal("created"), Type.Literal("lastcomment")])
+            ),
+            page: Type.Optional(Type.RegEx(regex.integer)),
+            limit: Type.Optional(Type.RegEx(regex.oneTo50)),
+        },
+        { additionalProperties: false }
+    );
 
     const paramsSchema = Type.Object({
-        id: Type.RegEx(/^([1-9]\d*|self)$/),
+        id: Type.RegEx(regex.integer),
     });
 
     fastify.get(
@@ -38,11 +41,12 @@ export default (
             const page = Number(req.query.page) || 1;
             const sort = req.query.sort || "created";
             const limit = Number(req.query.limit) || 25;
-            const user = verifyUser(req.headers.authorization);
+            const user = await verifyUser(req.headers.authorization, req.ip);
 
             const requestedUser = (await usersCl.findOne({ id })) as User;
 
-            if (!requestedUser) return res.code(404).send({ error: "User not found." });
+            if (!requestedUser)
+                return res.code(404).send({ statusCode: 404, error: "User not found." });
 
             const history = (await threadCl
                 .find({

@@ -4,8 +4,8 @@ import multer from "fastify-multer"; // handle image uploads
 import fs from "fs";
 import { move } from "fs-extra";
 import sharp from "sharp"; // reshape images to circle
-import verifyUser from "../../../lib/auth/verify";
-import RequireSameUser from "../../../plugins/requireSameUser";
+import verifyUser from "../../../../lib/auth/verify";
+import RequireSameUser from "../../../../plugins/requireSameUser";
 
 dotenv.config();
 
@@ -14,7 +14,7 @@ export default function (
     _opts: FastifyPluginOptions,
     done: () => void
 ) {
-    const maxSize = 2048000;
+    const maxSize = 1048576;
     const upload = multer({ dest: "uploads/", limits: { fileSize: maxSize } });
 
     /**
@@ -43,13 +43,11 @@ export default function (
                 },
             ])
             .toFormat("png")
-            .toFile(`${process.env.root}/tmp/avatars/${id}.png`)
+            .toFile(`tmp/avatars/${id}.png`)
             .catch((err) => console.log(err));
-        await move(
-            `${process.env.root}/tmp/avatars/${id}.png`,
-            `${process.env.root}/images/avatars/${id}.png`,
-            { overwrite: true }
-        );
+        await move(`tmp/avatars/${id}.png`, `images/avatars/${id}.png`, {
+            overwrite: true,
+        });
     }
     /**
      * Image is saved to uploads/ upon uploading
@@ -57,32 +55,39 @@ export default function (
      * Image is renamed to <user-id>.<png/svg/jpg/jpeg>
      */
     fastify.put(
-        "/avatar",
+        "/",
         { preHandler: [RequireSameUser, upload.single("avatar")] },
         async (req, res) => {
             try {
                 const file = req.file as unknown as Express.Multer.File;
-                if (!file) return res.code(400).send({ error: "Bad request." });
+                if (!file)
+                    return res.code(400).send({ statusCode: 400, error: "Bad request." });
 
                 if (file?.size > maxSize) {
                     fs.rm(file?.path, (err) => {
                         console.error(err);
                     });
-                    return res.code(413).send({ error: "File too large." });
+                    return res
+                        .code(413)
+                        .send({ statusCode: 413, error: "File too large." });
                 }
                 if (!file.mimetype.match(/^image\/(png|svg|jpg|jpeg|jfif|gif|webp)$/i)) {
                     //remove the file
                     fs.rm(file?.path, (err) => {
                         console.error(err);
                     });
-                    return res.code(415).send({ error: "File type not supported." });
+                    return res
+                        .code(415)
+                        .send({ statusCode: 415, error: "File type not supported." });
                 }
-                const user = verifyUser(req.headers.authorization);
+                const user = await verifyUser(req.headers.authorization, req.ip);
                 if (!user) {
-                    fs.rm(`${process.env.root}/uploads/${file?.filename}`, (err) => {
+                    fs.rm(`uploads/${file?.filename}`, (err) => {
                         console.error(err);
                     });
-                    return res.code(401).send({ error: "Unauthorized." });
+                    return res
+                        .code(401)
+                        .send({ statusCode: 401, error: "Unauthorized." });
                 }
 
                 //rename file to <user-id>.<extension>
@@ -90,18 +95,19 @@ export default function (
                 fs.mkdirSync("images/processing/avatars", { recursive: true });
                 fs.mkdirSync("images/avatars", { recursive: true });
                 //move file to processing folder
-                await move(
-                    `${process.env.root}/${file?.path}`,
-                    `${process.env.root}/images/processing/avatars/${newFileName}`,
-                    { overwrite: true }
-                );
+                await move(`${file?.path}`, `images/processing/avatars/${newFileName}`, {
+                    overwrite: true,
+                });
                 try {
                     //compress the file
                     await compress(`images/processing/avatars/${newFileName}`, user.id);
                     //fs.rmSync(`images/processing/avatars/${newFileName}`);
                 } catch (err) {
                     console.error(err);
-                    res.code(422).send({ error: "Could not process you file." });
+                    res.code(422).send({
+                        statusCode: 422,
+                        error: "Could not process you file.",
+                    });
                     fs.rm(`images/processing/avatars/${newFileName}`, (err) => {
                         console.error(err);
                     });
@@ -110,7 +116,7 @@ export default function (
                 res.send({ success: true });
             } catch (err) {
                 console.error(err);
-                res.code(500).send({ error: "Internal server error." });
+                res.code(500).send({ statusCode: 500, error: "Internal server error." });
             }
         }
     );

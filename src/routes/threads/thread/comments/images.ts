@@ -1,5 +1,5 @@
 import isInteger from "is-sn-integer";
-import { threadCl } from "../../../../common";
+import { threadCl } from "../../../../lib/common";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { Static, Type } from "@sinclair/typebox";
 import regex from "../../../../lib/regex";
@@ -25,7 +25,7 @@ export default (
             res
         ) => {
             if (!isInteger(req.params.id))
-                return res.code(400).send({ error: "Bad request." });
+                return res.code(400).send({ statusCode: 400, error: "Bad request." });
 
             const threadId = Number(req.params.id);
             const commentId = Number(req.params.cid);
@@ -41,7 +41,9 @@ export default (
             )) as Thread;
 
             if (!result)
-                return res.code(404).send({ error: "Thread or comment not found." });
+                return res
+                    .code(404)
+                    .send({ statusCode: 404, error: "Thread or comment not found." });
 
             if (!("removed" in result) && !("removed" in result?.conversation?.[0]))
                 res.send(result?.conversation?.[0]?.images);

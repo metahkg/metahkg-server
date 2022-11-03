@@ -1,10 +1,12 @@
-import { usersCl, verificationCl } from "../../common";
-import hash from "hash.js";
+import { usersCl, verificationCl } from "../../lib/common";
 import { Static, Type } from "@sinclair/typebox";
 import User from "../../models/user";
 import bcrypt from "bcrypt";
-import { createToken } from "../../lib/auth/createtoken";
+import { createToken } from "../../lib/auth/createToken";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
+import { createSession } from "../../lib/sessions/createSession";
+import { CodeSchema, EmailSchema, PasswordSchema } from "../../lib/schemas";
+import { sha256 } from "../../lib/sha256";
 
 export default (
     fastify: FastifyInstance,
@@ -13,9 +15,9 @@ export default (
 ) => {
     const schema = Type.Object(
         {
-            email: Type.String({ format: "email" }),
-            code: Type.String({ minLength: 30, maxLength: 30 }),
-            pwd: Type.RegEx(/^[a-f0-9]{64}$/i),
+            email: EmailSchema,
+            code: CodeSchema,
+            password: PasswordSchema,
         },
         { additionalProperties: false }
     );
@@ -24,9 +26,9 @@ export default (
         "/reset",
         { schema: { body: schema } },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            const { email, code, pwd } = req.body;
+            const { email, code, password } = req.body;
 
-            const hashedEmail = hash.sha256().update(email).digest("hex");
+            const hashedEmail = sha256(email);
 
             if (
                 !(await verificationCl.findOne({
@@ -36,15 +38,17 @@ export default (
                 }))
             )
                 return res.code(401).send({
+                    statusCode: 401,
                     error: "Token incorrect, or expired, or you have not requested reset password.",
                 });
 
             const user = (await usersCl.findOne({ email: hashedEmail })) as User;
-            if (!user) return res.code(404).send({ error: "User not found." });
+            if (!user)
+                return res.code(404).send({ statusCode: 404, error: "User not found." });
 
             await usersCl.updateOne(
                 { email: hashedEmail },
-                { $set: { pwd: bcrypt.hashSync(pwd, 10) } }
+                { $set: { password: bcrypt.hashSync(password, 10) } }
             );
 
             await verificationCl.deleteOne({
@@ -53,7 +57,11 @@ export default (
                 code: code,
             });
 
-            return res.send({ token: createToken(user) });
+            const token = createToken(user);
+
+            await createSession(user.id, token, req.headers["user-agent"], req.ip);
+
+            return res.send({ token });
         }
     );
     done();

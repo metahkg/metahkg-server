@@ -1,4 +1,4 @@
-import { categoryCl, threadCl } from "../../common";
+import { categoryCl, threadCl } from "../../lib/common";
 import { hiddencats as gethiddencats } from "../../lib/hiddencats";
 import { Static, Type } from "@sinclair/typebox";
 import verifyUser from "../../lib/auth/verify";
@@ -46,11 +46,16 @@ export default (
 
             const hiddenCats = await gethiddencats();
 
-            if (!verifyUser(req.headers.authorization) && hiddenCats.includes(category))
-                return res.code(403).send({ error: "Forbidden." });
+            if (
+                !(await verifyUser(req.headers.authorization, req.ip)) &&
+                hiddenCats.includes(category)
+            )
+                return res.code(403).send({ statusCode: 403, error: "Forbidden." });
 
             if (!(await categoryCl.findOne({ id: category })))
-                return res.code(404).send({ error: "Category not found." });
+                return res
+                    .code(404)
+                    .send({ statusCode: 404, error: "Category not found." });
 
             const viralLimit = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
 

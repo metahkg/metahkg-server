@@ -1,6 +1,6 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { threadCl } from "../../../../../common";
+import { threadCl } from "../../../../../lib/common";
 import verifyUser from "../../../../../lib/auth/verify";
 import regex from "../../../../../lib/regex";
 import Thread from "../../../../../models/thread";
@@ -25,9 +25,10 @@ export default function (
         async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
             const id = Number(req.params.id);
             const cid = Number(req.params.cid);
-            const user = verifyUser(req.headers.authorization);
+            const user = await verifyUser(req.headers.authorization, req.ip);
 
-            if (!user) return res.code(401).send({ error: "Unauthorized." });
+            if (!user)
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
             const thread = (await threadCl.findOne(
                 {
@@ -48,7 +49,9 @@ export default function (
 
             // index can be 0
             if (index === undefined || index === -1)
-                return res.code(404).send({ error: "Comment not found." });
+                return res
+                    .code(404)
+                    .send({ statusCode: 404, error: "Comment not found." });
 
             if (
                 !(
@@ -67,7 +70,9 @@ export default function (
                     )
                 ).matchedCount
             )
-                return res.code(409).send({ error: "Emotion doesn't exist." });
+                return res
+                    .code(409)
+                    .send({ statusCode: 409, error: "Emotion doesn't exist." });
 
             return res.send({ success: true });
         }

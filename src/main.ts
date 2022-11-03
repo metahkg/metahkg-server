@@ -1,17 +1,10 @@
 import dotenv from "dotenv";
-import { client } from "./common";
-import { setup } from "./mongo/setupmongo";
 import MetahkgServer from "./app";
-import { agenda } from "./lib/agenda";
 
 dotenv.config();
 
 (async () => {
-    await client.connect();
-    await setup();
-    await agenda.start();
-
-    const app = MetahkgServer();
+    const app = await MetahkgServer();
 
     /**
      * The port can be modified in .env

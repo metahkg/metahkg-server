@@ -4,7 +4,7 @@ import {
     LINKS_DOMAIN,
     linksCl,
     threadCl,
-} from "../../common";
+} from "../../lib/common";
 import { verifyCaptcha } from "../../lib/recaptcha";
 import findImages from "../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
@@ -15,6 +15,12 @@ import Thread from "../../models/thread";
 import { htmlToText } from "html-to-text";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import checkMuted from "../../plugins/checkMuted";
+import {
+    CommentSchema,
+    IntegerSchema,
+    RTokenSchema,
+    TitleSchema,
+} from "../../lib/schemas";
 
 export default (
     fastify: FastifyInstance,
@@ -23,10 +29,10 @@ export default (
 ) => {
     const schema = Type.Object(
         {
-            comment: Type.String(),
-            rtoken: Type.String(),
-            title: Type.String({ maxLength: 100 }),
-            category: Type.Integer({ minimum: 1 }),
+            comment: CommentSchema,
+            rtoken: RTokenSchema,
+            title: TitleSchema,
+            category: IntegerSchema,
         },
         { additionalProperties: false }
     );
@@ -55,16 +61,24 @@ export default (
             const title = req.body.title.trim();
 
             if (!(await verifyCaptcha(RecaptchaSecret, req.body.rtoken)))
-                return res.code(429).send({ error: "Recaptcha token invalid." });
+                return res
+                    .code(429)
+                    .send({ statusCode: 429, error: "Recaptcha token invalid." });
 
-            const user = verifyUser(req.headers.authorization);
-            if (!user) return res.code(401).send({ error: "Unauthorized." });
+            const user = await verifyUser(req.headers.authorization, req.ip);
+            if (!user)
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
             const category = await categoryCl.findOne({ id: req.body.category });
-            if (!category) return res.code(404).send({ error: "Category not found." });
+            if (!category)
+                return res
+                    .code(404)
+                    .send({ statusCode: 404, error: "Category not found." });
 
             if (await threadCl.findOne({ title }, { projection: { _id: 0, id: 1 } }))
-                return res.code(409).send({ error: "Title already exists." });
+                return res
+                    .code(409)
+                    .send({ statusCode: 409, error: "Title already exists." });
 
             const newThreadId =
                 (

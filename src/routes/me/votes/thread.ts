@@ -1,4 +1,4 @@
-import { votesCl } from "../../../common";
+import { votesCl } from "../../../lib/common";
 import verifyUser from "../../../lib/auth/verify";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { Static, Type } from "@sinclair/typebox";
@@ -23,8 +23,9 @@ export default (
         async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
             const threadId = Number(req.params.id);
 
-            const user = verifyUser(req.headers.authorization);
-            if (!user) return res.code(401).send({ error: "Unauthorized." });
+            const user = await verifyUser(req.headers.authorization, req.ip);
+            if (!user)
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
             const votes = await votesCl.findOne(
                 { id: user.id },

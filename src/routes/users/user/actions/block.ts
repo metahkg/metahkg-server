@@ -1,8 +1,9 @@
 import { Static, Type } from "@sinclair/typebox";
 import verifyUser from "../../../../lib/auth/verify";
-import { usersCl } from "../../../../common";
+import { usersCl } from "../../../../lib/common";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../../lib/regex";
+import { ReasonSchemaUser } from "../../../../lib/schemas";
 
 export default (
     fastify: FastifyInstance,
@@ -15,7 +16,7 @@ export default (
 
     const schema = Type.Object(
         {
-            reason: Type.String({ minLength: 0, maxLength: 50 }),
+            reason: ReasonSchemaUser,
         },
         { additionalProperties: false }
     );
@@ -35,14 +36,15 @@ export default (
             }>,
             res
         ) => {
-            const user = verifyUser(req.headers.authorization);
-            if (!user) return res.code(401).send({ error: "Unauthorized." });
+            const user = await verifyUser(req.headers.authorization, req.ip);
+            if (!user)
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
             const userId = Number(req.params.id);
             const { reason } = req.body;
 
             if (!(await usersCl.findOne({ id: userId })))
-                return res.code(404).send({ error: "User not found." });
+                return res.code(404).send({ statusCode: 404, error: "User not found." });
 
             if (
                 !(
@@ -63,7 +65,9 @@ export default (
                     )
                 ).matchedCount
             )
-                return res.code(409).send({ error: "User already blocked." });
+                return res
+                    .code(409)
+                    .send({ statusCode: 409, error: "User already blocked." });
 
             return res.send({ success: true });
         }

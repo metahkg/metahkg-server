@@ -7,7 +7,7 @@ ENV env $env
 
 COPY ./package.json ./yarn.lock ./tsconfig.json ./tsconfig.build.json ./
 
-RUN if [ "${env}" = "dev" ]; then yarn install; else yarn install --production; fi;
+RUN yarn install
 
 COPY ./src ./src
 
@@ -15,13 +15,17 @@ RUN if [ "${env}" = "dev" ]; then mkdir -p dist; else yarn build; fi;
 
 FROM node:18-alpine
 
+ARG env
+ENV env $env
+
 RUN adduser user -D
 WORKDIR /home/user
 
-COPY ./package.json ./yarn.lock ./tsconfig.json ./tsconfig.build.json ./start.js ./
+COPY ./package.json ./yarn.lock ./tsconfig.json ./tsconfig.build.json ./
 
 COPY --from=build /usr/src/app/dist ./dist
-COPY --from=build /usr/src/app/node_modules ./node_modules
+
+RUN if [ "${env}" = "dev" ]; then yarn install; else yarn install --production; fi;
 
 RUN touch .env && mkdir images && chown user:user -R images .env
 

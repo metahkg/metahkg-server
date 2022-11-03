@@ -1,11 +1,12 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { usersCl } from "../../../../common";
+import { usersCl } from "../../../../lib/common";
 import { agenda } from "../../../../lib/agenda";
 import verifyUser from "../../../../lib/auth/verify";
 import regex from "../../../../lib/regex";
 import User from "../../../../models/user";
-import requireAdmin from "../../../../plugins/requireAdmin";
+import RequireAdmin from "../../../../plugins/requireAdmin";
+import { ReasonSchemaAdmin, DateSchema } from "../../../../lib/schemas";
 
 export default function (
     fastify: FastifyInstance,
@@ -16,14 +17,17 @@ export default function (
         id: Type.RegEx(regex.integer),
     });
 
-    const schema = Type.Object({
-        reason: Type.String(),
-        exp: Type.Optional(Type.String({ format: "date-time" })),
-    });
+    const schema = Type.Object(
+        {
+            reason: ReasonSchemaAdmin,
+            exp: Type.Optional(DateSchema),
+        },
+        { additionalProperties: false }
+    );
 
     fastify.post(
         "/mute",
-        { schema: { params: paramsSchema, body: schema }, preHandler: [requireAdmin] },
+        { schema: { params: paramsSchema, body: schema }, preHandler: [RequireAdmin] },
         async (
             req: FastifyRequest<{
                 Params: Static<typeof paramsSchema>;
@@ -32,15 +36,18 @@ export default function (
             res
         ) => {
             const id = Number(req.params.id);
-            const admin = verifyUser(req.headers.authorization);
+            const admin = await verifyUser(req.headers.authorization, req.ip);
             const { reason, exp } = req.body;
 
             const reqUser = (await usersCl.findOne({ id })) as User;
 
-            if (!reqUser) return res.status(404).send({ error: "User not found." });
+            if (!reqUser)
+                return res.code(404).send({ statusCode: 404, error: "User not found." });
 
             if (reqUser.role === "admin")
-                return res.code(409).send({ error: "Cannot mute an admin." });
+                return res
+                    .code(409)
+                    .send({ statusCode: 409, error: "Cannot mute an admin." });
 
             await usersCl.updateOne(
                 { id },
@@ -55,6 +62,7 @@ export default function (
                 }
             );
 
+            await agenda.cancel({ name: "unmuteUser", data: { userId: id } });
             if (exp) await agenda.schedule(new Date(exp), "unmuteUser", { userId: id });
 
             return res.send({ success: true });

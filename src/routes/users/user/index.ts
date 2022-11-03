@@ -8,22 +8,24 @@ import unblock from "./actions/unblock";
 import mute from "./actions/mute";
 import unmute from "./actions/unmute";
 import edit from "./actions/edit";
-import uploadAvatar from "./uploadAvatar";
+import ban from "./actions/ban";
+import unban from "./actions/unban";
 
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
     done: (err?: Error) => void
 ) {
+    fastify.register(avatar, { prefix: "/avatar" });
     fastify.register(profile);
     fastify.register(name);
-    fastify.register(avatar);
-    fastify.register(uploadAvatar);
     fastify.register(threads);
     fastify.register(block);
     fastify.register(unblock);
     fastify.register(mute);
     fastify.register(unmute);
+    fastify.register(ban);
+    fastify.register(unban);
     fastify.register(edit);
     done();
 }

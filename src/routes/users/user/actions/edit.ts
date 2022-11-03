@@ -1,11 +1,13 @@
 import { Static, Type } from "@sinclair/typebox";
-import { usersCl } from "../../../../common";
+import { usersCl } from "../../../../lib/common";
 import verifyUser from "../../../../lib/auth/verify";
-import { createToken } from "../../../../lib/auth/createtoken";
+import { createToken } from "../../../../lib/auth/createToken";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../../lib/regex";
 import EmailValidator from "email-validator";
 import { userSex } from "../../../../types/user";
+import { updateSessionByToken } from "../../../../lib/sessions/updateSession";
+import { SexSchema, UserNameSchema } from "../../../../lib/schemas";
 
 export default (
     fastify: FastifyInstance,
@@ -14,8 +16,8 @@ export default (
 ) => {
     const schema = Type.Object(
         {
-            name: Type.Optional(Type.RegEx(/^\S{1,15}$/)),
-            sex: Type.Optional(Type.Union(["M", "F"].map((x) => Type.Literal(x)))),
+            name: Type.Optional(UserNameSchema),
+            sex: Type.Optional(SexSchema),
         },
         { additionalProperties: false, minProperties: 1 }
     );
@@ -34,29 +36,38 @@ export default (
         ) => {
             const id = Number(req.params.id);
 
-            const user = verifyUser(req.headers.authorization);
+            const user = await verifyUser(req.headers.authorization, req.ip);
             if (!user || user?.id !== id)
-                return res.code(403).send({ error: "Forbidden." });
+                return res.code(403).send({ statusCode: 403, error: "Forbidden." });
 
             const { name, sex } = req.body as { name?: string; sex?: userSex };
 
             if (name && name !== user.name && (await usersCl.findOne({ name })))
-                return res.code(409).send({ error: "Name already taken." });
+                return res
+                    .code(409)
+                    .send({ statusCode: 409, error: "Name already taken." });
 
             if (EmailValidator.validate(name))
-                return res.code(400).send({ error: "Name must not be a email." });
+                return res
+                    .code(400)
+                    .send({ statusCode: 400, error: "Name must not be a email." });
 
             await usersCl.updateOne({ id: user.id }, { $set: req.body });
 
-            const token = createToken({
+            const newToken = createToken({
                 ...user,
                 ...(name && { name }),
                 ...(sex && { sex }),
             });
 
-            res.header("token", token).send({
-                success: true,
-                token,
+            await updateSessionByToken(
+                user.id,
+                req.headers.authorization.slice(7),
+                newToken
+            );
+
+            res.header("token", newToken).send({
+                token: newToken,
             });
         }
     );
