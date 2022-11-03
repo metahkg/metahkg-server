@@ -125,6 +125,18 @@ apifuzzer_fuzz:
     - export FUZZAPI_OPENAPI="https://gitlab.com/metahkg/metahkg-server/-/raw/${CI_COMMIT_BRANCH}/openapi.yaml"
     - export FUZZAPI_PROFILE="Medium-20"
 
+trigger_api_generate:
+  variables:
+    UPDATE: "true"
+  trigger:
+    project: metahkg/metahkg-api
+    branch: $CI_COMMIT_BRANCH
+  rules:
+    - if: "$CI_COMMIT_TAG"
+      when: never
+    - changes:
+      - openapi.yaml
+
 include:
   - template: Auto-DevOps.gitlab-ci.yml
   - template: Security/API-Fuzzing.gitlab-ci.yml
