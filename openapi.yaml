@@ -200,7 +200,7 @@ paths:
           schema:
             type: string
             minLength: 1
-            maxLength: 100
+            maxLength: 200
         - in: query
           name: mode
           description: "Search mode. title or op"
@@ -3226,7 +3226,7 @@ components:
           type: string
           description: thread title
           example: "Hello world"
-          maxLength: 100
+          maxLength: 500
           minLength: 1
         category:
           $ref: "#/components/schemas/Category/properties/id"
@@ -3329,7 +3329,7 @@ components:
       type: string
       description: Recaptcha token. See [https://developers.google.com/recaptcha/docs/verify](https://developers.google.com/recaptcha/docs/verify).
       example: "6LeIxAcTAAAAAJcZVRqd76R7tjHpI9u0tRwxV5ksM"
-      maxLength: 100
+      maxLength: 1000
       minLength: 1
 
   securitySchemes:

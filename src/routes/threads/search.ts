@@ -14,7 +14,7 @@ export default (
     const querySchema = Type.Object(
         {
             page: Type.Optional(Type.RegEx(regex.integer)),
-            q: Type.String({ maxLength: 100, minLength: 1 }),
+            q: Type.String({ maxLength: 200, minLength: 1 }),
             sort: Type.Optional(
                 Type.Union(
                     ["relevance", "created", "lastcomment"].map((x) => Type.Literal(x))
