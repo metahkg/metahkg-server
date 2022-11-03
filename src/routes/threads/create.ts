@@ -16,7 +16,7 @@ import { htmlToText } from "html-to-text";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import checkMuted from "../../plugins/checkMuted";
 import {
-    CommentSchema,
+    CommentContentSchema,
     IntegerSchema,
     RTokenSchema,
     TitleSchema,
@@ -29,7 +29,7 @@ export default (
 ) => {
     const schema = Type.Object(
         {
-            comment: CommentSchema,
+            content: CommentContentSchema,
             rtoken: RTokenSchema,
             title: TitleSchema,
             category: IntegerSchema,
@@ -56,8 +56,9 @@ export default (
             }>,
             res
         ) => {
-            const comment = sanitize(req.body.comment);
-            const text = htmlToText(comment, { wordwrap: false });
+            const { content } = req.body;
+            content.html = sanitize(content.html);
+            const text = htmlToText(content.html, { wordwrap: false });
             const title = req.body.title.trim();
 
             if (!(await verifyCaptcha(RecaptchaSecret, req.body.rtoken)))
@@ -119,7 +120,7 @@ export default (
                 sex: user.sex,
             };
 
-            const images = findImages(comment);
+            const images = findImages(content.html);
 
             const threadData: Thread = {
                 id: newThreadId,
@@ -129,7 +130,7 @@ export default (
                         id: 1,
                         user: userData,
                         slink: `https://${LINKS_DOMAIN}/${commentSlinkId}`,
-                        comment,
+                        content: { ...content, text },
                         text,
                         createdAt: date,
                         images,

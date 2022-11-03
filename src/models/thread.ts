@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import type { userSex, userRole } from "../types/user";
 
 export type Thread =
-    | { id: number; removed: true }
+    | { _id?: ObjectId; id: number; removed: true }
     | {
           id: number;
           title: string;
@@ -27,6 +27,25 @@ export type publicUserType = {
     sex: userSex;
 };
 
+export type commentContentType =
+    | {
+          type: "html";
+          html: string;
+          text: string;
+      }
+    | {
+          type: "image";
+          src: string;
+      }
+    | {
+          type: "video";
+          src: string;
+      }
+    | {
+          type: "poll";
+          pollId: string;
+      };
+
 export type commentType =
     /** if removed */
     | { id: number; removed: true }
@@ -36,7 +55,7 @@ export type commentType =
           /** user id */
           user: publicUserType;
           /** html string */
-          comment: string;
+          content: commentContentType;
           /** comment converted to text */
           text: string;
           /** date string */

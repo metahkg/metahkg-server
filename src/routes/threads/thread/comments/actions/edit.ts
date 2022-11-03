@@ -7,7 +7,7 @@ import verifyUser from "../../../../../lib/auth/verify";
 import regex from "../../../../../lib/regex";
 import checkComment from "../../../../../plugins/checkComment";
 import RequireAdmin from "../../../../../plugins/requireAdmin";
-import { ReasonSchemaAdmin, CommentSchema } from "../../../../../lib/schemas";
+import { ReasonSchemaAdmin, CommentContentSchema } from "../../../../../lib/schemas";
 
 export default function (
     fastify: FastifyInstance,
@@ -21,7 +21,7 @@ export default function (
 
     const schema = Type.Object(
         {
-            comment: CommentSchema,
+            content: CommentContentSchema,
             reason: ReasonSchemaAdmin,
         },
         { minProperties: 2, additionalProperties: false }
@@ -45,9 +45,9 @@ export default function (
 
             const user = await verifyUser(req.headers.authorization, req.ip);
 
-            const { comment, reason } = req.body;
+            const { content, reason } = req.body;
 
-            const text = htmlToText(comment);
+            const text = htmlToText(content.html);
 
             const index = (
                 (await threadCl.findOne(
@@ -65,7 +65,7 @@ export default function (
                 { id },
                 {
                     $set: {
-                        [`conversation.${index}.comment`]: comment,
+                        [`conversation.${index}.comment`]: content,
                         [`conversation.${index}.text`]: text,
                     },
                     $push: {

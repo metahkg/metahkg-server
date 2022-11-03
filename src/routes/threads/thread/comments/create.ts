@@ -19,7 +19,7 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../../lib/regex";
 import checkMuted from "../../../../plugins/checkMuted";
 import { sendNotification } from "../../../../lib/notifications/sendNotification";
-import { CommentSchema, IntegerSchema, RTokenSchema } from "../../../../lib/schemas";
+import { CommentContentSchema, IntegerSchema, RTokenSchema } from "../../../../lib/schemas";
 
 export default (
     fastify: FastifyInstance,
@@ -28,7 +28,7 @@ export default (
 ) => {
     const schema = Type.Object(
         {
-            comment: CommentSchema,
+            content: CommentContentSchema,
             rtoken: RTokenSchema,
             quote: Type.Optional(IntegerSchema),
         },
@@ -55,7 +55,7 @@ export default (
         ) => {
             const id = Number(req.params.id);
 
-            const { rtoken, quote } = req.body;
+            const { rtoken, quote, content } = req.body;
 
             if (!(await verifyCaptcha(RecaptchaSecret, rtoken)))
                 return res
@@ -71,8 +71,8 @@ export default (
                     .code(404)
                     .send({ statusCode: 404, error: "Thread not found." });
 
-            const comment = sanitize(req.body.comment);
-            const text = htmlToText(comment, { wordwrap: false });
+            content.html = sanitize(req.body.content.html);
+            const text = htmlToText(content.html, { wordwrap: false });
 
             const thread = (await threadCl.findOne(
                 { id },
@@ -133,7 +133,7 @@ export default (
                 }
             }
 
-            const imagesInComment = findImages(comment);
+            const imagesInComment = findImages(content.html);
 
             await threadCl.updateOne(
                 { id },
@@ -147,7 +147,7 @@ export default (
                                 role: user.role,
                                 sex: user.sex,
                             },
-                            comment,
+                            comment: content,
                             text,
                             createdAt: new Date(),
                             slink: `https://${LINKS_DOMAIN}/${slinkId}`,
