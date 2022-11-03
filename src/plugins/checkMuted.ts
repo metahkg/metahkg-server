@@ -17,7 +17,7 @@ export default async function checkMuted(req: FastifyRequest, res: FastifyReply)
                 },
             }
         )) as User
-    ).mute;
+    )?.mute;
 
     if (mute)
         return res.code(403).send({
