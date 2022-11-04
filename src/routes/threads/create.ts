@@ -4,13 +4,15 @@ import {
     LINKS_DOMAIN,
     linksCl,
     threadCl,
+    usersCl,
+    domain,
 } from "../../lib/common";
 import { verifyCaptcha } from "../../lib/recaptcha";
 import findImages from "../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
-
 import { generate } from "generate-password";
 import sanitize from "../../lib/sanitize";
+import User from "../../models/user";
 import Thread from "../../models/thread";
 import { htmlToText } from "html-to-text";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
@@ -21,6 +23,7 @@ import {
     RTokenSchema,
     TitleSchema,
 } from "../../lib/schemas";
+import { sendNotification } from "../../lib/notifications/sendNotification";
 
 export default (
     fastify: FastifyInstance,
@@ -148,6 +151,40 @@ export default (
             };
 
             await threadCl.insertOne(threadData);
+
+            (
+                usersCl
+                    .find({
+                        following: {
+                            $elemMatch: {
+                                id: user.id,
+                            },
+                        },
+                        sessions: { $elemMatch: { subscription: { $exists: true } } },
+                    })
+                    .project({
+                        _id: 0,
+                        id: 1,
+                    })
+                    .toArray() as Promise<User[]>
+            ).then((users) => {
+                users.forEach(({ id }) => {
+                    if (id !== user.id) {
+                        sendNotification(id, {
+                            title: "New thread",
+                            createdAt: new Date(),
+                            options: {
+                                body: `${user.name} #${user.id} created: ${title}`,
+                                data: {
+                                    type: "thread",
+                                    threadId: newThreadId,
+                                    url: `https://${domain}/thread/${newThreadId}`,
+                                },
+                            },
+                        });
+                    }
+                });
+            });
 
             res.send({ id: newThreadId });
         }

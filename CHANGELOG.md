@@ -1,5 +1,9 @@
 # Changelog
 
+## v5.7.1
+
+- send notifications to users following the op upon thread creation
+
 ## v5.7.0
 
 - follow, unfollow, following (users)
