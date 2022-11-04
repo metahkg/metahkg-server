@@ -53,7 +53,7 @@ export default interface User {
     password: string;
     sex: userSex;
     role: userRole;
-    starred?: { id: number; date: Date };
+    starred?: { id: number; date: Date }[];
     sessions?: Session[];
     notifications?: Notification[];
     blocked?: BlockedUser[];
