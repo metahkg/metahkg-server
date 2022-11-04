@@ -1,7 +1,7 @@
 import { Static, Type } from "@sinclair/typebox";
 import { threadCl } from "../../../lib/common";
 import Thread from "../../../models/thread";
-import verifyUser from "../../../lib/auth/verify";
+
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../lib/regex";
 
@@ -25,7 +25,7 @@ export default (
         ) => {
             const threadId = Number(req.params.id);
 
-            const user = await verifyUser(req.headers.authorization, req.ip);
+            const user = req.user;
 
             const thread = (await threadCl.findOne(
                 { id: threadId },

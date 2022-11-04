@@ -1,11 +1,18 @@
 import { ObjectId } from "mongodb";
-import { userRole, userSex } from "../types/user";
 import { AdminUser } from "./thread";
+
+export type userSex = "M" | "F";
+export type userRole = "admin" | "user";
 
 export interface BlockedUser {
     id: number;
     date: Date;
     reason: string;
+}
+
+export interface FollowedUser {
+    id: number;
+    date: Date;
 }
 
 export interface Subscription {
@@ -53,9 +60,10 @@ export default interface User {
     password: string;
     sex: userSex;
     role: userRole;
-    starred?: { id: number; date: Date };
+    starred?: { id: number; date: Date }[];
     sessions?: Session[];
     notifications?: Notification[];
+    following?: FollowedUser[];
     blocked?: BlockedUser[];
     mute?: { admin: AdminUser; reason: string; exp?: Date };
     ban?: { admin: AdminUser; reason: string; exp?: Date };

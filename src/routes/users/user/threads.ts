@@ -1,6 +1,6 @@
 import User from "../../../models/user";
 import { threadCl, usersCl } from "../../../lib/common";
-import verifyUser from "../../../lib/auth/verify";
+
 import Thread from "../../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { Static, Type } from "@sinclair/typebox";
@@ -41,7 +41,7 @@ export default (
             const page = Number(req.query.page) || 1;
             const sort = req.query.sort || "created";
             const limit = Number(req.query.limit) || 25;
-            const user = await verifyUser(req.headers.authorization, req.ip);
+            const user = req.user;
 
             const requestedUser = (await usersCl.findOne({ id })) as User;
 

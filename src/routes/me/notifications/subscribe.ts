@@ -1,6 +1,6 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyPluginOptions, FastifyInstance, FastifyRequest } from "fastify";
-import verifyUser from "../../../lib/auth/verify";
+
 import { subscribeByToken } from "../../../lib/notifications/subscribe";
 
 export default function (
@@ -25,7 +25,7 @@ export default function (
         "/subscribe",
         { schema: { body: schema } },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            const user = await verifyUser(req.headers.authorization, req.ip);
+            const user = req.user;
             if (!user)
                 return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 

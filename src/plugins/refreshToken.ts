@@ -1,12 +1,13 @@
 import { createToken } from "../lib/auth/createToken";
-import verifyUser from "../lib/auth/verify";
-import { jwtTokenType } from "../types/jwt/user";
 import { updateSessionByToken } from "../lib/sessions/updateSession";
-import { FastifyReply, FastifyRequest } from "fastify";
+import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 
-export default async function (req: FastifyRequest, res: FastifyReply) {
-    const token = req.headers.authorization;
-    const user = (await verifyUser(token, req.ip)) as jwtTokenType & { exp: number };
+export default async function (
+    this: FastifyInstance,
+    req: FastifyRequest,
+    res: FastifyReply
+) {
+    const user = req.user;
     if (user) {
         const { exp } = user;
         if (
@@ -14,7 +15,7 @@ export default async function (req: FastifyRequest, res: FastifyReply) {
             new Date(exp * 1000).getTime() - 60 * 60 * 24 * 7 <
             new Date().getTime() - 60 * 60 * 24 * 2
         ) {
-            const newToken = createToken(user);
+            const newToken = createToken(this.jwt, user);
 
             await updateSessionByToken(
                 user.id,

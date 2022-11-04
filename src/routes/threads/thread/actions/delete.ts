@@ -1,7 +1,7 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { removedCl, threadCl } from "../../../../lib/common";
-import verifyUser from "../../../../lib/auth/verify";
+
 import regex from "../../../../lib/regex";
 import RequireAdmin from "../../../../plugins/requireAdmin";
 import { ReasonSchemaAdmin } from "../../../../lib/schemas";
@@ -34,7 +34,7 @@ export default function (
         ) => {
             const id = Number(req.params.id);
             const { reason } = req.body;
-            const admin = await verifyUser(req.headers.authorization, req.ip);
+            const admin = req.user;
 
             const thread = await threadCl.findOne({ id }, { projection: { _id: 0 } });
             if (!thread)

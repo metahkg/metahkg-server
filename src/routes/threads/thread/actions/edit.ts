@@ -1,7 +1,7 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { categoryCl, threadCl } from "../../../../lib/common";
-import verifyUser from "../../../../lib/auth/verify";
+
 import regex from "../../../../lib/regex";
 import checkThread from "../../../../plugins/checkThread";
 import RequireAdmin from "../../../../plugins/requireAdmin";
@@ -40,7 +40,7 @@ export default function (
         ) => {
             const id = Number(req.params.id);
 
-            const user = await verifyUser(req.headers.authorization, req.ip);
+            const user = req.user;
 
             const { category, title, reason } = req.body;
 

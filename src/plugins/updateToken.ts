@@ -1,12 +1,15 @@
-import verifyUser from "../lib/auth/verify";
 import { usersCl } from "../lib/common";
 import User from "../models/user";
 import { createToken } from "../lib/auth/createToken";
-import { FastifyReply, FastifyRequest } from "fastify";
+import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { updateSessionByToken } from "../lib/sessions/updateSession";
 
-export default async function (req: FastifyRequest, res: FastifyReply) {
-    const user = await verifyUser(req.headers.authorization, req.ip);
+export default async function (
+    this: FastifyInstance,
+    req: FastifyRequest,
+    res: FastifyReply
+) {
+    const user = req.user;
 
     if (user) {
         const userData = (await usersCl.findOne(
@@ -14,7 +17,7 @@ export default async function (req: FastifyRequest, res: FastifyReply) {
             { projection: { _id: 0, id: 1, name: 1, sex: 1 } }
         )) as User;
         if (userData.name !== user.name || userData.sex !== user.sex) {
-            const newToken = createToken(user);
+            const newToken = createToken(this.jwt, user);
 
             await updateSessionByToken(
                 user.id,

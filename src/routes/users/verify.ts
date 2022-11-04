@@ -63,7 +63,7 @@ export default (
 
             await agenda.cancel({ name: "updateVerificationCode", data: { email } });
 
-            const token = createToken(newUser);
+            const token = createToken(fastify.jwt, newUser);
 
             await createSession(
                 newUser.id,

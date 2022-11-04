@@ -1,7 +1,7 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { threadCl } from "../../../../../lib/common";
-import verifyUser from "../../../../../lib/auth/verify";
+
 import regex from "../../../../../lib/regex";
 import Thread from "../../../../../models/thread";
 
@@ -25,7 +25,7 @@ export default function (
         async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
             const id = Number(req.params.id);
             const cid = Number(req.params.cid);
-            const user = await verifyUser(req.headers.authorization, req.ip);
+            const user = req.user;
 
             if (!user)
                 return res.code(401).send({ statusCode: 401, error: "Unauthorized." });

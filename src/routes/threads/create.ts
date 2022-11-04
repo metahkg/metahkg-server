@@ -8,7 +8,7 @@ import {
 import { verifyCaptcha } from "../../lib/recaptcha";
 import findImages from "../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
-import verifyUser from "../../lib/auth/verify";
+
 import { generate } from "generate-password";
 import sanitize from "../../lib/sanitize";
 import Thread from "../../models/thread";
@@ -66,7 +66,7 @@ export default (
                     .code(429)
                     .send({ statusCode: 429, error: "Recaptcha token invalid." });
 
-            const user = await verifyUser(req.headers.authorization, req.ip);
+            const user = req.user;
             if (!user)
                 return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 

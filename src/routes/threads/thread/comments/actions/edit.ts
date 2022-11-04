@@ -3,7 +3,7 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { htmlToText } from "html-to-text";
 import { ObjectId } from "mongodb";
 import { threadCl } from "../../../../../lib/common";
-import verifyUser from "../../../../../lib/auth/verify";
+
 import regex from "../../../../../lib/regex";
 import checkComment from "../../../../../plugins/checkComment";
 import RequireAdmin from "../../../../../plugins/requireAdmin";
@@ -43,7 +43,7 @@ export default function (
             const id = Number(req.params.id);
             const cid = Number(req.params.cid);
 
-            const user = await verifyUser(req.headers.authorization, req.ip);
+            const user = req.user;
 
             const { content, reason } = req.body;
 

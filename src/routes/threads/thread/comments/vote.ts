@@ -1,6 +1,6 @@
 import { domain, threadCl, votesCl } from "../../../../lib/common";
 import { Type, Static } from "@sinclair/typebox";
-import verifyUser from "../../../../lib/auth/verify";
+
 import Thread from "../../../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../../lib/regex";
@@ -39,7 +39,7 @@ export default (
             const commentId = Number(req.params.cid);
             const { vote } = req.body;
 
-            const user = await verifyUser(req.headers.authorization, req.ip);
+            const user = req.user;
             if (!user)
                 return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 

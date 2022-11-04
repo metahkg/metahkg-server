@@ -14,7 +14,7 @@ export default (
     });
 
     fastify.post(
-        "/unblock",
+        "/unfollow",
         { schema: { params: paramsSchema } },
         async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
             const user = req.user;
@@ -26,14 +26,14 @@ export default (
             if (
                 !(
                     await usersCl.updateOne(
-                        { id: user.id, blocked: { $elemMatch: { id: userId } } },
-                        { $pull: { blocked: { id: userId } } }
+                        { id: user.id, following: { $elemMatch: { id: userId } } },
+                        { $pull: { following: { id: userId } } }
                     )
                 ).matchedCount
             )
                 return res
                     .code(409)
-                    .send({ statusCode: 409, error: "User not blocked." });
+                    .send({ statusCode: 409, error: "User not followed." });
 
             return res.send({ success: true });
         }

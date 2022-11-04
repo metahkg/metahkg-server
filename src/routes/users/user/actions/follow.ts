@@ -1,50 +1,53 @@
 import { Static, Type } from "@sinclair/typebox";
+import { usersCl } from "../../../../lib/common";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { threadCl, usersCl } from "../../../../lib/common";
-
 import regex from "../../../../lib/regex";
 
-export default function (
+export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
-) {
+    done: (e?: Error) => void
+) => {
     const paramsSchema = Type.Object({
         id: Type.RegEx(regex.integer),
     });
 
     fastify.post(
-        "/star",
-        { schema: { params: paramsSchema } },
-        async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
+        "/follow",
+        {
+            schema: {
+                params: paramsSchema,
+            },
+        },
+        async (
+            req: FastifyRequest<{
+                Params: Static<typeof paramsSchema>;
+            }>,
+            res
+        ) => {
             const user = req.user;
             if (!user)
                 return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
-            const threadId = Number(req.params.id);
+            const userId = Number(req.params.id);
 
-            if (!(await threadCl.findOne({ id: threadId })))
-                return res
-                    .code(404)
-                    .send({ statusCode: 404, error: "Thread not found." });
+            if (!(await usersCl.findOne({ id: userId })))
+                return res.code(404).send({ statusCode: 404, error: "User not found." });
 
             if (
                 !(
                     await usersCl.updateOne(
                         {
                             id: user.id,
-                            starred: {
+                            following: {
                                 $not: {
-                                    $elemMatch: { id: threadId },
+                                    $elemMatch: { id: userId },
                                 },
                             },
                         },
                         {
                             $push: {
-                                starred: {
-                                    $each: [{ id: threadId, date: new Date() }],
-                                    $position: 0,
-                                },
+                                following: { id: userId, date: new Date() },
                             },
                         }
                     )
@@ -52,10 +55,10 @@ export default function (
             )
                 return res
                     .code(409)
-                    .send({ statusCode: 409, error: "Thread already starred." });
+                    .send({ statusCode: 409, error: "User already followed." });
 
             return res.send({ success: true });
         }
     );
     done();
-}
+};

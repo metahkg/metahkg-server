@@ -1,5 +1,10 @@
 # Changelog
 
+## v5.7.0
+
+- follow, unfollow, following (users)
+- use @fastify/jwt for authentication, instead of using jsonwebtoken (only done twice, so should be faster)
+
 ## v5.6.1
 
 - resolve [issue #2](https://gitlab.com/metahkg/metahkg-server/-/issues/2) by implementing stricter schemas

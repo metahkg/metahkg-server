@@ -1,7 +1,8 @@
 import { randomBytes } from "crypto";
 import { usersCl } from "../common";
 import { sha256 } from "../sha256";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import { createDecoder } from "fast-jwt";
+import { jwtTokenType } from "../../types/jwt";
 
 export async function createSession(
     userId: number,
@@ -10,7 +11,8 @@ export async function createSession(
     ip: string,
     sameIp?: boolean
 ) {
-    const exp = (jwt.decode(token) as JwtPayload)?.exp * 1000;
+    const decode = createDecoder()
+    const exp = (decode(token) as jwtTokenType)?.exp * 1000;
     if (!exp) return null;
 
     const session = {

@@ -1,7 +1,6 @@
 import { categoryCl, threadCl } from "../../lib/common";
 import { hiddencats as gethiddencats } from "../../lib/hiddencats";
 import { Static, Type } from "@sinclair/typebox";
-import verifyUser from "../../lib/auth/verify";
 import Thread from "../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../lib/regex";
@@ -46,10 +45,7 @@ export default (
 
             const hiddenCats = await gethiddencats();
 
-            if (
-                !(await verifyUser(req.headers.authorization, req.ip)) &&
-                hiddenCats.includes(category)
-            )
+            if (!req.user && hiddenCats.includes(category))
                 return res.code(403).send({ statusCode: 403, error: "Forbidden." });
 
             if (!(await categoryCl.findOne({ id: category })))

@@ -68,7 +68,7 @@ export default (
                 });
             }
 
-            const token = createToken(user);
+            const token = createToken(fastify.jwt, user);
 
             await createSession(
                 user.id,
