@@ -12,7 +12,7 @@ export const ReasonSchemaAdmin = Type.String({
 export const RTokenSchema = Type.String({ minLength: 1, maxLength: 1000 });
 
 export const TitleSchema = Type.String({ minLength: 1, maxLength: 500 });
-export const CommentSchema = Type.String({ minLength: 1, maxLength: 10000 });
+export const CommentSchema = Type.String({ minLength: 1, maxLength: 50000 });
 export const VoteSchema = Type.Union([Type.Literal("U"), Type.Literal("D")]);
 
 export const UserNameSchema = Type.RegEx(/^\S{1,15}$/);
