@@ -11,7 +11,7 @@ export async function createSession(
     ip: string,
     sameIp?: boolean
 ) {
-    const decode = createDecoder()
+    const decode = createDecoder();
     const exp = (decode(token) as jwtTokenType)?.exp * 1000;
     if (!exp) return null;
 
