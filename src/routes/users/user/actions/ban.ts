@@ -2,7 +2,7 @@ import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { usersCl } from "../../../../lib/common";
 import { agenda } from "../../../../lib/agenda";
-import verifyUser from "../../../../lib/auth/verify";
+
 import regex from "../../../../lib/regex";
 import User from "../../../../models/user";
 import RequireAdmin from "../../../../plugins/requireAdmin";
@@ -36,7 +36,7 @@ export default function (
             res
         ) => {
             const id = Number(req.params.id);
-            const admin = await verifyUser(req.headers.authorization, req.ip);
+            const admin = req.user;
             const { reason, exp } = req.body;
 
             const reqUser = (await usersCl.findOne({ id })) as User;

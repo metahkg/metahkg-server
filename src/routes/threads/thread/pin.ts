@@ -1,6 +1,6 @@
 import { Static, Type } from "@sinclair/typebox";
 import { threadCl } from "../../../lib/common";
-import verifyUser from "../../../lib/auth/verify";
+
 import Thread, { commentType } from "../../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../lib/regex";
@@ -40,7 +40,7 @@ export default function (
             const threadId = Number(req.params.id);
             const { cid: commentId } = req.body;
 
-            const user = await verifyUser(req.headers.authorization, req.ip);
+            const user = req.user;
             if (!user)
                 return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 

@@ -1,11 +1,11 @@
 import { Static, Type } from "@sinclair/typebox";
 import { usersCl } from "../../../../lib/common";
-import verifyUser from "../../../../lib/auth/verify";
+
 import { createToken } from "../../../../lib/auth/createToken";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../../lib/regex";
 import EmailValidator from "email-validator";
-import { userSex } from "../../../../types/user";
+import { userSex } from "../../../../models/user";
 import { updateSessionByToken } from "../../../../lib/sessions/updateSession";
 import { SexSchema, UserNameSchema } from "../../../../lib/schemas";
 
@@ -36,7 +36,7 @@ export default (
         ) => {
             const id = Number(req.params.id);
 
-            const user = await verifyUser(req.headers.authorization, req.ip);
+            const user = req.user;
             if (!user || user?.id !== id)
                 return res.code(403).send({ statusCode: 403, error: "Forbidden." });
 
@@ -52,9 +52,15 @@ export default (
                     .code(400)
                     .send({ statusCode: 400, error: "Name must not be a email." });
 
-            await usersCl.updateOne({ id: user.id }, { $set: req.body });
+            if (
+                !(await usersCl.updateOne({ id: user.id }, { $set: req.body }))
+                    .modifiedCount
+            )
+                return res
+                    .code(500)
+                    .send({ statusCode: 500, error: "An unknown error occured." });
 
-            const newToken = createToken({
+            const newToken = createToken(fastify.jwt, {
                 ...user,
                 ...(name && { name }),
                 ...(sex && { sex }),

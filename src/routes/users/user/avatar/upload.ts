@@ -1,10 +1,11 @@
 import dotenv from "dotenv";
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
 import multer from "fastify-multer"; // handle image uploads
+import { File } from "fastify-multer/lib/interfaces";
 import fs from "fs";
 import { move } from "fs-extra";
 import sharp from "sharp"; // reshape images to circle
-import verifyUser from "../../../../lib/auth/verify";
+
 import RequireSameUser from "../../../../plugins/requireSameUser";
 
 dotenv.config();
@@ -59,7 +60,7 @@ export default function (
         { preHandler: [RequireSameUser, upload.single("avatar")] },
         async (req, res) => {
             try {
-                const file = req.file as unknown as Express.Multer.File;
+                const file = req.file as unknown as File;
                 if (!file)
                     return res.code(400).send({ statusCode: 400, error: "Bad request." });
 
@@ -80,7 +81,7 @@ export default function (
                         .code(415)
                         .send({ statusCode: 415, error: "File type not supported." });
                 }
-                const user = await verifyUser(req.headers.authorization, req.ip);
+                const user = req.user;
                 if (!user) {
                     fs.rm(`uploads/${file?.filename}`, (err) => {
                         console.error(err);

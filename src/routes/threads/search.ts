@@ -4,7 +4,6 @@ import Thread from "../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../lib/regex";
 import { hiddencats } from "../../lib/hiddencats";
-import verifyUser from "../../lib/auth/verify";
 
 export default (
     fastify: FastifyInstance,
@@ -44,7 +43,7 @@ export default (
             const sort = req.query.sort || "relevance";
             const mode = req.query.mode || "title";
             const limit = Number(req.query.limit) || 25;
-            const user = await verifyUser(req.headers.authorization, req.ip);
+            const user = req.user;
 
             const regex = new RegExp(
                 query.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"),

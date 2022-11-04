@@ -10,6 +10,8 @@ import unmute from "./actions/unmute";
 import edit from "./actions/edit";
 import ban from "./actions/ban";
 import unban from "./actions/unban";
+import follow from "./actions/follow";
+import unfollow from "./actions/unfollow";
 
 export default function (
     fastify: FastifyInstance,
@@ -22,6 +24,8 @@ export default function (
     fastify.register(threads);
     fastify.register(block);
     fastify.register(unblock);
+    fastify.register(follow);
+    fastify.register(unfollow);
     fastify.register(mute);
     fastify.register(unmute);
     fastify.register(ban);

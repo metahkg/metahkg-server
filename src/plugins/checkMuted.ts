@@ -1,10 +1,9 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { usersCl } from "../lib/common";
-import verifyUser from "../lib/auth/verify";
 import User from "../models/user";
 
 export default async function checkMuted(req: FastifyRequest, res: FastifyReply) {
-    const user = await verifyUser(req.headers.authorization, req.ip);
+    const user = req.user;
     if (!user) return;
 
     const mute = (

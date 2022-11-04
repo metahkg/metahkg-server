@@ -1,6 +1,7 @@
 import { usersCl } from "../common";
 import { sha256 } from "../sha256";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import { createDecoder } from "fast-jwt";
+import { jwtTokenType } from "../../types/jwt";
 
 export async function updateSessionById(
     userId: number,
@@ -8,7 +9,8 @@ export async function updateSessionById(
     newToken: string
 ) {
     // jwt exp is in seconds
-    const newExp = (jwt.decode(newToken) as JwtPayload)?.exp * 1000;
+    const decode = createDecoder();
+    const newExp = (decode(newToken) as jwtTokenType)?.exp * 1000;
     if (!newExp) return null;
 
     if (
@@ -35,7 +37,8 @@ export async function updateSessionByToken(
     newToken: string
 ) {
     // jwt exp is in seconds
-    const newExp = (jwt.decode(newToken) as JwtPayload)?.exp * 1000;
+    const decode = createDecoder();
+    const newExp = (decode(newToken) as jwtTokenType)?.exp * 1000;
     if (!newExp) return null;
 
     const hashedToken = sha256(token);

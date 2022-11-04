@@ -3,7 +3,7 @@ import { threadCl } from "../../lib/common";
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { hiddencats } from "../../lib/hiddencats";
-import verifyUser from "../../lib/auth/verify";
+
 import regex from "../../lib/regex";
 
 export default (
@@ -30,7 +30,7 @@ export default (
             if (!req.query.id) return res.send([]);
 
             const threads = [req.query.id].flat(Infinity).map((id) => Number(id));
-            const user = await verifyUser(req.headers.authorization, req.ip);
+            const user = req.user;
 
             const result = (await threadCl
                 .find({

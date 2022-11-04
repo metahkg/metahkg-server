@@ -1,6 +1,6 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import verifyUser from "../../../lib/auth/verify";
+
 import { SessionIdSchema } from "../../../lib/schemas";
 import { getSessionById, getSessionByToken } from "../../../lib/sessions/getSession";
 import { revokeSessionById } from "../../../lib/sessions/revokeSession";
@@ -18,7 +18,7 @@ export default function (
         "/:id",
         { schema: { params: paramsSchema } },
         async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
-            const user = await verifyUser(req.headers.authorization, req.ip);
+            const user = req.user;
             if (!user)
                 return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 

@@ -1,11 +1,10 @@
 import { FastifyReply, FastifyRequest } from "fastify";
 import { categoryCl, threadCl } from "../lib/common";
-import verifyUser from "../lib/auth/verify";
 
-export default async (
+export default async function (
     req: FastifyRequest<{ Params: { id?: string } }>,
     res: FastifyReply
-) => {
+) {
     if (req.params.id) {
         const id = Number(req.params.id);
         if (!(Number.isInteger(id) && id > 0)) return;
@@ -22,8 +21,8 @@ export default async (
             })
         )?.hidden;
 
-        if (hidden && !(await verifyUser(req.headers.authorization, req.ip)))
+        if (hidden && !req.user)
             return res.code(403).send({ statusCode: 403, error: "Forbidden." });
     }
     return;
-};
+}

@@ -1,7 +1,7 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { domain, threadCl } from "../../../../../lib/common";
-import verifyUser from "../../../../../lib/auth/verify";
+
 import { sendNotification } from "../../../../../lib/notifications/sendNotification";
 import regex from "../../../../../lib/regex";
 import Thread from "../../../../../models/thread";
@@ -33,7 +33,7 @@ export default function (
             }>,
             res
         ) {
-            const user = await verifyUser(req.headers.authorization, req.ip);
+            const user = req.user;
             if (!user)
                 return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
