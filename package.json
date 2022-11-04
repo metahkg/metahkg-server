@@ -85,7 +85,7 @@
     "start:api": "yarn run start",
     "lint": "eslint --fix src && (prettier --check src || prettier --write src)",
     "deploy": "yarn run build && yarn run start",
-    "dev": "node start.js && nodemon ./src/main.ts",
+    "dev": "nodemon ./src/main.ts",
     "prepare": "husky install"
   },
   "browserslist": {
