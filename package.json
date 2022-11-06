@@ -78,7 +78,7 @@
     "start": "node dist/main",
     "start:dev": "yarn dev",
     "start:prod": "yarn start",
-    "test": "jest --passWithNoTests",
+    "test": "jest --passWithNoTests && yarn build --noEmit",
     "test:watch": "jest --watch --passWithNoTests",
     "test:cov": "jest --coverage --passWithNoTests",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand --passWithNoTests",
