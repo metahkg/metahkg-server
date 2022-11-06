@@ -72,7 +72,7 @@ export default function (
                         .code(413)
                         .send({ statusCode: 413, error: "File too large." });
                 }
-                if (!file.mimetype.match(/^image\/(png|svg|jpg|jpeg|jfif|gif|webp)$/i)) {
+                if (!/^image\/(png|svg|jpg|jpeg|jfif|gif|webp)$/i.test(file.mimetype)) {
                     //remove the file
                     fs.rm(file?.path, (err) => {
                         console.error(err);
