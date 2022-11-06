@@ -27,7 +27,7 @@ yarn-error.log*
 /images/
 
 # vscode
-.vscode/
+# .vscode/
 
 # internal
 deploy.sh
