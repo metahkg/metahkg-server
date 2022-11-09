@@ -69,39 +69,35 @@ export default function (
                         _id: 0,
                         id: 1,
                         title: 1,
-                        index: {
-                            $indexOfArray: ["$conversation.id", cid],
-                        },
                         conversation: { $elemMatch: { id: cid } },
                     },
                 }
-            )) as Thread & { index: number };
-
-            const index = thread?.index;
-
-            // index can be 0
-            if (index === undefined || index === -1)
-                return res
-                    .code(404)
-                    .send({ statusCode: 404, error: "Comment not found." });
+            )) as Thread
 
             // remove previous value first
-            await threadCl.updateOne(
-                { id },
-                {
-                    $pull: {
-                        [`conversation.${index}.emotions`]: {
-                            user: user.id,
+            const previousExist = Boolean(
+                (
+                    await threadCl.updateOne(
+                        {
+                            id,
+                            conversation: { $elemMatch: { id: cid } },
                         },
-                    },
-                }
+                        {
+                            $pull: {
+                                [`conversation.$.emotions`]: {
+                                    user: user.id,
+                                },
+                            },
+                        }
+                    )
+                ).modifiedCount
             );
 
             await threadCl.updateOne(
-                { id },
+                { id, conversation: { $elemMatch: { id: cid } } },
                 {
                     $push: {
-                        [`conversation.${index}.emotions`]: {
+                        [`conversation.$.emotions`]: {
                             user: user.id,
                             emotion,
                         },
@@ -112,7 +108,10 @@ export default function (
             if (
                 !("removed" in thread) &&
                 !("removed" in thread.conversation?.[0]) &&
-                thread.conversation[0]?.user?.id !== user.id
+                thread.conversation[0]?.user?.id !== user.id &&
+                // prevent spamming by repeated reset of the emotion to
+                // send a large amount to notifications to the targeted user
+                !previousExist
             )
                 sendNotification(thread?.conversation[0].user.id, {
                     title: `New reaction (${thread.title})`,

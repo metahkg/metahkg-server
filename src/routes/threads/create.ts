@@ -41,6 +41,7 @@ import {
     TitleSchema,
 } from "../../lib/schemas";
 import { sendNotification } from "../../lib/notifications/sendNotification";
+import { sha256 } from "../../lib/sha256";
 
 export default (
     fastify: FastifyInstance,
@@ -60,13 +61,17 @@ export default (
     fastify.post(
         "/",
         {
-            preHandler: [
-                checkMuted,
-                fastify.rateLimit({
-                    max: 10,
+            preHandler: [checkMuted],
+            config: {
+                rateLimit: {
+                    keyGenerator: (req: FastifyRequest) => {
+                        return req.user?.id ? `user${req.user.id}` : sha256(req.ip);
+                    },
+                    max: 30,
+                    ban: 5,
                     timeWindow: 1000 * 60 * 60,
-                }),
-            ],
+                },
+            },
             schema: { body: schema },
         },
         async (

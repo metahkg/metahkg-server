@@ -17,7 +17,7 @@
 
 import dotenv from "dotenv";
 import routes from "./routes";
-import Fastify from "fastify";
+import Fastify, { FastifyRequest } from "fastify";
 import { client, domain } from "./lib/common";
 import { setup } from "./mongo/setupMongo";
 import { agenda } from "./lib/agenda";
@@ -83,11 +83,14 @@ export default async function MetahkgServer() {
 
     fastify.register(multipart);
 
-    fastify.register(fastifyRateLimit, {
+    await fastify.register(fastifyRateLimit, {
         global: true,
         max: 200,
         ban: 50,
         timeWindow: 1000 * 30,
+        keyGenerator: (req: FastifyRequest) => {
+            return sha256(req.ip);
+        },
     });
 
     fastify.register(fastifyJwt, {

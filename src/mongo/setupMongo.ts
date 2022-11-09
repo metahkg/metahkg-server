@@ -16,7 +16,6 @@
  */
 
 import {
-    limitCl,
     verificationCl,
     categoryCl,
     threadCl,
@@ -38,7 +37,6 @@ export async function setup() {
     await inviteCl.createIndex({ code: 1 });
 
     await threadCl.createIndex({ title: "text" }); // text search
-    await limitCl.createIndex({ createdAt: 1 }, { expireAfterSeconds: 86400 });
     await verificationCl.createIndex({ createdAt: 1 }, { expireAfterSeconds: 300 });
 
     if ((await categoryCl.find().toArray()).length)

@@ -71,7 +71,7 @@ export default (
             await verificationCl.deleteOne({
                 type: "reset",
                 email: hashedEmail,
-                code: code,
+                code,
             });
 
             const token = createToken(fastify.jwt, user);

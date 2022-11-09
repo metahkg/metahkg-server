@@ -46,11 +46,13 @@ export default (
     fastify.post(
         "/login",
         {
-            preHandler: fastify.rateLimit({
-                max: 5,
-                ban: 5,
-                timeWindow: 1000 * 60 * 5,
-            }),
+            config: {
+                rateLimit: {
+                    max: 5,
+                    ban: 5,
+                    timeWindow: 1000 * 60 * 5,
+                },
+            },
             schema: { body: schema },
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
@@ -62,6 +64,7 @@ export default (
 
             if (!user) {
                 const verifyUser = await verificationCl.findOne({
+                    type: "register",
                     $or: [{ name }, { email: sha256(name) }],
                 });
 

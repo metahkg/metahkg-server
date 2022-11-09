@@ -37,6 +37,7 @@ import regex from "../../../../lib/regex";
 import checkMuted from "../../../../plugins/checkMuted";
 import { sendNotification } from "../../../../lib/notifications/sendNotification";
 import { CommentSchema, IntegerSchema, RTokenSchema } from "../../../../lib/schemas";
+import { sha256 } from "../../../../lib/sha256";
 
 export default (
     fastify: FastifyInstance,
@@ -62,6 +63,16 @@ export default (
                 params: paramsSchema,
             },
             preHandler: [checkMuted],
+            config: {
+                rateLimit: {
+                    keyGenerator: (req: FastifyRequest) => {
+                        return req.user?.id ? `user${req.user.id}` : sha256(req.ip);
+                    },
+                    max: 300,
+                    ban: 50,
+                    timeWindow: 1000 * 60 * 60,
+                },
+            },
         },
         async (
             req: FastifyRequest<{

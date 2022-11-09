@@ -20,7 +20,6 @@ import { mg, mgDomain, verifyMsg } from "../../lib/mailgun";
 import EmailValidator from "email-validator";
 import { verifyCaptcha } from "../../lib/recaptcha";
 import bcrypt from "bcrypt";
-import { generate } from "generate-password";
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import dotenv from "dotenv";
@@ -34,6 +33,7 @@ import {
     SexSchema,
     InviteCodeSchema,
 } from "../../lib/schemas";
+import { randomBytes } from "crypto";
 
 dotenv.config();
 
@@ -60,9 +60,12 @@ export default (
         { schema: { body: schema } },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             if (EmailValidator.validate(req.body.name))
-                return res.code(400).send({ statusCode: 400, error: "Bad request." });
+                return res
+                    .code(400)
+                    .send({ statusCode: 400, error: "Name must not be a email." });
 
             const { name, password, email, rtoken, sex, inviteCode } = req.body;
+            const hashedEmail = sha256(email);
 
             if (!(await verifyCaptcha(RecaptchaSecret, rtoken)))
                 return res
@@ -70,12 +73,11 @@ export default (
                     .send({ statusCode: 429, error: "Recaptcha token invalid." });
 
             // register modes (process.env.register)
-            const registerMode =
-                {
-                    normal: "normal",
-                    none: "none",
-                    invite: "invite",
-                }[process.env.register || ""] || "normal";
+            const registerMode = ["normal", "none", "invite"].includes(
+                process.env.register
+            )
+                ? process.env.register
+                : "normal";
 
             if (registerMode === "none")
                 return res
@@ -93,10 +95,11 @@ export default (
 
             if (
                 (await usersCl.findOne({
-                    $or: [{ name }, { email: sha256(email) }],
+                    $or: [{ name }, { email: hashedEmail }],
                 })) ||
                 (await verificationCl.findOne({
-                    $or: [{ name }, { email }],
+                    type: "register",
+                    $or: [{ name }, { email: hashedEmail }],
                 }))
             )
                 return res.code(409).send({
@@ -104,22 +107,24 @@ export default (
                     error: "Username or email already in use.",
                 });
 
-            const code = generate({
-                length: 30,
-                numbers: true,
-                lowercase: true,
-                uppercase: true,
-                symbols: false,
-                strict: true,
-            });
+            const code = randomBytes(15).toString("hex");
 
-            await mg.messages.create(mgDomain, verifyMsg({ email, code }));
+            try {
+                await mg.messages.create(mgDomain, verifyMsg({ email, code }));
+            } catch {
+                return res
+                    .code(500)
+                    .send({
+                        statusCode: 500,
+                        error: "An error occurred while sending the email.",
+                    });
+            }
 
             const hashedPwd = await bcrypt.hash(password, 10);
             await verificationCl.insertOne({
                 createdAt: new Date(),
                 code,
-                email,
+                email: hashedEmail,
                 password: hashedPwd,
                 name,
                 sex,
@@ -129,7 +134,7 @@ export default (
             await agenda.every(
                 "1 day",
                 "updateVerificationCode",
-                { email },
+                { email: hashedEmail },
                 {
                     startDate: new Date(new Date().getTime() + 86400 * 1000),
                     skipImmediate: true,

@@ -22,6 +22,7 @@ import { client, usersCl, verificationCl } from "./common";
 export const agenda = new Agenda({ mongo: client.db("agenda") });
 
 agenda.define("updateVerificationCode", async (job: Job) => {
+    // hashed email
     const { email } = job.attrs.data;
 
     await verificationCl.updateOne(

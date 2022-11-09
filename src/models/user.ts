@@ -73,6 +73,7 @@ export default interface User {
     id: number;
     createdAt: Date;
     name: string;
+    /** hashed (sha256) email */
     email: string;
     password: string;
     sex: userSex;

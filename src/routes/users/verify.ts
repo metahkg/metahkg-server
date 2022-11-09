@@ -47,10 +47,11 @@ export default (
         { schema: { body: schema } },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const { email, code, sameIp } = req.body;
+            const hashedEmail = sha256(email);
 
             const verificationData = await verificationCl.findOne({
                 type: "register",
-                email,
+                email: hashedEmail,
                 code,
             });
 
@@ -68,7 +69,7 @@ export default (
             const newUser: User = {
                 name,
                 id: newUserId,
-                email: sha256(email),
+                email: hashedEmail,
                 password,
                 role: "user",
                 createdAt: new Date(),
@@ -76,9 +77,9 @@ export default (
             };
 
             await usersCl.insertOne(newUser);
-            await verificationCl.deleteOne({ type: "register", email });
+            await verificationCl.deleteOne({ type: "register", email: hashedEmail });
 
-            await agenda.cancel({ name: "updateVerificationCode", data: { email } });
+            await agenda.cancel({ name: "updateVerificationCode", data: { email: hashedEmail } });
 
             const token = createToken(fastify.jwt, newUser);
 

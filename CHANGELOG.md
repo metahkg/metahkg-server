@@ -1,5 +1,11 @@
 # Changelog
 
+## v5.7.2
+
+- fixed rate limit on certain paths (use `config` instead of `preHandler`)
+- removed `limitCl` in favor of using `@fastify/rate-limit` with custom `keyGenerator` for those paths
+- emails in `verificationCl` are now hashed
+
 ## v5.7.1
 
 - send notifications to users following the op upon thread creation

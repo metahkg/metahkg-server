@@ -34,9 +34,9 @@ export default (
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
-    fastify.register(comments, { prefix: "/comments" });
     fastify.addHook("preHandler", checkHidden);
     fastify.addHook("preHandler", checkThread);
+    fastify.register(comments, { prefix: "/comments" });
     fastify.register(thread);
     fastify.register(images);
     fastify.register(category);
