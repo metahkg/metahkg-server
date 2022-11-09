@@ -49,11 +49,11 @@ export default (
             const hashedEmail = sha256(email);
 
             if (
-                !(await verificationCl.findOne({
+                !((await verificationCl.findOne({
                     type: "reset",
                     email: hashedEmail,
                     code,
-                }) as Verification)
+                })) as Verification)
             )
                 return res.code(401).send({
                     statusCode: 401,

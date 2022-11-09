@@ -121,7 +121,7 @@ export default (
 
             let slinkId = generate(genOpts);
 
-            while (await linksCl.findOne({ id: slinkId }) as Link) {
+            while ((await linksCl.findOne({ id: slinkId })) as Link) {
                 slinkId = generate(genOpts);
             }
 
@@ -198,7 +198,7 @@ export default (
                 const thread = (await threadCl.findOne(
                     { id },
                     { projection: { _id: 0, images: 1 } }
-                )) as Thread
+                )) as Thread;
 
                 if ("removed" in thread) return;
 

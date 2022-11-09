@@ -44,10 +44,10 @@ export async function createSession(
     };
 
     while (
-        await usersCl.findOne({
+        (await usersCl.findOne({
             id: userId,
             sessions: { $elemMatch: { id: session.id } },
-        }) as User
+        })) as User
     ) {
         session.id = randomBytes(15).toString("hex");
     }
