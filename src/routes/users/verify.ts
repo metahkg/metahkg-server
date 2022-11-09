@@ -25,6 +25,7 @@ import { agenda } from "../../lib/agenda";
 import { createSession } from "../../lib/sessions/createSession";
 import { CodeSchema, EmailSchema } from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
+import { Verification } from "../../models/verification";
 
 dotenv.config();
 
@@ -49,11 +50,11 @@ export default (
             const { email, code, sameIp } = req.body;
             const hashedEmail = sha256(email);
 
-            const verificationData = await verificationCl.findOne({
+            const verificationData = (await verificationCl.findOne({
                 type: "register",
                 email: hashedEmail,
                 code,
-            });
+            })) as Verification & { type: "register" };
 
             if (!verificationData)
                 return res
@@ -63,8 +64,8 @@ export default (
             const { name, password, sex } = verificationData;
 
             const newUserId =
-                (await usersCl.find().sort({ id: -1 }).limit(1).toArray())[0]?.id + 1 ||
-                1;
+                ((await usersCl.find().sort({ id: -1 }).limit(1).toArray()) as User[])[0]
+                    ?.id + 1 || 1;
 
             const newUser: User = {
                 name,
@@ -79,7 +80,10 @@ export default (
             await usersCl.insertOne(newUser);
             await verificationCl.deleteOne({ type: "register", email: hashedEmail });
 
-            await agenda.cancel({ name: "updateVerificationCode", data: { email: hashedEmail } });
+            await agenda.cancel({
+                name: "updateVerificationCode",
+                data: { email: hashedEmail },
+            });
 
             const token = createToken(fastify.jwt, newUser);
 

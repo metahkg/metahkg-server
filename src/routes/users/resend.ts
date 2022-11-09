@@ -22,6 +22,7 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { mg, mgDomain, verifyMsg } from "../../lib/mailgun";
 import { EmailSchema, RTokenSchema } from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
+import { Verification } from "../../models/verification";
 
 export default (
     fastify: FastifyInstance,
@@ -63,7 +64,7 @@ export default (
             const verificationUserData = await verificationCl.findOne({
                 type: "register",
                 email: hashedEmail,
-            });
+            }) as Verification;
 
             if (!verificationUserData)
                 return res.code(404).send({ statusCode: 404, error: "Email not found." });

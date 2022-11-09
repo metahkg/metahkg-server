@@ -24,6 +24,7 @@ import { verifyCaptcha } from "../../lib/recaptcha";
 import { EmailSchema, RTokenSchema } from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
 import User from "../../models/user";
+import { Verification } from "../../models/verification";
 
 export default (
     fastify: FastifyInstance,
@@ -62,7 +63,6 @@ export default (
                     .code(429)
                     .send({ statusCode: 429, error: "Recaptcha token invalid." });
 
-
             const userData = (await usersCl.findOne({ email: hashedEmail })) as User;
             if (!userData)
                 return res.code(404).send({ statusCode: 404, error: "User not found." });
@@ -81,7 +81,7 @@ export default (
                 });
             }
 
-            await verificationCl.insertOne({
+            await verificationCl.insertOne(<Verification>{
                 type: "reset",
                 code: verificationCode,
                 email: hashedEmail,

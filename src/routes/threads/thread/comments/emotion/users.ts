@@ -20,6 +20,7 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { threadCl, usersCl } from "../../../../../lib/common";
 import regex from "../../../../../lib/regex";
 import { Emotion } from "../../../../../models/thread";
+import User from "../../../../../models/user";
 
 export default function (
     fastify: FastifyInstance,
@@ -89,7 +90,7 @@ export default function (
                     sex: 1,
                     role: 1,
                 })
-                .toArray();
+                .toArray() as User[];
 
             res.send(users);
         }

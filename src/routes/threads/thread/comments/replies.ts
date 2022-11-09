@@ -62,7 +62,7 @@ export default (
             if ("removed" in comment) return;
 
             const replies = (
-                await threadCl.findOne(
+                (await threadCl.findOne(
                     { id },
                     {
                         projection: {
@@ -85,7 +85,7 @@ export default (
                             },
                         },
                     }
-                )
+                )) as Thread & { removed: undefined }
             )?.conversation;
 
             res.send(replies);

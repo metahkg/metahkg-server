@@ -17,6 +17,8 @@
 
 import { FastifyReply, FastifyRequest } from "fastify";
 import { categoryCl, threadCl } from "../lib/common";
+import Category from "../models/category";
+import Thread from "../models/thread";
 
 export default async function (
     req: FastifyRequest<{ Params: { id?: string } }>,
@@ -27,15 +29,18 @@ export default async function (
         if (!(Number.isInteger(id) && id > 0)) return;
 
         const category = (
-            await threadCl.findOne({ id }, { projection: { _id: 0, category: 1 } })
+            (await threadCl.findOne(
+                { id },
+                { projection: { _id: 0, category: 1 } }
+            )) as Thread & { removed: undefined }
         )?.category;
 
         if (!category) return;
 
         const hidden = (
-            await categoryCl.findOne({
+            (await categoryCl.findOne({
                 id: category,
-            })
+            })) as Category
         )?.hidden;
 
         if (hidden && !req.user)

@@ -20,6 +20,7 @@ import { usersCl } from "../common";
 import { sha256 } from "../sha256";
 import { createDecoder } from "fast-jwt";
 import { jwtTokenType } from "../../types/jwt";
+import User from "../../models/user";
 
 export async function createSession(
     userId: number,
@@ -46,7 +47,7 @@ export async function createSession(
         await usersCl.findOne({
             id: userId,
             sessions: { $elemMatch: { id: session.id } },
-        })
+        }) as User
     ) {
         session.id = randomBytes(15).toString("hex");
     }

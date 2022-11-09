@@ -26,11 +26,9 @@ import {
 import { verifyCaptcha } from "../../../../lib/recaptcha";
 import findImages from "../../../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
-
 import { generate } from "generate-password";
 import sanitize from "../../../../lib/sanitize";
-import Images from "../../../../models/images";
-import Thread, { commentType } from "../../../../models/thread";
+import Thread, { Comment } from "../../../../models/thread";
 import { htmlToText } from "html-to-text";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../../lib/regex";
@@ -38,6 +36,7 @@ import checkMuted from "../../../../plugins/checkMuted";
 import { sendNotification } from "../../../../lib/notifications/sendNotification";
 import { CommentSchema, IntegerSchema, RTokenSchema } from "../../../../lib/schemas";
 import { sha256 } from "../../../../lib/sha256";
+import { Link } from "../../../../models/link";
 
 export default (
     fastify: FastifyInstance,
@@ -122,16 +121,16 @@ export default (
 
             let slinkId = generate(genOpts);
 
-            while (await linksCl.findOne({ id: slinkId })) {
+            while (await linksCl.findOne({ id: slinkId }) as Link) {
                 slinkId = generate(genOpts);
             }
 
-            await linksCl.insertOne({
+            await linksCl.insertOne(<Link>{
                 id: slinkId,
                 url: `/thread/${id}?c=${newcid}`,
             });
 
-            let quotedComment: commentType | undefined, quoteIndex: number;
+            let quotedComment: Comment | undefined, quoteIndex: number;
 
             if (quote) {
                 const thread = (await threadCl.findOne(
@@ -154,7 +153,7 @@ export default (
                                         i[0]
                                     )
                             )
-                        ) as commentType) || undefined;
+                        ) as Comment) || undefined;
                     if ("removed" in quotedComment) quotedComment = undefined;
 
                     if (quotedComment) quoteIndex = thread?.index;
@@ -196,17 +195,19 @@ export default (
             }
 
             if (imagesInComment.length) {
-                const imagesData = (
-                    (await threadCl.findOne(
-                        { id },
-                        { projection: { _id: 0, images: 1 } }
-                    )) as Images
-                ).images;
+                const thread = (await threadCl.findOne(
+                    { id },
+                    { projection: { _id: 0, images: 1 } }
+                )) as Thread
+
+                if ("removed" in thread) return;
+
+                const imagesData = thread.images;
 
                 await threadCl.updateOne(
                     { id },
                     {
-                        $push: {
+                        $addToSet: {
                             images: {
                                 $each: imagesInComment
                                     .filter(

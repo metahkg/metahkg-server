@@ -80,7 +80,7 @@ export default (
             const votes = (await votesCl.findOne({ id: user.id })) as Votes;
 
             if (!votes) {
-                await votesCl.insertOne({ id: user.id });
+                await votesCl.insertOne(<Votes>{ id: user.id });
             } else if (votes?.[threadId]?.find((i) => i.cid === commentId)) {
                 return res
                     .code(429)

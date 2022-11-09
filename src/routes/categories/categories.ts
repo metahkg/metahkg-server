@@ -17,6 +17,7 @@
 
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
 import { categoryCl } from "../../lib/common";
+import Category from "../../models/category";
 
 export default function (
     fastify: FastifyInstance,
@@ -24,7 +25,13 @@ export default function (
     done: (e?: Error) => void
 ) {
     fastify.get("/", async (_req, res) => {
-        res.send(await categoryCl.find().project({ _id: 0 }).sort({ id: 1 }).toArray());
+        res.send(
+            (await categoryCl
+                .find()
+                .project({ _id: 0 })
+                .sort({ id: 1 })
+                .toArray()) as Category[]
+        );
     });
     done();
 }

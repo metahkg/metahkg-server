@@ -21,6 +21,7 @@ import { Static, Type } from "@sinclair/typebox";
 import Thread from "../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../lib/regex";
+import Category from "../../models/category";
 
 export default (
     fastify: FastifyInstance,
@@ -65,7 +66,7 @@ export default (
             if (!req.user && hiddenCats.includes(category))
                 return res.code(403).send({ statusCode: 403, error: "Forbidden." });
 
-            if (!(await categoryCl.findOne({ id: category })))
+            if (!((await categoryCl.findOne({ id: category })) as Category))
                 return res
                     .code(404)
                     .send({ statusCode: 404, error: "Category not found." });

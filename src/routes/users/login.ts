@@ -25,6 +25,7 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { createSession } from "../../lib/sessions/createSession";
 import { EmailSchema, PasswordSchema, UserNameSchema } from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
+import { Verification } from "../../models/verification";
 
 dotenv.config();
 
@@ -63,12 +64,12 @@ export default (
             })) as User;
 
             if (!user) {
-                const verifyUser = await verificationCl.findOne({
+                const verifyUser = (await verificationCl.findOne({
                     type: "register",
                     $or: [{ name }, { email: sha256(name) }],
-                });
+                })) as Verification & { type: "register" };
 
-                if (verifyUser && (await bcrypt.compare(password, verifyUser.pwd)))
+                if (verifyUser && (await bcrypt.compare(password, verifyUser.password)))
                     return res
                         .code(409)
                         .send({ statusCode: 409, error: "Please verify your email." });

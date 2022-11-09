@@ -29,10 +29,10 @@ export default function (
         if (!user) return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
         const following = ((
-            await usersCl.findOne(
+            (await usersCl.findOne(
                 { id: user.id },
                 { projection: { _id: 0, following: 1 } }
-            )
+            )) as User
         )?.following || []) as FollowedUser[];
 
         const usersFollowed = (await usersCl

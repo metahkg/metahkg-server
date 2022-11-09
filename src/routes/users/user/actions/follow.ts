@@ -19,6 +19,7 @@ import { Static, Type } from "@sinclair/typebox";
 import { usersCl } from "../../../../lib/common";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../../lib/regex";
+import User from "../../../../models/user";
 
 export default (
     fastify: FastifyInstance,
@@ -48,7 +49,7 @@ export default (
 
             const userId = Number(req.params.id);
 
-            if (!(await usersCl.findOne({ id: userId })))
+            if (!((await usersCl.findOne({ id: userId })) as User))
                 return res.code(404).send({ statusCode: 404, error: "User not found." });
 
             if (

@@ -33,7 +33,7 @@ export default function (
             (await usersCl.findOne(
                 { id: user.id },
                 { projection: { starred: 1, _id: 0 } }
-            )) as User | null
+            )) as User
         )?.starred;
 
         return res.send(starred || []);

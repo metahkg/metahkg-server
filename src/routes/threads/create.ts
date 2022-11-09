@@ -30,7 +30,7 @@ import { Static, Type } from "@sinclair/typebox";
 import { generate } from "generate-password";
 import sanitize from "../../lib/sanitize";
 import User from "../../models/user";
-import Thread from "../../models/thread";
+import Thread, { publicUserType } from "../../models/thread";
 import { htmlToText } from "html-to-text";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import checkMuted from "../../plugins/checkMuted";
@@ -42,6 +42,8 @@ import {
 } from "../../lib/schemas";
 import { sendNotification } from "../../lib/notifications/sendNotification";
 import { sha256 } from "../../lib/sha256";
+import { Link } from "../../models/link";
+import Category from "../../models/category";
 
 export default (
     fastify: FastifyInstance,
@@ -94,13 +96,15 @@ export default (
             if (!user)
                 return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
-            const category = await categoryCl.findOne({ id: req.body.category });
+            const category = (await categoryCl.findOne({
+                id: req.body.category,
+            })) as Category;
             if (!category)
                 return res
                     .code(404)
                     .send({ statusCode: 404, error: "Category not found." });
 
-            if (await threadCl.findOne({ title }, { projection: { _id: 0, id: 1 } }))
+            if ((await threadCl.findOne({ title }, { projection: { _id: 0 } })) as Thread)
                 return res
                     .code(409)
                     .send({ statusCode: 409, error: "Title already exists." });
@@ -128,16 +132,16 @@ export default (
 
             let commentSlinkId = generate(genOpts);
 
-            while (await linksCl.findOne({ id: commentSlinkId })) {
+            while ((await linksCl.findOne({ id: commentSlinkId })) as Link) {
                 commentSlinkId = generate(genOpts);
             }
 
-            await linksCl.insertOne({
+            await linksCl.insertOne(<Link>{
                 id: commentSlinkId,
                 url: `/thread/${newThreadId}?c=1`,
             });
 
-            const userData = {
+            const userData: publicUserType = {
                 id: user.id,
                 name: user.name,
                 role: user.role,

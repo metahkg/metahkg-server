@@ -24,6 +24,7 @@ import {
     votesCl,
     inviteCl,
 } from "../lib/common";
+import Category from "../models/category";
 import { categories } from "./category";
 export async function setup() {
     await threadCl.createIndex({ id: 1 });
@@ -41,5 +42,5 @@ export async function setup() {
 
     if ((await categoryCl.find().toArray()).length)
         console.log("categories found. not inserting again.");
-    else await categoryCl.insertMany(categories);
+    else await categoryCl.insertMany(<Category[]>categories);
 }

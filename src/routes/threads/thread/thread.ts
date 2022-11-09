@@ -61,7 +61,7 @@ export default (
             if (end < start)
                 return res.code(400).send({ statusCode: 400, error: "Bad request." });
 
-            if (!(await threadCl.findOne({ id })))
+            if (!((await threadCl.findOne({ id })) as Thread))
                 return res.code(404).send({ statusCode: 404, error: "Thread not found" });
 
             const thread = (

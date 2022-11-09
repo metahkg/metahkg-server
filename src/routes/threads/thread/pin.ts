@@ -18,7 +18,7 @@
 import { Static, Type } from "@sinclair/typebox";
 import { threadCl } from "../../../lib/common";
 
-import Thread, { commentType } from "../../../models/thread";
+import Thread, { Comment } from "../../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../lib/regex";
 import { IntegerSchema } from "../../../lib/schemas";
@@ -81,14 +81,12 @@ export default function (
                         },
                     },
                 }
-            )) as Thread;
+            )) as Thread & { removed: undefined };
 
             if (!thread)
                 return res
                     .code(404)
                     .send({ statusCode: 404, error: "Thread not found." });
-
-            if ("removed" in thread) return;
 
             if (thread?.op?.id !== user.id)
                 return res.code(403).send({ statusCode: 403, error: "Forbidden." });
@@ -97,7 +95,7 @@ export default function (
                 Object.entries(thread.conversation?.[0]).filter(
                     (i) => !["replies", "U", "D", "admin"].includes(i[0])
                 )
-            ) as commentType;
+            ) as Comment;
 
             if (!comment)
                 return res

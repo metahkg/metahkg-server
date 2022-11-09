@@ -22,7 +22,7 @@ import { createToken } from "../../../../lib/auth/createToken";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../../lib/regex";
 import EmailValidator from "email-validator";
-import { userSex } from "../../../../models/user";
+import User, { userSex } from "../../../../models/user";
 import { updateSessionByToken } from "../../../../lib/sessions/updateSession";
 import { SexSchema, UserNameSchema } from "../../../../lib/schemas";
 
@@ -59,7 +59,7 @@ export default (
 
             const { name, sex } = req.body as { name?: string; sex?: userSex };
 
-            if (name && name !== user.name && (await usersCl.findOne({ name })))
+            if (name && name !== user.name && ((await usersCl.findOne({ name })) as User))
                 return res
                     .code(409)
                     .send({ statusCode: 409, error: "Name already taken." });

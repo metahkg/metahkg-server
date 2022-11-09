@@ -22,6 +22,7 @@ import { removedCl, threadCl } from "../../../../lib/common";
 import regex from "../../../../lib/regex";
 import RequireAdmin from "../../../../plugins/requireAdmin";
 import { ReasonSchemaAdmin } from "../../../../lib/schemas";
+import Thread from "../../../../models/thread";
 
 export default function (
     fastify: FastifyInstance,
@@ -53,7 +54,10 @@ export default function (
             const { reason } = req.body;
             const admin = req.user;
 
-            const thread = await threadCl.findOne({ id }, { projection: { _id: 0 } });
+            const thread = (await threadCl.findOne(
+                { id },
+                { projection: { _id: 0 } }
+            )) as Thread;
             if (!thread)
                 return res
                     .code(404)

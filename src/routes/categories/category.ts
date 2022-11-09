@@ -19,6 +19,7 @@ import { categoryCl } from "../../lib/common";
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../lib/regex";
+import Category from "../../models/category";
 
 export default function (
     fastify: FastifyInstance,
@@ -34,7 +35,10 @@ export default function (
         async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
             const id = Number(req.params.id);
 
-            const category = await categoryCl.findOne({ id }, { projection: { _id: 0 } });
+            const category = (await categoryCl.findOne(
+                { id },
+                { projection: { _id: 0 } }
+            )) as Category;
 
             if (!category)
                 return res.code(404).send({ statusCode: 404, error: "Not found." });

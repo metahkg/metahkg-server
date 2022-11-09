@@ -23,6 +23,7 @@ import regex from "../../../../lib/regex";
 import checkThread from "../../../../plugins/checkThread";
 import RequireAdmin from "../../../../plugins/requireAdmin";
 import { IntegerSchema, ReasonSchemaAdmin, TitleSchema } from "../../../../lib/schemas";
+import Category from "../../../../models/category";
 
 export default function (
     fastify: FastifyInstance,
@@ -61,7 +62,7 @@ export default function (
 
             const { category, title, reason } = req.body;
 
-            if (category && !(await categoryCl.findOne({ id: category })))
+            if (category && !((await categoryCl.findOne({ id: category })) as Category))
                 return res
                     .code(404)
                     .send({ statusCode: 404, error: "Category not found" });

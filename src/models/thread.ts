@@ -26,13 +26,13 @@ export type Thread =
           op: publicUserType;
           category: number;
           count: number;
-          conversation: commentType[];
+          conversation: Comment[];
           score: number;
           lastModified: Date;
           createdAt: Date;
           slink: string;
-          images: { src: string; cid: number }[];
-          pin?: commentType;
+          images: Images;
+          pin?: Comment;
           _id?: ObjectId;
           admin?: Admin;
       };
@@ -44,7 +44,10 @@ export type publicUserType = {
     sex: userSex;
 };
 
-export type commentType =
+export type Image = { src: string; cid: number };
+export type Images = Image[];
+
+export type Comment =
     /** if removed */
     | { id: number; removed: true }
     | {
@@ -68,7 +71,7 @@ export type commentType =
           /** replies */
           replies?: number[];
           /** quote **/
-          quote?: commentType;
+          quote?: Comment;
           emotions?: Emotion[];
           admin?: Admin;
       };

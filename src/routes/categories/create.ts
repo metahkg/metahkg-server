@@ -43,7 +43,7 @@ export default function (
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const { name } = req.body;
 
-            if (await categoryCl.findOne({ name }))
+            if ((await categoryCl.findOne({ name })) as Category)
                 return res
                     .code(409)
                     .send({ statusCode: 409, error: "Category already exists." });
@@ -58,7 +58,7 @@ export default function (
                         .toArray()) as Category[]
                 )[0]?.id + 1 || 1;
 
-            await categoryCl.insertOne({ id, ...req.body });
+            await categoryCl.insertOne(<Category>{ id, ...req.body });
 
             return res.send({ success: true });
         }

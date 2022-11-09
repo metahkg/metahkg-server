@@ -20,6 +20,7 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { categoryCl, removedCl } from "../../../lib/common";
 import regex from "../../../lib/regex";
 import { CategoryNameSchema, CategoryTagsSchema } from "../../../lib/schemas";
+import Category from "../../../models/category";
 import RequireAdmin from "../../../plugins/requireAdmin";
 
 export default function (
@@ -51,7 +52,10 @@ export default function (
         ) => {
             const id = Number(req.params.id);
 
-            const category = await categoryCl.findOne({ id }, { projection: { _id: 0 } });
+            const category = (await categoryCl.findOne(
+                { id },
+                { projection: { _id: 0 } }
+            )) as Category;
 
             if (!category)
                 return res

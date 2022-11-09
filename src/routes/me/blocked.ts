@@ -29,7 +29,10 @@ export default function (
         if (!user) return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
         const blocked = ((
-            await usersCl.findOne({ id: user.id }, { projection: { _id: 0, blocked: 1 } })
+            (await usersCl.findOne(
+                { id: user.id },
+                { projection: { _id: 0, blocked: 1 } }
+            )) as User
         )?.blocked || []) as BlockedUser[];
 
         const usersBlocked = (await usersCl

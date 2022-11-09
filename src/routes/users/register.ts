@@ -34,6 +34,8 @@ import {
     InviteCodeSchema,
 } from "../../lib/schemas";
 import { randomBytes } from "crypto";
+import { Verification } from "../../models/verification";
+import User from "../../models/user";
 
 dotenv.config();
 
@@ -94,13 +96,13 @@ export default (
                     .send({ statusCode: 400, error: "Invalid invite code." });
 
             if (
-                (await usersCl.findOne({
+                ((await usersCl.findOne({
                     $or: [{ name }, { email: hashedEmail }],
-                })) ||
-                (await verificationCl.findOne({
+                })) as User) ||
+                ((await verificationCl.findOne({
                     type: "register",
                     $or: [{ name }, { email: hashedEmail }],
-                }))
+                })) as Verification)
             )
                 return res.code(409).send({
                     statusCode: 409,
@@ -112,16 +114,14 @@ export default (
             try {
                 await mg.messages.create(mgDomain, verifyMsg({ email, code }));
             } catch {
-                return res
-                    .code(500)
-                    .send({
-                        statusCode: 500,
-                        error: "An error occurred while sending the email.",
-                    });
+                return res.code(500).send({
+                    statusCode: 500,
+                    error: "An error occurred while sending the email.",
+                });
             }
 
             const hashedPwd = await bcrypt.hash(password, 10);
-            await verificationCl.insertOne({
+            await verificationCl.insertOne(<Verification>{
                 createdAt: new Date(),
                 code,
                 email: hashedEmail,

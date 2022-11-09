@@ -24,6 +24,7 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { createSession } from "../../lib/sessions/createSession";
 import { CodeSchema, EmailSchema, PasswordSchema } from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
+import { Verification } from "../../models/verification";
 
 export default (
     fastify: FastifyInstance,
@@ -52,7 +53,7 @@ export default (
                     type: "reset",
                     email: hashedEmail,
                     code,
-                }))
+                }) as Verification)
             )
                 return res.code(401).send({
                     statusCode: 401,

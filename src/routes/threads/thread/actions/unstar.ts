@@ -20,6 +20,7 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { threadCl, usersCl } from "../../../../lib/common";
 
 import regex from "../../../../lib/regex";
+import Thread from "../../../../models/thread";
 
 export default function (
     fastify: FastifyInstance,
@@ -40,7 +41,7 @@ export default function (
 
             const threadId = Number(req.params.id);
 
-            if (!(await threadCl.findOne({ id: threadId })))
+            if (!((await threadCl.findOne({ id: threadId })) as Thread))
                 return res
                     .code(404)
                     .send({ statusCode: 404, error: "Thread not found." });
