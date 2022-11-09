@@ -61,10 +61,10 @@ export default (
                     .code(429)
                     .send({ statusCode: 429, error: "Recaptcha token invalid." });
 
-            const verificationUserData = await verificationCl.findOne({
+            const verificationUserData = (await verificationCl.findOne({
                 type: "register",
                 email: hashedEmail,
-            }) as Verification;
+            })) as Verification;
 
             if (!verificationUserData)
                 return res.code(404).send({ statusCode: 404, error: "Email not found." });

@@ -45,10 +45,10 @@ export default (
             if (!user)
                 return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
-            const votes = await votesCl.findOne(
+            const votes = (await votesCl.findOne(
                 { id: user.id },
                 { projection: { [threadId]: 1, _id: 0 } }
-            ) as Votes;
+            )) as Votes;
 
             res.send(votes?.[threadId] || []);
         }

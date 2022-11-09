@@ -79,7 +79,7 @@ export default function (
 
             if (!emotions?.length) return res.send([]);
 
-            const users = await usersCl
+            const users = (await usersCl
                 .find({
                     id: { $in: emotions.map((x) => x.user) },
                 })
@@ -90,7 +90,7 @@ export default function (
                     sex: 1,
                     role: 1,
                 })
-                .toArray() as User[];
+                .toArray()) as User[];
 
             res.send(users);
         }
