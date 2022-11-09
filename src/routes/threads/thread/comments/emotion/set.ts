@@ -72,7 +72,7 @@ export default function (
                         conversation: { $elemMatch: { id: cid } },
                     },
                 }
-            )) as Thread
+            )) as Thread;
 
             // remove previous value first
             const previousExist = Boolean(
