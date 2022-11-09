@@ -2486,6 +2486,7 @@ paths:
       summary: Register
       description:
         "Register an account. A verification email is sent to the email address after the request completes.
+        Rate limit: 5 requests / 1 day.
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/5.7.2-dev/src/routes/users/register.ts)"
       operationId: usersRegister
       requestBody:

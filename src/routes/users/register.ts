@@ -59,7 +59,17 @@ export default (
 
     fastify.post(
         "/register",
-        { schema: { body: schema } },
+        {
+            schema: { body: schema },
+            config: {
+                rateLimit: {
+                    max: 5,
+                    ban: 5,
+                    // 1 day
+                    timeWindow: 1000 * 60 * 60 * 24,
+                },
+            },
+        },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             if (EmailValidator.validate(req.body.name))
                 return res
