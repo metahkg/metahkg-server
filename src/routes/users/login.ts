@@ -48,7 +48,7 @@ export default (
                     $or: [{ name }, { email: sha256(name) }],
                 });
 
-                if (verifyUser && (await bcrypt.compare(password, verifyUser.pwd)))
+                if (verifyUser && (await bcrypt.compare(password, verifyUser.password)))
                     return res
                         .code(409)
                         .send({ statusCode: 409, error: "Please verify your email." });
