@@ -79,7 +79,10 @@ export default (
             await usersCl.insertOne(newUser);
             await verificationCl.deleteOne({ type: "register", email: hashedEmail });
 
-            await agenda.cancel({ name: "updateVerificationCode", data: { email: hashedEmail } });
+            await agenda.cancel({
+                name: "updateVerificationCode",
+                data: { email: hashedEmail },
+            });
 
             const token = createToken(fastify.jwt, newUser);
 

@@ -62,7 +62,6 @@ export default (
                     .code(429)
                     .send({ statusCode: 429, error: "Recaptcha token invalid." });
 
-
             const userData = (await usersCl.findOne({ email: hashedEmail })) as User;
             if (!userData)
                 return res.code(404).send({ statusCode: 404, error: "User not found." });

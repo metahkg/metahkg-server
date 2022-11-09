@@ -112,12 +112,10 @@ export default (
             try {
                 await mg.messages.create(mgDomain, verifyMsg({ email, code }));
             } catch {
-                return res
-                    .code(500)
-                    .send({
-                        statusCode: 500,
-                        error: "An error occurred while sending the email.",
-                    });
+                return res.code(500).send({
+                    statusCode: 500,
+                    error: "An error occurred while sending the email.",
+                });
             }
 
             const hashedPwd = await bcrypt.hash(password, 10);
