@@ -62,8 +62,8 @@ export interface Emotion {
 }
 
 export interface Admin {
-    edits?: [{ admin: AdminUser; reason: string; date: Date }];
-    replies?: [{ admin: AdminUser; reply: string; date: Date }];
+    edits?: { admin: AdminUser; reason: string; date: Date }[];
+    replies?: { admin: AdminUser; reply: string; date: Date }[];
 }
 
 export type AdminUser = publicUserType & { role: "admin" };
