@@ -1601,6 +1601,7 @@ paths:
         - category
         - admin
       operationId: categoryCreate
+      summary: Create category
       description: "Create category. Admin privilege required.
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/5.7.3-2-dev/src/routes/categories/create.ts)"
       requestBody:
