@@ -25,6 +25,7 @@ import regex from "../../../../../lib/regex";
 import checkComment from "../../../../../plugins/checkComment";
 import RequireAdmin from "../../../../../plugins/requireAdmin";
 import { ReasonSchemaAdmin, CommentSchema } from "../../../../../lib/schemas";
+import { objectFilter } from "../../../../../lib/objectFilter";
 
 export default function (
     fastify: FastifyInstance,
@@ -60,7 +61,9 @@ export default function (
             const id = Number(req.params.id);
             const cid = Number(req.params.cid);
 
-            const user = req.user;
+            const admin = objectFilter(req.user, (key: string) =>
+                ["id", "name", "sex", "role"].includes(key)
+            );
 
             const { comment, reason } = req.body;
 
@@ -87,7 +90,7 @@ export default function (
                     },
                     $push: {
                         [`conversation.${index}.admin.edits`]: {
-                            admin: user,
+                            admin,
                             reason,
                             date: new Date(),
                         },

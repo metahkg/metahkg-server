@@ -24,6 +24,7 @@ import checkThread from "../../../../plugins/checkThread";
 import RequireAdmin from "../../../../plugins/requireAdmin";
 import { IntegerSchema, ReasonSchemaAdmin, TitleSchema } from "../../../../lib/schemas";
 import Category from "../../../../models/category";
+import { objectFilter } from "../../../../lib/objectFilter";
 
 export default function (
     fastify: FastifyInstance,
@@ -76,7 +77,9 @@ export default function (
                     },
                     $push: {
                         "admin.edits": {
-                            admin: user,
+                            admin: objectFilter(user, (key: string) =>
+                                ["id", "name", "sex", "role"].includes(key)
+                            ),
                             reason,
                             date: new Date(),
                         },

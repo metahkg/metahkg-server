@@ -24,6 +24,7 @@ import regex from "../../../../lib/regex";
 import User from "../../../../models/user";
 import RequireAdmin from "../../../../plugins/requireAdmin";
 import { ReasonSchemaAdmin, DateSchema } from "../../../../lib/schemas";
+import { objectFilter } from "../../../../lib/objectFilter";
 
 export default function (
     fastify: FastifyInstance,
@@ -53,7 +54,9 @@ export default function (
             res
         ) => {
             const id = Number(req.params.id);
-            const admin = req.user;
+            const admin = objectFilter(req.user, (key: string) =>
+                ["id", "name", "sex", "role"].includes(key)
+            );
             const { reason, exp } = req.body;
 
             const reqUser = (await usersCl.findOne({ id })) as User;

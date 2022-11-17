@@ -23,6 +23,7 @@ import regex from "../../../../lib/regex";
 import RequireAdmin from "../../../../plugins/requireAdmin";
 import { ReasonSchemaAdmin } from "../../../../lib/schemas";
 import Thread from "../../../../models/thread";
+import { objectFilter } from "../../../../lib/objectFilter";
 
 export default function (
     fastify: FastifyInstance,
@@ -52,7 +53,9 @@ export default function (
         ) => {
             const id = Number(req.params.id);
             const { reason } = req.body;
-            const admin = req.user;
+            const admin = objectFilter(req.user, (key: string) =>
+                ["id", "name", "sex", "role"].includes(key)
+            );
 
             const thread = (await threadCl.findOne(
                 { id },
