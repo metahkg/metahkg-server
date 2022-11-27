@@ -2,4 +2,4 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 npx eslint --fix src
-yarn build
+yarn test

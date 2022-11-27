@@ -1,5 +1,22 @@
+/*
+ Copyright (C) 2022-present Metahkg Contributors
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as
+ published by the Free Software Foundation, either version 3 of the
+ License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import { ObjectId } from "mongodb";
-import type { userSex, userRole } from "../types/user";
+import type { userSex, userRole } from "../models/user";
 
 export type Thread =
     | { id: number; removed: true }
@@ -9,13 +26,13 @@ export type Thread =
           op: publicUserType;
           category: number;
           count: number;
-          conversation: commentType[];
+          conversation: Comment[];
           score: number;
           lastModified: Date;
           createdAt: Date;
           slink: string;
-          images: { src: string; cid: number }[];
-          pin?: commentType;
+          images: Images;
+          pin?: Comment;
           _id?: ObjectId;
           admin?: Admin;
       };
@@ -27,7 +44,10 @@ export type publicUserType = {
     sex: userSex;
 };
 
-export type commentType =
+export type Image = { src: string; cid: number };
+export type Images = Image[];
+
+export type Comment =
     /** if removed */
     | { id: number; removed: true }
     | {
@@ -51,7 +71,7 @@ export type commentType =
           /** replies */
           replies?: number[];
           /** quote **/
-          quote?: commentType;
+          quote?: Comment;
           emotions?: Emotion[];
           admin?: Admin;
       };

@@ -1,10 +1,28 @@
+/*
+ Copyright (C) 2022-present Metahkg Contributors
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as
+ published by the Free Software Foundation, either version 3 of the
+ License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import dotenv from "dotenv";
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
 import multer from "fastify-multer"; // handle image uploads
+import { File } from "fastify-multer/lib/interfaces";
 import fs from "fs";
 import { move } from "fs-extra";
 import sharp from "sharp"; // reshape images to circle
-import verifyUser from "../../../../lib/auth/verify";
+
 import RequireSameUser from "../../../../plugins/requireSameUser";
 
 dotenv.config();
@@ -59,7 +77,7 @@ export default function (
         { preHandler: [RequireSameUser, upload.single("avatar")] },
         async (req, res) => {
             try {
-                const file = req.file as unknown as Express.Multer.File;
+                const file = req.file as unknown as File;
                 if (!file)
                     return res.code(400).send({ statusCode: 400, error: "Bad request." });
 
@@ -71,7 +89,7 @@ export default function (
                         .code(413)
                         .send({ statusCode: 413, error: "File too large." });
                 }
-                if (!file.mimetype.match(/^image\/(png|svg|jpg|jpeg|jfif|gif|webp)$/i)) {
+                if (!/^image\/(png|svg|jpg|jpeg|jfif|gif|webp)$/i.test(file.mimetype)) {
                     //remove the file
                     fs.rm(file?.path, (err) => {
                         console.error(err);
@@ -80,7 +98,7 @@ export default function (
                         .code(415)
                         .send({ statusCode: 415, error: "File type not supported." });
                 }
-                const user = await verifyUser(req.headers.authorization, req.ip);
+                const user = req.user;
                 if (!user) {
                     fs.rm(`uploads/${file?.filename}`, (err) => {
                         console.error(err);

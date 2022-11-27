@@ -1,11 +1,29 @@
+/*
+ Copyright (C) 2022-present Metahkg Contributors
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as
+ published by the Free Software Foundation, either version 3 of the
+ License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { removedCl, threadCl } from "../../../../../lib/common";
-import verifyUser from "../../../../../lib/auth/verify";
+
 import regex from "../../../../../lib/regex";
 import Thread from "../../../../../models/thread";
 import RequireAdmin from "../../../../../plugins/requireAdmin";
 import { ReasonSchemaAdmin } from "../../../../../lib/schemas";
+import { objectFilter } from "../../../../../lib/objectFilter";
 
 export default function (
     fastify: FastifyInstance,
@@ -37,7 +55,9 @@ export default function (
             const id = Number(req.params.id);
             const cid = Number(req.params.cid);
             const { reason } = req.body;
-            const admin = await verifyUser(req.headers.authorization, req.ip);
+            const admin = objectFilter(req.user, (key: string) =>
+                ["id", "name", "sex", "role"].includes(key)
+            );
 
             const thread = (await threadCl.findOne(
                 { id, conversation: { $elemMatch: { id: cid } } },
