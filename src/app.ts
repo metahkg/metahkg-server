@@ -22,7 +22,6 @@ import { client, domain } from "./lib/common";
 import { setup } from "./mongo/setupMongo";
 import { agenda } from "./lib/agenda";
 import refreshToken from "./plugins/refreshToken";
-import updateToken from "./plugins/updateToken";
 import multipart from "@fastify/multipart";
 import fastifyRateLimit from "@fastify/rate-limit";
 import fastifyCors from "@fastify/cors";
@@ -114,7 +113,6 @@ export default async function MetahkgServer() {
     });
 
     fastify.addHook("onRequest", authenticate);
-    fastify.addHook("onRequest", updateToken);
     fastify.addHook("onRequest", refreshToken);
     // re-verify after updateToken and refreshToken
     fastify.addHook("onRequest", authenticate);

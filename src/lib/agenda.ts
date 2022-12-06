@@ -18,6 +18,7 @@
 import { Agenda, Job } from "agenda";
 import { randomBytes } from "crypto";
 import { client, usersCl, verificationCl } from "./common";
+import { revokeSessionById } from "./sessions/revokeSession";
 
 export const agenda = new Agenda({ mongo: client.db("agenda") });
 
@@ -78,3 +79,11 @@ agenda.define("removeOldNotifications", async () => {
         }
     );
 });
+
+agenda.define(
+    "revokeSession",
+    async (job: Job & { attrs: { data: { userId: number; sessionId: string } } }) => {
+        const { userId, sessionId } = job.attrs.data;
+        await revokeSessionById(userId, sessionId);
+    }
+);

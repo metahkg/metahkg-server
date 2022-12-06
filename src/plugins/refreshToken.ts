@@ -16,8 +16,10 @@
  */
 
 import { createToken } from "../lib/auth/createToken";
-import { updateSessionByToken } from "../lib/sessions/updateSession";
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { createSession } from "../lib/sessions/createSession";
+import { getSessionByToken } from "../lib/sessions/getSession";
+import { agenda } from "../lib/agenda";
 
 export default async function (
     this: FastifyInstance,
@@ -32,13 +34,26 @@ export default async function (
             new Date(exp * 1000).getTime() - 60 * 60 * 24 * 7 <
             new Date().getTime() - 60 * 60 * 24 * 2
         ) {
+            const session = await getSessionByToken(
+                user.id,
+                req.headers.authorization?.slice(7)
+            );
+
             const newToken = createToken(this.jwt, user);
 
-            await updateSessionByToken(
+            await createSession(
                 user.id,
-                req.headers.authorization?.slice(7),
-                newToken
+                newToken,
+                session.userAgent,
+                session.ip,
+                session.sameIp,
+                session.createdAt
             );
+
+            await agenda.schedule(new Date(new Date().getTime() + 1000 * 60 * 2), "revokeSession", {
+                userId: user.id,
+                sessionId: session.id,
+            })
 
             res.header("token", newToken);
         }
