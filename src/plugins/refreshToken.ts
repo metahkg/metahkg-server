@@ -50,10 +50,14 @@ export default async function (
                 session.createdAt
             );
 
-            await agenda.schedule(new Date(new Date().getTime() + 1000 * 60 * 2), "revokeSession", {
-                userId: user.id,
-                sessionId: session.id,
-            })
+            await agenda.schedule(
+                new Date(new Date().getTime() + 1000 * 60 * 2),
+                "revokeSession",
+                {
+                    userId: user.id,
+                    sessionId: session.id,
+                }
+            );
 
             res.header("token", newToken);
         }
