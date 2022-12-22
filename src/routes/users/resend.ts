@@ -50,7 +50,7 @@ export default (
                     ) => {
                         return sha256(req.body?.email);
                     },
-                    hook: "preHandler"
+                    hook: "preHandler",
                 },
             },
         },
