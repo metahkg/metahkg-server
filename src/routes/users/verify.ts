@@ -26,6 +26,7 @@ import { createSession } from "../../lib/sessions/createSession";
 import { CodeSchema, EmailSchema } from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
 import { Verification } from "../../models/verification";
+import { RateLimitOptions } from "@fastify/rate-limit";
 
 dotenv.config();
 
@@ -45,7 +46,17 @@ export default (
 
     fastify.post(
         "/verify",
-        { schema: { body: schema } },
+        {
+            schema: { body: schema },
+            config: {
+                rateLimit: <RateLimitOptions>{
+                    max: 10,
+                    ban: 10,
+                    // 1 day
+                    timeWindow: 1000 * 60 * 60 * 24,
+                },
+            },
+        },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const { email, code, sameIp } = req.body;
             const hashedEmail = sha256(email);
