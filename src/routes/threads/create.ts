@@ -1,3 +1,20 @@
+/*
+ Copyright (C) 2022-present Metahkg Contributors
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as
+ published by the Free Software Foundation, either version 3 of the
+ License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import {
     RecaptchaSecret,
     categoryCl,
@@ -13,7 +30,7 @@ import { Static, Type } from "@sinclair/typebox";
 import { generate } from "generate-password";
 import sanitize from "../../lib/sanitize";
 import User from "../../models/user";
-import Thread from "../../models/thread";
+import Thread, { publicUserType } from "../../models/thread";
 import { htmlToText } from "html-to-text";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import checkMuted from "../../plugins/checkMuted";
@@ -24,6 +41,10 @@ import {
     TitleSchema,
 } from "../../lib/schemas";
 import { sendNotification } from "../../lib/notifications/sendNotification";
+import { sha256 } from "../../lib/sha256";
+import { Link } from "../../models/link";
+import Category from "../../models/category";
+import { RateLimitOptions } from "@fastify/rate-limit";
 
 export default (
     fastify: FastifyInstance,
@@ -43,13 +64,17 @@ export default (
     fastify.post(
         "/",
         {
-            preHandler: [
-                checkMuted,
-                fastify.rateLimit({
-                    max: 10,
+            preHandler: [checkMuted],
+            config: {
+                rateLimit: <RateLimitOptions>{
+                    keyGenerator: (req: FastifyRequest) => {
+                        return req.user?.id ? `user${req.user.id}` : sha256(req.ip);
+                    },
+                    max: 30,
+                    ban: 5,
                     timeWindow: 1000 * 60 * 60,
-                }),
-            ],
+                },
+            },
             schema: { body: schema },
         },
         async (
@@ -73,13 +98,15 @@ export default (
             if (!user)
                 return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
-            const category = await categoryCl.findOne({ id: req.body.category });
+            const category = (await categoryCl.findOne({
+                id: req.body.category,
+            })) as Category;
             if (!category)
                 return res
                     .code(404)
                     .send({ statusCode: 404, error: "Category not found." });
 
-            if (await threadCl.findOne({ title }, { projection: { _id: 0, id: 1 } }))
+            if ((await threadCl.findOne({ title }, { projection: { _id: 0 } })) as Thread)
                 return res
                     .code(409)
                     .send({ statusCode: 409, error: "Title already exists." });
@@ -107,16 +134,16 @@ export default (
 
             let commentSlinkId = generate(genOpts);
 
-            while (await linksCl.findOne({ id: commentSlinkId })) {
+            while ((await linksCl.findOne({ id: commentSlinkId })) as Link) {
                 commentSlinkId = generate(genOpts);
             }
 
-            await linksCl.insertOne({
+            await linksCl.insertOne(<Link>{
                 id: commentSlinkId,
                 url: `/thread/${newThreadId}?c=1`,
             });
 
-            const userData = {
+            const userData: publicUserType = {
                 id: user.id,
                 name: user.name,
                 role: user.role,

@@ -1,3 +1,20 @@
+/*
+ Copyright (C) 2022-present Metahkg Contributors
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as
+ published by the Free Software Foundation, either version 3 of the
+ License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { htmlToText } from "html-to-text";
@@ -7,7 +24,8 @@ import { threadCl } from "../../../../../lib/common";
 import regex from "../../../../../lib/regex";
 import checkComment from "../../../../../plugins/checkComment";
 import RequireAdmin from "../../../../../plugins/requireAdmin";
-import { ReasonSchemaAdmin, CommentContentSchema } from "../../../../../lib/schemas";
+import { ReasonSchemaAdmin, CommentSchema } from "../../../../../lib/schemas";
+import { objectFilter } from "../../../../../lib/objectFilter";
 
 export default function (
     fastify: FastifyInstance,
@@ -43,7 +61,9 @@ export default function (
             const id = Number(req.params.id);
             const cid = Number(req.params.cid);
 
-            const user = req.user;
+            const admin = objectFilter(req.user, (key: string) =>
+                ["id", "name", "sex", "role"].includes(key)
+            );
 
             const { content, reason } = req.body;
 
@@ -70,7 +90,7 @@ export default function (
                     },
                     $push: {
                         [`conversation.${index}.admin.edits`]: {
-                            admin: user,
+                            admin,
                             reason,
                             date: new Date(),
                         },

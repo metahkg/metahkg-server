@@ -1,7 +1,24 @@
+/*
+ Copyright (C) 2022-present Metahkg Contributors
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as
+ published by the Free Software Foundation, either version 3 of the
+ License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import { Static, Type } from "@sinclair/typebox";
 import { threadCl } from "../../../lib/common";
 
-import Thread, { commentType } from "../../../models/thread";
+import Thread, { Comment } from "../../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../lib/regex";
 import { IntegerSchema } from "../../../lib/schemas";
@@ -64,14 +81,12 @@ export default function (
                         },
                     },
                 }
-            )) as Thread;
+            )) as Thread & { removed: undefined };
 
             if (!thread)
                 return res
                     .code(404)
                     .send({ statusCode: 404, error: "Thread not found." });
-
-            if ("removed" in thread) return;
 
             if (thread?.op?.id !== user.id)
                 return res.code(403).send({ statusCode: 403, error: "Forbidden." });
@@ -80,7 +95,7 @@ export default function (
                 Object.entries(thread.conversation?.[0]).filter(
                     (i) => !["replies", "U", "D", "admin"].includes(i[0])
                 )
-            ) as commentType;
+            ) as Comment;
 
             if (!comment)
                 return res
