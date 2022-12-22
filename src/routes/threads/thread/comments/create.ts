@@ -68,9 +68,9 @@ export default (
                     keyGenerator: (req: FastifyRequest) => {
                         return req.user?.id ? `user${req.user.id}` : sha256(req.ip);
                     },
-                    max: 300,
-                    ban: 50,
-                    timeWindow: 1000 * 60 * 60,
+                    max: 10,
+                    ban: 5,
+                    timeWindow: 1000 * 60,
                 },
             },
         },
