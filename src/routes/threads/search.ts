@@ -1,10 +1,26 @@
+/*
+ Copyright (C) 2022-present Metahkg Contributors
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as
+ published by the Free Software Foundation, either version 3 of the
+ License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import { Static, Type } from "@sinclair/typebox";
 import { threadCl } from "../../lib/common";
 import Thread from "../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../lib/regex";
 import { hiddencats } from "../../lib/hiddencats";
-import verifyUser from "../../lib/auth/verify";
 
 export default (
     fastify: FastifyInstance,
@@ -44,7 +60,7 @@ export default (
             const sort = req.query.sort || "relevance";
             const mode = req.query.mode || "title";
             const limit = Number(req.query.limit) || 25;
-            const user = await verifyUser(req.headers.authorization, req.ip);
+            const user = req.user;
 
             const regex = new RegExp(
                 query.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"),

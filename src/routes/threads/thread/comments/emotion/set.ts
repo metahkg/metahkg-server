@@ -1,7 +1,24 @@
+/*
+ Copyright (C) 2022-present Metahkg Contributors
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as
+ published by the Free Software Foundation, either version 3 of the
+ License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { domain, threadCl } from "../../../../../lib/common";
-import verifyUser from "../../../../../lib/auth/verify";
+
 import { sendNotification } from "../../../../../lib/notifications/sendNotification";
 import regex from "../../../../../lib/regex";
 import Thread from "../../../../../models/thread";
@@ -33,7 +50,7 @@ export default function (
             }>,
             res
         ) {
-            const user = await verifyUser(req.headers.authorization, req.ip);
+            const user = req.user;
             if (!user)
                 return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
@@ -52,39 +69,35 @@ export default function (
                         _id: 0,
                         id: 1,
                         title: 1,
-                        index: {
-                            $indexOfArray: ["$conversation.id", cid],
-                        },
                         conversation: { $elemMatch: { id: cid } },
                     },
                 }
-            )) as Thread & { index: number };
-
-            const index = thread?.index;
-
-            // index can be 0
-            if (index === undefined || index === -1)
-                return res
-                    .code(404)
-                    .send({ statusCode: 404, error: "Comment not found." });
+            )) as Thread;
 
             // remove previous value first
-            await threadCl.updateOne(
-                { id },
-                {
-                    $pull: {
-                        [`conversation.${index}.emotions`]: {
-                            user: user.id,
+            const previousExist = Boolean(
+                (
+                    await threadCl.updateOne(
+                        {
+                            id,
+                            conversation: { $elemMatch: { id: cid } },
                         },
-                    },
-                }
+                        {
+                            $pull: {
+                                [`conversation.$.emotions`]: {
+                                    user: user.id,
+                                },
+                            },
+                        }
+                    )
+                ).modifiedCount
             );
 
             await threadCl.updateOne(
-                { id },
+                { id, conversation: { $elemMatch: { id: cid } } },
                 {
                     $push: {
-                        [`conversation.${index}.emotions`]: {
+                        [`conversation.$.emotions`]: {
                             user: user.id,
                             emotion,
                         },
@@ -95,7 +108,10 @@ export default function (
             if (
                 !("removed" in thread) &&
                 !("removed" in thread.conversation?.[0]) &&
-                thread.conversation[0]?.user?.id !== user.id
+                thread.conversation[0]?.user?.id !== user.id &&
+                // prevent spamming by repeated reset of the emotion to
+                // send a large amount to notifications to the targeted user
+                !previousExist
             )
                 sendNotification(thread?.conversation[0].user.id, {
                     title: `New reaction (${thread.title})`,

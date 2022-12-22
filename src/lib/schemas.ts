@@ -1,3 +1,20 @@
+/*
+ Copyright (C) 2022-present Metahkg Contributors
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as
+ published by the Free Software Foundation, either version 3 of the
+ License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import { Type } from "@sinclair/typebox";
 
 export const ReasonSchemaUser = Type.String({
@@ -12,7 +29,7 @@ export const ReasonSchemaAdmin = Type.String({
 export const RTokenSchema = Type.String({ minLength: 1, maxLength: 1000 });
 
 export const TitleSchema = Type.String({ minLength: 1, maxLength: 500 });
-export const CommentSchema = Type.String({ minLength: 1, maxLength: 10000 });
+export const CommentSchema = Type.String({ minLength: 1, maxLength: 50000 });
 export const VoteSchema = Type.Union([Type.Literal("U"), Type.Literal("D")]);
 
 export const UserNameSchema = Type.RegEx(/^\S{1,15}$/);

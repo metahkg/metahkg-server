@@ -1,3 +1,20 @@
+/*
+ Copyright (C) 2022-present Metahkg Contributors
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as
+ published by the Free Software Foundation, either version 3 of the
+ License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import { usersCl, verificationCl } from "../../lib/common";
 import { Static, Type } from "@sinclair/typebox";
 import User from "../../models/user";
@@ -7,6 +24,8 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { createSession } from "../../lib/sessions/createSession";
 import { CodeSchema, EmailSchema, PasswordSchema } from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
+import { Verification } from "../../models/verification";
+import { RateLimitOptions } from "@fastify/rate-limit";
 
 export default (
     fastify: FastifyInstance,
@@ -24,18 +43,34 @@ export default (
 
     fastify.post(
         "/reset",
-        { schema: { body: schema } },
+        {
+            schema: { body: schema },
+            config: {
+                rateLimit: <RateLimitOptions>{
+                    max: 5,
+                    ban: 5,
+                    keyGenerator: (
+                        req: FastifyRequest<{ Body: Static<typeof schema> }>
+                    ) => {
+                        return sha256(req.body?.email);
+                    },
+                    hook: "preHandler",
+                    // one day
+                    timeWindow: 1000 * 60 * 60 * 24,
+                },
+            },
+        },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const { email, code, password } = req.body;
 
             const hashedEmail = sha256(email);
 
             if (
-                !(await verificationCl.findOne({
+                !((await verificationCl.findOne({
                     type: "reset",
                     email: hashedEmail,
                     code,
-                }))
+                })) as Verification)
             )
                 return res.code(401).send({
                     statusCode: 401,
@@ -54,10 +89,10 @@ export default (
             await verificationCl.deleteOne({
                 type: "reset",
                 email: hashedEmail,
-                code: code,
+                code,
             });
 
-            const token = createToken(user);
+            const token = createToken(fastify.jwt, user);
 
             await createSession(user.id, token, req.headers["user-agent"], req.ip);
 

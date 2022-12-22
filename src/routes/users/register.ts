@@ -1,9 +1,25 @@
+/*
+ Copyright (C) 2022-present Metahkg Contributors
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as
+ published by the Free Software Foundation, either version 3 of the
+ License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import { RecaptchaSecret, usersCl, verificationCl, inviteCl } from "../../lib/common";
 import { mg, mgDomain, verifyMsg } from "../../lib/mailgun";
 import EmailValidator from "email-validator";
 import { verifyCaptcha } from "../../lib/recaptcha";
 import bcrypt from "bcrypt";
-import { generate } from "generate-password";
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import dotenv from "dotenv";
@@ -17,6 +33,10 @@ import {
     SexSchema,
     InviteCodeSchema,
 } from "../../lib/schemas";
+import { randomBytes } from "crypto";
+import { Verification } from "../../models/verification";
+import User from "../../models/user";
+import { RateLimitOptions } from "@fastify/rate-limit";
 
 dotenv.config();
 
@@ -40,12 +60,25 @@ export default (
 
     fastify.post(
         "/register",
-        { schema: { body: schema } },
+        {
+            schema: { body: schema },
+            config: {
+                rateLimit: <RateLimitOptions>{
+                    max: 5,
+                    ban: 5,
+                    // 1 day
+                    timeWindow: 1000 * 60 * 60 * 24,
+                },
+            },
+        },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             if (EmailValidator.validate(req.body.name))
-                return res.code(400).send({ statusCode: 400, error: "Bad request." });
+                return res
+                    .code(400)
+                    .send({ statusCode: 400, error: "Name must not be a email." });
 
             const { name, password, email, rtoken, sex, inviteCode } = req.body;
+            const hashedEmail = sha256(email);
 
             if (!(await verifyCaptcha(RecaptchaSecret, rtoken)))
                 return res
@@ -53,12 +86,11 @@ export default (
                     .send({ statusCode: 429, error: "Recaptcha token invalid." });
 
             // register modes (process.env.register)
-            const registerMode =
-                {
-                    normal: "normal",
-                    none: "none",
-                    invite: "invite",
-                }[process.env.register || ""] || "normal";
+            const registerMode = ["normal", "none", "invite"].includes(
+                process.env.register
+            )
+                ? process.env.register
+                : "normal";
 
             if (registerMode === "none")
                 return res
@@ -75,34 +107,35 @@ export default (
                     .send({ statusCode: 400, error: "Invalid invite code." });
 
             if (
-                (await usersCl.findOne({
-                    $or: [{ name }, { email: sha256(email) }],
-                })) ||
-                (await verificationCl.findOne({
-                    $or: [{ name }, { email }],
-                }))
+                ((await usersCl.findOne({
+                    $or: [{ name }, { email: hashedEmail }],
+                })) as User) ||
+                ((await verificationCl.findOne({
+                    type: "register",
+                    $or: [{ name }, { email: hashedEmail }],
+                })) as Verification)
             )
                 return res.code(409).send({
                     statusCode: 409,
                     error: "Username or email already in use.",
                 });
 
-            const code = generate({
-                length: 30,
-                numbers: true,
-                lowercase: true,
-                uppercase: true,
-                symbols: false,
-                strict: true,
-            });
+            const code = randomBytes(15).toString("hex");
 
-            await mg.messages.create(mgDomain, verifyMsg({ email, code }));
+            try {
+                await mg.messages.create(mgDomain, verifyMsg({ email, code }));
+            } catch {
+                return res.code(500).send({
+                    statusCode: 500,
+                    error: "An error occurred while sending the email.",
+                });
+            }
 
             const hashedPwd = await bcrypt.hash(password, 10);
-            await verificationCl.insertOne({
+            await verificationCl.insertOne(<Verification>{
                 createdAt: new Date(),
                 code,
-                email,
+                email: hashedEmail,
                 password: hashedPwd,
                 name,
                 sex,
@@ -112,7 +145,7 @@ export default (
             await agenda.every(
                 "1 day",
                 "updateVerificationCode",
-                { email },
+                { email: hashedEmail },
                 {
                     startDate: new Date(new Date().getTime() + 86400 * 1000),
                     skipImmediate: true,

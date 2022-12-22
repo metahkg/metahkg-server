@@ -1,3 +1,20 @@
+/*
+ Copyright (C) 2022-present Metahkg Contributors
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU Affero General Public License as
+ published by the Free Software Foundation, either version 3 of the
+ License, or (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU Affero General Public License for more details.
+
+ You should have received a copy of the GNU Affero General Public License
+ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 import {
     linksCl,
     RecaptchaSecret,
@@ -9,17 +26,18 @@ import {
 import { verifyCaptcha } from "../../../../lib/recaptcha";
 import findImages from "../../../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
-import verifyUser from "../../../../lib/auth/verify";
 import { generate } from "generate-password";
 import sanitize from "../../../../lib/sanitize";
-import Images from "../../../../models/images";
-import Thread, { commentType } from "../../../../models/thread";
+import Thread, { Comment } from "../../../../models/thread";
 import { htmlToText } from "html-to-text";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../../lib/regex";
 import checkMuted from "../../../../plugins/checkMuted";
 import { sendNotification } from "../../../../lib/notifications/sendNotification";
 import { CommentSchema, IntegerSchema, RTokenSchema } from "../../../../lib/schemas";
+import { sha256 } from "../../../../lib/sha256";
+import { Link } from "../../../../models/link";
+import { RateLimitOptions } from "@fastify/rate-limit";
 
 export default (
     fastify: FastifyInstance,
@@ -45,6 +63,16 @@ export default (
                 params: paramsSchema,
             },
             preHandler: [checkMuted],
+            config: {
+                rateLimit: <RateLimitOptions>{
+                    keyGenerator: (req: FastifyRequest) => {
+                        return req.user?.id ? `user${req.user.id}` : sha256(req.ip);
+                    },
+                    max: 10,
+                    ban: 5,
+                    timeWindow: 1000 * 60,
+                },
+            },
         },
         async (
             req: FastifyRequest<{
@@ -62,7 +90,7 @@ export default (
                     .code(429)
                     .send({ statusCode: 429, error: "Recaptcha token invalid." });
 
-            const user = await verifyUser(req.headers.authorization, req.ip);
+            const user = req.user;
             if (!user)
                 return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
@@ -94,16 +122,16 @@ export default (
 
             let slinkId = generate(genOpts);
 
-            while (await linksCl.findOne({ id: slinkId })) {
+            while ((await linksCl.findOne({ id: slinkId })) as Link) {
                 slinkId = generate(genOpts);
             }
 
-            await linksCl.insertOne({
+            await linksCl.insertOne(<Link>{
                 id: slinkId,
                 url: `/thread/${id}?c=${newcid}`,
             });
 
-            let quotedComment: commentType | undefined, quoteIndex: number;
+            let quotedComment: Comment | undefined, quoteIndex: number;
 
             if (quote) {
                 const thread = (await threadCl.findOne(
@@ -126,7 +154,7 @@ export default (
                                         i[0]
                                     )
                             )
-                        ) as commentType) || undefined;
+                        ) as Comment) || undefined;
                     if ("removed" in quotedComment) quotedComment = undefined;
 
                     if (quotedComment) quoteIndex = thread?.index;
@@ -168,17 +196,19 @@ export default (
             }
 
             if (imagesInComment.length) {
-                const imagesData = (
-                    (await threadCl.findOne(
-                        { id },
-                        { projection: { _id: 0, images: 1 } }
-                    )) as Images
-                ).images;
+                const thread = (await threadCl.findOne(
+                    { id },
+                    { projection: { _id: 0, images: 1 } }
+                )) as Thread;
+
+                if ("removed" in thread) return;
+
+                const imagesData = thread.images;
 
                 await threadCl.updateOne(
                     { id },
                     {
-                        $push: {
+                        $addToSet: {
                             images: {
                                 $each: imagesInComment
                                     .filter(
