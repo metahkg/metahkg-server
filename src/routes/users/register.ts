@@ -36,6 +36,7 @@ import {
 import { randomBytes } from "crypto";
 import { Verification } from "../../models/verification";
 import User from "../../models/user";
+import { RateLimitOptions } from "@fastify/rate-limit";
 
 dotenv.config();
 
@@ -62,7 +63,7 @@ export default (
         {
             schema: { body: schema },
             config: {
-                rateLimit: {
+                rateLimit: <RateLimitOptions>{
                     max: 5,
                     ban: 5,
                     // 1 day

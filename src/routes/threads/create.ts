@@ -44,6 +44,7 @@ import { sendNotification } from "../../lib/notifications/sendNotification";
 import { sha256 } from "../../lib/sha256";
 import { Link } from "../../models/link";
 import Category from "../../models/category";
+import { RateLimitOptions } from "@fastify/rate-limit";
 
 export default (
     fastify: FastifyInstance,
@@ -65,7 +66,7 @@ export default (
         {
             preHandler: [checkMuted],
             config: {
-                rateLimit: {
+                rateLimit: <RateLimitOptions>{
                     keyGenerator: (req: FastifyRequest) => {
                         return req.user?.id ? `user${req.user.id}` : sha256(req.ip);
                     },

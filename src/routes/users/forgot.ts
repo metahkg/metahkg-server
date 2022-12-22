@@ -15,6 +15,7 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { RateLimitOptions } from "@fastify/rate-limit";
 import { Static, Type } from "@sinclair/typebox";
 import { randomBytes } from "crypto";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
@@ -41,7 +42,7 @@ export default (
         {
             schema: { body: schema },
             config: {
-                rateLimit: {
+                rateLimit: <RateLimitOptions>{
                     max: 2,
                     ban: 2,
                     keyGenerator: (
@@ -49,6 +50,7 @@ export default (
                     ) => {
                         return sha256(req.body?.email);
                     },
+                    hook: "preHandler",
                     // one day
                     timeWindow: 1000 * 60 * 60 * 24,
                 },

@@ -23,6 +23,7 @@ import { mg, mgDomain, verifyMsg } from "../../lib/mailgun";
 import { EmailSchema, RTokenSchema } from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
 import { Verification } from "../../models/verification";
+import { RateLimitOptions } from "@fastify/rate-limit";
 
 export default (
     fastify: FastifyInstance,
@@ -39,7 +40,7 @@ export default (
         {
             schema: { body: schema },
             config: {
-                rateLimit: {
+                rateLimit: <RateLimitOptions>{
                     max: 2,
                     ban: 5,
                     // one day
@@ -49,6 +50,7 @@ export default (
                     ) => {
                         return sha256(req.body?.email);
                     },
+                    hook: "preHandler"
                 },
             },
         },
