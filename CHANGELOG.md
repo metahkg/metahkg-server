@@ -1,5 +1,11 @@
 # Changelog
 
+## v5.9.0
+
+- `/users/reset` and `/users/verify` now require recaptcha
+- `/users/reset` now supports `sameIp`
+- better rate limit configurations
+
 ## v5.8.0
 
 - `/users/login` now requires recaptcha

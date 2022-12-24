@@ -17,13 +17,11 @@
 
 import {
     linksCl,
-    RecaptchaSecret,
     LINKS_DOMAIN,
     threadCl,
     domain,
     usersCl,
 } from "../../../../lib/common";
-import { verifyCaptcha } from "../../../../lib/recaptcha";
 import findImages from "../../../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
 import { generate } from "generate-password";
@@ -38,6 +36,7 @@ import { CommentSchema, IntegerSchema, RTokenSchema } from "../../../../lib/sche
 import { sha256 } from "../../../../lib/sha256";
 import { Link } from "../../../../models/link";
 import { RateLimitOptions } from "@fastify/rate-limit";
+import RequireReCAPTCHA from "../../../../plugins/requireRecaptcha";
 
 export default (
     fastify: FastifyInstance,
@@ -62,7 +61,7 @@ export default (
                 body: schema,
                 params: paramsSchema,
             },
-            preHandler: [checkMuted],
+            preHandler: [RequireReCAPTCHA, checkMuted],
             config: {
                 rateLimit: <RateLimitOptions>{
                     keyGenerator: (req: FastifyRequest) => {
@@ -83,12 +82,7 @@ export default (
         ) => {
             const id = Number(req.params.id);
 
-            const { rtoken, quote } = req.body;
-
-            if (!(await verifyCaptcha(RecaptchaSecret, rtoken)))
-                return res
-                    .code(429)
-                    .send({ statusCode: 429, error: "Recaptcha token invalid." });
+            const { quote } = req.body;
 
             const user = req.user;
             if (!user)

@@ -19,13 +19,13 @@ import { RateLimitOptions } from "@fastify/rate-limit";
 import { Static, Type } from "@sinclair/typebox";
 import { randomBytes } from "crypto";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { RecaptchaSecret, usersCl, verificationCl } from "../../lib/common";
+import { usersCl, verificationCl } from "../../lib/common";
 import { mg, mgDomain, resetMsg } from "../../lib/mailgun";
-import { verifyCaptcha } from "../../lib/recaptcha";
 import { EmailSchema, RTokenSchema } from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
 import User from "../../models/user";
 import { Verification } from "../../models/verification";
+import RequireReCAPTCHA from "../../plugins/requireRecaptcha";
 
 export default (
     fastify: FastifyInstance,
@@ -55,15 +55,11 @@ export default (
                     timeWindow: 1000 * 60 * 60 * 24,
                 },
             },
+            preHandler: [RequireReCAPTCHA]
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            const { email, rtoken } = req.body;
+            const { email } = req.body;
             const hashedEmail = sha256(email);
-
-            if (!verifyCaptcha(RecaptchaSecret, rtoken))
-                return res
-                    .code(429)
-                    .send({ statusCode: 429, error: "Recaptcha token invalid." });
 
             const userData = (await usersCl.findOne({ email: hashedEmail })) as User;
             if (!userData)

@@ -15,10 +15,9 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { RecaptchaSecret, usersCl, verificationCl, inviteCl } from "../../lib/common";
+import { usersCl, verificationCl, inviteCl } from "../../lib/common";
 import { mg, mgDomain, verifyMsg } from "../../lib/mailgun";
 import EmailValidator from "email-validator";
-import { verifyCaptcha } from "../../lib/recaptcha";
 import bcrypt from "bcrypt";
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
@@ -37,6 +36,7 @@ import { randomBytes } from "crypto";
 import { Verification } from "../../models/verification";
 import User from "../../models/user";
 import { RateLimitOptions } from "@fastify/rate-limit";
+import RequireReCAPTCHA from "../../plugins/requireRecaptcha";
 
 dotenv.config();
 
@@ -70,6 +70,7 @@ export default (
                     timeWindow: 1000 * 60 * 60 * 24,
                 },
             },
+            preHandler: [RequireReCAPTCHA]
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             if (EmailValidator.validate(req.body.name))
@@ -77,13 +78,8 @@ export default (
                     .code(400)
                     .send({ statusCode: 400, error: "Name must not be a email." });
 
-            const { name, password, email, rtoken, sex, inviteCode } = req.body;
+            const { name, password, email, sex, inviteCode } = req.body;
             const hashedEmail = sha256(email);
-
-            if (!(await verifyCaptcha(RecaptchaSecret, rtoken)))
-                return res
-                    .code(429)
-                    .send({ statusCode: 429, error: "Recaptcha token invalid." });
 
             // register modes (process.env.register)
             const registerMode = ["normal", "none", "invite"].includes(

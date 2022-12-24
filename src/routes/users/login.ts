@@ -16,7 +16,7 @@
  */
 
 import dotenv from "dotenv";
-import { RecaptchaSecret, usersCl, verificationCl } from "../../lib/common";
+import { usersCl, verificationCl } from "../../lib/common";
 import bcrypt from "bcrypt";
 import { Static, Type } from "@sinclair/typebox";
 import { createToken } from "../../lib/auth/createToken";
@@ -31,8 +31,8 @@ import {
 } from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
 import { Verification } from "../../models/verification";
-import { verifyCaptcha } from "../../lib/recaptcha";
 import { RateLimitOptions } from "@fastify/rate-limit";
+import RequireReCAPTCHA from "../../plugins/requireRecaptcha";
 
 dotenv.config();
 
@@ -63,14 +63,10 @@ export default (
                 },
             },
             schema: { body: schema },
+            preHandler: [RequireReCAPTCHA]
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            const { name, password, sameIp, rtoken } = req.body;
-
-            if (!(await verifyCaptcha(RecaptchaSecret, rtoken)))
-                return res
-                    .code(429)
-                    .send({ statusCode: 429, error: "Recaptcha token invalid." });
+            const { name, password, sameIp } = req.body;
 
             const user = (await usersCl.findOne({
                 $or: [{ name }, { email: sha256(name) }],
