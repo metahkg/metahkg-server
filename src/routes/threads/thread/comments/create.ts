@@ -15,13 +15,7 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import {
-    linksCl,
-    LINKS_DOMAIN,
-    threadCl,
-    domain,
-    usersCl,
-} from "../../../../lib/common";
+import { linksCl, LINKS_DOMAIN, threadCl, domain, usersCl } from "../../../../lib/common";
 import findImages from "../../../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
 import { generate } from "generate-password";

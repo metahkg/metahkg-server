@@ -53,7 +53,7 @@ export default (
                     hook: "preHandler",
                 },
             },
-            preHandler: [RequireReCAPTCHA]
+            preHandler: [RequireReCAPTCHA],
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const { email } = req.body;

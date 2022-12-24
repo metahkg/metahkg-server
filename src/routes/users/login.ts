@@ -63,7 +63,7 @@ export default (
                 },
             },
             schema: { body: schema },
-            preHandler: [RequireReCAPTCHA]
+            preHandler: [RequireReCAPTCHA],
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const { name, password, sameIp } = req.body;

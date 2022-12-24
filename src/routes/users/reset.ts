@@ -92,7 +92,13 @@ export default (
 
             const token = createToken(fastify.jwt, user);
 
-            await createSession(user.id, token, req.headers["user-agent"], req.ip, sameIp);
+            await createSession(
+                user.id,
+                token,
+                req.headers["user-agent"],
+                req.ip,
+                sameIp
+            );
 
             return res.send({ token });
         }

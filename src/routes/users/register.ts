@@ -70,7 +70,7 @@ export default (
                     timeWindow: 1000 * 60 * 60 * 24,
                 },
             },
-            preHandler: [RequireReCAPTCHA]
+            preHandler: [RequireReCAPTCHA],
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             if (EmailValidator.validate(req.body.name))

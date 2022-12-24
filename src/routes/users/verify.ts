@@ -41,7 +41,7 @@ export default (
             email: EmailSchema,
             code: CodeSchema,
             sameIp: Type.Optional(Type.Boolean()),
-            rtoken: RTokenSchema
+            rtoken: RTokenSchema,
         },
         { additionalProperties: false }
     );
@@ -58,7 +58,7 @@ export default (
                     timeWindow: 1000 * 60 * 60 * 24,
                 },
             },
-            preHandler: [RequireReCAPTCHA]
+            preHandler: [RequireReCAPTCHA],
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const { email, code, sameIp } = req.body;
