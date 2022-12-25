@@ -42,6 +42,8 @@ COPY --from=build /usr/src/app/dist ./dist
 
 RUN if [ "${env}" = "dev" ]; then yarn install; else yarn install --production; fi;
 
-RUN touch .env && mkdir images && chown user:user -R images .env
+USER user
 
-CMD chown user:user -R images && su user -c 'if [ "${env}" = "dev" ]; then yarn dev; else yarn start; fi;'
+RUN touch .env
+
+CMD if [ "${env}" = "dev" ]; then yarn dev; else yarn start; fi;
