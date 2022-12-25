@@ -32,7 +32,11 @@ For manual deployment, see DEPLOY.md.
 
 ## OpenApi specification
 
-See [openapi spec](https://gitlab.com/metahkg/openapi-spec).
+- [current version (in this branch)](./openapi.yaml)
+- [master](https://gitlab.com/metahkg/metahkg-server/-/blob/master/openapi.yaml)
+- [dev](https://gitlab.com/metahkg/metahkg-server/-/blob/dev/openapi.yaml)
+
+For archives, see [openapi spec](https://gitlab.com/metahkg/openapi-spec).
 
 ## Api docs
 

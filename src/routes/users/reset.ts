@@ -22,9 +22,11 @@ import bcrypt from "bcrypt";
 import { createToken } from "../../lib/auth/createToken";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { createSession } from "../../lib/sessions/createSession";
-import { CodeSchema, EmailSchema, PasswordSchema } from "../../lib/schemas";
+import { CodeSchema, EmailSchema, PasswordSchema, RTokenSchema } from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
 import { Verification } from "../../models/verification";
+import { RateLimitOptions } from "@fastify/rate-limit";
+import RequireReCAPTCHA from "../../plugins/requireRecaptcha";
 
 export default (
     fastify: FastifyInstance,
@@ -36,15 +38,28 @@ export default (
             email: EmailSchema,
             code: CodeSchema,
             password: PasswordSchema,
+            sameIp: Type.Optional(Type.Boolean()),
+            rtoken: RTokenSchema,
         },
         { additionalProperties: false }
     );
 
     fastify.post(
         "/reset",
-        { schema: { body: schema } },
+        {
+            schema: { body: schema },
+            config: {
+                rateLimit: <RateLimitOptions>{
+                    max: 5,
+                    ban: 5,
+                    // one day
+                    timeWindow: 1000 * 60 * 60 * 24,
+                },
+            },
+            preHandler: [RequireReCAPTCHA],
+        },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            const { email, code, password } = req.body;
+            const { email, code, password, sameIp } = req.body;
 
             const hashedEmail = sha256(email);
 
@@ -77,7 +92,13 @@ export default (
 
             const token = createToken(fastify.jwt, user);
 
-            await createSession(user.id, token, req.headers["user-agent"], req.ip);
+            await createSession(
+                user.id,
+                token,
+                req.headers["user-agent"],
+                req.ip,
+                sameIp
+            );
 
             return res.send({ token });
         }

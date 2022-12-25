@@ -23,9 +23,16 @@ import { createToken } from "../../lib/auth/createToken";
 import User from "../../models/user";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { createSession } from "../../lib/sessions/createSession";
-import { EmailSchema, PasswordSchema, UserNameSchema } from "../../lib/schemas";
+import {
+    EmailSchema,
+    PasswordSchema,
+    RTokenSchema,
+    UserNameSchema,
+} from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
 import { Verification } from "../../models/verification";
+import { RateLimitOptions } from "@fastify/rate-limit";
+import RequireReCAPTCHA from "../../plugins/requireRecaptcha";
 
 dotenv.config();
 
@@ -40,6 +47,7 @@ export default (
             // check if password is a sha256 hash
             password: PasswordSchema,
             sameIp: Type.Optional(Type.Boolean()),
+            rtoken: RTokenSchema,
         },
         { additionalProperties: false }
     );
@@ -48,13 +56,14 @@ export default (
         "/login",
         {
             config: {
-                rateLimit: {
+                rateLimit: <RateLimitOptions>{
                     max: 5,
                     ban: 5,
                     timeWindow: 1000 * 60 * 5,
                 },
             },
             schema: { body: schema },
+            preHandler: [RequireReCAPTCHA],
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const { name, password, sameIp } = req.body;

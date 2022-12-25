@@ -1,5 +1,16 @@
 # Changelog
 
+## v5.9.0
+
+- `/users/reset` and `/users/verify` now require recaptcha
+- `/users/reset` now supports `sameIp`
+- better rate limit configurations
+
+## v5.8.0
+
+- `/users/login` now requires recaptcha
+- fixed rate limit for `/users/forgot` and `/users/resend`
+
 ## v5.7.2
 
 - fixed rate limit on certain paths (use `config` instead of `preHandler`)

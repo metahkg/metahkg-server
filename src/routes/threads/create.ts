@@ -16,7 +16,6 @@
  */
 
 import {
-    RecaptchaSecret,
     categoryCl,
     LINKS_DOMAIN,
     linksCl,
@@ -24,7 +23,6 @@ import {
     usersCl,
     domain,
 } from "../../lib/common";
-import { verifyCaptcha } from "../../lib/recaptcha";
 import findImages from "../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
 import { generate } from "generate-password";
@@ -44,6 +42,8 @@ import { sendNotification } from "../../lib/notifications/sendNotification";
 import { sha256 } from "../../lib/sha256";
 import { Link } from "../../models/link";
 import Category from "../../models/category";
+import { RateLimitOptions } from "@fastify/rate-limit";
+import RequireReCAPTCHA from "../../plugins/requireRecaptcha";
 
 export default (
     fastify: FastifyInstance,
@@ -63,9 +63,9 @@ export default (
     fastify.post(
         "/",
         {
-            preHandler: [checkMuted],
+            preHandler: [RequireReCAPTCHA, checkMuted],
             config: {
-                rateLimit: {
+                rateLimit: <RateLimitOptions>{
                     keyGenerator: (req: FastifyRequest) => {
                         return req.user?.id ? `user${req.user.id}` : sha256(req.ip);
                     },
@@ -86,11 +86,6 @@ export default (
             const comment = sanitize(req.body.comment);
             const text = htmlToText(comment, { wordwrap: false });
             const title = req.body.title.trim();
-
-            if (!(await verifyCaptcha(RecaptchaSecret, req.body.rtoken)))
-                return res
-                    .code(429)
-                    .send({ statusCode: 429, error: "Recaptcha token invalid." });
 
             const user = req.user;
             if (!user)

@@ -41,7 +41,8 @@ export const verifyMsg = (params: { email: string; code: string }) => {
         <p>Click here to verify your email address:</p>
         <a href="https://${domain}/users/verify?code=${encodeURIComponent(
             code
-        )}&email=${encodeURIComponent(email)}">Verify</a>`,
+        )}&email=${encodeURIComponent(email)}">Verify</a>
+        <p>Please ignore this email if you did not register at ${domain}.</p>`,
     };
 };
 
@@ -52,9 +53,10 @@ export const resetMsg = (params: { email: string; code: string }) => {
         to: email,
         subject: "Metahkg - Reset Password",
         html: /*html*/ `<h1>Reset Password</h1>
-        <p>Click here to reset your password:</h1>
+        <p>Click here to reset your password:</p>
         <a href="https://${domain}/users/reset?code=${encodeURIComponent(
             code
-        )}&email=${encodeURIComponent(email)}">Reset</a>`,
+        )}&email=${encodeURIComponent(email)}">Reset</a>
+        <p>Please ignore this email if you did not request to reset your password.</p>`,
     };
 };

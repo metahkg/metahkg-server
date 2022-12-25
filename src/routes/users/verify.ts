@@ -23,9 +23,11 @@ import User from "../../models/user";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { agenda } from "../../lib/agenda";
 import { createSession } from "../../lib/sessions/createSession";
-import { CodeSchema, EmailSchema } from "../../lib/schemas";
+import { CodeSchema, EmailSchema, RTokenSchema } from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
 import { Verification } from "../../models/verification";
+import { RateLimitOptions } from "@fastify/rate-limit";
+import RequireReCAPTCHA from "../../plugins/requireRecaptcha";
 
 dotenv.config();
 
@@ -39,15 +41,28 @@ export default (
             email: EmailSchema,
             code: CodeSchema,
             sameIp: Type.Optional(Type.Boolean()),
+            rtoken: RTokenSchema,
         },
         { additionalProperties: false }
     );
 
     fastify.post(
         "/verify",
-        { schema: { body: schema } },
+        {
+            schema: { body: schema },
+            config: {
+                rateLimit: <RateLimitOptions>{
+                    max: 5,
+                    ban: 5,
+                    // 1 day
+                    timeWindow: 1000 * 60 * 60 * 24,
+                },
+            },
+            preHandler: [RequireReCAPTCHA],
+        },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const { email, code, sameIp } = req.body;
+
             const hashedEmail = sha256(email);
 
             const verificationData = (await verificationCl.findOne({
