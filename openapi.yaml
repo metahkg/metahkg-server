@@ -2698,6 +2698,7 @@ paths:
       operationId: usersReset
       summary: Reset password
       description: "Reset password. A jwt token is returned.
+        All sessions would be revoked.
         Rate limit: 5 requests / 1 day.
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/5.9.0-dev/src/routes/users/reset.ts)"
       requestBody:

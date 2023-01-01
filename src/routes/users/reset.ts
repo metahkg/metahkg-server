@@ -27,6 +27,7 @@ import { sha256 } from "../../lib/sha256";
 import { Verification } from "../../models/verification";
 import { RateLimitOptions } from "@fastify/rate-limit";
 import RequireReCAPTCHA from "../../plugins/requireRecaptcha";
+import { revokeAllSessions } from "../../lib/sessions/revokeAllSessions";
 
 export default (
     fastify: FastifyInstance,
@@ -91,6 +92,8 @@ export default (
             });
 
             const token = createToken(fastify.jwt, user);
+
+            await revokeAllSessions(user.id);
 
             await createSession(
                 user.id,
