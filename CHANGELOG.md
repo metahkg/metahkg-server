@@ -1,5 +1,9 @@
 # Changelog
 
+## v5.10.0
+
+- resetting password would now revoke all sessions
+
 ## v5.9.0
 
 - `/users/reset` and `/users/verify` now require recaptcha
