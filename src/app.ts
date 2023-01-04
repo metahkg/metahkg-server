@@ -33,6 +33,7 @@ import { jwtTokenSchema } from "./types/jwt";
 import fastifyJwt from "@fastify/jwt";
 import { getSessionByToken } from "./lib/sessions/getSession";
 import { sha256 } from "./lib/sha256";
+import updateToken from "./plugins/updateToken";
 
 dotenv.config();
 
@@ -113,6 +114,7 @@ export default async function MetahkgServer() {
     });
 
     fastify.addHook("onRequest", authenticate);
+    fastify.addHook("onRequest", updateToken);
     fastify.addHook("onRequest", refreshToken);
     // re-verify after updateToken and refreshToken
     fastify.addHook("onRequest", authenticate);
