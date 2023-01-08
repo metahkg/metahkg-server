@@ -18,17 +18,17 @@ export async function generateCerts() {
     }
 
     console.log("Public and private key not found. Generating a new ed25519 key pair...");
-    const {publicKey, privateKey } = generateKeyPairSync("ed25519", {
+    const { publicKey, privateKey } = generateKeyPairSync("ed25519", {
         publicKeyEncoding: {
-            type: 'spki',
-            format: 'pem'
+            type: "spki",
+            format: "pem",
         },
         privateKeyEncoding: {
-            type: 'pkcs8',
+            type: "pkcs8",
             format: "pem",
-            cipher: 'aes-256-cbc',
-            passphrase: config.KEY_PASSPHRASE
-        }
+            cipher: "aes-256-cbc",
+            passphrase: config.KEY_PASSPHRASE,
+        },
     });
     if (!existsSync("certs")) {
         mkdirSync("certs");

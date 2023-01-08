@@ -43,7 +43,7 @@ export default function (
         { schema: { body: schema } },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const user = req.user;
-        
+
             await subscribeByToken(
                 user.id,
                 req.headers.authorization?.slice(7),

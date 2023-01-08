@@ -22,7 +22,11 @@ import { config } from "../config";
 
 export async function sendNotification(userId: number, data: Notification) {
     webPush.setGCMAPIKey(config.GCM_API_KEY);
-    webPush.setVapidDetails(`https://${config.DOMAIN}`, config.VAPID_PUBLIC_KEY, config.VAPID_PRIVATE_KEY);
+    webPush.setVapidDetails(
+        `https://${config.DOMAIN}`,
+        config.VAPID_PUBLIC_KEY,
+        config.VAPID_PRIVATE_KEY
+    );
     const sessions = (
         (await usersCl.findOne(
             { id: userId },
