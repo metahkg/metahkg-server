@@ -17,9 +17,10 @@
 
 import { FastifyReply, FastifyRequest } from "fastify";
 
-export default async function RequireSameUser(
+export default function RequireSameUser(
     req: FastifyRequest<{ Params: { id: string } }>,
-    res: FastifyReply
+    res: FastifyReply,
+    done: (err?: Error) => void
 ) {
     const userId = Number(req.params.id);
     const user = req.user;
@@ -28,5 +29,5 @@ export default async function RequireSameUser(
     if (user.id !== userId)
         return res.code(403).send({ statusCode: 403, error: "Forbidden." });
 
-    return;
+    done();
 }

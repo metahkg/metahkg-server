@@ -25,6 +25,7 @@ import EmailValidator from "email-validator";
 import User, { userSex } from "../../../../models/user";
 import { updateSessionByToken } from "../../../../lib/sessions/updateSession";
 import { SexSchema, UserNameSchema } from "../../../../lib/schemas";
+import requireSameUser from "../../../../plugins/requireSameUser";
 
 export default (
     fastify: FastifyInstance,
@@ -43,7 +44,10 @@ export default (
 
     fastify.patch(
         "/",
-        { schema: { body: schema, params: paramsSchema } },
+        {
+            schema: { body: schema, params: paramsSchema },
+            preValidation: [requireSameUser],
+        },
         async (
             req: FastifyRequest<{
                 Body: Static<typeof schema>;
@@ -51,11 +55,7 @@ export default (
             }>,
             res
         ) => {
-            const id = Number(req.params.id);
-
             const user = req.user;
-            if (!user || user?.id !== id)
-                return res.code(403).send({ statusCode: 403, error: "Forbidden." });
 
             const { name, sex } = req.body as { name?: string; sex?: userSex };
 
@@ -89,7 +89,7 @@ export default (
 
             await updateSessionByToken(
                 user.id,
-                req.headers.authorization.slice(7),
+                req.headers.authorization?.slice(7),
                 newToken
             );
 

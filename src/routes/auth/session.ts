@@ -18,13 +18,14 @@
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
 import { getSessionByToken } from "../../lib/sessions/getSession";
 import { objectFilter } from "../../lib/objectFilter";
+import requireAuth from "../../plugins/requireAuth";
 
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
-    fastify.get("/session", async (req, res) => {
+    fastify.get("/session", { preValidation: [requireAuth] }, async (req, res) => {
         const user = req.user;
 
         const session = await getSessionByToken(

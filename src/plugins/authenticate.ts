@@ -21,4 +21,7 @@ export default async function (req: FastifyRequest) {
     try {
         await req.jwtVerify();
     } catch {}
+    if (!req.user) {
+        req.headers.authorization = undefined;
+    }
 }
