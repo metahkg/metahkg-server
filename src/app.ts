@@ -102,8 +102,17 @@ export default async function MetahkgServer() {
                 passphrase: config.KEY_PASSPHRASE,
             },
         },
-        sign: { algorithm: "EdDSA", iss: config.DOMAIN, aud: config.DOMAIN, expiresIn: "7d" },
-        verify: { algorithms: ["EdDSA"], allowedIss: [config.DOMAIN], allowedAud: [config.DOMAIN] },
+        sign: {
+            algorithm: "EdDSA",
+            iss: config.DOMAIN,
+            aud: config.DOMAIN,
+            expiresIn: "7d",
+        },
+        verify: {
+            algorithms: ["EdDSA"],
+            allowedIss: [config.DOMAIN],
+            allowedAud: [config.DOMAIN],
+        },
         trusted: async (req, decodedToken) => {
             // validate with jwt token schema
             if (!decodedToken || !ajv.validate(jwtTokenSchema, decodedToken))

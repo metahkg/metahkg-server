@@ -115,7 +115,10 @@ export default (
             const code = randomBytes(15).toString("hex");
 
             try {
-                await mg.messages.create(config.MAILGUN_DOMAIN, verifyMsg({ email, code }));
+                await mg.messages.create(
+                    config.MAILGUN_DOMAIN,
+                    verifyMsg({ email, code })
+                );
             } catch {
                 return res.code(500).send({
                     statusCode: 500,
