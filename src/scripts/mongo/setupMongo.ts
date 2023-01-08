@@ -23,10 +23,10 @@ import {
     linksCl,
     votesCl,
     inviteCl,
-} from "../lib/common";
-import Category from "../models/category";
+} from "../../lib/common";
+import Category from "../../models/category";
 import { categories } from "./category";
-export async function setup() {
+export async function setupMongo() {
     await threadCl.createIndex({ id: 1 });
     await usersCl.createIndex({ id: 1 });
     await usersCl.createIndex({ name: 1 });

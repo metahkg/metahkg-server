@@ -18,43 +18,41 @@
 import Mailgun from "mailgun.js";
 import formData from "form-data";
 import dotenv from "dotenv";
-import { domain } from "./common";
+import { config } from "./config";
 
 dotenv.config();
-
-export const mgDomain = process.env.mailgun_domain || process.env.domain || "metahkg.org";
 
 const mailgun = new Mailgun(formData);
 
 export const mg = mailgun.client({
-    key: process.env.mailgun_key || "",
+    key: config.MAILGUN_KEY,
     username: "api",
 });
 
 export const verifyMsg = (params: { email: string; code: string }) => {
     const { email, code } = params;
     return {
-        from: `Metahkg support <support@${mgDomain}>`,
+        from: `Metahkg support <support@${config.MAILGUN_DOMAIN}>`,
         to: email,
         subject: "Metahkg - verify your email",
         html: /*html*/ `<h1>Verify your email</h1>
         <p>Click here to verify your email address:</p>
-        <a href="https://${domain}/users/verify?code=${encodeURIComponent(
+        <a href="https://${config.DOMAIN}/users/verify?code=${encodeURIComponent(
             code
         )}&email=${encodeURIComponent(email)}">Verify</a>
-        <p>Please ignore this email if you did not register at ${domain}.</p>`,
+        <p>Please ignore this email if you did not register at ${config.DOMAIN}.</p>`,
     };
 };
 
 export const resetMsg = (params: { email: string; code: string }) => {
     const { email, code } = params;
     return {
-        from: `Metahkg support <support@${mgDomain}>`,
+        from: `Metahkg support <support@${config.MAILGUN_DOMAIN}>`,
         to: email,
         subject: "Metahkg - Reset Password",
         html: /*html*/ `<h1>Reset Password</h1>
         <p>Click here to reset your password:</p>
-        <a href="https://${domain}/users/reset?code=${encodeURIComponent(
+        <a href="https://${config.DOMAIN}/users/reset?code=${encodeURIComponent(
             code
         )}&email=${encodeURIComponent(email)}">Reset</a>
         <p>Please ignore this email if you did not request to reset your password.</p>`,

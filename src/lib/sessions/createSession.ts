@@ -20,7 +20,7 @@ import { usersCl } from "../common";
 import { sha256 } from "../sha256";
 import { createDecoder } from "fast-jwt";
 import { jwtTokenType } from "../../types/jwt";
-import User from "../../models/user";
+import User, { Session } from "../../models/user";
 
 export async function createSession(
     userId: number,
@@ -29,14 +29,24 @@ export async function createSession(
     ip: string,
     sameIp?: boolean,
     createdAt: Date = new Date()
-) {
+): Promise<
+    Session & {
+        /** jwt token (unhashed) */
+        token: string;
+        /** refresh token (unhashed) */
+        refreshToken: string;
+    }
+> {
     const decode = createDecoder();
     const exp = (decode(token) as jwtTokenType)?.exp * 1000;
     if (!exp) return null;
 
-    const session = {
+    const refreshToken = randomBytes(15).toString("hex");
+
+    const session: Session = {
         id: randomBytes(15).toString("hex"),
         token: sha256(token),
+        refreshToken: sha256(refreshToken),
         createdAt,
         exp: new Date(exp),
         userAgent,
@@ -47,7 +57,9 @@ export async function createSession(
     while (
         (await usersCl.findOne({
             id: userId,
-            sessions: { $elemMatch: { id: session.id } },
+            sessions: {
+                $elemMatch: { id: session.id },
+            },
         })) as User
     ) {
         session.id = randomBytes(15).toString("hex");
@@ -67,5 +79,5 @@ export async function createSession(
     )
         return null;
 
-    return session;
+    return { ...session, token, refreshToken };
 }

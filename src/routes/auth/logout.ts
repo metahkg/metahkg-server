@@ -15,24 +15,23 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import blocked from "./blocked";
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import votes from "./votes";
-import starred from "./starred";
-import notifications from "./notifications";
-import following from "./following";
+
+import { revokeSessionByToken } from "../../lib/sessions/revokeSession";
 import RequireAuth from "../../plugins/requireAuth";
 
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (err?: Error) => void
 ) {
-    fastify.addHook("preValidation", RequireAuth);
-    fastify.register(votes, { prefix: "/votes" });
-    fastify.register(blocked);
-    fastify.register(starred);
-    fastify.register(following);
-    fastify.register(notifications, { prefix: "/notifications" });
+    fastify.post("/logout", { preValidation: [RequireAuth] }, async (req, res) => {
+        const user = req.user;
+
+        const token = req.headers.authorization?.slice(7);
+        await revokeSessionByToken(user.id, token);
+
+        return res.send({ success: true });
+    });
     done();
 }

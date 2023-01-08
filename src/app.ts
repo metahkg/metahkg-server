@@ -18,28 +18,29 @@
 import dotenv from "dotenv";
 import routes from "./routes";
 import Fastify, { FastifyRequest } from "fastify";
-import { client, domain } from "./lib/common";
-import { setup } from "./mongo/setupMongo";
+import { client } from "./lib/common";
+import { setupMongo } from "./scripts/mongo/setupMongo";
 import { agenda } from "./lib/agenda";
-import refreshToken from "./plugins/refreshToken";
 import multipart from "@fastify/multipart";
 import fastifyRateLimit from "@fastify/rate-limit";
 import fastifyCors from "@fastify/cors";
 import { ajv } from "./lib/ajv";
 import sitemap from "./sitemap";
-import checkBanned from "./plugins/checkBanned";
 import authenticate from "./plugins/authenticate";
 import { jwtTokenSchema } from "./types/jwt";
 import fastifyJwt from "@fastify/jwt";
 import { getSessionByToken } from "./lib/sessions/getSession";
 import { sha256 } from "./lib/sha256";
-import updateToken from "./plugins/updateToken";
+import { config } from "./lib/config";
+import { readFileSync } from "fs";
+import { generateCerts } from "./scripts/certs";
 
 dotenv.config();
 
 export default async function MetahkgServer() {
     await client.connect();
-    await setup();
+    await setupMongo();
+    await generateCerts();
     await agenda.start();
 
     [
@@ -64,7 +65,7 @@ export default async function MetahkgServer() {
     fastify.setValidatorCompiler((opt) => ajv.compile(opt.schema));
 
     fastify.setErrorHandler((error, _request, res) => {
-        console.error(error);
+        fastify.log.error(error);
         const { statusCode, message: errormsg } = error;
 
         if (error.validation) {
@@ -79,7 +80,7 @@ export default async function MetahkgServer() {
         res.code(500).send({ statusCode: 500, error: "Internal Server Error." });
     });
 
-    JSON.parse(process.env.cors) && fastify.register(fastifyCors);
+    config.CORS && fastify.register(fastifyCors);
 
     fastify.register(multipart);
 
@@ -94,19 +95,46 @@ export default async function MetahkgServer() {
     });
 
     fastify.register(fastifyJwt, {
-        secret: process.env.jwtKey || "",
-        sign: { algorithm: "HS256", iss: domain, aud: domain, expiresIn: "7d" },
-        verify: { algorithms: ["HS256"], allowedIss: [domain], allowedAud: [domain] },
+        secret: {
+            public: readFileSync("certs/public.pem", "utf-8"),
+            private: {
+                key: readFileSync("certs/private.pem", "utf-8"),
+                passphrase: config.KEY_PASSPHRASE,
+            },
+        },
+        sign: { algorithm: "EdDSA", iss: config.DOMAIN, aud: config.DOMAIN, expiresIn: "7d" },
+        verify: { algorithms: ["EdDSA"], allowedIss: [config.DOMAIN], allowedAud: [config.DOMAIN] },
         trusted: async (req, decodedToken) => {
+            // validate with jwt token schema
             if (!decodedToken || !ajv.validate(jwtTokenSchema, decodedToken))
                 return false;
 
+            // check if session exists
             const session = await getSessionByToken(
                 decodedToken.id,
-                req.headers.authorization?.slice(7)
+                req.headers.authorization?.slice(7),
+                true
             );
             if (!session) return false;
 
+            // check if user is banned
+            if (session.user?.ban) return false;
+
+            // check if all values are the same
+            if (
+                !Object.entries(decodedToken).every(([key, value]: [string, any]) => {
+                    const userData = session.user as { [_k: string]: any };
+                    if (userData[key]) {
+                        if (value === userData[key]) return true;
+                        return false;
+                    }
+                    return true;
+                })
+            ) {
+                return false;
+            }
+
+            // check if ip is the same (if sameIp is enabled)
             if (session.sameIp && sha256(req.ip) !== session.ip) return false;
 
             return true;
@@ -114,11 +142,6 @@ export default async function MetahkgServer() {
     });
 
     fastify.addHook("onRequest", authenticate);
-    fastify.addHook("onRequest", updateToken);
-    fastify.addHook("onRequest", refreshToken);
-    // re-verify after updateToken and refreshToken
-    fastify.addHook("onRequest", authenticate);
-    fastify.addHook("onRequest", checkBanned);
 
     fastify.register(sitemap);
     fastify.register(routes, { prefix: "/api" });

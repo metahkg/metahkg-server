@@ -16,7 +16,7 @@
  */
 
 import { usersCl, verificationCl, inviteCl } from "../../lib/common";
-import { mg, mgDomain, verifyMsg } from "../../lib/mailgun";
+import { mg, verifyMsg } from "../../lib/mailgun";
 import EmailValidator from "email-validator";
 import bcrypt from "bcrypt";
 import { Static, Type } from "@sinclair/typebox";
@@ -37,6 +37,7 @@ import { Verification } from "../../models/verification";
 import User from "../../models/user";
 import { RateLimitOptions } from "@fastify/rate-limit";
 import RequireReCAPTCHA from "../../plugins/requireRecaptcha";
+import { config } from "../../lib/config";
 
 dotenv.config();
 
@@ -81,12 +82,7 @@ export default (
             const { name, password, email, sex, inviteCode } = req.body;
             const hashedEmail = sha256(email);
 
-            // register modes (process.env.register)
-            const registerMode = ["normal", "none", "invite"].includes(
-                process.env.register
-            )
-                ? process.env.register
-                : "normal";
+            const registerMode = config.REGISTER_MODE;
 
             if (registerMode === "none")
                 return res
@@ -119,7 +115,7 @@ export default (
             const code = randomBytes(15).toString("hex");
 
             try {
-                await mg.messages.create(mgDomain, verifyMsg({ email, code }));
+                await mg.messages.create(config.MAILGUN_DOMAIN, verifyMsg({ email, code }));
             } catch {
                 return res.code(500).send({
                     statusCode: 500,

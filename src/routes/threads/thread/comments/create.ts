@@ -15,7 +15,7 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { linksCl, LINKS_DOMAIN, threadCl, domain, usersCl } from "../../../../lib/common";
+import { linksCl, threadCl, usersCl } from "../../../../lib/common";
 import findImages from "../../../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
 import { generate } from "generate-password";
@@ -31,6 +31,7 @@ import { sha256 } from "../../../../lib/sha256";
 import { Link } from "../../../../models/link";
 import { RateLimitOptions } from "@fastify/rate-limit";
 import RequireReCAPTCHA from "../../../../plugins/requireRecaptcha";
+import { config } from "../../../../lib/config";
 
 export default (
     fastify: FastifyInstance,
@@ -166,7 +167,7 @@ export default (
                             comment,
                             text,
                             createdAt: new Date(),
-                            slink: `https://${LINKS_DOMAIN}/${slinkId}`,
+                            slink: `https://${config.LINKS_DOMAIN}/${slinkId}`,
                             images: imagesInComment,
                             ...(quotedComment && { quote: quotedComment }),
                         },
@@ -239,7 +240,7 @@ export default (
                                     type: "comment",
                                     threadId: thread.id,
                                     commentId: newcid,
-                                    url: `https://${domain}/thread/${thread.id}?c=${newcid}`,
+                                    url: `https://${config.DOMAIN}/thread/${thread.id}?c=${newcid}`,
                                 },
                             },
                         });
@@ -259,7 +260,7 @@ export default (
                                 type: "reply",
                                 threadId: thread.id,
                                 commentId: newcid,
-                                url: `https://${domain}/thread/${thread.id}?c=${newcid}`,
+                                url: `https://${config.DOMAIN}/thread/${thread.id}?c=${newcid}`,
                             },
                         },
                     });

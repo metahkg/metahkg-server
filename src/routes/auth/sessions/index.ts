@@ -15,24 +15,16 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import blocked from "./blocked";
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import votes from "./votes";
-import starred from "./starred";
-import notifications from "./notifications";
-import following from "./following";
-import RequireAuth from "../../plugins/requireAuth";
+import session from "./session";
+import sessions from "./sessions";
 
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (err?: Error) => void
 ) {
-    fastify.addHook("preValidation", RequireAuth);
-    fastify.register(votes, { prefix: "/votes" });
-    fastify.register(blocked);
-    fastify.register(starred);
-    fastify.register(following);
-    fastify.register(notifications, { prefix: "/notifications" });
+    fastify.register(session, { prefix: "/:id" });
+    fastify.register(sessions);
     done();
 }

@@ -1,5 +1,56 @@
 # Changelog
 
+## v6.0.0
+
+> **WARNING**: Braking changes (routes and db, migration not needed)
+> You should re-configure your environmental variables (see other changes)
+> All previous sessions will be invalid after this update (see auth)
+
+### Routes
+
+- auth-related routes are now all under `/auth` (src/auth, src/users, src/me)
+  - many routes under `/users` and `/me` are now in `/auth` (see openapi.yaml)
+  - including:
+    - everything under `/users` except `/users/{id}`
+    - /me/session --> /me/session
+    - /me/sessions --> /auth/sessions
+    - /me/logout --> /auth/logout
+- added: `/auth/sessions/{id}/refresh` (see auth changes)
+- added: `/server/publickey` to retrieve the public key of the server (see auth changes)
+
+### Security
+
+- added rate limit for several routes
+  - src/routes/me/blocked
+  - src/routes/me/following
+  - src/routes/me/starred
+  - src/routes/users/user/avatar/upload.ts
+- for `/me`, added `requireAuth` hook at the root to replace `if (!user)` lines
+
+### Auth
+
+- query db for user identity reduced from three times to once per request
+  - check for banned put into `trusted` (src/app.ts)
+  - updateToken hook removed (src/app.ts)
+  - added a check for if every field in jwt data is the same as in that in db, if not the token would be considered invalid (src/app.ts)
+- removed the `token` response header (src/users/user/actions/edit.ts)
+- refreshToken hook removed (src/app.ts)
+- added refresh token to be sent alongside token upon login and `/auth/sessions/{id}/refresh` for refreshing a session in 7 days after expiry / before expiry (src/auth/sessions/session/refresh.ts)
+- not to extend the expiry time for an updated token (src/users/user/actions/edit.ts)
+- use a set of `ed25519` keys for signing and verifying JWTs (algorithm changed to `EdDSA`) (src/app.ts)
+  - as a result, all previous sessions are invalidated
+  - keys are automatically generated at runtime if do not exist (src/scripts/certs.ts)
+  - added `/server/publickey` to retrieve the server public key (src/routes/server/publickey.ts)
+
+### Other changes
+
+- replaced some `console` calls with `fastify.log`
+- added `src/lib/config.ts` to replace `process.env` calls
+- env variables renamed to be more standardized (temp.env)
+  - compatibility with previous naming (using config.ts)
+- added `KEY_PASSPHRASE` environment variable (temp.env)
+- docker: use `node` as the user (Dockerfile)
+
 ## v5.10.0
 
 - resetting password would now revoke all sessions

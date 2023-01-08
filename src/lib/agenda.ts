@@ -62,7 +62,16 @@ agenda.define("removeExpiredSessions", async () => {
     // probably bug from mongodb side that $pull only accepts never
     await usersCl.updateMany(
         {},
-        { $pull: { sessions: { exp: { $lt: new Date() } } } as never }
+        {
+            $pull: {
+                sessions: {
+                    exp: {
+                        // 7 days after expiry (can refresh)
+                        $lt: new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 7),
+                    },
+                },
+            } as never,
+        }
     );
 });
 

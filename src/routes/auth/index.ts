@@ -16,28 +16,29 @@
  */
 
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import { getSessionByToken } from "../../lib/sessions/getSession";
-import { objectFilter } from "../../lib/objectFilter";
+import register from "./register";
+import login from "./login";
+import verify from "./verify";
+import resend from "./resend";
+import reset from "./reset";
+import forgot from "./forgot";
+import sessions from "./sessions";
+import logout from "./logout";
+import session from "./session";
 
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
-    fastify.get("/session", async (req, res) => {
-        const user = req.user;
-        if (!user) return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
-
-        const session = await getSessionByToken(
-            user.id,
-            req.headers.authorization?.slice(7)
-        );
-
-        res.send(
-            objectFilter(session, (key) =>
-                ["id", "createdAt", "exp", "sameIp", "userAgent"].includes(key)
-            )
-        );
-    });
+    fastify.register(sessions, { prefix: "/sessions" });
+    fastify.register(session);
+    fastify.register(login);
+    fastify.register(logout);
+    fastify.register(register);
+    fastify.register(verify);
+    fastify.register(resend);
+    fastify.register(reset);
+    fastify.register(forgot);
     done();
 };

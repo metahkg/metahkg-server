@@ -16,22 +16,17 @@
  */
 
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
-
-import { revokeSessionByToken } from "../../lib/sessions/revokeSession";
+import refresh from "./refresh";
+import revoke from "./revoke";
+import session from "./session";
 
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
     done: (err?: Error) => void
 ) {
-    fastify.post("/logout", async (req, res) => {
-        const user = req.user;
-        if (!user) return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
-
-        const token = req.headers.authorization?.slice(7);
-        await revokeSessionByToken(user.id, token);
-
-        return res.send({ success: true });
-    });
+    fastify.register(session);
+    fastify.register(revoke);
+    fastify.register(refresh);
     done();
 }

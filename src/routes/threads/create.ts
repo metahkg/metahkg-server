@@ -17,11 +17,9 @@
 
 import {
     categoryCl,
-    LINKS_DOMAIN,
     linksCl,
     threadCl,
     usersCl,
-    domain,
 } from "../../lib/common";
 import findImages from "../../lib/findimages";
 import { Static, Type } from "@sinclair/typebox";
@@ -44,6 +42,7 @@ import { Link } from "../../models/link";
 import Category from "../../models/category";
 import { RateLimitOptions } from "@fastify/rate-limit";
 import RequireReCAPTCHA from "../../plugins/requireRecaptcha";
+import { config } from "../../lib/config";
 
 export default (
     fastify: FastifyInstance,
@@ -152,7 +151,7 @@ export default (
                     {
                         id: 1,
                         user: userData,
-                        slink: `https://${LINKS_DOMAIN}/${commentSlinkId}`,
+                        slink: `https://${config.LINKS_DOMAIN}/${commentSlinkId}`,
                         comment,
                         text,
                         createdAt: date,
@@ -161,7 +160,7 @@ export default (
                 ],
                 op: userData,
                 score: 0,
-                slink: `https://${LINKS_DOMAIN}/${newThreadId}`,
+                slink: `https://${config.LINKS_DOMAIN}/${newThreadId}`,
                 title,
                 category: category.id,
                 lastModified: date,
@@ -199,7 +198,7 @@ export default (
                                 data: {
                                     type: "thread",
                                     threadId: newThreadId,
-                                    url: `https://${domain}/thread/${newThreadId}`,
+                                    url: `https://${config.DOMAIN}/thread/${newThreadId}`,
                                 },
                             },
                         });

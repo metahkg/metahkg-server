@@ -16,12 +16,13 @@
  */
 
 import webPush from "web-push";
-import { domain, usersCl, vapidKeys } from "../common";
+import { usersCl } from "../common";
 import User, { Notification } from "../../models/user";
+import { config } from "../config";
 
 export async function sendNotification(userId: number, data: Notification) {
-    webPush.setGCMAPIKey(process.env.GCM_API_KEY);
-    webPush.setVapidDetails(`https://${domain}`, vapidKeys.public, vapidKeys.private);
+    webPush.setGCMAPIKey(config.GCM_API_KEY);
+    webPush.setVapidDetails(`https://${config.DOMAIN}`, config.VAPID_PUBLIC_KEY, config.VAPID_PRIVATE_KEY);
     const sessions = (
         (await usersCl.findOne(
             { id: userId },
@@ -50,7 +51,7 @@ export async function sendNotification(userId: number, data: Notification) {
         try {
             await webPush.sendNotification(session.subscription, JSON.stringify(data));
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     });
 

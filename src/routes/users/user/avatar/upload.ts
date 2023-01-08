@@ -15,6 +15,7 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { RateLimitOptions } from "@fastify/rate-limit";
 import dotenv from "dotenv";
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
 import multer from "fastify-multer"; // handle image uploads
@@ -62,7 +63,7 @@ export default function (
             ])
             .toFormat("png")
             .toFile(`tmp/avatars/${id}.png`)
-            .catch((err) => console.log(err));
+            .catch((err) => fastify.log.error(err));
         await move(`tmp/avatars/${id}.png`, `images/avatars/${id}.png`, {
             overwrite: true,
         });
@@ -74,7 +75,16 @@ export default function (
      */
     fastify.put(
         "/",
-        { preHandler: [RequireSameUser, upload.single("avatar")] },
+        {
+            preHandler: [RequireSameUser, upload.single("avatar")],
+            config: {
+                rateLimit: <RateLimitOptions>{
+                    max: 10,
+                    ban: 5,
+                    timeWindow: 1000 * 60 * 60,
+                },
+            },
+        },
         async (req, res) => {
             try {
                 const file = req.file as unknown as File;
@@ -83,7 +93,7 @@ export default function (
 
                 if (file?.size > maxSize) {
                     fs.rm(file?.path, (err) => {
-                        console.error(err);
+                        fastify.log.error(err);
                     });
                     return res
                         .code(413)
@@ -92,7 +102,7 @@ export default function (
                 if (!/^image\/(png|svg|jpg|jpeg|jfif|gif|webp)$/i.test(file.mimetype)) {
                     //remove the file
                     fs.rm(file?.path, (err) => {
-                        console.error(err);
+                        fastify.log.error(err);
                     });
                     return res
                         .code(415)
@@ -101,7 +111,7 @@ export default function (
                 const user = req.user;
                 if (!user) {
                     fs.rm(`uploads/${file?.filename}`, (err) => {
-                        console.error(err);
+                        fastify.log.error(err);
                     });
                     return res
                         .code(401)
@@ -121,19 +131,19 @@ export default function (
                     await compress(`images/processing/avatars/${newFileName}`, user.id);
                     //fs.rmSync(`images/processing/avatars/${newFileName}`);
                 } catch (err) {
-                    console.error(err);
+                    fastify.log.error(err);
                     res.code(422).send({
                         statusCode: 422,
                         error: "Could not process you file.",
                     });
                     fs.rm(`images/processing/avatars/${newFileName}`, (err) => {
-                        console.error(err);
+                        fastify.log.error(err);
                     });
                     return;
                 }
                 res.send({ success: true });
             } catch (err) {
-                console.error(err);
+                fastify.log.error(err);
                 res.code(500).send({ statusCode: 500, error: "Internal server error." });
             }
         }

@@ -17,7 +17,8 @@
 
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { domain, threadCl } from "../../../../../lib/common";
+import { threadCl } from "../../../../../lib/common";
+import { config } from "../../../../../lib/config";
 
 import { sendNotification } from "../../../../../lib/notifications/sendNotification";
 import regex from "../../../../../lib/regex";
@@ -122,7 +123,7 @@ export default function (
                             type: "emotion",
                             threadId: thread.id,
                             commentId: thread.conversation[0].id,
-                            url: `https://${domain}/thread/${thread.id}?c=${thread.conversation[0].id}`,
+                            url: `https://${config.DOMAIN}/thread/${thread.id}?c=${thread.conversation[0].id}`,
                         },
                     },
                 });

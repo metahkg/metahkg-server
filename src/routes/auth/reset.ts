@@ -15,21 +15,18 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import dotenv from "dotenv";
 import { usersCl, verificationCl } from "../../lib/common";
 import { Static, Type } from "@sinclair/typebox";
-import { createToken } from "../../lib/auth/createToken";
 import User from "../../models/user";
+import bcrypt from "bcrypt";
+import { createToken } from "../../lib/auth/createToken";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { agenda } from "../../lib/agenda";
 import { createSession } from "../../lib/sessions/createSession";
-import { CodeSchema, EmailSchema, RTokenSchema } from "../../lib/schemas";
+import { CodeSchema, EmailSchema, PasswordSchema, RTokenSchema } from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
 import { Verification } from "../../models/verification";
 import { RateLimitOptions } from "@fastify/rate-limit";
 import RequireReCAPTCHA from "../../plugins/requireRecaptcha";
-
-dotenv.config();
 
 export default (
     fastify: FastifyInstance,
@@ -40,6 +37,7 @@ export default (
         {
             email: EmailSchema,
             code: CodeSchema,
+            password: PasswordSchema,
             sameIp: Type.Optional(Type.Boolean()),
             rtoken: RTokenSchema,
         },
@@ -47,70 +45,67 @@ export default (
     );
 
     fastify.post(
-        "/verify",
+        "/reset",
         {
             schema: { body: schema },
             config: {
                 rateLimit: <RateLimitOptions>{
                     max: 5,
                     ban: 5,
-                    // 1 day
+                    // one day
                     timeWindow: 1000 * 60 * 60 * 24,
                 },
             },
             preHandler: [RequireReCAPTCHA],
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            const { email, code, sameIp } = req.body;
+            const { email, code, password, sameIp } = req.body;
 
             const hashedEmail = sha256(email);
 
-            const verificationData = (await verificationCl.findOne({
-                type: "register",
+            if (
+                !((await verificationCl.findOne({
+                    type: "reset",
+                    email: hashedEmail,
+                    code,
+                })) as Verification)
+            )
+                return res.code(401).send({
+                    statusCode: 401,
+                    error: "Token incorrect, or expired, or you have not requested reset password.",
+                });
+
+            const user = (await usersCl.findOne({ email: hashedEmail })) as User;
+            if (!user)
+                return res.code(404).send({ statusCode: 404, error: "User not found." });
+
+            await usersCl.updateOne(
+                { email: hashedEmail },
+                { $set: { password: bcrypt.hashSync(password, 10) } }
+            );
+
+            await verificationCl.deleteOne({
+                type: "reset",
                 email: hashedEmail,
                 code,
-            })) as Verification & { type: "register" };
-
-            if (!verificationData)
-                return res
-                    .code(401)
-                    .send({ error: "Code incorrect or expired, or email not found." });
-
-            const { name, password, sex } = verificationData;
-
-            const newUserId =
-                ((await usersCl.find().sort({ id: -1 }).limit(1).toArray()) as User[])[0]
-                    ?.id + 1 || 1;
-
-            const newUser: User = {
-                name,
-                id: newUserId,
-                email: hashedEmail,
-                password,
-                role: "user",
-                createdAt: new Date(),
-                sex,
-            };
-
-            await usersCl.insertOne(newUser);
-            await verificationCl.deleteOne({ type: "register", email: hashedEmail });
-
-            await agenda.cancel({
-                name: "updateVerificationCode",
-                data: { email: hashedEmail },
             });
 
-            const token = createToken(fastify.jwt, newUser);
+            const token = createToken(fastify.jwt, user);
 
-            await createSession(
-                newUser.id,
+            const session = await createSession(
+                user.id,
                 token,
                 req.headers["user-agent"],
                 req.ip,
                 sameIp
             );
 
-            res.send({ token });
+            if (!session)
+                return res
+                    .code(500)
+                    .send({ statusCode: 500, error: "An error occurred." });
+
+            return res.send(session);
         }
     );
     done();

@@ -77,11 +77,15 @@ export default (
                     .code(500)
                     .send({ statusCode: 500, error: "An unknown error occured." });
 
-            const newToken = createToken(fastify.jwt, {
-                ...user,
-                ...(name && { name }),
-                ...(sex && { sex }),
-            });
+            const newToken = createToken(
+                fastify.jwt,
+                {
+                    ...user,
+                    ...(name && { name }),
+                    ...(sex && { sex }),
+                },
+                req.user.exp - new Date().getTime() / 1000
+            );
 
             await updateSessionByToken(
                 user.id,
@@ -89,7 +93,7 @@ export default (
                 newToken
             );
 
-            res.header("token", newToken).send({
+            res.send({
                 token: newToken,
             });
         }

@@ -17,18 +17,18 @@
 
 import dotenv from "dotenv";
 import MetahkgServer from "./app";
+import { config } from "./lib/config";
 
 dotenv.config();
 
 (async () => {
     const app = await MetahkgServer();
 
-    const port = Number(process.env.PORT || process.env.port) || 3200;
+    const port = config.PORT;
     /**
      * The port can be modified in .env
      */
     app.listen({ port, host: "0.0.0.0" }, (err: Error) => {
         if (err) throw err;
-        console.log(`listening at port ${port}`);
     });
 })();

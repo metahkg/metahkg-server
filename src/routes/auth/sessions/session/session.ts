@@ -18,9 +18,10 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 
-import { objectFilter } from "../../../lib/objectFilter";
-import { SessionIdSchema } from "../../../lib/schemas";
-import { getSessionById } from "../../../lib/sessions/getSession";
+import { objectFilter } from "../../../../lib/objectFilter";
+import { SessionIdSchema } from "../../../../lib/schemas";
+import { getSessionById } from "../../../../lib/sessions/getSession";
+import RequireAuth from "../../../../plugins/requireAuth";
 
 export default function (
     fastify: FastifyInstance,
@@ -32,12 +33,10 @@ export default function (
     });
 
     fastify.get(
-        "/:id",
-        { schema: { params: paramsSchema } },
+        "/",
+        { schema: { params: paramsSchema }, preValidation: [RequireAuth] },
         async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
             const user = req.user;
-            if (!user)
-                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
             const { id: sessionId } = req.params;
 

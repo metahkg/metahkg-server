@@ -29,7 +29,15 @@ export function createToken(
         name: string;
         sex: userSex;
         role: userRole;
-    }
+    },
+    /**
+     Time span after which the token expires, added as the exp claim in the payload.
+     It is expressed in seconds or a string describing a time span (E.g.: 60, "2 days", "10h", "7d").
+     A numeric value is interpreted as a seconds count.
+     If you use a string be sure you provide the time units (days, hours, etc.), otherwise milliseconds unit is used by default ("120" is equal to "120ms").
+     This will override any existing value in the claim.
+     */
+    expiresIn?: string | number
 ) {
     const { id, name, sex, role } = user;
     const jsonData: jwtTokenDataType = {
@@ -38,6 +46,6 @@ export function createToken(
         sex,
         role,
     };
-    const token = fastifyJWT.sign(jsonData);
+    const token = fastifyJWT.sign(jsonData, expiresIn && { expiresIn });
     return token;
 }

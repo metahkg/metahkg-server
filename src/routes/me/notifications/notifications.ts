@@ -27,7 +27,6 @@ export default (
 ) => {
     fastify.get("/", async (req: FastifyRequest, res) => {
         const user = req.user;
-        if (!user) return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
         const notifications = (
             (await usersCl.findOne(

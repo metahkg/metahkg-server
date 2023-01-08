@@ -16,17 +16,27 @@
  */
 
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import revoke from "./revoke";
-import session from "./session";
-import sessions from "./sessions";
+import { getSessionByToken } from "../../lib/sessions/getSession";
+import { objectFilter } from "../../lib/objectFilter";
 
-export default function (
+export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
-) {
-    fastify.register(sessions);
-    fastify.register(session);
-    fastify.register(revoke);
+    done: (e?: Error) => void
+) => {
+    fastify.get("/session", async (req, res) => {
+        const user = req.user;
+
+        const session = await getSessionByToken(
+            user.id,
+            req.headers.authorization?.slice(7)
+        );
+
+        res.send(
+            objectFilter(session, (key) =>
+                ["id", "createdAt", "exp", "sameIp", "userAgent"].includes(key)
+            )
+        );
+    });
     done();
-}
+};
