@@ -4,7 +4,7 @@
 
 > **WARNING**: Braking changes (routes and db, migration not needed)\
 > You should re-configure your environmental variables (see other changes)\
-> All previous sessions will be invalid after this update (see auth)\
+> All previous sessions will be invalid after this update (see auth)
 
 ### Routes
 
