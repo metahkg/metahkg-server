@@ -24,7 +24,8 @@ dotenv.config();
 async function migrate() {
     console.log("migrating to v5.2-v5.6...");
 
-    if (!process.env.MONGO_URI) throw new Error("Missing MONGO_URI environment variable.");
+    if (!process.env.MONGO_URI)
+        throw new Error("Missing MONGO_URI environment variable.");
 
     const client = new MongoClient(process.env.MONGO_URI);
     await client.connect();
