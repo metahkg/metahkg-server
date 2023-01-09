@@ -15,22 +15,10 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import {
-    FastifyInstance,
-    FastifyPluginOptions,
-    FastifyRequest
-} from "fastify";
-import {
-    Static,
-    Type
-} from "@sinclair/typebox";
-import {
-    CodeSchema,
-    SessionIdSchema
-} from "../../../../lib/schemas";
-import {
-    getSessionByIdOnly
-} from "../../../../lib/sessions/getSession";
+import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
+import { Static, Type } from "@sinclair/typebox";
+import { CodeSchema, SessionIdSchema } from "../../../../lib/schemas";
+import { getSessionByIdOnly } from "../../../../lib/sessions/getSession";
 import { sha256 } from "../../../../lib/sha256";
 import { refreshSession } from "../../../../lib/sessions/refreshSession";
 import { RateLimitOptions } from "@fastify/rate-limit";
@@ -44,16 +32,19 @@ export default function (
         id: SessionIdSchema,
     });
 
-    const schema = Type.Object({
-        refreshToken: CodeSchema,
-    }, {additionalProperties: false});
+    const schema = Type.Object(
+        {
+            refreshToken: CodeSchema,
+        },
+        { additionalProperties: false }
+    );
 
     fastify.post(
         "/refresh",
         {
             schema: {
                 params: paramsSchema,
-                body: schema
+                body: schema,
             },
             config: {
                 rateLimit: <RateLimitOptions>{
@@ -70,29 +61,23 @@ export default function (
             }>,
             res
         ) => {
-            const {
-                refreshToken
-            } = req.body;
-            const {id: sessionId} = req.params;
+            const { refreshToken } = req.body;
+            const { id: sessionId } = req.params;
 
             const session = await getSessionByIdOnly(sessionId, true);
 
             if (!session) {
-                return res
-                    .code(404)
-                    .send({
-                        statusCode: 404,
-                        message: "Session not found."
-                    });
+                return res.code(404).send({
+                    statusCode: 404,
+                    message: "Session not found.",
+                });
             }
 
             if (sha256(refreshToken) !== session.refreshToken) {
-                return res
-                    .code(401)
-                    .send({
-                        statusCode: 401,
-                        message: "Invalid refresh token."
-                    });
+                return res.code(401).send({
+                    statusCode: 401,
+                    message: "Invalid refresh token.",
+                });
             }
 
             if (session.sameIp && sha256(req.ip) !== session.ip) {
@@ -104,12 +89,10 @@ export default function (
 
             const refresh = await refreshSession(fastify.jwt, session.user, session.id);
             if (!refresh) {
-                return res
-                    .code(500)
-                    .send({
-                        statusCode: 500,
-                        message: "An error occurred."
-                    });
+                return res.code(500).send({
+                    statusCode: 500,
+                    message: "An error occurred.",
+                });
             }
 
             return res.send(refresh);
