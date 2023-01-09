@@ -2756,11 +2756,8 @@ paths:
               type: object
               additionalProperties: false
               required:
-                - userId
                 - refreshToken
               properties:
-                userId:
-                  $ref: "#/components/schemas/User/properties/id"
                 refreshToken:
                   $ref: "#/components/schemas/RefreshToken"
       responses:

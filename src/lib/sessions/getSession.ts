@@ -23,7 +23,9 @@ export function getSessionByToken(
     userId: number,
     sessionId: string,
     includeUser: true
-): Promise<(Session & { user: User }) | null>;
+): Promise<(Session & {
+    user: User
+}) | null>;
 export function getSessionByToken(
     userId: number,
     sessionId: string,
@@ -42,20 +44,25 @@ export async function getSessionByToken(
     const hashedToken = sha256(token);
     const user = (await usersCl.findOne({
         id: userId,
-        sessions: { $elemMatch: { token: hashedToken } },
+        "sessions.token": hashedToken,
     })) as User;
 
     // not using project since cannot retrieve the whole user object (would only include the sessions field)
     const session = user?.sessions.find((session) => session.token === hashedToken);
 
-    return includeUser ? { ...session, user } : session;
+    return includeUser ? {
+        ...session,
+        user
+    } : session;
 }
 
 export function getSessionById(
     userId: number,
     sessionId: string,
     includeUser: true
-): Promise<(Session & { user: User }) | null>;
+): Promise<(Session & {
+    user: User
+}) | null>;
 export function getSessionById(
     userId: number,
     sessionId: string,
@@ -73,7 +80,7 @@ export async function getSessionById(
 ) {
     const user = (await usersCl.findOne({
         id: userId,
-        sessions: { $elemMatch: { id: sessionId } },
+        "sessions.id": {id: sessionId},
     })) as User;
 
     if (!user) return null;
@@ -81,5 +88,42 @@ export async function getSessionById(
     // not using project since cannot retrieve the whole user object (would only include the sessions field)
     const session = user?.sessions.find((session) => session.id === sessionId);
 
-    return includeUser ? { ...session, user } : session;
+    return includeUser ? {
+        ...session,
+        user
+    } : session;
 }
+
+export function getSessionByIdOnly(
+    sessionId: string,
+    includeUser: true
+): Promise<(Session & {
+    user: User
+}) | null>;
+export function getSessionByIdOnly(
+    sessionId: string,
+    includeUser: false
+): Promise<Session | null>;
+export function getSessionByIdOnly(
+    sessionId: string
+): Promise<Session | null>;
+
+export async function getSessionByIdOnly(
+    sessionId: string,
+    includeUser?: boolean
+) {
+    const user = (await usersCl.findOne({
+        "sessions.id": {id: sessionId},
+    })) as User;
+
+    if (!user) return null;
+
+    // not using project since cannot retrieve the whole user object (would only include the sessions field)
+    const session = user?.sessions.find((session) => session.id === sessionId);
+
+    return includeUser ? {
+        ...session,
+        user
+    } : session;
+}
+

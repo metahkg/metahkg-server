@@ -56,7 +56,6 @@ export async function createSession(
 
     while (
         (await usersCl.findOne({
-            id: userId,
             sessions: {
                 $elemMatch: { id: session.id },
             },
