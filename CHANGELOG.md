@@ -1,5 +1,9 @@
 # Changelog
 
+## v6.1.0
+
+- removed `userId` field from request body of `/auth/sessions/{id}/refresh` (src/routes/sessions/session/refresh.ts)
+
 ## v6.0.0
 
 > **WARNING**: Braking changes (routes and db, migration not needed)\
