@@ -88,7 +88,7 @@ export async function getSessionById(
 ) {
     const user = (await usersCl.findOne({
         id: userId,
-        "sessions.id": { id: sessionId },
+        "sessions.id": sessionId,
     })) as User;
 
     if (!user) return null;
@@ -121,7 +121,7 @@ export function getSessionByIdOnly(sessionId: string): Promise<Session | null>;
 
 export async function getSessionByIdOnly(sessionId: string, includeUser?: boolean) {
     const user = (await usersCl.findOne({
-        "sessions.id": { id: sessionId },
+        "sessions.id": sessionId,
     })) as User;
 
     if (!user) return null;
