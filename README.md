@@ -6,7 +6,6 @@ stable (master): [metahkg.org](https://metahkg.org)
 
 dev build (dev): [dev.metahkg.org](https://dev.metahkg.org)
 
-[![React](https://badges.aleen42.com/src/react.svg)](http://reactjs.org/)
 [![Nodejs](https://badges.aleen42.com/src/node.svg)](https://nodejs.org)
 [![Typescript](https://badges.aleen42.com/src/typescript.svg)](https://www.typescriptlang.org/)
 
