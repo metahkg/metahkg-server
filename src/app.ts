@@ -44,6 +44,7 @@ export default async function MetahkgServer() {
     await agenda.start();
 
     [
+        "updateVerificationCode",
         "removeExpiredSessions",
         "removeOldNotifications",
         "autoUnmuteUsers",

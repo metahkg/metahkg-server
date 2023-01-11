@@ -22,15 +22,12 @@ import { revokeSessionById } from "./sessions/revokeSession";
 
 export const agenda = new Agenda({ mongo: client.db("agenda") });
 
-agenda.define("updateVerificationCode", async (job: Job) => {
-    // hashed email
-    const { email } = job.attrs.data;
-
-    await verificationCl.updateOne(
-        { email, createdAt: { $lte: new Date(new Date().getTime() - 86400 * 1000) } },
+agenda.define("updateVerificationCode", async () => {
+    await verificationCl.updateMany(
+        { createdAt: { $lte: new Date(new Date().getTime() - 86400 * 1000) } },
         {
             $set: { code: randomBytes(15).toString("hex") },
-            $currentDate: { lastModified: true },
+            $currentDate: { lastModified: new Date() },
         }
     );
 });

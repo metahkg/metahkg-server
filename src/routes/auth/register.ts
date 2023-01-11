@@ -22,7 +22,6 @@ import bcrypt from "bcrypt";
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import dotenv from "dotenv";
-import { agenda } from "../../lib/agenda";
 import { sha256 } from "../../lib/sha256";
 import {
     EmailSchema,
@@ -136,16 +135,6 @@ export default (
                 sex,
                 type: "register",
             });
-
-            await agenda.every(
-                "1 day",
-                "updateVerificationCode",
-                { email: hashedEmail },
-                {
-                    startDate: new Date(new Date().getTime() + 86400 * 1000),
-                    skipImmediate: true,
-                }
-            );
 
             res.send({ success: true });
         }

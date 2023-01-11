@@ -21,7 +21,6 @@ import { Static, Type } from "@sinclair/typebox";
 import { createToken } from "../../lib/auth/createToken";
 import User from "../../models/user";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { agenda } from "../../lib/agenda";
 import { createSession } from "../../lib/sessions/createSession";
 import { CodeSchema, EmailSchema, RTokenSchema } from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
@@ -94,11 +93,6 @@ export default (
 
             await usersCl.insertOne(newUser);
             await verificationCl.deleteOne({ type: "register", email: hashedEmail });
-
-            await agenda.cancel({
-                name: "updateVerificationCode",
-                data: { email: hashedEmail },
-            });
 
             const token = createToken(fastify.jwt, newUser);
 
