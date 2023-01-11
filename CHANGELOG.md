@@ -1,5 +1,11 @@
 # Changelog
 
+## v6.1.1
+
+- update verification code: changed to updateMany
+- no longer schedule runs for updateVerificationCode after register / forgot password
+  - replaced by checking and updating every 5 minutes
+
 ## v6.1.0
 
 - removed `userId` field from request body of `/auth/sessions/{id}/refresh` (src/routes/sessions/session/refresh.ts)
