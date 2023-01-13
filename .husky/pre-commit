@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
 fileList=$(git diff --diff-filter=d --cached --name-only | grep src/ | tr '\n' ' ' | xargs)
