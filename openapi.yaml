@@ -33,13 +33,13 @@ info:
     Authorization: Bearer <JWT>
     ```
     <br><br>
-    A pair of JWT token and refresh token is returned on login (`/auth/login`), verify email (`/auth/verify`), reset password (`/auth/reset`), and refresh session (`/auth/sessions/{id}/refresh`).
+    A pair of JWT token and refresh token is returned on login (`authLogin`), verify email (`authVerify`), reset password (`authReset`), and refresh session (`authSessionRefresh`).
     <br>
     The JWT token valid for 7 days.
     <br>
     In 7 days following the expiry of the JWT token,
     or when the JWT token is still valid,
-    a POST request can be sent to `/auth/sessions/{id}/refresh`
+    a POST request can be sent to `authSessionRefresh`
     to get a new set of JWT token and refresh token.
     <br>
 
@@ -3025,7 +3025,7 @@ components:
       example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWQwZjMwZjEtZjQwMC
     RefreshToken:
       type: string
-      description: 30-digit random refresh token, send to `/auth/refresh` to refresh the session in 7 days after expiry
+      description: 30-digit random refresh token, send to `authRefresh` to refresh the session in 7 days after / before expiry
       minLength: 30
       maxLength: 30
     LoginSuccess:
