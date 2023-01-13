@@ -4,6 +4,9 @@ dotenv.config();
 
 export const config = {
     MONGO_URI: process.env.MONGO_URI || process.env.DB_URI || "mongodb://localhost",
+    REDIS_HOST: process.env.REDIS_HOST || "",
+    REDIS_PASSWORD: process.env.REDIS_PASSWORD || "",
+    REDIS_PORT: Number(process.env.REDIS_PORT || 6379) || 6379,
     MAILGUN_KEY: process.env.MAILGUN_KEY || process.env.mailgun_key || "",
     MAILGUN_DOMAIN:
         process.env.MAILGUN_DOMAIN ||
