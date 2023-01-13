@@ -81,22 +81,35 @@ export default (
             const { name, password, email, sex, inviteCode } = req.body;
             const hashedEmail = sha256(email);
 
-            const registerMode = config.REGISTER_MODE;
-
-            if (registerMode === "none")
+            // check if registration is enabled
+            if (config.REGISTER_MODE === "none") {
                 return res
                     .code(400)
                     .send({ statusCode: 400, error: "Registration disabled." });
+            }
 
             // TODO: WARNING: frontend not implemented !!!
+            // check if invite code is needed, and if so check the invite code
             if (
-                registerMode === "invite" &&
+                config.REGISTER_MODE === "invite" &&
                 !(await inviteCl.findOne({ code: inviteCode }))
-            )
+            ) {
                 return res
                     .code(400)
                     .send({ statusCode: 400, error: "Invalid invite code." });
+            }
 
+            // check if email domain is allowed
+            if (
+                config.REGISTER_DOMAINS &&
+                !config.REGISTER_DOMAINS.includes(email.split("@")[1])
+            ) {
+                return res
+                    .code(400)
+                    .send({ statusCode: 400, error: "Email domain not allowed." });
+            }
+
+            // check if email / username is in use
             if (
                 ((await usersCl.findOne({
                     $or: [{ name }, { email: hashedEmail }],

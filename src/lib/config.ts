@@ -23,6 +23,14 @@ export const config = {
     )
         ? process.env.REGISTER_MODE || process.env.register
         : "normal") as "normal" | "none" | "invite",
+    REGISTER_DOMAINS: (() => {
+        if (process.env.REGISTER_DOMAINS) {
+            const domains = process.env.REGISTER_DOMAINS.split(",");
+            if (!domains.length) return null;
+            return domains;
+        }
+        return null;
+    })(),
     VISIBILITY: (["public", "internal"].includes(process.env.VISIBILITY)
         ? process.env.VISIBILITY
         : "public") as "public" | "internal",
