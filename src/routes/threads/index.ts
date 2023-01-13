@@ -20,12 +20,17 @@ import create from "./create";
 import threads from "./threads";
 import search from "./search";
 import thread from "./thread";
+import { config } from "../../lib/config";
+import RequireAuth from "../../plugins/requireAuth";
 
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
+    if (config.VISIBILITY === "internal") {
+        fastify.addHook("preParsing", RequireAuth);
+    }
     fastify.register(threads);
     fastify.register(search);
     fastify.register(create);

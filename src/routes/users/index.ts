@@ -16,6 +16,8 @@
  */
 
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
+import { config } from "../../lib/config";
+import RequireAuth from "../../plugins/requireAuth";
 import user from "./user";
 
 export default (
@@ -23,6 +25,9 @@ export default (
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
+    if (config.VISIBILITY === "internal") {
+        fastify.addHook("preParsing", RequireAuth);
+    }
     fastify.register(user, { prefix: "/:id" });
     done();
 };

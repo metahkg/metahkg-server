@@ -18,11 +18,14 @@ export const config = {
     LINKS_DOMAIN: process.env.LINKS_DOMAIN || "",
     PORT: Number(process.env.PORT || 3200) || 3200,
     RECAPTCHA_SECRET: process.env.RECAPTCHA_SECRET || process.env.recaptchasecret || "",
-    REGISTER_MODE: ["normal", "none", "invite"].includes(
+    REGISTER_MODE: (["normal", "none", "invite"].includes(
         process.env.REGISTER_MODE || process.env.register
     )
         ? process.env.REGISTER_MODE || process.env.register
-        : "normal",
+        : "normal") as "normal" | "none" | "invite",
+    VISIBILITY: (["public", "internal"].includes(process.env.VISIBILITY)
+        ? process.env.VISIBILITY
+        : "public") as "public" | "internal",
     CORS: JSON.parse(process.env.CORS || process.env.cors) || false,
     VAPID_PUBLIC_KEY: process.env.VAPID_PUBLIC_KEY || "",
     VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY || "",
