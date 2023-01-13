@@ -25,7 +25,7 @@ export default function (
     _opts: FastifyPluginOptions,
     done: (err?: Error) => void
 ) {
-    fastify.post("/logout", { preValidation: [RequireAuth] }, async (req, res) => {
+    fastify.post("/logout", { preParsing: [RequireAuth] }, async (req, res) => {
         const user = req.user;
 
         const token = req.headers.authorization?.slice(7);

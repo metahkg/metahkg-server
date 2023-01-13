@@ -25,7 +25,7 @@ export default (
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
-    fastify.get("/session", { preValidation: [requireAuth] }, async (req, res) => {
+    fastify.get("/session", { preParsing: [requireAuth] }, async (req, res) => {
         const user = req.user;
 
         const session = await getSessionByToken(

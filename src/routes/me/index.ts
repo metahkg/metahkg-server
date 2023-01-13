@@ -28,7 +28,7 @@ export default function (
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) {
-    fastify.addHook("preValidation", RequireAuth);
+    fastify.addHook("preParsing", RequireAuth);
     fastify.register(votes, { prefix: "/votes" });
     fastify.register(blocked);
     fastify.register(starred);

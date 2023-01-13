@@ -34,7 +34,7 @@ export default function (
 
     fastify.get(
         "/",
-        { schema: { params: paramsSchema }, preValidation: [RequireAuth] },
+        { schema: { params: paramsSchema }, preParsing: [RequireAuth] },
         async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
             const user = req.user;
 

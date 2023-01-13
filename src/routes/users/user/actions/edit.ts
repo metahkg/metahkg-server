@@ -46,7 +46,7 @@ export default (
         "/",
         {
             schema: { body: schema, params: paramsSchema },
-            preValidation: [requireSameUser],
+            preParsing: [requireSameUser],
         },
         async (
             req: FastifyRequest<{

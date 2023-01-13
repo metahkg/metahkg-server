@@ -28,7 +28,7 @@ export default function sessions(
 ) {
     fastify.get(
         "/",
-        { preValidation: [RequireAuth] },
+        { preParsing: [RequireAuth] },
         async (req: FastifyRequest, res) => {
             const user = req.user;
 

@@ -76,7 +76,8 @@ export default function (
     fastify.put(
         "/",
         {
-            preHandler: [RequireSameUser, upload.single("avatar")],
+            preParsing: [RequireSameUser],
+            preHandler: [upload.single("avatar")],
             config: {
                 rateLimit: <RateLimitOptions>{
                     max: 10,

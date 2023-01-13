@@ -32,7 +32,7 @@ export default function (
 
     fastify.delete(
         "/",
-        { preHandler: [RequireSameUserOrAdmin], schema: { params: paramsSchema } },
+        { preParsing: [RequireSameUserOrAdmin], schema: { params: paramsSchema } },
         async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
             const id = Number(req.params.id);
             const filename = `images/avatars/${id}.png`;
