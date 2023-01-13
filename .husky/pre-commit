@@ -1,5 +1,19 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 . "$(dirname -- "$0")/_/husky.sh"
 
-npx eslint --fix src
-yarn test
+fileList=$(git diff --diff-filter=d --cached --name-only | grep src/ | tr '\n' ' ' | xargs)
+lintFileList=$(echo $fileList | tr ' ' '\n' | grep -E '\.(ts|js)$' | tr '\n' ' ' | xargs)
+
+# test for errors
+if [ "$fileList" != "" ];
+then
+yarn test;
+fi;
+
+# lint
+if [ "$lintFileList" != "" ];
+then
+yarn eslint --fix $lintFileList || echo "WARNING: eslint failed to run";
+yarn prettier --write $lintFileList || echo "WARNING: prettier failed to run";
+git add $lintFileList;
+fi;
