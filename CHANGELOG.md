@@ -1,5 +1,22 @@
 # Changelog
 
+## v6.2.0
+
+### Features
+
+- 24a1e56: optionally use redis for rate limiting ([src/app.ts](src/app.ts))
+
+### Improvements
+
+- 59f5c24: security: increase length of verification codes & refresh token to 60 (=30 bytes) ([src/lib/schemas.ts](src/lib/schemas.ts))
+
+### Fixes
+
+- 45cd72a: openapi: fixed incorrect path / operationId for `authSessionRefresh` ([openapi.yaml](openapi.yaml))
+- 1ccb389: openapi: use operationId instead of path to reference operations ([openapi.yml](openapi.yaml))
+- bab89e5: ci: run tagging only if package.json changed ([.gitlab-ci.yaml`](.gitlab-ci.yaml))
+- 48f8ea1: config: fix `MONGO_URI` compatibility ([src/lib/config.ts](src/lib/config.ts))
+
 ## v6.1.1
 
 - update verification code: changed to updateMany
