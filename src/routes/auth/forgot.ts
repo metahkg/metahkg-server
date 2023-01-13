@@ -66,7 +66,7 @@ export default (
             if (!userData)
                 return res.code(404).send({ statusCode: 404, error: "User not found." });
 
-            const verificationCode = randomBytes(15).toString("hex");
+            const verificationCode = randomBytes(30).toString("hex");
 
             try {
                 await mg.messages.create(

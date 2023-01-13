@@ -34,7 +34,7 @@ export async function refreshSession(
     sessionId: string
 ) {
     const token = createToken(fastifyJWT, user);
-    const refreshToken = randomBytes(15).toString("hex");
+    const refreshToken = randomBytes(30).toString("hex");
 
     const exp = new Date((fastifyJWT.decode(token) as jwtTokenType).exp * 1000);
 

@@ -17,7 +17,7 @@
 
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { Static, Type } from "@sinclair/typebox";
-import { CodeSchema, SessionIdSchema } from "../../../../lib/schemas";
+import { RefreshTokenSchema, SessionIdSchema } from "../../../../lib/schemas";
 import { getSessionByIdOnly } from "../../../../lib/sessions/getSession";
 import { sha256 } from "../../../../lib/sha256";
 import { refreshSession } from "../../../../lib/sessions/refreshSession";
@@ -34,7 +34,7 @@ export default function (
 
     const schema = Type.Object(
         {
-            refreshToken: CodeSchema,
+            refreshToken: RefreshTokenSchema,
         },
         { additionalProperties: false }
     );

@@ -2434,11 +2434,7 @@ paths:
                 email:
                   $ref: "#/components/schemas/email"
                 code:
-                  type: string
-                  minLength: 30
-                  maxLength: 30
-                  description: "Verification code sent to email"
-                  example: "123456789012345678901234567890"
+                  $ref: "#/components/schemas/code"
                 rtoken:
                   $ref: "#/components/schemas/rtoken"
                 sameIp:
@@ -2578,18 +2574,13 @@ paths:
                 email:
                   $ref: "#/components/schemas/email"
                 code:
-                  type: string
-                  minLength: 30
-                  maxLength: 30
-                  description: "Verification code sent to email"
-                  example: "123456789012345678901234567890"
+                  $ref: "#/components/schemas/code"
                 password:
                   $ref: "#/components/schemas/hashedPwd"
                 rtoken:
                   $ref: "#/components/schemas/rtoken"
                 sameIp:
-                  type: boolean
-                  description: whether the session is restricted to a same ip
+                  $ref: "#/components/schemas/sameIp"
       responses:
         "200":
           $ref: "#/components/responses/LoginSuccess"
@@ -3025,9 +3016,9 @@ components:
       example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNWQwZjMwZjEtZjQwMC
     RefreshToken:
       type: string
-      description: 30-digit random refresh token, send to `authRefresh` to refresh the session in 7 days after / before expiry
-      minLength: 30
-      maxLength: 30
+      description: 60-digit random refresh token, send to `authRefresh` to refresh the session in 7 days after / before expiry
+      minLength: 60
+      maxLength: 60
     LoginSuccess:
       type: object
       additionalProperties: false
@@ -3177,7 +3168,7 @@ components:
       properties:
         id:
           type: string
-          description: 30-digit random id
+          description: 30-digit random session id
           minLength: 30
           maxLength: 30
         createdAt:
@@ -3192,8 +3183,7 @@ components:
           type: string
           description: user agent used to create the session
         sameIp:
-          type: boolean
-          description: whether the session is restricted to a same ip
+          $ref: "#/components/schemas/sameIp"
     Admin:
       type: object
       additionalProperties: false
@@ -3278,6 +3268,12 @@ components:
       format: email
       description: user email
       example: "metahkg@metahkg.org"
+    code:
+      type: string
+      minLength: 60
+      maxLength: 60
+      description: "Verification code sent to email"
+      example: "123456789012345678901234567890123456789012345678901234567890"
     hashedPwd:
       type: string
       description: user password, hashed with sha256

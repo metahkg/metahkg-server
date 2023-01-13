@@ -18,6 +18,6 @@ export type Verification = (
     _id?: ObjectId;
     /** hashed email (sha256) */
     email: string;
-    /** verification code (30-digit) */
+    /** verification code (60-digit) */
     code: string;
 };

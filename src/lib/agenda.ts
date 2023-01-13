@@ -26,7 +26,7 @@ agenda.define("updateVerificationCode", async () => {
     await verificationCl.updateMany(
         { createdAt: { $lte: new Date(new Date().getTime() - 86400 * 1000) } },
         {
-            $set: { code: randomBytes(15).toString("hex") },
+            $set: { code: randomBytes(30).toString("hex") },
             $currentDate: { lastModified: new Date() },
         }
     );

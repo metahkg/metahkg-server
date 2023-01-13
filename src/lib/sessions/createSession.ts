@@ -41,7 +41,7 @@ export async function createSession(
     const exp = (decode(token) as jwtTokenType)?.exp * 1000;
     if (!exp) return null;
 
-    const refreshToken = randomBytes(15).toString("hex");
+    const refreshToken = randomBytes(30).toString("hex");
 
     const session: Session = {
         id: randomBytes(15).toString("hex"),

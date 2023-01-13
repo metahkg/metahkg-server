@@ -111,7 +111,7 @@ export default (
                     error: "Username or email already in use.",
                 });
 
-            const code = randomBytes(15).toString("hex");
+            const code = randomBytes(30).toString("hex");
 
             try {
                 await mg.messages.create(

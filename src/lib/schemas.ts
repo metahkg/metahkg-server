@@ -40,12 +40,13 @@ export const UserRoleSchema = Type.Union([Type.Literal("user"), Type.Literal("ad
 export const DateSchema = Type.String({ format: "date-time" });
 
 export const PasswordSchema = Type.RegEx(/^[a-f0-9]{64}$/i);
-export const CodeSchema = Type.String({ minLength: 30, maxLength: 30 });
+export const CodeSchema = Type.String({ minLength: 60, maxLength: 60 });
 
 export const CategoryNameSchema = Type.String({ maxLength: 15 });
 export const CategoryTagsSchema = Type.Array(Type.String({ maxLength: 15 }));
 
 export const SessionIdSchema = Type.String({ minLength: 30, maxLength: 30 });
+export const RefreshTokenSchema = Type.String({ minLength: 60, maxLength: 60 });
 
 export const IntegerSchema = Type.Integer({ minimum: 1, maximum: 9999999999 });
 

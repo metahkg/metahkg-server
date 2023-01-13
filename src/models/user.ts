@@ -59,7 +59,7 @@ export interface Session {
     id: string;
     /** hashed (sha256) jwt token */
     token: string;
-    /** hashed (sha256) refresh token (30-digit string) **/
+    /** hashed (sha256) refresh token (60-digit string) **/
     refreshToken: string;
     createdAt: Date;
     exp: Date;
