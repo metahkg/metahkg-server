@@ -26,32 +26,28 @@ export default function sessions(
     _opts: FastifyPluginOptions,
     done: (err?: Error) => void
 ) {
-    fastify.get(
-        "/",
-        { preParsing: [RequireAuth] },
-        async (req: FastifyRequest, res) => {
-            const user = req.user;
+    fastify.get("/", { preParsing: [RequireAuth] }, async (req: FastifyRequest, res) => {
+        const user = req.user;
 
-            const sessions = (
-                (await usersCl.findOne(
-                    { id: user.id },
-                    {
-                        projection: {
-                            _id: 0,
-                            sessions: {
-                                id: 1,
-                                createdAt: 1,
-                                exp: 1,
-                                sameIp: 1,
-                                userAgent: 1,
-                            },
+        const sessions = (
+            (await usersCl.findOne(
+                { id: user.id },
+                {
+                    projection: {
+                        _id: 0,
+                        sessions: {
+                            id: 1,
+                            createdAt: 1,
+                            exp: 1,
+                            sameIp: 1,
+                            userAgent: 1,
                         },
-                    }
-                )) as User
-            )?.sessions;
+                    },
+                }
+            )) as User
+        )?.sessions;
 
-            return res.send(sessions);
-        }
-    );
+        return res.send(sessions);
+    });
     done();
 }
