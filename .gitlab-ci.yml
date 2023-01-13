@@ -140,6 +140,10 @@ code_quality:
      - if: $CI_COMMIT_TAG
      - if: $CI_COMMIT_BRANCH
 
+build:
+  stage: build
+  retry: 2
+
 apifuzzer_fuzz:
   needs: []
   variables:
