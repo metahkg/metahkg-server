@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const config = {
-    MONGO_URI: process.env.MONGO_URI || process.env.MONGO_URI || "mongodb://localhost",
+    MONGO_URI: process.env.MONGO_URI || process.env.DB_URI || "mongodb://localhost",
     MAILGUN_KEY: process.env.MAILGUN_KEY || process.env.mailgun_key || "",
     MAILGUN_DOMAIN:
         process.env.MAILGUN_DOMAIN ||
