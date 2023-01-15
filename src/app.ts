@@ -34,7 +34,7 @@ import { sha256 } from "./lib/sha256";
 import { config } from "./lib/config";
 import { readFileSync } from "fs";
 import { generateCerts } from "./scripts/certs";
-import Redis from "ioredis";
+import { redis } from "./lib/redis";
 
 dotenv.config();
 
@@ -94,13 +94,7 @@ export default async function MetahkgServer() {
         keyGenerator: (req: FastifyRequest) => {
             return sha256(req.ip);
         },
-        ...(config.REDIS_HOST && {
-            redis: new Redis({
-                host: config.REDIS_HOST,
-                port: config.REDIS_PORT,
-                password: config.REDIS_PASSWORD,
-            }),
-        }),
+        ...(redis && { redis }),
     });
 
     fastify.register(fastifyJwt, {
