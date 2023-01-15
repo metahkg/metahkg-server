@@ -130,6 +130,8 @@ paths:
                   $ref: "#/components/schemas/ThreadMeta"
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "429":
@@ -256,6 +258,8 @@ paths:
                   $ref: "#/components/schemas/ThreadMeta"
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "429":
@@ -340,6 +344,8 @@ paths:
                 $ref: "#/components/schemas/Thread"
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
@@ -386,6 +392,8 @@ paths:
           $ref: "#/components/responses/OK"
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
@@ -434,6 +442,8 @@ paths:
           $ref: "#/components/responses/OK"
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
@@ -469,6 +479,8 @@ paths:
                 $ref: "#/components/schemas/Images"
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
@@ -504,6 +516,8 @@ paths:
                 $ref: "#/components/schemas/Category"
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
@@ -754,6 +768,8 @@ paths:
                 $ref: "#/components/schemas/Comment"
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
@@ -802,6 +818,8 @@ paths:
           $ref: "#/components/responses/OK"
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
@@ -847,6 +865,8 @@ paths:
           $ref: "#/components/responses/OK"
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
@@ -885,6 +905,8 @@ paths:
                     - $ref: "#/components/schemas/Comment"
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
@@ -920,6 +942,8 @@ paths:
                 $ref: "#/components/schemas/Images"
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
@@ -959,6 +983,8 @@ paths:
                     $ref: "#/components/schemas/Comment/properties/U"
                   D:
                     $ref: "#/components/schemas/Comment/properties/D"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
@@ -992,6 +1018,10 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Comment/properties/emotions"
+        "400":
+          $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
@@ -1035,6 +1065,8 @@ paths:
                   $ref: "#/components/schemas/User"
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
@@ -1075,6 +1107,8 @@ paths:
       responses:
         "200":
           $ref: "#/components/responses/OK"
+        "400":
+          $ref: "#/components/responses/Invalid"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "403":
@@ -1427,6 +1461,8 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Category"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "429":
@@ -1468,6 +1504,8 @@ paths:
           $ref: "#/components/responses/OK"
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "409":
@@ -1501,6 +1539,8 @@ paths:
                 $ref: "#/components/schemas/Category"
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "404":
           $ref: "#/components/responses/CategoryNotFound"
         "429":
@@ -1541,6 +1581,8 @@ paths:
           $ref: "#/components/responses/OK"
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
@@ -1568,6 +1610,8 @@ paths:
           $ref: "#/components/responses/OK"
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
@@ -1620,6 +1664,8 @@ paths:
                   $ref: "#/components/schemas/ThreadMeta"
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
@@ -1663,6 +1709,8 @@ paths:
                         description: Date and time when user was created
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
@@ -1745,6 +1793,8 @@ paths:
                     $ref: "#/components/schemas/User/properties/name"
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
@@ -1776,6 +1826,8 @@ paths:
                 format: binary
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
@@ -1923,6 +1975,8 @@ paths:
                   $ref: "#/components/schemas/ThreadMeta"
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
@@ -2124,6 +2178,8 @@ paths:
           $ref: "#/components/responses/OK"
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
@@ -2158,6 +2214,8 @@ paths:
           $ref: "#/components/responses/OK"
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
@@ -2212,6 +2270,8 @@ paths:
           $ref: "#/components/responses/OK"
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
@@ -2246,6 +2306,8 @@ paths:
           $ref: "#/components/responses/OK"
         "400":
           $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
