@@ -27,7 +27,8 @@ agenda.define("updateVerificationCode", async () => {
         { createdAt: { $lte: new Date(new Date().getTime() - 86400 * 1000) } },
         {
             $set: { code: randomBytes(30).toString("hex") },
-            $currentDate: { lastModified: new Date() },
+            // mongodb nodejs client types requires $currentDate.lastModified as Date, but it should be boolean
+            $currentDate: { lastModified: true as unknown as Date },
         }
     );
 });
