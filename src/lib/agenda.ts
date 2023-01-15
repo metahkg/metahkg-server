@@ -17,10 +17,10 @@
 
 import { Agenda, Job } from "agenda";
 import { randomBytes } from "crypto";
-import { client, usersCl, verificationCl } from "./common";
+import { db, usersCl, verificationCl } from "./common";
 import { revokeSessionById } from "./sessions/revokeSession";
 
-export const agenda = new Agenda({ mongo: client.db("agenda") });
+export const agenda = new Agenda({ mongo: db });
 
 agenda.define("updateVerificationCode", async () => {
     await verificationCl.updateMany(
