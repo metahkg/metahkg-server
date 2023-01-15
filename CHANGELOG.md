@@ -1,5 +1,23 @@
 # Changelog
 
+## v6.3.0
+
+### Features
+
+- e4b4d50: configure visibility
+- 423fea9: whitelist email domains for registration ([src/routes/auth/register.ts](src/routes/auth/register.ts))
+
+### Improvements
+
+- e15cdf5: use preParsing for hooks where possible
+- a94f5ad: use the metahkg db for agenda ([src/lib/agenda.ts](src/lib/agenda.ts))
+- d3b466a: add key prefix to redis, improve redis performance, and use a password for redis only if provided ([src/lib/redis.ts](src/lib/redis.ts))
+- 466adb80: send the message for validation errors ([src/app.ts](src/app.ts))
+
+### Fixes
+
+- 1966193: fixed agenda `updateVerificationCode` ([src/lib/agenda.ts](src/lib/agenda.ts))
+
 ## v6.2.0
 
 ### Features
