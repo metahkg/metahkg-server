@@ -2883,7 +2883,7 @@ paths:
       operationId: serverPublicKey
       summary: Get server public key
       description: "Get server public key. (ed25519)
-        [Source](https://gitlab.com/metahkg/metahkg/-/blob/6.3.1-dev/src/routes/server/publickey)"
+        [Source](https://gitlab.com/metahkg/metahkg/-/blob/6.3.1-dev/src/routes/server/publickey.ts)"
       responses:
         "200":
           description: Success
