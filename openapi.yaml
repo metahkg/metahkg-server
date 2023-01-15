@@ -3056,6 +3056,10 @@ components:
           type: string
           description: error message
           example: "Error"
+        message:
+          type: string
+          description: detailed error message
+          example: querystring/url must NOT have more than 1000 characters
     Notification:
       type: object
       additionalProperties: false

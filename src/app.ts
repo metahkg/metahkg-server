@@ -71,7 +71,11 @@ export default async function MetahkgServer() {
         const { statusCode, message: errormsg } = error;
 
         if (error.validation) {
-            res.code(400).send({ statusCode: 400, error: "Bad request." });
+            res.code(400).send({
+                statusCode: 400,
+                error: "Bad request.",
+                message: errormsg,
+            });
         }
 
         if (statusCode && statusCode < 500 && statusCode >= 400)
