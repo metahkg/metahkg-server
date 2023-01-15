@@ -2855,6 +2855,27 @@ paths:
           $ref: "#/components/responses/InternalServerError"
         "502":
           $ref: "#/components/responses/BadGateway"
+  /server/config:
+    get:
+      tags:
+        - server
+      operationId: serverConfig
+      summary: Get server config
+      description: "Get server configuration (not secrets)
+        [Source](https://gitlab.com/metahkg/metahkg/-/blob/6.3.1-dev/src/routes/server/config.ts)"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ServerConfig"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "502":
+          $ref: "#/components/responses/BadGateway"
   /server/publickey:
     get:
       tags:
@@ -3661,6 +3682,58 @@ components:
       example: "6LeIxAcTAAAAAJcZVRqd76R7tjHpI9u0tRwxV5ksM"
       maxLength: 1000
       minLength: 1
+    RegisterMode:
+      type: string
+      enum:
+        - normal
+        - none
+        - invite
+    VisibilityMode:
+      type: string
+      enum:
+        - public
+        - internal
+    ServerConfig:
+      type: object
+      additionalProperties: false
+      required:
+        - visibility
+        - register
+        - domain
+        - linksDomain
+        - vapidPublicKey
+        - cors
+      properties:
+        visibility:
+          $ref: "#/components/schemas/VisibilityMode"
+        register:
+          type: object
+          additionalProperties: false
+          required:
+            - mode
+          properties:
+            mode:
+              $ref: "#/components/schemas/RegisterMode"
+            domains:
+              type: array
+              description: allowed domains
+              items:
+                type: string
+                example: metahkg.org
+        domain:
+          type: string
+          description: the domain this instance of metahkg is on
+          example: metahkg.org
+        linksDomain:
+          type: string
+          description: the domain for metahkg links
+          example: l.metahkg.org
+        vapidPublicKey:
+          type: string
+          description: vapid public key (for notifications)
+        cors:
+          type: boolean
+          description: whether cors is enabled
 
   securitySchemes:
     bearerAuth:

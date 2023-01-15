@@ -1,4 +1,5 @@
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
+import config from "./config";
 import publickey from "./publickey";
 
 export default function (
@@ -6,6 +7,7 @@ export default function (
     _opts: FastifyPluginOptions,
     done: (err?: Error) => void
 ) {
+    fastify.register(config);
     fastify.register(publickey);
     done();
 }
