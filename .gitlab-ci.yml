@@ -50,6 +50,9 @@ docker-build:
     - docker:dind
   before_script:
     - apk add nodejs-current
+    - docker pull tonistiigi/binfmt:latest
+    - docker run --privileged --rm tonistiigi/binfmt --uninstall qemu-*
+    - docker run --privileged --rm tonistiigi/binfmt --install all
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
     - version=$(node -e 'console.log(require("./package.json").version)')
