@@ -22,6 +22,10 @@ ENV env $env
 
 COPY ./package.json ./yarn.lock ./tsconfig.json ./tsconfig.build.json ./
 
+RUN chown -Rf node:node /app
+
+USER node
+
 RUN yarn install --frozen-lockfile --network-timeout 1000000
 
 COPY ./src ./src
@@ -42,7 +46,7 @@ COPY ./package.json ./yarn.lock ./tsconfig.json ./tsconfig.build.json ./
 COPY --from=build /app/dist ./dist
 COPY --from=build /app/node_modules ./node_modules
 
-RUN chown -Rf node:node /app
+RUN chown node:node /app
 
 USER node
 
