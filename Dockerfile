@@ -22,13 +22,13 @@ ENV env $env
 
 COPY ./package.json ./yarn.lock ./tsconfig.json ./tsconfig.build.json ./
 
-RUN yarn install
+RUN yarn install --frozen-lockfile --network-timeout 1000000
 
 COPY ./src ./src
 
 RUN if [ "${env}" = "dev" ]; then mkdir -p dist; else yarn build; fi;
 
-RUN if [ "${env}" != "dev" ]; then yarn install --production; fi;
+RUN if [ "${env}" != "dev" ]; then yarn install --production --frozen-lockfile --network-timeout 1000000; fi;
 
 FROM node:18-alpine
 
