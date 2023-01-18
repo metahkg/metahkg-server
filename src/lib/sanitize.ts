@@ -93,12 +93,12 @@ export default function sanitize(html: string) {
                 color: [
                     /^#[\d\w]+$/,
                     /^rgb\(\d{1,3}\, ?\d{1,3}\, ?\d{1,3}\)$/,
-                    /^rgba\(\d{1,3}\, ?\d{1,3}\, ?\d{1,3}\, ?\d{1,3})$/,
+                    /^rgba\(\d{1,3}\, ?\d{1,3}\, ?\d{1,3}\, ?\d{1,3}\)$/,
                 ],
                 "background-color": [
                     /^#[\d\w]+$/,
                     /^rgb\(\d{1,3}\, ?\d{1,3}\, ?\d{1,3}\)$/,
-                    /^rgba\(\d{1,3}\, ?\d{1,3}\, ?\d{1,3}\, ?\d{1,3})$/,
+                    /^rgba\(\d{1,3}\, ?\d{1,3}\, ?\d{1,3}\, ?\d{1,3}\)$/,
                 ],
                 "text-decoration": [/^(underline|line-through)$/],
             },
