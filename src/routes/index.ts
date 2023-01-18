@@ -20,15 +20,19 @@ import thread from "./threads";
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
 import me from "./me";
 import categories from "./categories";
+import auth from "./auth";
+import server from "./server";
 
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) => {
+    fastify.register(auth, { prefix: "/auth" });
     fastify.register(users, { prefix: "/users" });
     fastify.register(me, { prefix: "/me" });
     fastify.register(categories, { prefix: "/categories" });
     fastify.register(thread, { prefix: "/threads" });
+    fastify.register(server, { prefix: "/server" });
     done();
 };

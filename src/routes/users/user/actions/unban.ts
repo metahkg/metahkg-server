@@ -34,7 +34,7 @@ export default function (
 
     fastify.post(
         "/unban",
-        { schema: { params: paramsSchema }, preHandler: [RequireAdmin] },
+        { schema: { params: paramsSchema }, preParsing: [RequireAdmin] },
         async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
             const id = Number(req.params.id);
 

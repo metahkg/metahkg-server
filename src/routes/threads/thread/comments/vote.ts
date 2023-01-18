@@ -15,7 +15,7 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { domain, threadCl, votesCl } from "../../../../lib/common";
+import { threadCl, votesCl } from "../../../../lib/common";
 import { Type, Static } from "@sinclair/typebox";
 
 import Thread from "../../../../models/thread";
@@ -24,6 +24,7 @@ import regex from "../../../../lib/regex";
 import Votes from "../../../../models/votes";
 import { sendNotification } from "../../../../lib/notifications/sendNotification";
 import { VoteSchema } from "../../../../lib/schemas";
+import { config } from "../../../../lib/config";
 
 export default (
     fastify: FastifyInstance,
@@ -134,7 +135,7 @@ export default (
                             type: "votes",
                             threadId,
                             commentId,
-                            url: `https://${domain}/thread/${threadId}?c=${commentId}`,
+                            url: `https://${config.DOMAIN}/thread/${threadId}?c=${commentId}`,
                         },
                     },
                 });

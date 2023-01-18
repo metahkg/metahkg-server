@@ -15,35 +15,39 @@
 
 FROM node:18-alpine AS build
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
 ARG env
 ENV env $env
 
 COPY ./package.json ./yarn.lock ./tsconfig.json ./tsconfig.build.json ./
 
-RUN yarn install
+RUN chown -Rf node:node /app
+
+USER node
+
+RUN yarn install --frozen-lockfile --network-timeout 1000000
 
 COPY ./src ./src
 
 RUN if [ "${env}" = "dev" ]; then mkdir -p dist; else yarn build; fi;
+
+RUN if [ "${env}" != "dev" ]; then yarn install --production --frozen-lockfile --network-timeout 1000000; fi;
 
 FROM node:18-alpine
 
 ARG env
 ENV env $env
 
-RUN adduser user -D
-WORKDIR /home/user
+WORKDIR /app
 
 COPY ./package.json ./yarn.lock ./tsconfig.json ./tsconfig.build.json ./
 
-COPY --from=build /usr/src/app/dist ./dist
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/node_modules ./node_modules
 
-RUN if [ "${env}" = "dev" ]; then yarn install; else yarn install --production; fi;
+RUN chown node:node /app
 
-USER user
-
-RUN touch .env
+USER node
 
 CMD if [ "${env}" = "dev" ]; then yarn dev; else yarn start; fi;

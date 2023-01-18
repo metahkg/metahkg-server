@@ -49,7 +49,8 @@ export default function (
         "/:cid",
         {
             schema: { params: paramsSchema, body: schema },
-            preHandler: [RequireAdmin, checkComment],
+            preParsing: [RequireAdmin],
+            preHandler: [checkComment],
         },
         async (
             req: FastifyRequest<{

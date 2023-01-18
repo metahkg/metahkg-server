@@ -43,8 +43,6 @@ export default function (
         { schema: { body: schema } },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const user = req.user;
-            if (!user)
-                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
             await subscribeByToken(
                 user.id,

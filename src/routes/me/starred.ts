@@ -15,6 +15,7 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { RateLimitOptions } from "@fastify/rate-limit";
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
 import { usersCl } from "../../lib/common";
 
@@ -25,18 +26,25 @@ export default function (
     _opts: FastifyPluginOptions,
     done: (err?: Error) => void
 ) {
-    fastify.get("/starred", async (req, res) => {
-        const user = req.user;
-        if (!user) return res.code(401).send({ statusCode: 401, error: "Unauthorized" });
+    fastify.get(
+        "/starred",
+        {
+            config: {
+                rateLimit: <RateLimitOptions>{ max: 10, ban: 5, timeWindow: 1000 * 60 },
+            },
+        },
+        async (req, res) => {
+            const user = req.user;
 
-        const starred = (
-            (await usersCl.findOne(
-                { id: user.id },
-                { projection: { starred: 1, _id: 0 } }
-            )) as User
-        )?.starred;
+            const starred = (
+                (await usersCl.findOne(
+                    { id: user.id },
+                    { projection: { starred: 1, _id: 0 } }
+                )) as User
+            )?.starred;
 
-        return res.send(starred || []);
-    });
+            return res.send(starred || []);
+        }
+    );
     done();
 }

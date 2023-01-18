@@ -25,6 +25,7 @@ import EmailValidator from "email-validator";
 import User, { userSex } from "../../../../models/user";
 import { updateSessionByToken } from "../../../../lib/sessions/updateSession";
 import { SexSchema, UserNameSchema } from "../../../../lib/schemas";
+import requireSameUser from "../../../../plugins/requireSameUser";
 
 export default (
     fastify: FastifyInstance,
@@ -43,7 +44,10 @@ export default (
 
     fastify.patch(
         "/",
-        { schema: { body: schema, params: paramsSchema } },
+        {
+            schema: { body: schema, params: paramsSchema },
+            preParsing: [requireSameUser],
+        },
         async (
             req: FastifyRequest<{
                 Body: Static<typeof schema>;
@@ -51,11 +55,7 @@ export default (
             }>,
             res
         ) => {
-            const id = Number(req.params.id);
-
             const user = req.user;
-            if (!user || user?.id !== id)
-                return res.code(403).send({ statusCode: 403, error: "Forbidden." });
 
             const { name, sex } = req.body as { name?: string; sex?: userSex };
 
@@ -77,19 +77,23 @@ export default (
                     .code(500)
                     .send({ statusCode: 500, error: "An unknown error occured." });
 
-            const newToken = createToken(fastify.jwt, {
-                ...user,
-                ...(name && { name }),
-                ...(sex && { sex }),
-            });
+            const newToken = createToken(
+                fastify.jwt,
+                {
+                    ...user,
+                    ...(name && { name }),
+                    ...(sex && { sex }),
+                },
+                req.user.exp - new Date().getTime() / 1000
+            );
 
             await updateSessionByToken(
                 user.id,
-                req.headers.authorization.slice(7),
+                req.headers.authorization?.slice(7),
                 newToken
             );
 
-            res.header("token", newToken).send({
+            res.send({
                 token: newToken,
             });
         }

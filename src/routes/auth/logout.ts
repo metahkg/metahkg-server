@@ -16,28 +16,22 @@
  */
 
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import { getSessionByToken } from "../../lib/sessions/getSession";
-import { objectFilter } from "../../lib/objectFilter";
 
-export default (
+import { revokeSessionByToken } from "../../lib/sessions/revokeSession";
+import RequireAuth from "../../plugins/requireAuth";
+
+export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
-) => {
-    fastify.get("/session", async (req, res) => {
+    done: (err?: Error) => void
+) {
+    fastify.post("/logout", { preParsing: [RequireAuth] }, async (req, res) => {
         const user = req.user;
-        if (!user) return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
-        const session = await getSessionByToken(
-            user.id,
-            req.headers.authorization?.slice(7)
-        );
+        const token = req.headers.authorization?.slice(7);
+        await revokeSessionByToken(user.id, token);
 
-        res.send(
-            objectFilter(session, (key) =>
-                ["id", "createdAt", "exp", "sameIp", "userAgent"].includes(key)
-            )
-        );
+        return res.send({ success: true });
     });
     done();
-};
+}

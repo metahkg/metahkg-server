@@ -1,5 +1,105 @@
 # Changelog
 
+## v6.3.0
+
+### Features
+
+- e4b4d50: configure visibility
+- 423fea9: whitelist email domains for registration ([src/routes/auth/register.ts](src/routes/auth/register.ts))
+
+### Improvements
+
+- e15cdf5: use preParsing for hooks where possible
+- a94f5ad: use the metahkg db for agenda ([src/lib/agenda.ts](src/lib/agenda.ts))
+- d3b466a: add key prefix to redis, improve redis performance, and use a password for redis only if provided ([src/lib/redis.ts](src/lib/redis.ts))
+- 466adb80: send the message for validation errors ([src/app.ts](src/app.ts))
+
+### Fixes
+
+- 1966193: fixed agenda `updateVerificationCode` ([src/lib/agenda.ts](src/lib/agenda.ts))
+
+## v6.2.0
+
+### Features
+
+- 24a1e56: optionally use redis for rate limiting ([src/app.ts](src/app.ts))
+
+### Improvements
+
+- 59f5c24: security: increase length of verification codes & refresh token to 60 (=30 bytes) ([src/lib/schemas.ts](src/lib/schemas.ts))
+
+### Fixes
+
+- 45cd72a: openapi: fixed incorrect path / operationId for `authSessionRefresh` ([openapi.yaml](openapi.yaml))
+- 1ccb389: openapi: use operationId instead of path to reference operations ([openapi.yml](openapi.yaml))
+- bab89e5: ci: run tagging only if package.json changed ([.gitlab-ci.yaml`](.gitlab-ci.yaml))
+- 48f8ea1: config: fix `MONGO_URI` compatibility ([src/lib/config.ts](src/lib/config.ts))
+
+## v6.1.1
+
+- update verification code: changed to updateMany
+- no longer schedule runs for updateVerificationCode after register / forgot password
+  - replaced by checking and updating every 5 minutes
+
+## v6.1.0
+
+- removed `userId` field from request body of `/auth/sessions/{id}/refresh` (src/routes/sessions/session/refresh.ts)
+
+## v6.0.0
+
+> **WARNING**: Braking changes (routes and db, migration not needed)\
+> You should re-configure your environmental variables (see other changes)\
+> All previous sessions will be invalid after this update (see auth)
+
+### Routes
+
+- auth-related routes are now all under `/auth` (src/auth, src/users, src/me)
+  - many routes under `/users` and `/me` are now in `/auth` (see openapi.yaml)
+  - including:
+    - everything under `/users` except `/users/{id}`
+    - /me/session --> /me/session
+    - /me/sessions --> /auth/sessions
+    - /me/logout --> /auth/logout
+- added: `/auth/sessions/{id}/refresh` (see auth changes)
+- added: `/server/publickey` to retrieve the public key of the server (see auth changes)
+
+### Security
+
+- added rate limit for several routes
+  - src/routes/me/blocked
+  - src/routes/me/following
+  - src/routes/me/starred
+  - src/routes/users/user/avatar/upload.ts
+- for `/me`, added `requireAuth` hook at the root to replace `if (!user)` lines
+
+### Auth
+
+- query db for user identity reduced from three times to once per request
+  - check for banned put into `trusted` (src/app.ts)
+  - updateToken hook removed (src/app.ts)
+  - added a check for if every field in jwt data is the same as in that in db, if not the token would be considered invalid (src/app.ts)
+- removed the `token` response header (src/users/user/actions/edit.ts)
+- refreshToken hook removed (src/app.ts)
+- added refresh token to be sent alongside token upon login and `/auth/sessions/{id}/refresh` for refreshing a session in 7 days after expiry / before expiry (src/auth/sessions/session/refresh.ts)
+- not to extend the expiry time for an updated token (src/users/user/actions/edit.ts)
+- use a set of `ed25519` keys for signing and verifying JWTs (algorithm changed to `EdDSA`) (src/app.ts)
+  - as a result, all previous sessions are invalidated
+  - keys are automatically generated at runtime if do not exist (src/scripts/certs.ts)
+  - added `/server/publickey` to retrieve the server public key (src/routes/server/publickey.ts)
+
+### Other changes
+
+- replaced some `console` calls with `fastify.log`
+- added `src/lib/config.ts` to replace `process.env` calls
+- env variables renamed to be more standardized (temp.env)
+  - compatibility with previous naming (using config.ts)
+- added `KEY_PASSPHRASE` environment variable (temp.env)
+- docker: use `node` as the user (Dockerfile)
+
+## v5.10.0
+
+- resetting password would now revoke all sessions
+
 ## v5.9.0
 
 - `/users/reset` and `/users/verify` now require recaptcha

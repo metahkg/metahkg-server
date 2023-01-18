@@ -17,20 +17,18 @@
 
 import { Agenda, Job } from "agenda";
 import { randomBytes } from "crypto";
-import { client, usersCl, verificationCl } from "./common";
+import { db, usersCl, verificationCl } from "./common";
 import { revokeSessionById } from "./sessions/revokeSession";
 
-export const agenda = new Agenda({ mongo: client.db("agenda") });
+export const agenda = new Agenda({ mongo: db });
 
-agenda.define("updateVerificationCode", async (job: Job) => {
-    // hashed email
-    const { email } = job.attrs.data;
-
-    await verificationCl.updateOne(
-        { email, createdAt: { $lte: new Date(new Date().getTime() - 86400 * 1000) } },
+agenda.define("updateVerificationCode", async () => {
+    await verificationCl.updateMany(
+        { createdAt: { $lte: new Date(new Date().getTime() - 86400 * 1000) } },
         {
-            $set: { code: randomBytes(15).toString("hex") },
-            $currentDate: { lastModified: true },
+            $set: { code: randomBytes(30).toString("hex") },
+            // mongodb nodejs client types requires $currentDate.lastModified as Date, but it should be boolean
+            $currentDate: { lastModified: true as unknown as Date },
         }
     );
 });
@@ -62,7 +60,16 @@ agenda.define("removeExpiredSessions", async () => {
     // probably bug from mongodb side that $pull only accepts never
     await usersCl.updateMany(
         {},
-        { $pull: { sessions: { exp: { $lt: new Date() } } } as never }
+        {
+            $pull: {
+                sessions: {
+                    exp: {
+                        // 7 days after expiry (can refresh)
+                        $lt: new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 7),
+                    },
+                },
+            } as never,
+        }
     );
 });
 

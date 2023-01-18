@@ -15,15 +15,10 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import dotenv from "dotenv";
 import { MongoClient } from "mongodb";
+import { config } from "./config";
 
-dotenv.config();
-
-export const mongouri = process.env.DB_URI || "mongodb://localhost"; //mongo connection string
-export const LINKS_DOMAIN = process.env.LINKS_DOMAIN;
-export const client = new MongoClient(mongouri);
-export const RecaptchaSecret = process.env.recaptchasecret || ""; //recaptcha secret used to cerify recaptcha tokens
+export const client = new MongoClient(config.MONGO_URI);
 /**
  * get difference in seconds between now and a time string
  */
@@ -81,15 +76,6 @@ export function objtoarr(obj: any): any[] {
     return arr;
 }
 
-export const domain = process.env.domain?.startsWith(".")
-    ? process.env.domain?.replace(".", "")
-    : process.env.domain;
-
-export const vapidKeys = {
-    public: process.env.VAPID_PUBLIC_KEY || "",
-    private: process.env.VAPID_PRIVATE_KEY || "",
-};
-
 export function allequal(arr: any[]) {
     const first = arr[0];
     for (const i of arr) {
@@ -97,6 +83,7 @@ export function allequal(arr: any[]) {
     }
     return true;
 }
+
 export const db = client.db("metahkg");
 
 export const threadCl = db.collection("thread");

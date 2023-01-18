@@ -16,7 +16,8 @@
  */
 
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import { categoryCl, domain, threadCl, usersCl } from "./lib/common";
+import { categoryCl, threadCl, usersCl } from "./lib/common";
+import { config } from "./lib/config";
 import Category from "./models/category";
 import Thread from "./models/thread";
 import User from "./models/user";
@@ -32,7 +33,7 @@ export default function (
         <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
             ${["", "create", "search", "recall"].map(
                 (path) => /*xml*/ `<url>
-                    <loc>https://${domain}/${path}</loc>
+                    <loc>https://${config.DOMAIN}/${path}</loc>
                     <changefreq>daily</changefreq>
                     <priority>1.0</priority>
                 </url>`
@@ -45,14 +46,14 @@ export default function (
                     .toArray()) as Category[]
             ).map(
                 (category) => /*xml*/ `<url>
-                    <loc>https://${domain}/category/${category.id}</loc>
+                    <loc>https://${config.DOMAIN}/category/${category.id}</loc>
                     <changefreq>daily</changefreq>
                     <priority>1.0</priority>
                 </url>`
             )}
             ${["login", "register", "verify", "resend"].map(
                 (path) => /*xml*/ `<url>
-                    <loc>https://${domain}/users/${path}</loc>
+                    <loc>https://${config.DOMAIN}/users/${path}</loc>
                     <priority>1.0</priority>
                 </url>`
             )}
@@ -67,7 +68,7 @@ export default function (
                     (thread) =>
                         !("removed" in thread) &&
                         /*xml*/ `<url>
-                    <loc>https://${domain}/thread/${thread.id}</loc>
+                    <loc>https://${config.DOMAIN}/thread/${thread.id}</loc>
                     <changefreq>daily</changefreq>
                     <lastmod>${thread.lastModified.toISOString()}</lastmod>
                     <priority>0.8</priority>
@@ -82,7 +83,7 @@ export default function (
                     .toArray()) as User[]
             ).map(
                 (user) => /*xml*/ `<url>
-                    <loc>https://${domain}/profile/${user.id}</loc>
+                    <loc>https://${config.DOMAIN}/profile/${user.id}</loc>
                     <changefreq>daily</changefreq>
                     <priority>0.8</priority>
                 </url>`

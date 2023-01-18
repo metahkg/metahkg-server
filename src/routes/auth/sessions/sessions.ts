@@ -19,15 +19,15 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { usersCl } from "../../../lib/common";
 
 import User from "../../../models/user";
+import RequireAuth from "../../../plugins/requireAuth";
 
 export default function sessions(
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
     done: (err?: Error) => void
 ) {
-    fastify.get("/", async (req: FastifyRequest, res) => {
+    fastify.get("/", { preParsing: [RequireAuth] }, async (req: FastifyRequest, res) => {
         const user = req.user;
-        if (!user) return res.code(401).send({ statusCode: 401, error: "Unauthorized" });
 
         const sessions = (
             (await usersCl.findOne(

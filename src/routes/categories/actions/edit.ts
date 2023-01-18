@@ -42,7 +42,7 @@ export default function (
 
     fastify.patch(
         "/:id",
-        { schema: { params: paramsSchema, body: schema }, preHandler: [RequireAdmin] },
+        { schema: { params: paramsSchema, body: schema }, preParsing: [RequireAdmin] },
         async (
             req: FastifyRequest<{
                 Params: Static<typeof paramsSchema>;

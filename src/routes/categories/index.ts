@@ -22,12 +22,17 @@ import create from "./create";
 import edit from "./actions/edit";
 import deleteCategory from "./actions/delete";
 import categories from "./categories";
+import { config } from "../../lib/config";
+import RequireAuth from "../../plugins/requireAuth";
 
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
     done: (err?: Error) => void
 ) {
+    if (config.VISIBILITY === "internal") {
+        fastify.addHook("preParsing", RequireAuth);
+    }
     fastify.register(categories);
     fastify.register(category);
     fastify.register(threads);

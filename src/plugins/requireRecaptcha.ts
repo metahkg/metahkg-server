@@ -1,5 +1,5 @@
 import { FastifyRequest, FastifyReply } from "fastify";
-import { RecaptchaSecret } from "../lib/common";
+import { config } from "../lib/config";
 import { verifyCaptcha } from "../lib/recaptcha";
 
 export default async function RequireReCAPTCHA(
@@ -7,6 +7,6 @@ export default async function RequireReCAPTCHA(
     res: FastifyReply
 ) {
     const { rtoken } = req.body;
-    if (!(await verifyCaptcha(RecaptchaSecret, rtoken)))
+    if (!(await verifyCaptcha(config.RECAPTCHA_SECRET, rtoken)))
         return res.code(429).send({ statusCode: 429, error: "Recaptcha token invalid." });
 }

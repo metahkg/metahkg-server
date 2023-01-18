@@ -17,6 +17,7 @@
 
 import { Static, Type } from "@sinclair/typebox";
 import dotenv from "dotenv";
+import { config } from "../lib/config";
 import { SexSchema, UserNameSchema, UserRoleSchema } from "../lib/schemas";
 
 dotenv.config();
@@ -37,9 +38,9 @@ export const jwtTokenSchema = Type.Intersect(
         Type.Object(
             {
                 /** issuer (your domain) */
-                iss: Type.Literal(process.env.domain || ""),
+                iss: Type.Literal(config.DOMAIN),
                 /** auditor (your domain) */
-                aud: Type.Literal(process.env.domain || ""),
+                aud: Type.Literal(config.DOMAIN),
                 /** issue date in seconds */
                 iat: Type.Integer({ minimum: 0 }),
                 /** expiration date in seconds */

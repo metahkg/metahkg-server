@@ -23,19 +23,22 @@ import {
     linksCl,
     votesCl,
     inviteCl,
-} from "../lib/common";
-import Category from "../models/category";
+} from "../../lib/common";
+import Category from "../../models/category";
 import { categories } from "./category";
-export async function setup() {
-    await threadCl.createIndex({ id: 1 });
-    await usersCl.createIndex({ id: 1 });
-    await usersCl.createIndex({ name: 1 });
-    await usersCl.createIndex({ email: 1 });
-    await linksCl.createIndex({ id: 1 });
-    await categoryCl.createIndex({ id: 1 });
-    await categoryCl.createIndex({ name: 1 });
-    await votesCl.createIndex({ id: 1 });
-    await inviteCl.createIndex({ code: 1 });
+export async function setupMongo() {
+    await threadCl.createIndex({ id: 1 }, { unique: true });
+    await usersCl.createIndex({ id: 1 }, { unique: true });
+    await usersCl.createIndex({ name: 1 }, { unique: true });
+    await usersCl.createIndex({ email: 1 }, { unique: true });
+    await usersCl.createIndex({ "sessions.id": 1 });
+    await usersCl.createIndex({ "sessions.token": 1 });
+    await usersCl.createIndex({ "sessions.refreshToken": 1 });
+    await linksCl.createIndex({ id: 1 }, { unique: true });
+    await categoryCl.createIndex({ id: 1 }, { unique: true });
+    await categoryCl.createIndex({ name: 1 }, { unique: true });
+    await votesCl.createIndex({ id: 1 }, { unique: true });
+    await inviteCl.createIndex({ code: 1 }, { unique: true });
 
     await threadCl.createIndex({ title: "text" }); // text search
     await verificationCl.createIndex({ createdAt: 1 }, { expireAfterSeconds: 300 });

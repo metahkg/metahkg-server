@@ -26,7 +26,6 @@ export default function (
 ) {
     fastify.post("/unsubscribe", async (req, res) => {
         const user = req.user;
-        if (!user) return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
 
         await unSubscribeByToken(user.id, req.headers.authorization?.slice(7));
 

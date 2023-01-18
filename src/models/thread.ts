@@ -16,7 +16,7 @@
  */
 
 import { ObjectId } from "mongodb";
-import type { userSex, userRole } from "../models/user";
+import type { userSex, userRole } from "./user";
 
 export type Thread =
     | { id: number; removed: true }

@@ -15,26 +15,18 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import dotenv from "dotenv";
 import { usersCl, verificationCl } from "../../lib/common";
-import bcrypt from "bcrypt";
 import { Static, Type } from "@sinclair/typebox";
-import { createToken } from "../../lib/auth/createToken";
 import User from "../../models/user";
+import bcrypt from "bcrypt";
+import { createToken } from "../../lib/auth/createToken";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { createSession } from "../../lib/sessions/createSession";
-import {
-    EmailSchema,
-    PasswordSchema,
-    RTokenSchema,
-    UserNameSchema,
-} from "../../lib/schemas";
+import { CodeSchema, EmailSchema, PasswordSchema, RTokenSchema } from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
 import { Verification } from "../../models/verification";
 import { RateLimitOptions } from "@fastify/rate-limit";
 import RequireReCAPTCHA from "../../plugins/requireRecaptcha";
-
-dotenv.config();
 
 export default (
     fastify: FastifyInstance,
@@ -43,8 +35,8 @@ export default (
 ) => {
     const schema = Type.Object(
         {
-            name: Type.Union([UserNameSchema, EmailSchema]),
-            // check if password is a sha256 hash
+            email: EmailSchema,
+            code: CodeSchema,
             password: PasswordSchema,
             sameIp: Type.Optional(Type.Boolean()),
             rtoken: RTokenSchema,
@@ -53,54 +45,54 @@ export default (
     );
 
     fastify.post(
-        "/login",
+        "/reset",
         {
+            schema: { body: schema },
             config: {
                 rateLimit: <RateLimitOptions>{
                     max: 5,
                     ban: 5,
-                    timeWindow: 1000 * 60 * 5,
+                    // one day
+                    timeWindow: 1000 * 60 * 60 * 24,
                 },
             },
-            schema: { body: schema },
             preHandler: [RequireReCAPTCHA],
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            const { name, password, sameIp } = req.body;
+            const { email, code, password, sameIp } = req.body;
 
-            const user = (await usersCl.findOne({
-                $or: [{ name }, { email: sha256(name) }],
-            })) as User;
+            const hashedEmail = sha256(email);
 
-            if (!user) {
-                const verifyUser = (await verificationCl.findOne({
-                    type: "register",
-                    $or: [{ name }, { email: sha256(name) }],
-                })) as Verification & { type: "register" };
-
-                if (verifyUser && (await bcrypt.compare(password, verifyUser.password)))
-                    return res
-                        .code(409)
-                        .send({ statusCode: 409, error: "Please verify your email." });
-
-                return res.code(401).send({ statusCode: 401, error: "Login failed." });
-            }
-
-            const pwdMatch = await bcrypt.compare(password, user.password);
-            if (!pwdMatch)
-                return res.code(401).send({ statusCode: 401, error: "Login failed." });
-
-            if (user.ban) {
-                return res.code(403).send({
-                    statusCode: 403,
-                    error: "Forbidden. You are banned by an admin.",
-                    ...(user.ban.exp && { exp: user.ban.exp }),
+            if (
+                !((await verificationCl.findOne({
+                    type: "reset",
+                    email: hashedEmail,
+                    code,
+                })) as Verification)
+            )
+                return res.code(401).send({
+                    statusCode: 401,
+                    error: "Token incorrect, or expired, or you have not requested reset password.",
                 });
-            }
+
+            const user = (await usersCl.findOne({ email: hashedEmail })) as User;
+            if (!user)
+                return res.code(404).send({ statusCode: 404, error: "User not found." });
+
+            await usersCl.updateOne(
+                { email: hashedEmail },
+                { $set: { password: bcrypt.hashSync(password, 10) } }
+            );
+
+            await verificationCl.deleteOne({
+                type: "reset",
+                email: hashedEmail,
+                code,
+            });
 
             const token = createToken(fastify.jwt, user);
 
-            await createSession(
+            const session = await createSession(
                 user.id,
                 token,
                 req.headers["user-agent"],
@@ -108,7 +100,12 @@ export default (
                 sameIp
             );
 
-            res.send({ token });
+            if (!session)
+                return res
+                    .code(500)
+                    .send({ statusCode: 500, error: "An error occurred." });
+
+            return res.send(session);
         }
     );
     done();

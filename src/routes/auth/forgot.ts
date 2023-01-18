@@ -20,7 +20,8 @@ import { Static, Type } from "@sinclair/typebox";
 import { randomBytes } from "crypto";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { usersCl, verificationCl } from "../../lib/common";
-import { mg, mgDomain, resetMsg } from "../../lib/mailgun";
+import { config } from "../../lib/config";
+import { mg, resetMsg } from "../../lib/mailgun";
 import { EmailSchema, RTokenSchema } from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
 import User from "../../models/user";
@@ -65,11 +66,11 @@ export default (
             if (!userData)
                 return res.code(404).send({ statusCode: 404, error: "User not found." });
 
-            const verificationCode = randomBytes(15).toString("hex");
+            const verificationCode = randomBytes(30).toString("hex");
 
             try {
                 await mg.messages.create(
-                    mgDomain,
+                    config.MAILGUN_DOMAIN,
                     resetMsg({ email, code: verificationCode })
                 );
             } catch {

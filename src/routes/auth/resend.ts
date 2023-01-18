@@ -18,12 +18,13 @@
 import { verificationCl } from "../../lib/common";
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { mg, mgDomain, verifyMsg } from "../../lib/mailgun";
+import { mg, verifyMsg } from "../../lib/mailgun";
 import { EmailSchema, RTokenSchema } from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
 import { Verification } from "../../models/verification";
 import { RateLimitOptions } from "@fastify/rate-limit";
 import RequireReCAPTCHA from "../../plugins/requireRecaptcha";
+import { config } from "../../lib/config";
 
 export default (
     fastify: FastifyInstance,
@@ -69,7 +70,7 @@ export default (
 
             try {
                 await mg.messages.create(
-                    mgDomain,
+                    config.MAILGUN_DOMAIN,
                     verifyMsg({ email, code: verificationUserData.code })
                 );
             } catch {

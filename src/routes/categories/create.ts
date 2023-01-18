@@ -39,7 +39,7 @@ export default function (
 
     fastify.post(
         "/",
-        { schema: { body: schema }, preHandler: [RequireAdmin] },
+        { schema: { body: schema }, preParsing: [RequireAdmin] },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const { name } = req.body;
 

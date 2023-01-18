@@ -15,11 +15,13 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { FastifyReply, FastifyRequest } from "fastify";
+import { FastifyReply, FastifyRequest, RequestPayload } from "fastify";
 
-export default async function RequireSameUser(
+export default function RequireSameUser(
     req: FastifyRequest<{ Params: { id: string } }>,
-    res: FastifyReply
+    res: FastifyReply,
+    done: RequestPayload | ((err?: Error) => void),
+    done_preparsing?: (err?: Error) => void
 ) {
     const userId = Number(req.params.id);
     const user = req.user;
@@ -28,5 +30,9 @@ export default async function RequireSameUser(
     if (user.id !== userId)
         return res.code(403).send({ statusCode: 403, error: "Forbidden." });
 
-    return;
+    if (typeof done === "function") {
+        done();
+    } else {
+        done_preparsing();
+    }
 }

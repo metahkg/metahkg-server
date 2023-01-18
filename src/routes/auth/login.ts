@@ -17,13 +17,18 @@
 
 import dotenv from "dotenv";
 import { usersCl, verificationCl } from "../../lib/common";
+import bcrypt from "bcrypt";
 import { Static, Type } from "@sinclair/typebox";
 import { createToken } from "../../lib/auth/createToken";
 import User from "../../models/user";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { agenda } from "../../lib/agenda";
 import { createSession } from "../../lib/sessions/createSession";
-import { CodeSchema, EmailSchema, RTokenSchema } from "../../lib/schemas";
+import {
+    EmailSchema,
+    PasswordSchema,
+    RTokenSchema,
+    UserNameSchema,
+} from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
 import { Verification } from "../../models/verification";
 import { RateLimitOptions } from "@fastify/rate-limit";
@@ -38,8 +43,9 @@ export default (
 ) => {
     const schema = Type.Object(
         {
-            email: EmailSchema,
-            code: CodeSchema,
+            name: Type.Union([UserNameSchema, EmailSchema]),
+            // check if password is a sha256 hash
+            password: PasswordSchema,
             sameIp: Type.Optional(Type.Boolean()),
             rtoken: RTokenSchema,
         },
@@ -47,70 +53,67 @@ export default (
     );
 
     fastify.post(
-        "/verify",
+        "/login",
         {
-            schema: { body: schema },
             config: {
                 rateLimit: <RateLimitOptions>{
                     max: 5,
                     ban: 5,
-                    // 1 day
-                    timeWindow: 1000 * 60 * 60 * 24,
+                    timeWindow: 1000 * 60 * 5,
                 },
             },
+            schema: { body: schema },
             preHandler: [RequireReCAPTCHA],
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            const { email, code, sameIp } = req.body;
+            const { name, password, sameIp } = req.body;
 
-            const hashedEmail = sha256(email);
+            const user = (await usersCl.findOne({
+                $or: [{ name }, { email: sha256(name) }],
+            })) as User;
 
-            const verificationData = (await verificationCl.findOne({
-                type: "register",
-                email: hashedEmail,
-                code,
-            })) as Verification & { type: "register" };
+            if (!user) {
+                const verifyUser = (await verificationCl.findOne({
+                    type: "register",
+                    $or: [{ name }, { email: sha256(name) }],
+                })) as Verification & { type: "register" };
 
-            if (!verificationData)
-                return res
-                    .code(401)
-                    .send({ error: "Code incorrect or expired, or email not found." });
+                if (verifyUser && (await bcrypt.compare(password, verifyUser.password)))
+                    return res
+                        .code(409)
+                        .send({ statusCode: 409, error: "Please verify your email." });
 
-            const { name, password, sex } = verificationData;
+                return res.code(401).send({ statusCode: 401, error: "Login failed." });
+            }
 
-            const newUserId =
-                ((await usersCl.find().sort({ id: -1 }).limit(1).toArray()) as User[])[0]
-                    ?.id + 1 || 1;
+            const pwdMatch = await bcrypt.compare(password, user.password);
+            if (!pwdMatch)
+                return res.code(401).send({ statusCode: 401, error: "Login failed." });
 
-            const newUser: User = {
-                name,
-                id: newUserId,
-                email: hashedEmail,
-                password,
-                role: "user",
-                createdAt: new Date(),
-                sex,
-            };
+            if (user.ban) {
+                return res.code(403).send({
+                    statusCode: 403,
+                    error: "Forbidden. You are banned by an admin.",
+                    ...(user.ban.exp && { exp: user.ban.exp }),
+                });
+            }
 
-            await usersCl.insertOne(newUser);
-            await verificationCl.deleteOne({ type: "register", email: hashedEmail });
+            const token = createToken(fastify.jwt, user);
 
-            await agenda.cancel({
-                name: "updateVerificationCode",
-                data: { email: hashedEmail },
-            });
-
-            const token = createToken(fastify.jwt, newUser);
-
-            await createSession(
-                newUser.id,
+            const session = await createSession(
+                user.id,
                 token,
                 req.headers["user-agent"],
                 req.ip,
                 sameIp
             );
 
-            res.send({ token });
+            if (!session)
+                return res
+                    .code(500)
+                    .send({ statusCode: 500, error: "An error occurred." });
+
+            res.send(session);
         }
     );
     done();
