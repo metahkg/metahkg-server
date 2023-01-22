@@ -127,7 +127,7 @@ export default async function MetahkgServer() {
 
             // check if session exists
             const session = await getSessionByToken(
-                decodedToken.id,
+                decodedToken?.id,
                 req.headers.authorization?.slice(7),
                 true
             );
@@ -136,17 +136,21 @@ export default async function MetahkgServer() {
             // check if user is banned
             if (session.user?.ban) return false;
 
-            // check if all values are the same
-            if (
-                !Object.entries(decodedToken).every(([key, value]: [string, any]) => {
-                    const userData = session.user as { [_k: string]: any };
-                    if (userData[key]) {
-                        if (value === userData[key]) return true;
-                        return false;
-                    }
-                    return true;
-                })
-            ) {
+            try {
+                // check if all values are the same
+                if (
+                    !Object.entries(decodedToken).every(([key, value]: [string, any]) => {
+                        const userData = session.user as { [_k: string]: any };
+                        if (userData[key]) {
+                            if (value === userData[key]) return true;
+                            return false;
+                        }
+                        return true;
+                    })
+                ) {
+                    return false;
+                }
+            } catch {
                 return false;
             }
 
