@@ -14,6 +14,16 @@ export const config = {
         process.env.DOMAIN ||
         process.env.domain ||
         "metahkg.org",
+    SMTP_HOST: process.env.SMTP_HOST || "",
+    SMTP_PORT: Number(process.env.SMTP_PORT || 587),
+    SMTP_SSL: JSON.parse(process.env.SMTP_SSL || "false") || false,
+    SMTP_TLS: JSON.parse(process.env.SMTP_TLS || "false") || false,
+    SMTP_REQUIRE_TLS: JSON.parse(process.env.SMTP_REQUIRE_TLS || "false") || false,
+    SMTP_USER: process.env.SMTP_USER || "",
+    SMTP_PASSWORD: process.env.SMTP_PASSWORD || "",
+    SMTP_EMAIL:
+        process.env.SMTP_EMAIL ||
+        `support@${process.env.DOMAIN || process.env.domain || ""}`,
     DOMAIN: process.env.DOMAIN || process.env.domain || "",
     LINKS_DOMAIN: process.env.LINKS_DOMAIN || "",
     PORT: Number(process.env.PORT || 3200) || 3200,

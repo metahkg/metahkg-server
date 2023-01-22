@@ -18,13 +18,12 @@
 import { verificationCl } from "../../lib/common";
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { mg, verifyMsg } from "../../lib/mailgun";
+import { sendVerifyMsg } from "../../lib/email";
 import { EmailSchema, RTokenSchema } from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
 import { Verification } from "../../models/verification";
 import { RateLimitOptions } from "@fastify/rate-limit";
 import RequireReCAPTCHA from "../../plugins/requireRecaptcha";
-import { config } from "../../lib/config";
 
 export default (
     fastify: FastifyInstance,
@@ -68,12 +67,7 @@ export default (
             if (!verificationUserData)
                 return res.code(404).send({ statusCode: 404, error: "Email not found." });
 
-            try {
-                await mg.messages.create(
-                    config.MAILGUN_DOMAIN,
-                    verifyMsg({ email, code: verificationUserData.code })
-                );
-            } catch {
+            if (!(await sendVerifyMsg(email, verificationUserData.code))) {
                 return res.code(500).send({
                     statusCode: 500,
                     error: "An error occurred while sending the email.",
