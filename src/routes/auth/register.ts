@@ -16,7 +16,7 @@
  */
 
 import { usersCl, verificationCl, inviteCl } from "../../lib/common";
-import { mg, verifyMsg } from "../../lib/mailgun";
+import { sendVerifyMsg } from "../../lib/email";
 import EmailValidator from "email-validator";
 import bcrypt from "bcrypt";
 import { Static, Type } from "@sinclair/typebox";
@@ -126,12 +126,7 @@ export default (
 
             const code = randomBytes(30).toString("hex");
 
-            try {
-                await mg.messages.create(
-                    config.MAILGUN_DOMAIN,
-                    verifyMsg({ email, code })
-                );
-            } catch {
+            if (!(await sendVerifyMsg(email, code))) {
                 return res.code(500).send({
                     statusCode: 500,
                     error: "An error occurred while sending the email.",
