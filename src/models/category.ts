@@ -18,9 +18,10 @@
 import { ObjectId } from "mongodb";
 
 export default interface Category {
+    _id?: ObjectId;
     id: number;
     name: string;
-    hidden?: boolean;
     tags?: string[];
-    _id?: ObjectId;
+    hidden?: boolean;
+    nsfw?: boolean;
 }
