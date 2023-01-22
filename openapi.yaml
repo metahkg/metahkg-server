@@ -1493,12 +1493,14 @@ paths:
               properties:
                 name:
                   $ref: "#/components/schemas/Category/properties/name"
-                hidden:
-                  $ref: "#/components/schemas/Category/properties/hidden"
                 tags:
                   $ref: "#/components/schemas/Category/properties/tags"
                 pinned:
                   $ref: "#/components/schemas/Category/properties/pinned"
+                hidden:
+                  $ref: "#/components/schemas/Category/properties/hidden"
+                nsfw:
+                  $ref: "#/components/schemas/Category/properties/nsfw"
       responses:
         "200":
           $ref: "#/components/responses/OK"
@@ -1576,6 +1578,10 @@ paths:
                   $ref: "#/components/schemas/Category/properties/tags"
                 pinned:
                   $ref: "#/components/schemas/Category/properties/pinned"
+                hidden:
+                  $ref: "#/components/schemas/Category/properties/hidden"
+                nsfw:
+                  $ref: "#/components/schemas/Category/properties/nsfw"
       responses:
         "200":
           $ref: "#/components/responses/OK"
@@ -3393,12 +3399,15 @@ components:
           items:
             type: string
             maxLength: 15
-        hidden:
-          type: boolean
-          description: category is hidden
         pinned:
           type: boolean
-          description: category is pinned
+          description: whether category is pinned
+        hidden:
+          type: boolean
+          description: whether the category is hidden
+        nsfw:
+          type: boolean
+          description: whether the category is nsfw
     Image:
       type: object
       additionalProperties: false
