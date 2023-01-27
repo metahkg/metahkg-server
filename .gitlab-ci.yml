@@ -146,12 +146,11 @@ build:
 apifuzzer_fuzz:
   needs: []
   variables:
-    FUZZAPI_TARGET_URL: https://dev.metahkg.org/api
-    FUZZAPI_OPENAPI: /openapi.yaml
+    FUZZAPI_TARGET_URL: https://dev.metahkg.org
+    FUZZAPI_OPENAPI: ./openapi.yaml
     FUZZAPI_PROFILE: Medium-20
   rules:
-    - if: $CI_COMMIT_BRANCH != "master" && $CI_COMMIT_BRANCH != "dev"
-      when: never
+    - if: $CI_COMMIT_BRANCH == "master" ||$CI_COMMIT_BRANCH == "dev"
 
 trigger_api_generate:
   variables:
