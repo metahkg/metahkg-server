@@ -146,7 +146,7 @@ build:
 apifuzzer_fuzz:
   needs: []
   variables:
-    FUZZAPI_TARGET_URL: https://dev.metahkg.org/api
+    FUZZAPI_TARGET_URL: https://dev.metahkg.org
     FUZZAPI_OPENAPI: ./openapi.yaml
     FUZZAPI_PROFILE: Medium-20
   rules:
