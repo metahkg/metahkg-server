@@ -150,8 +150,7 @@ apifuzzer_fuzz:
     FUZZAPI_OPENAPI: /openapi.yaml
     FUZZAPI_PROFILE: Medium-20
   rules:
-    - if: $CI_COMMIT_BRANCH != "master" && $CI_COMMIT_BRANCH != "dev"
-      when: never
+    - if: $CI_COMMIT_BRANCH == "master" ||$CI_COMMIT_BRANCH == "dev"
 
 trigger_api_generate:
   variables:
