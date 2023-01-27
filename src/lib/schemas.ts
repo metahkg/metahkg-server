@@ -32,7 +32,19 @@ export const TitleSchema = Type.String({ minLength: 1, maxLength: 500 });
 export const CommentSchema = Type.String({ minLength: 1, maxLength: 50000 });
 export const VoteSchema = Type.Union([Type.Literal("U"), Type.Literal("D")]);
 
-export const UserNameSchema = Type.RegEx(/^\S{1,15}$/);
+export const UserNameSchema = Type.RegEx(
+    // allows:
+    //   - a-z
+    //   - A-Z
+    //   - 0-9
+    //   - greek
+    //   - common chinese characters
+    //   - japanese characters
+    //   - emoji
+    //   - a limited set of special characters: ~!#$%^&*_-=+()[]{}|\.,/?"';:<>
+    //   **NOTE**: @ is not allowed to prevent the use of email addresses as username
+    /^[a-zA-Z0-9\u0370-\u03ff\u1f00-\u1fff\u3000-\u303F\u3400-\u4DBF\u4E00-\u9FFF一-龯\p{Emoji}\p{Emoji_Presentation}\p{Extended_Pictographic}~!#$%^&*_\-=+\(\)\[\]{}\|\\\.,\/\?"';:<>]{1,15}$/u
+);
 export const EmailSchema = Type.String({ format: "email", maxLength: 150 });
 export const SexSchema = Type.Union([Type.Literal("M"), Type.Literal("F")]);
 export const UserRoleSchema = Type.Union([Type.Literal("user"), Type.Literal("admin")]);
