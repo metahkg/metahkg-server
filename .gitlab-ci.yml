@@ -149,7 +149,7 @@ apifuzzer_fuzz:
   needs: []
   before_script:
     - export FUZZAPI_TARGET_URL="https://$(if [ \"$CI_COMMIT_BRANCH\" = \"dev\" ]; then echo 'dev.'; fi;)metahkg.org"
-    - export FUZZAPI_OPENAPI="https://gitlab.com/metahkg/metahkg-server/-/raw/${CI_COMMIT_BRANCH}/openapi.yaml"
+    - export FUZZAPI_OPENAPI=./openapi.yaml
     - export FUZZAPI_PROFILE="Quick-10"
   rules:
     - if: $CI_COMMIT_BRANCH == "master" ||$CI_COMMIT_BRANCH == "dev"
