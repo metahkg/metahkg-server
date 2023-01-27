@@ -244,7 +244,7 @@ paths:
               - relevance
               - created
               - lastcomment
-            default: latest
+            default: relevance
         - $ref: "#/components/parameters/ThreadsPage"
         - $ref: "#/components/parameters/ThreadsLimit"
       responses:
@@ -3240,7 +3240,6 @@ components:
           minLength: 1
           maxLength: 15
           pattern: '^[a-zA-Z0-9\u0370-\u03ff\u1f00-\u1fff\u3000-\u303F\u3400-\u4DBF\u4E00-\u9FFF一-龯\p{Emoji}\p{Emoji_Presentation}\p{Extended_Pictographic}~!#$%^&*_\-=+\(\)\[\]\{\}\|\\\.,\/\?"'':<>]{1,15}$'
->>>>>>> fa06488 (fix: username regex)
         sex:
           type: string
           enum:
