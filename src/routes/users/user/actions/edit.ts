@@ -21,7 +21,6 @@ import { usersCl } from "../../../../lib/common";
 import { createToken } from "../../../../lib/auth/createToken";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../../lib/regex";
-import EmailValidator from "email-validator";
 import User, { userSex } from "../../../../models/user";
 import { updateSessionByToken } from "../../../../lib/sessions/updateSession";
 import { SexSchema, UserNameSchema } from "../../../../lib/schemas";
@@ -63,11 +62,6 @@ export default (
                 return res
                     .code(409)
                     .send({ statusCode: 409, error: "Name already taken." });
-
-            if (EmailValidator.validate(name))
-                return res
-                    .code(400)
-                    .send({ statusCode: 400, error: "Name must not be a email." });
 
             if (
                 !(await usersCl.updateOne({ id: user.id }, { $set: req.body }))
