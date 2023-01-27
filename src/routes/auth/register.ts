@@ -17,7 +17,6 @@
 
 import { usersCl, verificationCl, inviteCl } from "../../lib/common";
 import { sendVerifyMsg } from "../../lib/email";
-import EmailValidator from "email-validator";
 import bcrypt from "bcrypt";
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
@@ -73,11 +72,6 @@ export default (
             preHandler: [RequireReCAPTCHA],
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            if (EmailValidator.validate(req.body.name))
-                return res
-                    .code(400)
-                    .send({ statusCode: 400, error: "Name must not be a email." });
-
             const { name, password, email, sex, inviteCode } = req.body;
             const hashedEmail = sha256(email);
 
