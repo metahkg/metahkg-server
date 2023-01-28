@@ -58,7 +58,7 @@ export default function (
                     .code(409)
                     .send({ statusCode: 409, error: "Thread not starred." });
 
-            return res.send({ success: true });
+            return res.code(204).send();
         }
     );
     done();

@@ -388,8 +388,8 @@ paths:
                 reason:
                   $ref: "#/components/schemas/Admin/properties/edits/items/properties/reason"
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -438,8 +438,8 @@ paths:
                   maxLength: 100
                   minLength: 1
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -557,8 +557,8 @@ paths:
                 cid:
                   $ref: "#/components/schemas/Comment/properties/id"
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -589,8 +589,8 @@ paths:
       parameters:
         - $ref: "#/components/parameters/ThreadId"
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -625,8 +625,8 @@ paths:
       parameters:
         - $ref: "#/components/parameters/ThreadId"
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -663,8 +663,8 @@ paths:
       parameters:
         - $ref: "#/components/parameters/ThreadId"
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -814,8 +814,8 @@ paths:
                   maxLength: 100
                   minLength: 1
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -861,8 +861,8 @@ paths:
                   maxLength: 100
                   minLength: 1
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -1105,8 +1105,8 @@ paths:
         - $ref: "#/components/parameters/ThreadId"
         - $ref: "#/components/parameters/CommentId"
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -1154,8 +1154,8 @@ paths:
                 emotion:
                   $ref: "#/components/schemas/Emotion"
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -1185,8 +1185,8 @@ paths:
         - $ref: "#/components/parameters/ThreadId"
         - $ref: "#/components/parameters/CommentId"
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -1284,8 +1284,8 @@ paths:
                       minLength: 87
                       maxLength: 87
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -1309,8 +1309,8 @@ paths:
       description: "Unsubscribe to notification. Authentication is required.
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.3.2/src/routes/me/notifications/unsubscribe.ts)"
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -1502,8 +1502,8 @@ paths:
                 nsfw:
                   $ref: "#/components/schemas/Category/properties/nsfw"
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -1583,8 +1583,8 @@ paths:
                 nsfw:
                   $ref: "#/components/schemas/Category/properties/nsfw"
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -1612,8 +1612,8 @@ paths:
       parameters:
         - $ref: "#/components/parameters/CategoryId"
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -1878,8 +1878,8 @@ paths:
                   description: Avatar image. Must be smaller than 2MB. Png, jpg, jpeg, jfif, svg, gif, webp are supported.
                   maxLength: 1048576
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -1924,8 +1924,8 @@ paths:
       parameters:
         - $ref: "#/components/parameters/UserId"
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -2007,8 +2007,8 @@ paths:
       parameters:
         - $ref: "#/components/parameters/UserId"
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -2043,8 +2043,8 @@ paths:
       parameters:
         - $ref: "#/components/parameters/UserId"
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -2090,8 +2090,8 @@ paths:
                   maxLength: 100
                   description: Reason for blocking user
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -2126,8 +2126,8 @@ paths:
       parameters:
         - $ref: "#/components/parameters/UserId"
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -2180,8 +2180,8 @@ paths:
                   type: string
                   format: date-time
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -2216,8 +2216,8 @@ paths:
       parameters:
         - $ref: "#/components/parameters/UserId"
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -2272,8 +2272,8 @@ paths:
                   type: string
                   format: date-time
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -2308,8 +2308,8 @@ paths:
       parameters:
         - $ref: "#/components/parameters/UserId"
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -2398,8 +2398,8 @@ paths:
       description: "Logout. Authentication is required.
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.3.2/src/routes/auth/logout.ts)"
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "401":
           $ref: "#/components/responses/Unauthorized"
         "403":
@@ -2452,12 +2452,8 @@ paths:
                   maxLength: 10
                   example: "1234567890"
       responses:
-        "200":
+        "204":
           description: Success, verification email sent.
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/OK"
         "400":
           description: Bad request / registration disabled / invalid invite code
           content:
@@ -2551,12 +2547,8 @@ paths:
                 rtoken:
                   $ref: "#/components/schemas/rtoken"
       responses:
-        "200":
+        "204":
           description: Success
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/OK"
         "400":
           $ref: "#/components/responses/Invalid"
         "403":
@@ -2598,12 +2590,8 @@ paths:
                 rtoken:
                   $ref: "#/components/schemas/rtoken"
       responses:
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "403":
@@ -2770,8 +2758,8 @@ paths:
       parameters:
         - $ref: "#/components/parameters/SessionId"
       responses:
-        "200":
-          $ref: "#/components/responses/OK"
+        "204":
+          $ref: "#/components/responses/NoContent"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -2963,12 +2951,8 @@ components:
         maximum: 50
         default: 25
   responses:
-    OK:
-      description: OK
-      content:
-        application/json:
-          schema:
-            $ref: "#/components/schemas/OK"
+    NoContent:
+      description: Success
     Token:
       description: Success
       content:
@@ -3089,16 +3073,6 @@ components:
     Emotion:
       type: string
       description: a single emoji
-    OK:
-      type: object
-      additionalProperties: false
-      required:
-        - success
-      properties:
-        success:
-          type: boolean
-          enum:
-            - true
     Token:
       description: jwt token
       type: string

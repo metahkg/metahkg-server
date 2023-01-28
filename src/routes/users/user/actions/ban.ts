@@ -85,7 +85,7 @@ export default function (
             await agenda.cancel({ name: "unbanUser", data: { userId: id } });
             if (exp) await agenda.schedule(new Date(exp), "unbanUser", { userId: id });
 
-            return res.send({ success: true });
+            return res.code(204).send();
         }
     );
     done();

@@ -138,7 +138,7 @@ export default (
                 type: "register",
             });
 
-            res.send({ success: true });
+            res.code(204).send();
         }
     );
     done();

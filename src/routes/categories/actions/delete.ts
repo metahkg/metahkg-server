@@ -66,7 +66,7 @@ export default function (
 
             await categoryCl.deleteOne({ id });
 
-            return res.send({ success: true });
+            return res.code(204).send();
         }
     );
     done();

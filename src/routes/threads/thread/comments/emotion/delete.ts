@@ -91,7 +91,7 @@ export default function (
                     .code(409)
                     .send({ statusCode: 409, error: "Emotion doesn't exist." });
 
-            return res.send({ success: true });
+            return res.code(204).send();
         }
     );
     done();

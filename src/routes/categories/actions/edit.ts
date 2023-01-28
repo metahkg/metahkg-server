@@ -59,7 +59,7 @@ export default function (
                     .code(404)
                     .send({ statusCode: 404, error: "Category not found." });
 
-            return res.send({ success: true });
+            return res.code(204).send();
         }
     );
     done();

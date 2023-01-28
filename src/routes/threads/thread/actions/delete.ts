@@ -70,7 +70,7 @@ export default function (
 
             await threadCl.replaceOne({ id }, { id, removed: true });
 
-            return res.send({ success: true });
+            return res.code(204).send();
         }
     );
     done();
