@@ -72,7 +72,7 @@ export default function (
                     .code(409)
                     .send({ statusCode: 409, error: "Thread already starred." });
 
-            return res.send({ success: true });
+            return res.code(204).send();
         }
     );
     done();

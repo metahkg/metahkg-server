@@ -80,7 +80,7 @@ export default (
                 email: hashedEmail,
             });
 
-            res.send({ success: true });
+            res.code(204).send();
         }
     );
     done();

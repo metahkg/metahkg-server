@@ -87,7 +87,7 @@ export default (
                     .code(409)
                     .send({ statusCode: 409, error: "User already blocked." });
 
-            return res.send({ success: true });
+            return res.code(204).send();
         }
     );
     done();

@@ -66,7 +66,7 @@ export default (
 
             await threadCl.updateOne({ id: threadId }, { $unset: { pin: 1 } });
 
-            return res.send({ success: true });
+            return res.code(204).send();
         }
     );
     done();
