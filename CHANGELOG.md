@@ -14,7 +14,7 @@
   - for supported characters see [src/lib/schemas.ts#36](https://gitlab.com/metahkg/metahkg-server/-/blob/c497d79aec523ad7f5d9222cca9ef1765a6a8340/src/lib/schemas.ts#L36)
   - **_WARNING_**: All users with a username including unsupported characters will not be able to log in or to anything after the change! The usernames should be changed before updating to this version.
   - 556bb2b: register & edit user no longer need to check if the input username is a email due to the '@' character is not allowed
-- c4c9390: replace `{ success: true }` response with 204 No Content
+- 28b936b6: replace `{ success: true }` response with 204 No Content
 
 ### Fixes
 
