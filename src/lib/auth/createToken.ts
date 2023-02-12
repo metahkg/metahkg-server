@@ -19,6 +19,7 @@ import { jwtTokenDataType } from "../../types/jwt";
 import { userSex, userRole } from "../../models/user";
 import dotenv from "dotenv";
 import { JWT } from "@fastify/jwt";
+import { config } from "../config";
 
 dotenv.config();
 
@@ -46,6 +47,11 @@ export function createToken(
         sex,
         role,
     };
-    const token = fastifyJWT.sign(jsonData, expiresIn && { expiresIn });
+    const token = fastifyJWT.sign(jsonData, {
+        algorithm: "EdDSA",
+        iss: config.DOMAIN,
+        aud: config.DOMAIN,
+        expiresIn: expiresIn || "7d",
+    });
     return token;
 }
