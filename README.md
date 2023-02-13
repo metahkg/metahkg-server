@@ -15,7 +15,7 @@ dev build (dev): [dev.metahkg.org](https://dev.metahkg.org)
 
 [![DeepSource](https://deepsource.io/gh/metahkg/metahkg-server.svg/?label=active+issues&show_trend=true&token=U57K3_mzxKK3THb0RtJifA_R)](https://deepsource.io/gh/metahkg/metahkg-server/?ref=repository-badge)
 [![DeepSource](https://deepsource.io/gh/metahkg/metahkg-server.svg/?label=resolved+issues&show_trend=true&token=U57K3_mzxKK3THb0RtJifA_R)](https://deepsource.io/gh/metahkg/metahkg-server/?ref=repository-badge)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/7a8bdd4a758c4338abe5d1d5d497a5d4)](https://www.codacy.com/gl/metahkg/metahkg-server/dashboard?utm_source=gitlab.com&amp;utm_medium=referral&amp;utm_content=metahkg/metahkg-server&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/7a8bdd4a758c4338abe5d1d5d497a5d4)](https://www.codacy.com/gl/metahkg/metahkg-server/dashboard?utm_source=gitlab.com&utm_medium=referral&utm_content=metahkg/metahkg-server&utm_campaign=Badge_Grade)
 
 ## Deploying
 
@@ -25,9 +25,9 @@ dev build (dev): [dev.metahkg.org](https://dev.metahkg.org)
 
 ## OpenApi specification
 
-- [current version (in this branch)](./openapi.yaml)
-- [master](https://gitlab.com/metahkg/metahkg-server/-/blob/master/openapi.yaml)
-- [dev](https://gitlab.com/metahkg/metahkg-server/-/blob/dev/openapi.yaml)
+-   [current version (in this branch)](./openapi.yaml)
+-   [master](https://gitlab.com/metahkg/metahkg-server/-/blob/master/openapi.yaml)
+-   [dev](https://gitlab.com/metahkg/metahkg-server/-/blob/dev/openapi.yaml)
 
 For archives, see [openapi spec](https://gitlab.com/metahkg/openapi-spec).
 
