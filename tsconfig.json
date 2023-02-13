@@ -21,7 +21,5 @@
   "ts-node": {
     "files": true
   },
-  "files": [
-    "src/main.ts"
-  ],
+  "files": ["src/main.ts"]
 }
