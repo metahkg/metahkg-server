@@ -47,27 +47,27 @@
 
 ### Features
 
-- bcddf25: allow fetching (part of) server config ([src/routes/server/config.ts](src/routes/server/config.ts))
-- 5de2b43: nsfw property for categories
-- a3acc13: send emails through smtp servers ([src/lib/email.ts](src/lib/email.ts))
+-   bcddf25: allow fetching (part of) server config ([src/routes/server/config.ts](src/routes/server/config.ts))
+-   5de2b43: nsfw property for categories
+-   a3acc13: send emails through smtp servers ([src/lib/email.ts](src/lib/email.ts))
 
 ### Improvements
 
-- c497d79: use stricter regex for username to prevent the use of ambiguous characters, such as the cyrillic c ([src/lib/schemas.ts](src/lib/schemas.ts))
-  - for supported characters see [src/lib/schemas.ts#36](https://gitlab.com/metahkg/metahkg-server/-/blob/c497d79aec523ad7f5d9222cca9ef1765a6a8340/src/lib/schemas.ts#L36)
-  - **_WARNING_**: All users with a username including unsupported characters will not be able to log in or to anything after the change! The usernames should be changed before updating to this version.
-  - 556bb2b: register & edit user no longer need to check if the input username is a email due to the '@' character is not allowed
-- 28b936b6: replace `{ success: true }` response with 204 No Content
+-   c497d79: use stricter regex for username to prevent the use of ambiguous characters, such as the cyrillic c ([src/lib/schemas.ts](src/lib/schemas.ts))
+    -   for supported characters see [src/lib/schemas.ts#36](https://gitlab.com/metahkg/metahkg-server/-/blob/c497d79aec523ad7f5d9222cca9ef1765a6a8340/src/lib/schemas.ts#L36)
+    -   **_WARNING_**: All users with a username including unsupported characters will not be able to log in or to anything after the change! The usernames should be changed before updating to this version.
+    -   556bb2b: register & edit user no longer need to check if the input username is a email due to the '@' character is not allowed
+-   28b936b6: replace `{ success: true }` response with 204 No Content
 
 ### Fixes
 
-- 85a8e8b, 507a5aa: allow rgb / rgba syntax for color ([src/lib/sanitize.ts](src/lib/sanitize.ts))
-- 17ec3bc: catch possible errors in jwt auth trusted function ([src/app.ts](src/app.ts))
-- f056ac5: fixed a wrong default value for the sort query in the threadsSearch operation ([openapi.yaml](./openapi.yaml))
+-   85a8e8b, 507a5aa: allow rgb / rgba syntax for color ([src/lib/sanitize.ts](src/lib/sanitize.ts))
+-   17ec3bc: catch possible errors in jwt auth trusted function ([src/app.ts](src/app.ts))
+-   f056ac5: fixed a wrong default value for the sort query in the threadsSearch operation ([openapi.yaml](./openapi.yaml))
 
 ### Chore
 
-- 68e01d6, 394b7e6: build docker images for linux/amd64, linux/arm64, darwin/amd64, darwin/arm64 using docker buildx with qemu ([.gitlab-ci.yml](.gitlab-ci.yml))
+-   68e01d6, 394b7e6: build docker images for linux/amd64, linux/arm64, darwin/amd64, darwin/arm64 using docker buildx with qemu ([.gitlab-ci.yml](.gitlab-ci.yml))
 
 ## v6.3.0
 
