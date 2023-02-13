@@ -23,12 +23,6 @@ dev build (dev): [dev.metahkg.org](https://dev.metahkg.org)
 
 [Docs](https://docs.metahkg.org/docs/category/deploy-metahkg)
 
-### Manually
-
-**_WARNING:_** This is NOT RECOMMENDED and might be OUTDATED!
-
-For manual deployment, see DEPLOY.md.
-
 ## OpenApi specification
 
 - [current version (in this branch)](./openapi.yaml)
