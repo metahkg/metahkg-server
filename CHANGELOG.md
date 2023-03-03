@@ -1,4 +1,21 @@
-# Changelog
+#### 6.4.1 (2023-03-03)
+
+##### Chores
+
+-   v6.4.1 (ffd7839a)
+-   replace temp.env with example.env (dc828dc2)
+
+##### Documentation Changes
+
+-   remove deprecated DEPLOY.md (1c06add0)
+
+##### Bug Fixes
+
+-   sign token settings (dbd0564e)
+
+##### Other Changes
+
+-   //gitlab.com/metahkg/metahkg-server into dev (5815fe07)
 
 ## v6.4.0
 
