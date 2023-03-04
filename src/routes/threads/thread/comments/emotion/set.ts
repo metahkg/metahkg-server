@@ -128,7 +128,7 @@ export default function (
                     },
                 });
 
-            return res.send({ success: true });
+            return res.code(204).send();
         }
     );
 

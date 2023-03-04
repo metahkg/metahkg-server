@@ -104,7 +104,7 @@ export default function (
 
             await threadCl.updateOne({ id: threadId }, { $set: { pin: comment } });
 
-            res.send({ success: true });
+            res.code(204).send();
         }
     );
     done();

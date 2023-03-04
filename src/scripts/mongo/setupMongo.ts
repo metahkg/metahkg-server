@@ -25,7 +25,7 @@ import {
     inviteCl,
 } from "../../lib/common";
 import Category from "../../models/category";
-import { categories } from "./category";
+import { categories } from "./categories";
 export async function setupMongo() {
     await threadCl.createIndex({ id: 1 }, { unique: true });
     await usersCl.createIndex({ id: 1 }, { unique: true });

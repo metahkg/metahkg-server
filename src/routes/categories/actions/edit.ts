@@ -36,6 +36,8 @@ export default function (
             name: Type.Optional(CategoryNameSchema),
             tags: Type.Optional(CategoryTagsSchema),
             pinned: Type.Optional(Type.Boolean()),
+            hidden: Type.Optional(Type.Boolean()),
+            nsfw: Type.Optional(Type.Boolean()),
         },
         { additionalProperties: false, minProperties: 1 }
     );
@@ -57,7 +59,7 @@ export default function (
                     .code(404)
                     .send({ statusCode: 404, error: "Category not found." });
 
-            return res.send({ success: true });
+            return res.code(204).send();
         }
     );
     done();

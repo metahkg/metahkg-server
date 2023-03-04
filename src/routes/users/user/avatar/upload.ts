@@ -142,7 +142,7 @@ export default function (
                     });
                     return;
                 }
-                res.send({ success: true });
+                res.code(204).send();
             } catch (err) {
                 fastify.log.error(err);
                 res.code(500).send({ statusCode: 500, error: "Internal server error." });

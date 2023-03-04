@@ -31,7 +31,7 @@ export default function (
         const token = req.headers.authorization?.slice(7);
         await revokeSessionByToken(user.id, token);
 
-        return res.send({ success: true });
+        return res.code(204).send();
     });
     done();
 }
