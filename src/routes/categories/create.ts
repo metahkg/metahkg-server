@@ -30,9 +30,10 @@ export default function (
     const schema = Type.Object(
         {
             name: CategoryNameSchema,
-            hidden: Type.Optional(Type.Boolean()),
-            pinned: Type.Optional(Type.Boolean()),
             tags: Type.Optional(CategoryTagsSchema),
+            pinned: Type.Optional(Type.Boolean()),
+            hidden: Type.Optional(Type.Boolean()),
+            nsfw: Type.Optional(Type.Boolean()),
         },
         { additionalProperties: false }
     );
@@ -60,7 +61,7 @@ export default function (
 
             await categoryCl.insertOne(<Category>{ id, ...req.body });
 
-            return res.send({ success: true });
+            return res.code(204).send();
         }
     );
     done();

@@ -20,8 +20,7 @@ import { Static, Type } from "@sinclair/typebox";
 import { randomBytes } from "crypto";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { usersCl, verificationCl } from "../../lib/common";
-import { config } from "../../lib/config";
-import { mg, resetMsg } from "../../lib/mailgun";
+import { sendResetMsg } from "../../lib/email";
 import { EmailSchema, RTokenSchema } from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
 import User from "../../models/user";
@@ -68,12 +67,7 @@ export default (
 
             const verificationCode = randomBytes(30).toString("hex");
 
-            try {
-                await mg.messages.create(
-                    config.MAILGUN_DOMAIN,
-                    resetMsg({ email, code: verificationCode })
-                );
-            } catch {
+            if (!(await sendResetMsg(email, verificationCode))) {
                 res.code(500).send({
                     statusCode: 500,
                     error: "An error occurred while sending the email.",
@@ -86,7 +80,7 @@ export default (
                 email: hashedEmail,
             });
 
-            res.send({ success: true });
+            res.code(204).send();
         }
     );
     done();

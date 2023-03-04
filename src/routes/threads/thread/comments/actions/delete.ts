@@ -92,7 +92,7 @@ export default function (
                 { $set: { [`conversation.${index}`]: { id: cid, removed: true } } }
             );
 
-            return res.send({ success: true });
+            return res.code(204).send();
         }
     );
     done();

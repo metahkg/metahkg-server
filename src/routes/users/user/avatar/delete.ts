@@ -45,7 +45,7 @@ export default function (
                     .send({ statusCode: 404, error: "Avatar not found." });
             }
 
-            return res.send({ success: true });
+            return res.code(204).send();
         }
     );
     done();

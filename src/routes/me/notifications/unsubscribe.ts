@@ -29,7 +29,7 @@ export default function (
 
         await unSubscribeByToken(user.id, req.headers.authorization?.slice(7));
 
-        return res.send({ success: true });
+        return res.code(204).send();
     });
     done();
 }

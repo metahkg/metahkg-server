@@ -2,11 +2,15 @@ version = 1
 
 [[analyzers]]
 name = "test-coverage"
-enabled = true
 
 [[analyzers]]
-name = "javascript"
-enabled = true
+name = "docker"
+
+[[analyzers]]
+name = "go"
 
   [analyzers.meta]
-  plugins = ["react"]
+  import_root = "gitlab.com/metahkg/imageproxy"
+
+[[transformers]]
+name = "gofmt"

@@ -16,37 +16,15 @@
  */
 
 export const categories = [
-    {
-        id: 1,
-        name: "Chit-chat",
-    },
-    {
-        id: 2,
-        name: "Stories",
-    },
-    {
-        id: 3,
-        name: "School",
-    },
-    {
-        id: 4,
-        name: "Admin",
-    },
-    {
-        id: 5,
-        name: "Leisure",
-    },
-    {
-        id: 6,
-        name: "IT",
-    },
-    {
-        id: 7,
-        name: "Sports",
-    },
-    {
-        id: 8,
-        name: "Adult",
-        hidden: true,
-    },
+    { id: 1, name: "Chit-chat", pinned: true },
+    { id: 2, name: "Stories", pinned: true, tags: ["Interest"] },
+    { id: 3, name: "School", tags: ["Life"] },
+    { id: 4, name: "Admin" },
+    { id: 5, name: "Leisure", tags: ["Interest"] },
+    { id: 6, name: "IT", tags: ["Interest"] },
+    { id: 7, name: "Sports", tags: ["Interest"] },
+    { id: 8, name: "Adult", hidden: true, nsfw: true, tags: ["Interest"] },
+    { id: 9, name: "News", pinned: true, tags: ["News"] },
+    { id: 10, name: "Music", tags: ["Interest"] },
+    { id: 11, name: "Emotions", pinned: true, tags: ["Life"] },
 ];

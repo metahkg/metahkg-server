@@ -16,8 +16,7 @@
  */
 
 import { usersCl, verificationCl, inviteCl } from "../../lib/common";
-import { mg, verifyMsg } from "../../lib/mailgun";
-import EmailValidator from "email-validator";
+import { sendVerifyMsg } from "../../lib/email";
 import bcrypt from "bcrypt";
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
@@ -73,11 +72,6 @@ export default (
             preHandler: [RequireReCAPTCHA],
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
-            if (EmailValidator.validate(req.body.name))
-                return res
-                    .code(400)
-                    .send({ statusCode: 400, error: "Name must not be a email." });
-
             const { name, password, email, sex, inviteCode } = req.body;
             const hashedEmail = sha256(email);
 
@@ -126,12 +120,7 @@ export default (
 
             const code = randomBytes(30).toString("hex");
 
-            try {
-                await mg.messages.create(
-                    config.MAILGUN_DOMAIN,
-                    verifyMsg({ email, code })
-                );
-            } catch {
+            if (!(await sendVerifyMsg(email, code))) {
                 return res.code(500).send({
                     statusCode: 500,
                     error: "An error occurred while sending the email.",
@@ -149,7 +138,7 @@ export default (
                 type: "register",
             });
 
-            res.send({ success: true });
+            res.code(204).send();
         }
     );
     done();

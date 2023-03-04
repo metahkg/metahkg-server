@@ -15,6 +15,7 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { RateLimitOptions } from "@fastify/rate-limit";
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
 import { categoryCl, threadCl, usersCl } from "./lib/common";
 import { config } from "./lib/config";
@@ -27,9 +28,20 @@ export default function (
     _opts: FastifyPluginOptions,
     done: (err?: Error) => void
 ) {
-    fastify.get("/sitemap.xml", async (req, res) => {
-        res.type("application/xml");
-        res.send(/*xml*/ `<?xml version="1.0" encoding="UTF-8"?>
+    fastify.get(
+        "/sitemap.xml",
+        {
+            config: {
+                rateLimit: <RateLimitOptions>{
+                    max: 10,
+                    ban: 5,
+                    timeWindow: 1000 * 60,
+                },
+            },
+        },
+        async (req, res) => {
+            res.type("application/xml");
+            res.send(/*xml*/ `<?xml version="1.0" encoding="UTF-8"?>
         <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
             ${["", "create", "search", "recall"].map(
                 (path) => /*xml*/ `<url>
@@ -89,6 +101,7 @@ export default function (
                 </url>`
             )}
         </urlset>`);
-    });
+        }
+    );
     done();
 }
