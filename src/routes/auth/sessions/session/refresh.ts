@@ -69,21 +69,21 @@ export default function (
             if (!session) {
                 return res.code(404).send({
                     statusCode: 404,
-                    message: "Session not found.",
+                    error: "Session not found.",
                 });
             }
 
             if (sha256(refreshToken) !== session.refreshToken) {
                 return res.code(401).send({
                     statusCode: 401,
-                    message: "Invalid refresh token.",
+                    error: "Invalid refresh token.",
                 });
             }
 
             if (session.sameIp && sha256(req.ip) !== session.ip) {
                 return res.code(403).send({
                     statusCode: 403,
-                    message: "Refreshing with another ip address is not allowed.",
+                    error: "Refreshing with another ip address is not allowed.",
                 });
             }
 
@@ -91,7 +91,7 @@ export default function (
             if (!refresh) {
                 return res.code(500).send({
                     statusCode: 500,
-                    message: "An error occurred.",
+                    error: "An error occurred.",
                 });
             }
 
