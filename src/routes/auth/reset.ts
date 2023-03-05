@@ -22,11 +22,16 @@ import bcrypt from "bcrypt";
 import { createToken } from "../../lib/auth/createToken";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { createSession } from "../../lib/sessions/createSession";
-import { CodeSchema, EmailSchema, PasswordSchema, RTokenSchema } from "../../lib/schemas";
+import {
+    CodeSchema,
+    EmailSchema,
+    PasswordSchema,
+    CaptchaTokenSchema,
+} from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
 import { Verification } from "../../models/verification";
 import { RateLimitOptions } from "@fastify/rate-limit";
-import RequireReCAPTCHA from "../../plugins/requireRecaptcha";
+import RequireCAPTCHA from "../../plugins/requireCaptcha";
 
 export default (
     fastify: FastifyInstance,
@@ -39,7 +44,7 @@ export default (
             code: CodeSchema,
             password: PasswordSchema,
             sameIp: Type.Optional(Type.Boolean()),
-            rtoken: RTokenSchema,
+            captchaToken: CaptchaTokenSchema,
         },
         { additionalProperties: false }
     );
@@ -56,7 +61,7 @@ export default (
                     timeWindow: 1000 * 60 * 60 * 24,
                 },
             },
-            preHandler: [RequireReCAPTCHA],
+            preHandler: [RequireCAPTCHA],
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const { email, code, password, sameIp } = req.body;

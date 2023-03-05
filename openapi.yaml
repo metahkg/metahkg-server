@@ -160,15 +160,15 @@ paths:
               required:
                 - title
                 - comment
-                - rtoken
+                - captchaToken
                 - category
               properties:
                 title:
                   $ref: "#/components/schemas/Thread/properties/title"
                 comment:
                   $ref: "#/components/schemas/Comment/properties/comment"
-                rtoken:
-                  $ref: "#/components/schemas/rtoken"
+                captchaToken:
+                  $ref: "#/components/schemas/captchaToken"
                 category:
                   $ref: "#/components/schemas/Category/properties/id"
       responses:
@@ -199,7 +199,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
         "429":
-          $ref: "#/components/responses/RecaptchaInvalidOrTooManyRequests"
+          $ref: "#/components/responses/CaptchaTokenInvalidOrTooManyRequests"
         "500":
           $ref: "#/components/responses/InternalServerError"
         "502":
@@ -710,12 +710,12 @@ paths:
               additionalProperties: false
               required:
                 - comment
-                - rtoken
+                - captchaToken
               properties:
                 comment:
                   $ref: "#/components/schemas/Comment/properties/comment"
-                rtoken:
-                  $ref: "#/components/schemas/rtoken"
+                captchaToken:
+                  $ref: "#/components/schemas/captchaToken"
                 quote:
                   $ref: "#/components/schemas/Comment/properties/id"
       responses:
@@ -740,7 +740,7 @@ paths:
         "404":
           $ref: "#/components/responses/ThreadNotFound"
         "429":
-          $ref: "#/components/responses/RecaptchaInvalidOrTooManyRequests"
+          $ref: "#/components/responses/CaptchaTokenInvalidOrTooManyRequests"
         "500":
           $ref: "#/components/responses/InternalServerError"
         "502":
@@ -2349,7 +2349,7 @@ paths:
               required:
                 - name
                 - password
-                - rtoken
+                - captchaToken
               properties:
                 name:
                   description: Username or email
@@ -2358,8 +2358,8 @@ paths:
                     - $ref: "#/components/schemas/email"
                 password:
                   $ref: "#/components/schemas/hashedPwd"
-                rtoken:
-                  $ref: "#/components/schemas/rtoken"
+                captchaToken:
+                  $ref: "#/components/schemas/captchaToken"
                 sameIp:
                   $ref: "#/components/schemas/sameIp"
       responses:
@@ -2432,7 +2432,7 @@ paths:
                 - email
                 - password
                 - sex
-                - rtoken
+                - captchaToken
               properties:
                 name:
                   $ref: "#/components/schemas/User/properties/name"
@@ -2442,8 +2442,8 @@ paths:
                   $ref: "#/components/schemas/hashedPwd"
                 sex:
                   $ref: "#/components/schemas/User/properties/sex"
-                rtoken:
-                  $ref: "#/components/schemas/rtoken"
+                captchaToken:
+                  $ref: "#/components/schemas/captchaToken"
                 inviteCode:
                   description: "Invite code, required if admin set register=invite
                     See [register mode](https://docs.metahkg.org/docs/customize/registermode)"
@@ -2493,14 +2493,14 @@ paths:
               required:
                 - email
                 - code
-                - rtoken
+                - captchaToken
               properties:
                 email:
                   $ref: "#/components/schemas/email"
                 code:
                   $ref: "#/components/schemas/code"
-                rtoken:
-                  $ref: "#/components/schemas/rtoken"
+                captchaToken:
+                  $ref: "#/components/schemas/captchaToken"
                 sameIp:
                   $ref: "#/components/schemas/sameIp"
       responses:
@@ -2540,12 +2540,12 @@ paths:
               additionalProperties: false
               required:
                 - email
-                - rtoken
+                - captchaToken
               properties:
                 email:
                   $ref: "#/components/schemas/email"
-                rtoken:
-                  $ref: "#/components/schemas/rtoken"
+                captchaToken:
+                  $ref: "#/components/schemas/captchaToken"
       responses:
         "204":
           description: Success
@@ -2560,7 +2560,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
         "429":
-          $ref: "#/components/responses/RecaptchaInvalidOrTooManyRequests"
+          $ref: "#/components/responses/CaptchaTokenInvalidOrTooManyRequests"
         "500":
           $ref: "#/components/responses/InternalServerError"
         "502":
@@ -2583,12 +2583,12 @@ paths:
               additionalProperties: false
               required:
                 - email
-                - rtoken
+                - captchaToken
               properties:
                 email:
                   $ref: "#/components/schemas/email"
-                rtoken:
-                  $ref: "#/components/schemas/rtoken"
+                captchaToken:
+                  $ref: "#/components/schemas/captchaToken"
       responses:
         "204":
           $ref: "#/components/responses/NoContent"
@@ -2599,7 +2599,7 @@ paths:
         "404":
           $ref: "#/components/responses/UserNotFound"
         "429":
-          $ref: "#/components/responses/RecaptchaInvalidOrTooManyRequests"
+          $ref: "#/components/responses/CaptchaTokenInvalidOrTooManyRequests"
         "500":
           $ref: "#/components/responses/InternalServerError"
         "502":
@@ -2625,7 +2625,7 @@ paths:
                 - email
                 - code
                 - password
-                - rtoken
+                - captchaToken
               properties:
                 email:
                   $ref: "#/components/schemas/email"
@@ -2633,8 +2633,8 @@ paths:
                   $ref: "#/components/schemas/code"
                 password:
                   $ref: "#/components/schemas/hashedPwd"
-                rtoken:
-                  $ref: "#/components/schemas/rtoken"
+                captchaToken:
+                  $ref: "#/components/schemas/captchaToken"
                 sameIp:
                   $ref: "#/components/schemas/sameIp"
       responses:
@@ -2983,8 +2983,8 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/Error"
-    RecaptchaInvalid:
-      description: "Recaptcha token invalid"
+    CaptchaTokenInvalid:
+      description: "Captcha token invalid"
       content:
         application/json:
           schema:
@@ -2995,8 +2995,8 @@ components:
         application/json:
           schema:
             $ref: "#/components/schemas/Error"
-    RecaptchaInvalidOrTooManyRequests:
-      description: "Recaptcha token invalid, or too many requests"
+    CaptchaTokenInvalidOrTooManyRequests:
+      description: "Captcha token invalid, or too many requests"
       content:
         application/json:
           schema:
@@ -3659,9 +3659,11 @@ components:
           type: string
           format: date-time
           description: date when star was created
-    rtoken:
+    captchaToken:
       type: string
-      description: Recaptcha token. See [https://developers.google.com/recaptcha/docs/verify](https://developers.google.com/recaptcha/docs/verify).
+      description: "Captcha token.
+        For ReCAPTCHA, see [https://developers.google.com/recaptcha/docs/verify](https://developers.google.com/recaptcha/docs/verify).
+        For Turnstile, see [https://developers.cloudflare.com/turnstile/get-started/server-side-validation/](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/)."
       example: "6LeIxAcTAAAAAJcZVRqd76R7tjHpI9u0tRwxV5ksM"
       maxLength: 1000
       minLength: 1

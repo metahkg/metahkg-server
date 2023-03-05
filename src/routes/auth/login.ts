@@ -26,13 +26,13 @@ import { createSession } from "../../lib/sessions/createSession";
 import {
     EmailSchema,
     PasswordSchema,
-    RTokenSchema,
+    CaptchaTokenSchema,
     UserNameSchema,
 } from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
 import { Verification } from "../../models/verification";
 import { RateLimitOptions } from "@fastify/rate-limit";
-import RequireReCAPTCHA from "../../plugins/requireRecaptcha";
+import RequireCAPTCHA from "../../plugins/requireCaptcha";
 
 dotenv.config();
 
@@ -47,7 +47,7 @@ export default (
             // check if password is a sha256 hash
             password: PasswordSchema,
             sameIp: Type.Optional(Type.Boolean()),
-            rtoken: RTokenSchema,
+            captchaToken: CaptchaTokenSchema,
         },
         { additionalProperties: false }
     );
@@ -63,7 +63,7 @@ export default (
                 },
             },
             schema: { body: schema },
-            preHandler: [RequireReCAPTCHA],
+            preHandler: [RequireCAPTCHA],
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const { name, password, sameIp } = req.body;
