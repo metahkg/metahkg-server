@@ -21,8 +21,8 @@ import { FastifyInstance, FastifyPluginOptions } from "fastify";
 import multer from "fastify-multer"; // handle image uploads
 import { File } from "fastify-multer/lib/interfaces";
 import fs from "fs";
-import { move } from "fs-extra";
 import sharp from "sharp"; // reshape images to circle
+import { avatarBucket as bucket } from "../../../../lib/common";
 
 import RequireSameUser from "../../../../plugins/requireSameUser";
 
@@ -48,9 +48,6 @@ export default function (
             //svg circle
             `<svg><circle cx="${r}" cy="${r}" r="${r}" /></svg>`
         );
-        try {
-            fs.rmSync(`images/avatars/${id}.png`);
-        } catch {}
         //use sharp to resize
         fs.mkdirSync(`tmp/avatars`, { recursive: true });
         await sharp(filename)
@@ -64,9 +61,6 @@ export default function (
             .toFormat("png")
             .toFile(`tmp/avatars/${id}.png`)
             .catch((err) => fastify.log.error(err));
-        await move(`tmp/avatars/${id}.png`, `images/avatars/${id}.png`, {
-            overwrite: true,
-        });
     }
     /**
      * Image is saved to uploads/ upon uploading
@@ -119,25 +113,27 @@ export default function (
                         .send({ statusCode: 401, error: "Unauthorized." });
                 }
 
-                //rename file to <user-id>.<extension>
-                const newFileName = `${user.id}.${file.originalname.split(".").pop()}`;
-                fs.mkdirSync("images/processing/avatars", { recursive: true });
-                fs.mkdirSync("images/avatars", { recursive: true });
-                //move file to processing folder
-                await move(`${file?.path}`, `images/processing/avatars/${newFileName}`, {
-                    overwrite: true,
-                });
                 try {
-                    //compress the file
-                    await compress(`images/processing/avatars/${newFileName}`, user.id);
-                    //fs.rmSync(`images/processing/avatars/${newFileName}`);
+                    // compress the file
+                    await compress(file.path, user.id);
+                    await new Promise((resolve, reject) => {
+                        const uploadStream = fs
+                            .createReadStream(`tmp/avatars/${user.id}.png`)
+                            .pipe(
+                                bucket.openUploadStream(`${user.id}.png`, {
+                                    metadata: { id: user.id },
+                                })
+                            );
+                        uploadStream.on("error", reject);
+                        uploadStream.on("close", resolve);
+                    });
                 } catch (err) {
                     fastify.log.error(err);
                     res.code(422).send({
                         statusCode: 422,
-                        error: "Could not process you file.",
+                        error: "Could not process your file.",
                     });
-                    fs.rm(`images/processing/avatars/${newFileName}`, (err) => {
+                    fs.rm(file.path, (err) => {
                         fastify.log.error(err);
                     });
                     return;
