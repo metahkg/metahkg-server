@@ -54,7 +54,7 @@ async function migrate() {
             await new Promise((resolve, reject) => {
                 const stream = createReadStream(`./images/avatars/${file}`).pipe(
                     avatarBucket.openUploadStream(file, {
-                        metadata: { id: file[0] },
+                        metadata: { id: Number(file[0]) },
                     })
                 );
                 stream.on("finish", resolve);
