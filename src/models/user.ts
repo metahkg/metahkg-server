@@ -70,6 +70,10 @@ export interface Session {
     subscription?: Subscription;
 }
 
+export interface Votes {
+    [id: number]: { cid: number; vote: "U" | "D" }[];
+}
+
 export default interface User {
     _id?: ObjectId;
     id: number;
@@ -87,4 +91,5 @@ export default interface User {
     blocked?: BlockedUser[];
     mute?: { admin: AdminUser; reason: string; exp?: Date };
     ban?: { admin: AdminUser; reason: string; exp?: Date };
+    votes?: Votes;
 }

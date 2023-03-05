@@ -90,7 +90,6 @@ export const threadCl = db.collection("thread");
 export const usersCl = db.collection("users");
 export const verificationCl = db.collection("verification");
 export const categoryCl = db.collection("category");
-export const votesCl = db.collection("votes");
 export const linksCl = db.collection("links");
 export const inviteCl = db.collection("invite");
 export const removedCl = db.collection("removed");
