@@ -21,7 +21,6 @@ import {
     threadCl,
     usersCl,
     linksCl,
-    votesCl,
     inviteCl,
 } from "../../lib/common";
 import Category from "../../models/category";
@@ -37,7 +36,6 @@ export async function setupMongo() {
     await linksCl.createIndex({ id: 1 }, { unique: true });
     await categoryCl.createIndex({ id: 1 }, { unique: true });
     await categoryCl.createIndex({ name: 1 }, { unique: true });
-    await votesCl.createIndex({ id: 1 }, { unique: true });
     await inviteCl.createIndex({ code: 1 }, { unique: true });
 
     await threadCl.createIndex({ title: "text" }); // text search
