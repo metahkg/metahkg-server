@@ -12,9 +12,16 @@ export async function autoMigrate() {
         console.warn("version.txt not found, not migrating!");
         console.info("Writing package.json version to version.txt");
         writeFileSync("version.txt", newVersion);
+        return;
     }
     try {
         const oldVersion = readFileSync("version.txt", "utf8").trim();
+        if (!oldVersion) {
+            console.warn("old version not found, not migrating!");
+            console.info("Writing package.json version to version.txt");
+            writeFileSync("version.txt", newVersion);
+            return;
+        }
         const oldVersionNum = Number(oldVersion.replace(/\D/g, ""));
         const newVersionNum = Number(newVersion.replace(/\D/g, ""));
         if (oldVersion !== newVersion) {
