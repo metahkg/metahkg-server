@@ -1,3 +1,34 @@
+#### 6.5.0 (2023-03-05)
+
+##### Chores
+
+*  v6.5.0 (2a875366)
+*  add turbo config (c23f76f1)
+*  v6.4.1 (ffd7839a)
+*  replace temp.env with example.env (dc828dc2)
+
+##### Documentation Changes
+
+*  remove deprecated DEPLOY.md (1c06add0)
+
+##### New Features
+
+*  auto migrate (be4fb677)
+*  generate license (dbefeb1a)
+
+##### Bug Fixes
+
+* **avatar upload:**  delete the old one after uploading (90850d47)
+* **avatar delete:**  find query (3764b481)
+* **refresh:**  error message wrong property (dc5c98d5)
+
+##### Other Changes
+
+* **migrate:**  6.5.0 migrate script [migrate] (ee159711)
+* **scripts:**  use console.info (175cae20)
+* **votes:**  merge votesCl into usersCl [breaking] [migration] (e926b5e4)
+* **avatar:**  store avatars using mongodb gridfs [breaking] [migration] (4f9c0591)
+
 #### 6.4.1 (2023-03-03)
 
 ##### Chores
