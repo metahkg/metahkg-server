@@ -6,7 +6,7 @@ export async function generateCerts() {
     const publicExists = existsSync("certs/public.pem");
     const privateExists = existsSync("certs/private.pem");
     if (publicExists && privateExists) {
-        return console.log(
+        return console.info(
             "Public and private keys exist. Not generating a new key pair."
         );
     }
@@ -17,7 +17,9 @@ export async function generateCerts() {
         throw "Private key exists but public key does not. Please remove the private key or add the public key.";
     }
 
-    console.log("Public and private key not found. Generating a new ed25519 key pair...");
+    console.info(
+        "Public and private key not found. Generating a new ed25519 key pair..."
+    );
     const { publicKey, privateKey } = generateKeyPairSync("ed25519", {
         publicKeyEncoding: {
             type: "spki",
