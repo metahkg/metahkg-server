@@ -1,3 +1,31 @@
+#### 6.6.0 (2023-03-05)
+
+##### Chores
+
+*  v6.6.0 (16a6837c)
+*  v6.5.0 (2a875366)
+*  add turbo config (c23f76f1)
+*  v6.4.1 (ffd7839a)
+
+##### New Features
+
+* **captcha:**  support turnstile [breaking] - can choose between recaptcha and turnstile via CAPTCHA env variable - rtoken in api requests changed to captchaToken (9730e03c)
+*  auto migrate (be4fb677)
+*  generate license (dbefeb1a)
+
+##### Bug Fixes
+
+* **avatar upload:**  delete the old one after uploading (90850d47)
+* **avatar delete:**  find query (3764b481)
+* **refresh:**  error message wrong property (dc5c98d5)
+
+##### Other Changes
+
+* **migrate:**  6.5.0 migrate script [migrate] (ee159711)
+* **scripts:**  use console.info (175cae20)
+* **votes:**  merge votesCl into usersCl [breaking] [migration] (e926b5e4)
+* **avatar:**  store avatars using mongodb gridfs [breaking] [migration] (4f9c0591)
+
 #### 6.4.1 (2023-03-03)
 
 ##### Chores
