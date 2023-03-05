@@ -3688,6 +3688,7 @@ components:
         - linksDomain
         - vapidPublicKey
         - cors
+        - captcha
       properties:
         visibility:
           $ref: "#/components/schemas/VisibilityMode"
@@ -3719,6 +3720,12 @@ components:
         cors:
           type: boolean
           description: whether cors is enabled
+        captcha:
+          type: string
+          description: uses recaptcha or turnstile
+          enum:
+            - recaptcha
+            - turnstile
 
   securitySchemes:
     bearerAuth:

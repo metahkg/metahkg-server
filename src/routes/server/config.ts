@@ -17,6 +17,7 @@ export default function (
             linksDomain: config.LINKS_DOMAIN,
             vapidPublicKey: config.VAPID_PUBLIC_KEY,
             cors: config.CORS,
+            captcha: config.CAPTCHA,
         });
     });
     done();
