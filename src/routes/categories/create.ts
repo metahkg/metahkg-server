@@ -47,7 +47,7 @@ export default function (
             if ((await categoryCl.findOne({ name })) as Category)
                 return res
                     .code(409)
-                    .send({ statusCode: 409, error: "Category already exists." });
+                    .send({ statusCode: 409, error: "Category already exists" });
 
             const id =
                 (

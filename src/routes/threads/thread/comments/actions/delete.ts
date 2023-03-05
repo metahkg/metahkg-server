@@ -76,7 +76,7 @@ export default function (
             if (index === undefined || index === -1)
                 return res
                     .code(404)
-                    .send({ statusCode: 404, error: "Thread or comment not found." });
+                    .send({ statusCode: 404, error: "Thread or comment not found" });
 
             if ("removed" in thread) return;
 

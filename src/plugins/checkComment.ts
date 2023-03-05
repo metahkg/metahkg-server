@@ -39,15 +39,15 @@ export default async function (
     if (!thread)
         return res
             .code(404)
-            .send({ statusCode: 404, error: "Thread or comment not found." });
+            .send({ statusCode: 404, error: "Thread or comment not found" });
 
     if ("removed" in thread)
-        return res.code(410).send({ statusCode: 410, error: "Thread removed." });
+        return res.code(410).send({ statusCode: 410, error: "Thread removed" });
 
     const comment = thread?.conversation?.[0];
 
     if ("removed" in comment)
-        return res.code(410).send({ statusCode: 410, error: "Comment removed." });
+        return res.code(410).send({ statusCode: 410, error: "Comment removed" });
 
     return;
 }

@@ -50,7 +50,7 @@ export default (
             )
                 return res
                     .code(409)
-                    .send({ statusCode: 409, error: "User not followed." });
+                    .send({ statusCode: 409, error: "User not followed" });
 
             return res.code(204).send();
         }

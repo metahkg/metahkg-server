@@ -85,12 +85,10 @@ export default (
 
             const user = req.user;
             if (!user)
-                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized" });
 
             if (!((await threadCl.findOne({ id })) as Thread))
-                return res
-                    .code(404)
-                    .send({ statusCode: 404, error: "Thread not found." });
+                return res.code(404).send({ statusCode: 404, error: "Thread not found" });
 
             const comment = sanitize(req.body.comment);
             const text = htmlToText(comment, { wordwrap: false });

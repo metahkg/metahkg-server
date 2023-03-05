@@ -24,9 +24,9 @@ export default async function RequireSameUserOrAdmin(
     const userId = Number(req.params.id);
     const user = req.user;
 
-    if (!user) return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
+    if (!user) return res.code(401).send({ statusCode: 401, error: "Unauthorized" });
     if (user.id !== userId && user.role !== "admin")
-        return res.code(403).send({ statusCode: 403, error: "Forbidden." });
+        return res.code(403).send({ statusCode: 403, error: "Forbidden" });
 
     return;
 }

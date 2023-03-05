@@ -73,7 +73,7 @@ export default (
             if (!verificationData)
                 return res
                     .code(401)
-                    .send({ error: "Code incorrect or expired, or email not found." });
+                    .send({ error: "Code incorrect or expired, or email not found" });
 
             const { name, password, sex } = verificationData;
 
@@ -107,7 +107,7 @@ export default (
             if (!session)
                 return res
                     .code(500)
-                    .send({ statusCode: 500, error: "An error occurred." });
+                    .send({ statusCode: 500, error: "An error occurred" });
 
             res.send(session);
         }

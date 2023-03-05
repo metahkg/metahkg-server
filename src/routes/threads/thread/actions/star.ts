@@ -37,14 +37,12 @@ export default function (
         async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
             const user = req.user;
             if (!user)
-                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized" });
 
             const threadId = Number(req.params.id);
 
             if (!((await threadCl.findOne({ id: threadId })) as Thread))
-                return res
-                    .code(404)
-                    .send({ statusCode: 404, error: "Thread not found." });
+                return res.code(404).send({ statusCode: 404, error: "Thread not found" });
 
             if (
                 !(
@@ -70,7 +68,7 @@ export default function (
             )
                 return res
                     .code(409)
-                    .send({ statusCode: 409, error: "Thread already starred." });
+                    .send({ statusCode: 409, error: "Thread already starred" });
 
             return res.code(204).send();
         }

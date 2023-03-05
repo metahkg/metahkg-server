@@ -33,10 +33,10 @@ export default async function (
     )) as Thread;
 
     if (!thread)
-        return res.code(404).send({ statusCode: 404, error: "Thread not found." });
+        return res.code(404).send({ statusCode: 404, error: "Thread not found" });
 
     if ("removed" in thread)
-        return res.code(410).send({ statusCode: 410, error: "Thread removed." });
+        return res.code(410).send({ statusCode: 410, error: "Thread removed" });
 
     return;
 }

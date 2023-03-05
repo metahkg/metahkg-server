@@ -62,9 +62,7 @@ export default function (
                 { projection: { _id: 0 } }
             )) as Thread;
             if (!thread)
-                return res
-                    .code(404)
-                    .send({ statusCode: 404, error: "Thread not found." });
+                return res.code(404).send({ statusCode: 404, error: "Thread not found" });
 
             await removedCl.insertOne({ thread, type: "thread", admin, reason });
 

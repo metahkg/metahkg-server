@@ -83,7 +83,7 @@ export default (
 
             const user = req.user;
             if (!user)
-                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized" });
 
             const category = (await categoryCl.findOne({
                 id: req.body.category,
@@ -91,12 +91,12 @@ export default (
             if (!category)
                 return res
                     .code(404)
-                    .send({ statusCode: 404, error: "Category not found." });
+                    .send({ statusCode: 404, error: "Category not found" });
 
             if ((await threadCl.findOne({ title }, { projection: { _id: 0 } })) as Thread)
                 return res
                     .code(409)
-                    .send({ statusCode: 409, error: "Title already exists." });
+                    .send({ statusCode: 409, error: "Title already exists" });
 
             const newThreadId =
                 (

@@ -63,7 +63,7 @@ export default (
             const requestedUser = (await usersCl.findOne({ id })) as User;
 
             if (!requestedUser)
-                return res.code(404).send({ statusCode: 404, error: "User not found." });
+                return res.code(404).send({ statusCode: 404, error: "User not found" });
 
             const history = (await threadCl
                 .find({

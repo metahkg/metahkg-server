@@ -48,9 +48,7 @@ export default (
                     )
                 ).matchedCount
             )
-                return res
-                    .code(409)
-                    .send({ statusCode: 409, error: "User not blocked." });
+                return res.code(409).send({ statusCode: 409, error: "User not blocked" });
 
             return res.code(204).send();
         }
