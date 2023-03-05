@@ -42,6 +42,6 @@ export async function setupMongo() {
     await verificationCl.createIndex({ createdAt: 1 }, { expireAfterSeconds: 300 });
 
     if ((await categoryCl.find().toArray()).length)
-        console.log("categories found. not inserting again.");
+        console.info("categories found. not inserting again.");
     else await categoryCl.insertMany(<Category[]>categories);
 }
