@@ -35,11 +35,13 @@ import { config } from "./lib/config";
 import { readFileSync } from "fs";
 import { generateCerts } from "./scripts/certs";
 import { redis } from "./lib/redis";
+import { autoMigrate } from "./scripts/autoMigrate";
 
 dotenv.config();
 
 export default async function MetahkgServer() {
     await client.connect();
+    await autoMigrate();
     await setupMongo();
     await generateCerts();
     await agenda.start();
