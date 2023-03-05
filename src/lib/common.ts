@@ -15,7 +15,7 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { MongoClient } from "mongodb";
+import { GridFSBucket, MongoClient } from "mongodb";
 import { config } from "./config";
 
 export const client = new MongoClient(config.MONGO_URI);
@@ -94,3 +94,5 @@ export const votesCl = db.collection("votes");
 export const linksCl = db.collection("links");
 export const inviteCl = db.collection("invite");
 export const removedCl = db.collection("removed");
+
+export const avatarBucket = new GridFSBucket(db, { bucketName: "avatar" });
