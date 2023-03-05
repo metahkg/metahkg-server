@@ -52,7 +52,7 @@ export default function (
             if (!file)
                 return res
                     .code(404)
-                    .send({ statusCode: 404, error: "User or avatar not found." });
+                    .send({ statusCode: 404, error: "User or avatar not found" });
 
             res.header("Content-Type", "image/png").send(file);
         }

@@ -40,9 +40,7 @@ export default function (
                 await avatarBucket.find({ "metadata.id": id }).toArray()
             )[0];
             if (!metadata) {
-                return res
-                    .code(404)
-                    .send({ statusCode: 404, error: "Avatar not found." });
+                return res.code(404).send({ statusCode: 404, error: "Avatar not found" });
             }
 
             await avatarBucket.delete(metadata._id);

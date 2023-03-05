@@ -59,7 +59,7 @@ export default (
 
             const user = req.user;
             if (!user)
-                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized" });
 
             const thread = (await threadCl.findOne(
                 { id: threadId, conversation: { $elemMatch: { id: commentId } } },
@@ -76,7 +76,7 @@ export default (
             if (!thread)
                 return res
                     .code(404)
-                    .send({ statusCode: 404, error: "Thread or comment not found." });
+                    .send({ statusCode: 404, error: "Thread or comment not found" });
 
             const votes = ((await usersCl.findOne({ id: user.id })) as User)?.votes;
 
@@ -85,7 +85,7 @@ export default (
             } else if (votes?.[threadId]?.find((i) => i.cid === commentId)) {
                 return res
                     .code(429)
-                    .send({ statusCode: 429, error: "You have already voted." });
+                    .send({ statusCode: 429, error: "You have already voted" });
             }
 
             await usersCl.updateOne(

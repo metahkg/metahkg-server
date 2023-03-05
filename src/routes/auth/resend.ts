@@ -65,12 +65,12 @@ export default (
             })) as Verification;
 
             if (!verificationUserData)
-                return res.code(404).send({ statusCode: 404, error: "Email not found." });
+                return res.code(404).send({ statusCode: 404, error: "Email not found" });
 
             if (!(await sendVerifyMsg(email, verificationUserData.code))) {
                 return res.code(500).send({
                     statusCode: 500,
-                    error: "An error occurred while sending the email.",
+                    error: "An error occurred while sending the email",
                 });
             }
 

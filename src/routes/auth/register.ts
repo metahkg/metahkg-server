@@ -79,7 +79,7 @@ export default (
             if (config.REGISTER_MODE === "none") {
                 return res
                     .code(400)
-                    .send({ statusCode: 400, error: "Registration disabled." });
+                    .send({ statusCode: 400, error: "Registration disabled" });
             }
 
             // TODO: WARNING: frontend not implemented !!!
@@ -90,7 +90,7 @@ export default (
             ) {
                 return res
                     .code(400)
-                    .send({ statusCode: 400, error: "Invalid invite code." });
+                    .send({ statusCode: 400, error: "Invalid invite code" });
             }
 
             // check if email domain is allowed
@@ -100,7 +100,7 @@ export default (
             ) {
                 return res
                     .code(400)
-                    .send({ statusCode: 400, error: "Email domain not allowed." });
+                    .send({ statusCode: 400, error: "Email domain not allowed" });
             }
 
             // check if email / username is in use
@@ -115,7 +115,7 @@ export default (
             )
                 return res.code(409).send({
                     statusCode: 409,
-                    error: "Username or email already in use.",
+                    error: "Username or email already in use",
                 });
 
             const code = randomBytes(30).toString("hex");
@@ -123,7 +123,7 @@ export default (
             if (!(await sendVerifyMsg(email, code))) {
                 return res.code(500).send({
                     statusCode: 500,
-                    error: "An error occurred while sending the email.",
+                    error: "An error occurred while sending the email",
                 });
             }
 

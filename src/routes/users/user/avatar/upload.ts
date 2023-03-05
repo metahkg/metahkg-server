@@ -84,7 +84,7 @@ export default function (
             try {
                 const file = req.file as unknown as File;
                 if (!file)
-                    return res.code(400).send({ statusCode: 400, error: "Bad request." });
+                    return res.code(400).send({ statusCode: 400, error: "Bad request" });
 
                 if (file?.size > maxSize) {
                     fs.rm(file?.path, (err) => {
@@ -92,7 +92,7 @@ export default function (
                     });
                     return res
                         .code(413)
-                        .send({ statusCode: 413, error: "File too large." });
+                        .send({ statusCode: 413, error: "File too large" });
                 }
                 if (!/^image\/(png|svg|jpg|jpeg|jfif|gif|webp)$/i.test(file.mimetype)) {
                     //remove the file
@@ -101,16 +101,14 @@ export default function (
                     });
                     return res
                         .code(415)
-                        .send({ statusCode: 415, error: "File type not supported." });
+                        .send({ statusCode: 415, error: "File type not supported" });
                 }
                 const user = req.user;
                 if (!user) {
                     fs.rm(`uploads/${file?.filename}`, (err) => {
                         fastify.log.error(err);
                     });
-                    return res
-                        .code(401)
-                        .send({ statusCode: 401, error: "Unauthorized." });
+                    return res.code(401).send({ statusCode: 401, error: "Unauthorized" });
                 }
 
                 try {
@@ -135,7 +133,7 @@ export default function (
                     fastify.log.error(err);
                     res.code(422).send({
                         statusCode: 422,
-                        error: "Could not process your file.",
+                        error: "Could not process your file",
                     });
                     fs.rm(file.path, (err) => {
                         fastify.log.error(err);
@@ -145,7 +143,7 @@ export default function (
                 res.code(204).send();
             } catch (err) {
                 fastify.log.error(err);
-                res.code(500).send({ statusCode: 500, error: "Internal server error." });
+                res.code(500).send({ statusCode: 500, error: "Internal server error" });
             }
         }
     );

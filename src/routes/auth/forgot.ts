@@ -63,14 +63,14 @@ export default (
 
             const userData = (await usersCl.findOne({ email: hashedEmail })) as User;
             if (!userData)
-                return res.code(404).send({ statusCode: 404, error: "User not found." });
+                return res.code(404).send({ statusCode: 404, error: "User not found" });
 
             const verificationCode = randomBytes(30).toString("hex");
 
             if (!(await sendResetMsg(email, verificationCode))) {
                 res.code(500).send({
                     statusCode: 500,
-                    error: "An error occurred while sending the email.",
+                    error: "An error occurred while sending the email",
                 });
             }
 

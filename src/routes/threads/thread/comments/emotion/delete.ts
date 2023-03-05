@@ -45,7 +45,7 @@ export default function (
             const user = req.user;
 
             if (!user)
-                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized" });
 
             const thread = (await threadCl.findOne(
                 {
@@ -68,7 +68,7 @@ export default function (
             if (index === undefined || index === -1)
                 return res
                     .code(404)
-                    .send({ statusCode: 404, error: "Comment not found." });
+                    .send({ statusCode: 404, error: "Comment not found" });
 
             if (
                 !(
@@ -89,7 +89,7 @@ export default function (
             )
                 return res
                     .code(409)
-                    .send({ statusCode: 409, error: "Emotion doesn't exist." });
+                    .send({ statusCode: 409, error: "Emotion doesn't exist" });
 
             return res.code(204).send();
         }
