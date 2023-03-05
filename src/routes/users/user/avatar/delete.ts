@@ -36,7 +36,9 @@ export default function (
         async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
             const id = Number(req.params.id);
 
-            const metadata = (await avatarBucket.find({ id }).toArray())[0];
+            const metadata = (
+                await avatarBucket.find({ "metadata.id": id }).toArray()
+            )[0];
             if (!metadata) {
                 return res
                     .code(404)
