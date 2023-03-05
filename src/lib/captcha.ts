@@ -16,23 +16,32 @@
  */
 
 import axios from "axios";
+import { config } from "./config";
 
 /**
  * It verifies that the user is a human.
- * @param {string} secret - The secret key that you got from the Google reCAPTCHA site
  * @param {string} token - The token you got from the user's browser.
  * @returns The `verify` function returns a promise that resolves to a boolean.
  */
-export async function verifyCaptcha(secret: string, token: string) {
+export async function verifyCaptcha(token: string) {
     try {
-        const { data } = await axios.get<{
+        const { data } = await axios.post<{
             success: boolean;
             /** timestamp */
             challenge_ts: string;
             hostname: string;
             error_codes?: number[];
         }>(
-            `https://www.google.com/recaptcha/api/siteverify?secret=${secret}&response=${token}`
+            config.CAPTCHA === "turnstile"
+                ? `https://challenges.cloudflare.com/turnstile/v0/siteverify`
+                : `https://www.google.com/recaptcha/api/siteverify`,
+            {
+                secret:
+                    config.CAPTCHA === "turnstile"
+                        ? config.TURNSTILE_SECRET
+                        : config.RECAPTCHA_SECRET,
+                token,
+            }
         );
         return data.success;
     } catch {

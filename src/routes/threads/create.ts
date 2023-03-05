@@ -28,7 +28,7 @@ import checkMuted from "../../plugins/checkMuted";
 import {
     CommentSchema,
     IntegerSchema,
-    RTokenSchema,
+    CaptchaTokenSchema,
     TitleSchema,
 } from "../../lib/schemas";
 import { sendNotification } from "../../lib/notifications/sendNotification";
@@ -36,7 +36,7 @@ import { sha256 } from "../../lib/sha256";
 import { Link } from "../../models/link";
 import Category from "../../models/category";
 import { RateLimitOptions } from "@fastify/rate-limit";
-import RequireReCAPTCHA from "../../plugins/requireRecaptcha";
+import RequireCAPTCHA from "../../plugins/requireCaptcha";
 import { config } from "../../lib/config";
 
 export default (
@@ -47,7 +47,7 @@ export default (
     const schema = Type.Object(
         {
             comment: CommentSchema,
-            rtoken: RTokenSchema,
+            captchaToken: CaptchaTokenSchema,
             title: TitleSchema,
             category: IntegerSchema,
         },
@@ -57,7 +57,7 @@ export default (
     fastify.post(
         "/",
         {
-            preHandler: [RequireReCAPTCHA, checkMuted],
+            preHandler: [RequireCAPTCHA, checkMuted],
             config: {
                 rateLimit: <RateLimitOptions>{
                     keyGenerator: (req: FastifyRequest) => {

@@ -19,11 +19,11 @@ import { verificationCl } from "../../lib/common";
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { sendVerifyMsg } from "../../lib/email";
-import { EmailSchema, RTokenSchema } from "../../lib/schemas";
+import { EmailSchema, CaptchaTokenSchema } from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
 import { Verification } from "../../models/verification";
 import { RateLimitOptions } from "@fastify/rate-limit";
-import RequireReCAPTCHA from "../../plugins/requireRecaptcha";
+import RequireCAPTCHA from "../../plugins/requireCaptcha";
 
 export default (
     fastify: FastifyInstance,
@@ -31,7 +31,7 @@ export default (
     done: (e?: Error) => void
 ) => {
     const schema = Type.Object(
-        { email: EmailSchema, rtoken: RTokenSchema },
+        { email: EmailSchema, captchaToken: CaptchaTokenSchema },
         { additionalProperties: false }
     );
 
@@ -53,7 +53,7 @@ export default (
                     hook: "preHandler",
                 },
             },
-            preHandler: [RequireReCAPTCHA],
+            preHandler: [RequireCAPTCHA],
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const { email } = req.body;

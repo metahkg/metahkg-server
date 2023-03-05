@@ -26,11 +26,15 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../../lib/regex";
 import checkMuted from "../../../../plugins/checkMuted";
 import { sendNotification } from "../../../../lib/notifications/sendNotification";
-import { CommentSchema, IntegerSchema, RTokenSchema } from "../../../../lib/schemas";
+import {
+    CommentSchema,
+    IntegerSchema,
+    CaptchaTokenSchema,
+} from "../../../../lib/schemas";
 import { sha256 } from "../../../../lib/sha256";
 import { Link } from "../../../../models/link";
 import { RateLimitOptions } from "@fastify/rate-limit";
-import RequireReCAPTCHA from "../../../../plugins/requireRecaptcha";
+import RequireCAPTCHA from "../../../../plugins/requireCaptcha";
 import { config } from "../../../../lib/config";
 
 export default (
@@ -41,7 +45,7 @@ export default (
     const schema = Type.Object(
         {
             comment: CommentSchema,
-            rtoken: RTokenSchema,
+            captchaToken: CaptchaTokenSchema,
             quote: Type.Optional(IntegerSchema),
         },
         { additionalProperties: false }
@@ -56,7 +60,7 @@ export default (
                 body: schema,
                 params: paramsSchema,
             },
-            preHandler: [RequireReCAPTCHA, checkMuted],
+            preHandler: [RequireCAPTCHA, checkMuted],
             config: {
                 rateLimit: <RateLimitOptions>{
                     keyGenerator: (req: FastifyRequest) => {

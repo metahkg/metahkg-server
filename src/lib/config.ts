@@ -27,7 +27,11 @@ export const config = {
     DOMAIN: process.env.DOMAIN || process.env.domain || "",
     LINKS_DOMAIN: process.env.LINKS_DOMAIN || "",
     PORT: Number(process.env.PORT || 3200) || 3200,
+    CAPTCHA: (["recaptcha", "turnstile"].includes(process.env.CAPTCHA)
+        ? process.env.CAPTCHA
+        : "recaptcha") as "recaptcha" | "turnstile",
     RECAPTCHA_SECRET: process.env.RECAPTCHA_SECRET || process.env.recaptchasecret || "",
+    TURNSTILE_SECRET: process.env.TURNSTILE_SECRET || "",
     REGISTER_MODE: (["normal", "none", "invite"].includes(
         process.env.REGISTER_MODE || process.env.register
     )
