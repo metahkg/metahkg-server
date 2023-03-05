@@ -116,6 +116,9 @@ export default function (
                 try {
                     // compress the file
                     await compress(file.path, user.id);
+                    const oldFile = (
+                        await bucket.find({ "metadata.id": user.id }).toArray()
+                    )[0];
                     await new Promise((resolve, reject) => {
                         const uploadStream = fs
                             .createReadStream(`tmp/avatars/${user.id}.png`)
@@ -127,6 +130,7 @@ export default function (
                         uploadStream.on("error", reject);
                         uploadStream.on("close", resolve);
                     });
+                    await bucket.delete(oldFile._id);
                 } catch (err) {
                     fastify.log.error(err);
                     res.code(422).send({
