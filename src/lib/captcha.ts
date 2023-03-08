@@ -25,7 +25,7 @@ import { config } from "./config";
  */
 export async function verifyCaptcha(token: string) {
     try {
-        const { data } = await axios.post<{
+        const { data } = await (config.CAPTCHA === "turnstile" ? axios.post : axios.get)<{
             success: boolean;
             /** timestamp */
             challenge_ts: string;
@@ -34,14 +34,13 @@ export async function verifyCaptcha(token: string) {
         }>(
             config.CAPTCHA === "turnstile"
                 ? `https://challenges.cloudflare.com/turnstile/v0/siteverify`
-                : `https://www.google.com/recaptcha/api/siteverify`,
-            {
-                secret:
-                    config.CAPTCHA === "turnstile"
-                        ? config.TURNSTILE_SECRET
-                        : config.RECAPTCHA_SECRET,
-                response: token,
-            }
+                : `https://www.google.com/recaptcha/api/siteverify?secret=${config.RECAPTCHA_SECRET}&token=${token}`,
+            config.CAPTCHA === "turnstile"
+                ? {
+                      secret: config.TURNSTILE_SECRET,
+                      response: token,
+                  }
+                : undefined
         );
         return data.success;
     } catch {
