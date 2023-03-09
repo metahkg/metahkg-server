@@ -34,7 +34,7 @@ export async function verifyCaptcha(token: string) {
         }>(
             config.CAPTCHA === "turnstile"
                 ? `https://challenges.cloudflare.com/turnstile/v0/siteverify`
-                : `https://www.google.com/recaptcha/api/siteverify?secret=${config.RECAPTCHA_SECRET}&token=${token}`,
+                : `https://www.google.com/recaptcha/api/siteverify?secret=${config.RECAPTCHA_SECRET}&response=${token}`,
             config.CAPTCHA === "turnstile"
                 ? {
                       secret: config.TURNSTILE_SECRET,
