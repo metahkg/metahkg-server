@@ -217,55 +217,60 @@ export default (
                 );
             }
 
-            (
-                usersCl
-                    .find({
-                        starred: { $elemMatch: { id: thread.id } },
-                        sessions: { $elemMatch: { subscription: { $exists: true } } },
-                    })
-                    .project({ _id: 0, id: 1 })
-                    .toArray() as Promise<{ id: number }[]>
-            ).then((users) => {
-                if (!users.find((i) => i.id === thread.op.id))
-                    users.push({ id: thread.op.id });
-
-                users.forEach(({ id }) => {
-                    if (id !== user.id)
-                        sendNotification(id, {
-                            title: `New comment (${thread.title})`,
-                            createdAt: new Date(),
-                            options: {
-                                body: `${user.name} (#${user.id}): ${
-                                    text.length < 200 ? text : `${text.slice(0, 200)}...`
-                                }`,
-                                data: {
-                                    type: "comment",
-                                    threadId: thread.id,
-                                    commentId: newcid,
-                                    url: `https://${config.DOMAIN}/thread/${thread.id}?c=${newcid}`,
-                                },
-                            },
-                        });
-                });
-            });
-
-            if (quotedComment && !("removed" in quotedComment)) {
-                if (quotedComment.user.id !== user.id)
-                    sendNotification(quotedComment.user.id, {
-                        title: `New reply (${thread.title})`,
-                        createdAt: new Date(),
-                        options: {
-                            body: `${user.name} (#${user.id}): ${
-                                text.length < 200 ? text : `${text.slice(0, 200)}...`
-                            }`,
-                            data: {
-                                type: "reply",
-                                threadId: thread.id,
-                                commentId: newcid,
-                                url: `https://${config.DOMAIN}/thread/${thread.id}?c=${newcid}`,
-                            },
+            if (
+                quotedComment &&
+                !("removed" in quotedComment) &&
+                quotedComment.user.id !== user.id
+            ) {
+                sendNotification(quotedComment.user.id, {
+                    title: `New reply (${thread.title})`,
+                    createdAt: new Date(),
+                    options: {
+                        body: `${user.name} (#${user.id}): ${
+                            text.length < 200 ? text : `${text.slice(0, 200)}...`
+                        }`,
+                        data: {
+                            type: "reply",
+                            threadId: thread.id,
+                            commentId: newcid,
+                            url: `https://${config.DOMAIN}/thread/${thread.id}?c=${newcid}`,
                         },
+                    },
+                });
+            } else {
+                (
+                    usersCl
+                        .find({
+                            starred: { $elemMatch: { id: thread.id } },
+                            sessions: { $elemMatch: { subscription: { $exists: true } } },
+                        })
+                        .project({ _id: 0, id: 1 })
+                        .toArray() as Promise<{ id: number }[]>
+                ).then((users) => {
+                    if (!users.find((i) => i.id === thread.op.id))
+                        users.push({ id: thread.op.id });
+
+                    users.forEach(({ id }) => {
+                        if (id !== user.id)
+                            sendNotification(id, {
+                                title: `New comment (${thread.title})`,
+                                createdAt: new Date(),
+                                options: {
+                                    body: `${user.name} (#${user.id}): ${
+                                        text.length < 200
+                                            ? text
+                                            : `${text.slice(0, 200)}...`
+                                    }`,
+                                    data: {
+                                        type: "comment",
+                                        threadId: thread.id,
+                                        commentId: newcid,
+                                        url: `https://${config.DOMAIN}/thread/${thread.id}?c=${newcid}`,
+                                    },
+                                },
+                            });
                     });
+                });
             }
 
             res.send({ id: newcid });
