@@ -1,6 +1,9 @@
 import dotenv from "dotenv";
+import { secrets } from "./secret";
 
 dotenv.config();
+
+const se = secrets();
 
 export const config = {
     MONGO_URI: process.env.MONGO_URI || process.env.DB_URI || "mongodb://localhost",
@@ -49,8 +52,8 @@ export const config = {
         ? process.env.VISIBILITY
         : "public") as "public" | "internal",
     CORS: JSON.parse(process.env.CORS || process.env.cors) || false,
-    VAPID_PUBLIC_KEY: process.env.VAPID_PUBLIC_KEY || "",
-    VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY || "",
+    VAPID_PUBLIC_KEY: process.env.VAPID_PUBLIC_KEY || se.VAPID_PUBLIC_KEY || "",
+    VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY || se.VAPID_PRIVATE_KEY || "",
     GCM_API_KEY: process.env.GCM_API_KEY || "",
-    KEY_PASSPHRASE: process.env.KEY_PASSPHRASE || "",
+    KEY_PASSPHRASE: process.env.KEY_PASSPHRASE || se.KEY_PASSPHRASE || "",
 };
