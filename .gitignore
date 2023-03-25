@@ -42,3 +42,4 @@ package-lock.json
 .turbo
 
 version.txt
+secrets.json
