@@ -114,23 +114,6 @@ export default function (
                 try {
                     // compress the file
                     await compress(file.path, user.id);
-                    const oldFile = (
-                        await bucket.find({ "metadata.id": user.id }).toArray()
-                    )?.[0];
-                    await new Promise((resolve, reject) => {
-                        const uploadStream = fs
-                            .createReadStream(`tmp/avatars/${user.id}.png`)
-                            .pipe(
-                                bucket.openUploadStream(`${user.id}.png`, {
-                                    metadata: { id: user.id },
-                                })
-                            );
-                        uploadStream.on("error", reject);
-                        uploadStream.on("close", resolve);
-                    });
-                    if (oldFile) {
-                        await bucket.delete(oldFile._id);
-                    }
                 } catch (err) {
                     fastify.log.error(err);
                     res.code(422).send({
@@ -141,6 +124,23 @@ export default function (
                         fastify.log.error(err);
                     });
                     return;
+                }
+                const oldFile = (
+                    await bucket.find({ "metadata.id": user.id }).toArray()
+                )?.[0];
+                await new Promise((resolve, reject) => {
+                    const uploadStream = fs
+                        .createReadStream(`tmp/avatars/${user.id}.png`)
+                        .pipe(
+                            bucket.openUploadStream(`${user.id}.png`, {
+                                metadata: { id: user.id },
+                            })
+                        );
+                    uploadStream.on("error", reject);
+                    uploadStream.on("close", resolve);
+                });
+                if (oldFile) {
+                    await bucket.delete(oldFile._id);
                 }
                 res.code(204).send();
             } catch (err) {
