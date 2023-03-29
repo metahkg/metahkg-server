@@ -73,7 +73,7 @@ externalDocs:
 servers:
   - url: https://dev.metahkg.org/api
   - url: http://localhost:3002/api
-  - url: https://wcyat.metahkg.org/api
+  - url: https://local.metahkg.org/api
 
 tags:
   - name: auth
