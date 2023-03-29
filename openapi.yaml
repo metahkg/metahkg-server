@@ -2445,12 +2445,7 @@ paths:
                 captchaToken:
                   $ref: "#/components/schemas/captchaToken"
                 inviteCode:
-                  description: "Invite code, required if admin set register=invite
-                    See [register mode](https://docs.metahkg.org/docs/customize/registermode)"
-                  type: string
-                  minLength: 1
-                  maxLength: 10
-                  example: "1234567890"
+                  $ref: "#/components/schemas/InviteCode"
       responses:
         "204":
           description: Success, verification email sent.
@@ -2892,6 +2887,199 @@ paths:
           $ref: "#/components/responses/InternalServerError"
         "502":
           $ref: "#/components/responses/BadGateway"
+  /server/invitecodes:
+    get:
+      tags:
+        - server
+        - admin
+      operationId: serverInviteCodes
+      security:
+        - bearerAuth: []
+      summary: Get invite codes
+      description: "Get all invite codes. Admin privilege required.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.6.1-dev/src/routes/server/invitecodes/all.ts)"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Invite"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "502":
+          $ref: "#/components/responses/BadGateway"
+    post:
+      tags:
+        - server
+        - admin
+      operationId: serverInviteCodesCreate
+      security:
+        - bearerAuth: []
+      summary: Create invite code
+      description: "Create invite codes. Admin privilege required.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.6.1-dev/src/routes/server/invitecodes/create.ts)"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - code
+              additionalProperties: false
+              properties:
+                code:
+                  $ref: "#/components/schemas/InviteCode"
+                description:
+                  $ref: "#/components/schemas/Invite/properties/description"
+      responses:
+        "204":
+          $ref: "#/components/responses/NoContent"
+        "400":
+          $ref: "#/components/responses/Invalid"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "409":
+          description: Invite code already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "502":
+          $ref: "#/components/responses/BadGateway"
+  /server/invitecodes/generate:
+    post:
+      tags:
+        - server
+        - admin
+      operationId: serverInviteCodesGenerate
+      security:
+        - bearerAuth: []
+      summary: Generate invite code
+      description: "Generate an invite code. Admin privilege required.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.6.1-dev/src/routes/server/invitecodes/generate.ts)"
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              properties:
+                description:
+                  $ref: "#/components/schemas/Invite/properties/description"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - code
+                properties:
+                  code:
+                    $ref: "#/components/schemas/InviteCode"
+        "400":
+          $ref: "#/components/responses/Invalid"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "502":
+          $ref: "#/components/responses/BadGateway"
+  /server/invitecodes/{code}:
+    get:
+      tags:
+        - server
+        - admin
+      operationId: serverInviteCodesInfo
+      security:
+        - bearerAuth: []
+      summary: Get invite code info
+      description: "Get info of an invite code. Admin privilege required.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.6.1-dev/src/routes/server/invitecodes/info.ts)"
+      parameters:
+        - in: path
+          name: code
+          description: invite code
+          schema:
+            $ref: "#/components/schemas/InviteCode"
+          required: true
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Invite"
+        "400":
+          $ref: "#/components/responses/Invalid"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Invite code not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "502":
+          $ref: "#/components/responses/BadGateway"
+    delete:
+      tags:
+        - server
+        - admin
+      operationId: serverInviteCodesDelete
+      security:
+        - bearerAuth: []
+      summary: Delete an invite code
+      description: "Delete an invite code. Admin privilege required.
+        [Source](https://github.com/metahkg/metahkg-server/blob/6.6.1-dev/src/routes/server/invitecodes/delete.ts)"
+      parameters:
+        - in: path
+          name: code
+          description: invite code
+          schema:
+            $ref: "#/components/schemas/InviteCode"
+          required: true
+      responses:
+        "204":
+          $ref: "#/components/responses/NoContent"
+        "400":
+          $ref: "#/components/responses/Invalid"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Invite code not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "502":
+          $ref: "#/components/responses/BadGateway"
+
 components:
   parameters:
     ThreadId:
@@ -3213,7 +3401,7 @@ components:
           example: "wcyat"
           minLength: 1
           maxLength: 15
-          pattern: '^[a-zA-Z0-9\u0370-\u03ff\u1f00-\u1fff\u3000-\u303F\u3400-\u4DBF\u4E00-\u9FFF一-龯\p{Emoji}\p{Emoji_Presentation}\p{Extended_Pictographic}~!#$%^&*_\-=+\(\)\[\]\{\}\|\\\.,\/\?"'':<>]{1,15}$'
+          pattern: '[a-zA-Z0-9\u0370-\u03ff\u1f00-\u1fff\u3000-\u303F\u3400-\u4DBF\u4E00-\u9FFF一-龯\p{Emoji}\p{Emoji_Presentation}\p{Extended_Pictographic}~!#$%^&*_\-=+\(\)\[\]\{\}\|\\\.,\/\?"'':<>]{1,15}'
         sex:
           type: string
           enum:
@@ -3341,6 +3529,27 @@ components:
       maxLength: 60
       description: "Verification code sent to email"
       example: "123456789012345678901234567890123456789012345678901234567890"
+    InviteCode:
+      description: "Invite code, required if admin set register=invite
+        See [register mode](https://docs.metahkg.org/docs/customize/registermode)"
+      type: string
+      minLength: 10
+      maxLength: 10
+      example: "1234567890"
+    Invite:
+      type: object
+      required:
+        - code
+        - createdAt
+      properties:
+        code:
+          $ref: "#/components/schemas/InviteCode"
+        description:
+          type: string
+          description: description as set by creator
+        createdAt:
+          type: string
+          format: date-time
     hashedPwd:
       type: string
       description: user password, hashed with sha256
