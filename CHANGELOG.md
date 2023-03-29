@@ -1,3 +1,41 @@
+#### 6.7.0 (2023-03-29)
+
+##### Build System / Dependencies
+
+* **tsconfig.json:**  set target to esnext (feec5d97)
+
+##### Chores
+
+*  v6.7.0 (dev) [release] [dev] (4d91ab76)
+*  v6.6.1 (4458f442)
+*  update CHANGELOG.md (0112d0d3)
+
+##### New Features
+
+* **server:**  add, generate, delete, get invite codes (admin only) [admin] (83acdb63)
+*  automatically generate internal secrets (21291247)
+* **captcha:**  add captcha mode to server config (4e0df6eb)
+
+##### Bug Fixes
+
+* **openapi:**  fix source urls (bf4c1279)
+* **avatar upload:**
+  *  upload code should be moved outside of the try-catch (f628abbc)
+  *  delete only if old file exists (596b4634)
+* **notifications:**  duplicated notifications (b3fd687b)
+* **captcha:**
+  *  use get request for recaptcha (b50ae621)
+  *  change wording (7e21e24f)
+*  captcha verification (5b2559d8)
+* **auto migrate:**  return if version not found (f1896155)
+* **migrate v6.5.0:**  convert id to number (a014a563)
+
+##### Other Changes
+
+*  update server list (7662ddc5)
+* **errors:**  remove full stop from error, if needed use message instead (9d178d57)
+* **.gitignore:**  add version.txt (8d49d409)
+
 #### 6.6.0 (2023-03-05)
 
 ##### Chores
