@@ -71,7 +71,7 @@ externalDocs:
   description: Server source code
 
 servers:
-  - url: https://dev.metahkg.org/api
+  - url: https://metahkg.org/api
   - url: http://localhost:3002/api
   - url: https://wcyat.metahkg.org/api
 
