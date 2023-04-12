@@ -26,6 +26,7 @@ import checkComment from "../../../../../plugins/checkComment";
 import RequireAdmin from "../../../../../plugins/requireAdmin";
 import { ReasonSchemaAdmin, CommentSchema } from "../../../../../lib/schemas";
 import { objectFilter } from "../../../../../lib/objectFilter";
+import sanitize from "../../../../../lib/sanitize";
 
 export default function (
     fastify: FastifyInstance,
@@ -66,7 +67,9 @@ export default function (
                 ["id", "name", "sex", "role"].includes(key)
             );
 
-            const { comment, reason } = req.body;
+            const { reason } = req.body;
+
+            const comment = sanitize(req.body.comment);
 
             const text = htmlToText(comment);
 
