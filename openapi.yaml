@@ -1311,12 +1311,14 @@ paths:
       responses:
         "204":
           $ref: "#/components/responses/NoContent"
-        "400":
-          $ref: "#/components/responses/Invalid"
         "401":
           $ref: "#/components/responses/Unauthorized"
-        "403":
-          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Not subscribed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
         "429":
           $ref: "#/components/responses/TooManyRequests"
         "500":

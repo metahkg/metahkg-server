@@ -27,7 +27,12 @@ export default function (
     fastify.post("/unsubscribe", async (req, res) => {
         const user = req.user;
 
-        await unSubscribeByToken(user.id, req.headers.authorization?.slice(7));
+        if (!(await unSubscribeByToken(user.id, req.headers.authorization?.slice(7)))) {
+            return res.code(404).send({
+                statusCode: 404,
+                error: "Not subscribed",
+            });
+        }
 
         return res.code(204).send();
     });
