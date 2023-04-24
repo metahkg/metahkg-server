@@ -18,7 +18,6 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { htmlToText } from "html-to-text";
-import { ObjectId } from "mongodb";
 import { threadCl } from "../../../../../lib/common";
 
 import regex from "../../../../../lib/regex";
@@ -26,6 +25,7 @@ import checkComment from "../../../../../plugins/checkComment";
 import RequireAdmin from "../../../../../plugins/requireAdmin";
 import { ReasonSchemaAdmin, CommentSchema } from "../../../../../lib/schemas";
 import { objectFilter } from "../../../../../lib/objectFilter";
+import Thread from "../../../../../models/thread";
 import sanitize from "../../../../../lib/sanitize";
 
 export default function (
@@ -73,27 +73,32 @@ export default function (
 
             const text = htmlToText(comment);
 
-            const index = (
-                (await threadCl.findOne(
-                    { id },
-                    {
-                        projection: {
-                            _id: 0,
-                            index: { $indexOfArray: ["$conversation.id", cid] },
-                        },
-                    }
-                )) as { _id: ObjectId; index: number }
-            )?.index;
+            const thread = (await threadCl.findOne(
+                { id },
+                {
+                    projection: {
+                        _id: 0,
+                        pin: 1,
+                        index: { $indexOfArray: ["$conversation.id", cid] },
+                        conversation: 1,
+                    },
+                }
+            )) as Thread & { index: number };
 
             await threadCl.updateOne(
                 { id },
                 {
                     $set: {
-                        [`conversation.${index}.comment`]: comment,
-                        [`conversation.${index}.text`]: text,
+                        [`conversation.${thread.index}.comment`]: comment,
+                        [`conversation.${thread.index}.text`]: text,
+                        ...(!("removed" in thread) &&
+                            thread.pin?.id === cid && {
+                                "pin.comment": comment,
+                                "pin.text": text,
+                            }),
                     },
                     $push: {
-                        [`conversation.${index}.admin.edits`]: {
+                        [`conversation.${thread.index}.admin.edits`]: {
                             admin,
                             reason,
                             date: new Date(),
@@ -102,7 +107,21 @@ export default function (
                 }
             );
 
-            return res.code(204).send();
+            // edit quotes of the comment
+            // first order only
+            // TODO: edit higher orders (need to do it recursively)
+            await threadCl.updateOne(
+                { id },
+                {
+                    $set: {
+                        "conversation.$[elem].quote.comment": comment,
+                        "conversation.$[elem].quote.text": text,
+                    },
+                },
+                { arrayFilters: [{ "elem.quote.id": cid }] }
+            );
+
+            res.code(204).send();
         }
     );
     done();
