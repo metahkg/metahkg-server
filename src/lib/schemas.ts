@@ -31,6 +31,10 @@ export const CaptchaTokenSchema = Type.String({ minLength: 1, maxLength: 1000 })
 export const TitleSchema = Type.String({ minLength: 1, maxLength: 500 });
 export const CommentSchema = Type.String({ minLength: 1, maxLength: 50000 });
 export const VoteSchema = Type.Union([Type.Literal("U"), Type.Literal("D")]);
+export const VisibilitySchema = Type.Union([
+    Type.Literal("public"),
+    Type.Literal("internal"),
+]);
 
 export const UserNameSchema = Type.RegEx(
     // allows:

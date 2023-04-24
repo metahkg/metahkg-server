@@ -171,6 +171,8 @@ paths:
                   $ref: "#/components/schemas/captchaToken"
                 category:
                   $ref: "#/components/schemas/Category/properties/id"
+                visibility:
+                  $ref: "#/components/schemas/Visibility"
       responses:
         "200":
           description: "Success"
@@ -718,6 +720,8 @@ paths:
                   $ref: "#/components/schemas/captchaToken"
                 quote:
                   $ref: "#/components/schemas/Comment/properties/id"
+                visibility:
+                  $ref: "#/components/schemas/Visibility"
       responses:
         "200":
           description: "Success"
@@ -3561,6 +3565,11 @@ components:
     sameIp:
       type: boolean
       description: restrict the session to a same ip
+    Visibility:
+      type: string
+      enum:
+        - public
+        - internal
     Category:
       type: object
       additionalProperties: false
@@ -3669,6 +3678,8 @@ components:
           format: uri
           description: shortened link to the comment
           example: "https://l.metahkg.org/p994Nw2"
+        visibility:
+          $ref: "#/components/schemas/Visibility"
         quote:
           allOf:
             - $ref: "#/components/schemas/CommentC"
@@ -3744,6 +3755,8 @@ components:
           $ref: "#/components/schemas/Comment/properties/createdAt"
         slink:
           $ref: "#/components/schemas/Comment/properties/slink"
+        visibility:
+          $ref: "#/components/schemas/Comment/properties/visibility"
         quote:
           $ref: "#/components/schemas/Comment/properties/quote"
     Thread:
@@ -3817,6 +3830,8 @@ components:
           type: string
           description: shortened link to the thread
           example: "https://l.metahkg.org/1"
+        visibility:
+          $ref: "#/components/schemas/Visibility"
         pin:
           description: pinned comment
           allOf:
@@ -3884,11 +3899,6 @@ components:
         - normal
         - none
         - invite
-    VisibilityMode:
-      type: string
-      enum:
-        - public
-        - internal
     ServerConfig:
       type: object
       additionalProperties: false
@@ -3902,7 +3912,7 @@ components:
         - captcha
       properties:
         visibility:
-          $ref: "#/components/schemas/VisibilityMode"
+          $ref: "#/components/schemas/Visibility"
         register:
           type: object
           additionalProperties: false

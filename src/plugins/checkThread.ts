@@ -38,5 +38,9 @@ export default async function (
     if ("removed" in thread)
         return res.code(410).send({ statusCode: 410, error: "Thread removed" });
 
+    if (thread.visibility === "internal" && !req.user) {
+        return res.code(403).send({ statusCode: 403, error: "Forbidden" });
+    }
+
     return;
 }

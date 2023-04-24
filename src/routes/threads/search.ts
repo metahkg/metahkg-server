@@ -76,6 +76,7 @@ export default (
                                     ? { "op.name": regex }
                                     : { title: regex }),
                                 ...(!user && { category: { $nin: await hiddencats() } }),
+                                ...(!user && { visibility: { $ne: "internal" } }),
                                 removed: { $ne: true },
                             },
                         },

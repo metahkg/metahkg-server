@@ -26,6 +26,7 @@ export type Thread =
           op: publicUserType;
           category: number;
           count: number;
+          visibility?: "public" | "internal";
           conversation: Comment[];
           score: number;
           lastModified: Date;
@@ -74,6 +75,7 @@ export type Comment =
           quote?: Comment;
           emotions?: Emotion[];
           admin?: Admin;
+          visibility?: "public" | "internal";
       };
 
 export interface Emotion {

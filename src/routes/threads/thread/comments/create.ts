@@ -30,6 +30,7 @@ import {
     CommentSchema,
     IntegerSchema,
     CaptchaTokenSchema,
+    VisibilitySchema,
 } from "../../../../lib/schemas";
 import { sha256 } from "../../../../lib/sha256";
 import { Link } from "../../../../models/link";
@@ -47,6 +48,7 @@ export default (
             comment: CommentSchema,
             captchaToken: CaptchaTokenSchema,
             quote: Type.Optional(IntegerSchema),
+            visibility: Type.Optional(VisibilitySchema),
         },
         { additionalProperties: false }
     );
@@ -82,6 +84,7 @@ export default (
             const id = Number(req.params.id);
 
             const { quote } = req.body;
+            let { visibility } = req.body;
 
             const user = req.user;
             if (!user)
@@ -146,9 +149,14 @@ export default (
                                     )
                             )
                         ) as Comment) || undefined;
-                    if ("removed" in quotedComment) quotedComment = undefined;
+                    if ("removed" in quotedComment) return (quotedComment = undefined);
 
                     if (quotedComment) quoteIndex = thread?.index;
+
+                    // comment is made internal if the quoted comment is internal
+                    if (quotedComment.visibility === "internal") {
+                        visibility = "internal";
+                    }
                 }
             }
 
@@ -158,7 +166,7 @@ export default (
                 { id },
                 {
                     $push: {
-                        conversation: {
+                        conversation: <Comment>{
                             id: newcid,
                             user: {
                                 id: user.id,
@@ -172,6 +180,7 @@ export default (
                             slink: `https://${config.LINKS_DOMAIN}/${slinkId}`,
                             images: imagesInComment,
                             ...(quotedComment && { quote: quotedComment }),
+                            visibility,
                         },
                     },
                     $currentDate: { lastModified: true },

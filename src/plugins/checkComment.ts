@@ -49,5 +49,9 @@ export default async function (
     if ("removed" in comment)
         return res.code(410).send({ statusCode: 410, error: "Comment removed" });
 
+    if (comment.visibility === "internal" && !req.user) {
+        return res.code(403).send({ statusCode: 403, error: "Forbidden" });
+    }
+
     return;
 }
