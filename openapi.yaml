@@ -3608,6 +3608,7 @@ components:
       required:
         - cid
         - src
+        - signature
       properties:
         cid:
           $ref: "#/components/schemas/Comment/properties/id"
@@ -3616,6 +3617,9 @@ components:
           format: uri
           description: image source url
           example: "https://images.unsplash.com/photo-1459478309853-2c33a60058e7"
+        signature:
+          type: string
+          description: hmac-signed image source url
     Images:
       type: array
       description: List of images in comments. Duplicated images (with the same url) are not included.
@@ -3669,7 +3673,16 @@ components:
         images:
           type: array
           items:
-            $ref: "#/components/schemas/Image/properties/src"
+            type: object
+            additionalProperties: false
+            required:
+              - src
+              - signature
+            properties:
+              src:
+                $ref: "#/components/schemas/Image/properties/src"
+              signature:
+                $ref: "#/components/schemas/Image/properties/signature"
         createdAt:
           type: string
           format: date-time

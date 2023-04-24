@@ -214,11 +214,11 @@ export default (
                                     .filter(
                                         (item) =>
                                             imagesData.findIndex(
-                                                (i) => i.src === item
+                                                (i) => i.src === item.src
                                             ) === -1
                                     )
                                     .map((item) => {
-                                        return { src: item, cid: newcid };
+                                        return { ...item, cid: newcid };
                                     }),
                             },
                         },

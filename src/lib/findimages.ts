@@ -17,14 +17,15 @@
 
 import { parse } from "node-html-parser";
 import validUrl from "valid-url";
+import { HMACSign } from "./hmac";
 
 export default function findimages(comment: string) {
     const parsed = parse(comment);
-    const images: string[] = [];
+    const images: { src: string; signature: string }[] = [];
     parsed.querySelectorAll("img").forEach((item) => {
         const src = item.getAttribute("src");
         if (validUrl.isHttpsUri(src)) {
-            images.push(src);
+            images.push({ src, signature: HMACSign(src) });
         }
     });
     return images;

@@ -2,7 +2,7 @@ import { generateKeyPairSync } from "crypto";
 import { existsSync, mkdirSync, writeFileSync } from "fs";
 import { config } from "../lib/config";
 
-export async function generateCerts() {
+export function generateCerts() {
     const publicExists = existsSync("certs/public.pem");
     const privateExists = existsSync("certs/private.pem");
     if (publicExists && privateExists) {

@@ -45,7 +45,7 @@ export type publicUserType = {
     sex: userSex;
 };
 
-export type Image = { src: string; cid: number };
+export type Image = { src: string; signature: string; cid: number };
 export type Images = Image[];
 
 export type Comment =
@@ -64,7 +64,7 @@ export type Comment =
           createdAt: Date;
           /** shortened link */
           slink: string;
-          images: string[];
+          images: { src: string; signature: string }[];
           /** upvotes */
           U?: number;
           /** downvotes */

@@ -1,5 +1,6 @@
 import dotenv from "dotenv";
 import { secrets } from "./secret";
+import { getHMACKey } from "./hmac";
 
 dotenv.config();
 
@@ -56,4 +57,5 @@ export const config = {
     VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY || se.VAPID_PRIVATE_KEY || "",
     GCM_API_KEY: process.env.GCM_API_KEY || "",
     KEY_PASSPHRASE: process.env.KEY_PASSPHRASE || se.KEY_PASSPHRASE || "",
+    HMAC_KEY: getHMACKey(),
 };
