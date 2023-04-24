@@ -82,7 +82,6 @@ export default (
                     .send({ statusCode: 400, error: "Registration disabled" });
             }
 
-            // TODO: WARNING: frontend not implemented !!!
             // check if invite code is needed, and if so check the invite code
             if (
                 config.REGISTER_MODE === "invite" &&
