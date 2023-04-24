@@ -36,6 +36,7 @@ import { readFileSync } from "fs";
 import { generateCerts } from "./scripts/certs";
 import { redis } from "./lib/redis";
 import { autoMigrate } from "./scripts/autoMigrate";
+import { generateHMACKey } from "./lib/hmac";
 
 dotenv.config();
 
@@ -43,7 +44,8 @@ export default async function MetahkgServer() {
     await client.connect();
     await autoMigrate();
     await setupMongo();
-    await generateCerts();
+    generateCerts();
+    generateHMACKey();
     await agenda.start();
 
     [

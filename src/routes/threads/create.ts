@@ -166,7 +166,7 @@ export default (
                 lastModified: date,
                 createdAt: date,
                 images: images.map((item) => {
-                    return { src: item, cid: 1 };
+                    return { ...item, cid: 1 };
                 }),
             };
 
