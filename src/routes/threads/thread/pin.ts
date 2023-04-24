@@ -100,6 +100,13 @@ export default function (
                     .code(404)
                     .send({ statusCode: 404, error: "Comment not found" });
 
+            if ("removed" in comment) {
+                return res.code(410).send({
+                    statusCode: 410,
+                    error: "Comment removed",
+                });
+            }
+
             await threadCl.updateOne({ id: threadId }, { $set: { pin: comment } });
 
             res.code(204).send();
