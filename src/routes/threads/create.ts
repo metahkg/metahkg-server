@@ -30,6 +30,7 @@ import {
     IntegerSchema,
     CaptchaTokenSchema,
     TitleSchema,
+    VisibilitySchema,
 } from "../../lib/schemas";
 import { sendNotification } from "../../lib/notifications/sendNotification";
 import { sha256 } from "../../lib/sha256";
@@ -50,6 +51,7 @@ export default (
             captchaToken: CaptchaTokenSchema,
             title: TitleSchema,
             category: IntegerSchema,
+            visibility: Type.Optional(VisibilitySchema),
         },
         { additionalProperties: false }
     );
@@ -80,6 +82,7 @@ export default (
             const comment = sanitize(req.body.comment);
             const text = htmlToText(comment, { wordwrap: false });
             const title = req.body.title.trim();
+            const { visibility } = req.body;
 
             const user = req.user;
             if (!user)
@@ -142,6 +145,7 @@ export default (
             const threadData: Thread = {
                 id: newThreadId,
                 count: 1,
+                visibility,
                 conversation: [
                     {
                         id: 1,
@@ -151,6 +155,7 @@ export default (
                         text,
                         createdAt: date,
                         images,
+                        visibility,
                     },
                 ],
                 op: userData,

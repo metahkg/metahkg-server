@@ -64,6 +64,8 @@ export default (
             if (!((await threadCl.findOne({ id })) as Thread))
                 return res.code(404).send({ statusCode: 404, error: "Thread not found" });
 
+            // filter the conversation array to only include messages
+            // that are within the start and end range
             const thread = (
                 await threadCl
                     .aggregate([
@@ -77,12 +79,19 @@ export default (
                                             $and: [
                                                 { $gte: ["$$this.id", start] },
                                                 { $lte: ["$$this.id", end] },
-                                            ],
+                                                !req.user && {
+                                                    $ne: [
+                                                        "$$this.visibility",
+                                                        "internal",
+                                                    ],
+                                                },
+                                            ].filter(Boolean),
                                         },
                                     },
                                 },
                             },
                         },
+                        // add a score field to each message
                         {
                             $set: {
                                 conversation: {
@@ -105,12 +114,14 @@ export default (
                                 },
                             },
                         },
+                        // unwind the conversation array so we can sort it
                         {
                             $unwind: {
                                 path: "$conversation",
                                 preserveNullAndEmptyArrays: true,
                             },
                         },
+                        // sort the conversation array
                         {
                             $sort: {
                                 score: {
@@ -121,6 +132,7 @@ export default (
                                 latest: { "conversation.createdAt": -1 },
                             }[sort],
                         },
+                        // group the conversation array back into the thread
                         {
                             $group: {
                                 _id: "$_id",
@@ -128,6 +140,7 @@ export default (
                                 conversation: { $push: "$conversation" },
                             },
                         },
+                        // replace the root with the thread
                         {
                             $replaceRoot: {
                                 newRoot: {
@@ -142,6 +155,7 @@ export default (
                                 },
                             },
                         },
+                        // remove the _id field
                         { $project: { _id: 0 } },
                     ])
                     .toArray()

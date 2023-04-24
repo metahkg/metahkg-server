@@ -69,6 +69,7 @@ export default (
                 .find({
                     "op.id": requestedUser.id,
                     ...(!user && { category: { $nin: await hiddencats() } }),
+                    ...(!user && { visibility: { $ne: "internal" } }),
                     removed: { $ne: true },
                 })
                 .sort({

@@ -83,6 +83,7 @@ export default (
                                 ...(sort === "viral" && {
                                     lastModified: { $gte: viralLimit },
                                 }),
+                                ...(!req.user && { visibility: { $ne: "internal" } }),
                                 removed: { $ne: true },
                             },
                         },

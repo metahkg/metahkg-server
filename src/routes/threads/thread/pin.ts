@@ -107,6 +107,15 @@ export default function (
                 });
             }
 
+            if (comment.visibility === "internal" && thread.visibility !== "internal") {
+                return res.code(403).send({
+                    statusCode: 403,
+                    error: "Forbidden",
+                    message:
+                        "Pinning an internal comment in a public thread is not allowed.",
+                });
+            }
+
             await threadCl.updateOne({ id: threadId }, { $set: { pin: comment } });
 
             res.code(204).send();
