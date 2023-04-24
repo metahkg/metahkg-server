@@ -2903,7 +2903,7 @@ paths:
         - bearerAuth: []
       summary: Get invite codes
       description: "Get all invite codes. Admin privilege required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.8.0-dev/src/routes/server/invitecodes/all.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.9.0-dev/src/routes/server/invitecodes/all.ts)"
       responses:
         "200":
           description: Success
@@ -2930,7 +2930,7 @@ paths:
         - bearerAuth: []
       summary: Create invite code
       description: "Create invite codes. Admin privilege required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.8.0-dev/src/routes/server/invitecodes/create.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.9.0-dev/src/routes/server/invitecodes/create.ts)"
       requestBody:
         required: true
         content:
@@ -2974,7 +2974,7 @@ paths:
         - bearerAuth: []
       summary: Generate invite code
       description: "Generate an invite code. Admin privilege required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.8.0-dev/src/routes/server/invitecodes/generate.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.9.0-dev/src/routes/server/invitecodes/generate.ts)"
       requestBody:
         required: false
         content:
@@ -3018,7 +3018,7 @@ paths:
         - bearerAuth: []
       summary: Get invite code info
       description: "Get info of an invite code. Admin privilege required.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.8.0-dev/src/routes/server/invitecodes/info.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.9.0-dev/src/routes/server/invitecodes/info.ts)"
       parameters:
         - in: path
           name: code
@@ -3058,7 +3058,7 @@ paths:
         - bearerAuth: []
       summary: Delete an invite code
       description: "Delete an invite code. Admin privilege required.
-        [Source](https://github.com/metahkg/metahkg-server/blob/6.8.0-dev/src/routes/server/invitecodes/delete.ts)"
+        [Source](https://github.com/metahkg/metahkg-server/blob/6.9.0-dev/src/routes/server/invitecodes/delete.ts)"
       parameters:
         - in: path
           name: code
