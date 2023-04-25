@@ -59,7 +59,9 @@ async function migrate() {
 
     await Promise.all(
         (
-            await threadCl.find({ images: { $exists: true } }).toArray()
+            await threadCl
+                .find({ images: { $exists: true }, removed: { $exists: false } })
+                .toArray()
         ).map(async (v) => {
             let { images, conversation } = v;
             if (
@@ -79,6 +81,7 @@ async function migrate() {
             }
             conversation = conversation.map((c: { images: string[] }) => {
                 if (
+                    !("removed" in c) &&
                     c.images?.every(
                         (i: any) => i && (typeof i === "string" || !("signature" in i))
                     )
