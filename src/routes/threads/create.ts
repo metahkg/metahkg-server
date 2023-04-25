@@ -39,6 +39,7 @@ import Category from "../../models/category";
 import { RateLimitOptions } from "@fastify/rate-limit";
 import RequireCAPTCHA from "../../plugins/requireCaptcha";
 import { config } from "../../lib/config";
+import findLinks from "../../lib/findLinks";
 
 export default (
     fastify: FastifyInstance,
@@ -141,6 +142,7 @@ export default (
             };
 
             const images = findImages(comment);
+            const links = findLinks(comment);
 
             const threadData: Thread = {
                 id: newThreadId,
@@ -154,6 +156,7 @@ export default (
                         comment,
                         text,
                         createdAt: date,
+                        links,
                         images,
                         visibility,
                     },

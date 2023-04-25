@@ -3625,6 +3625,21 @@ components:
       description: List of images in comments. Duplicated images (with the same url) are not included.
       items:
         $ref: "#/components/schemas/Image"
+    Link:
+      type: object
+      additionalProperties: false
+      required:
+        - url
+        - signature
+      properties:
+        url:
+          type: string
+          format: uri
+          description: link url
+          example: https://metahkg.org
+        signature:
+          type: string
+          description: hmac-signed link url
     RemovedComment:
       type: object
       additionalProperties: false
@@ -3647,6 +3662,7 @@ components:
         - user
         - comment
         - text
+        - links
         - images
         - createdAt
         - slink
@@ -3670,6 +3686,10 @@ components:
           type: string
           description: comment converted to plain text
           example: "This is a comment"
+        links:
+          type: array
+          items:
+            $ref: "#/components/schemas/Link"
         images:
           type: array
           items:
@@ -3749,6 +3769,7 @@ components:
         - id
         - user
         - comment
+        - links
         - images
         - text
         - createdAt
@@ -3762,6 +3783,8 @@ components:
           $ref: "#/components/schemas/Comment/properties/comment"
         text:
           $ref: "#/components/schemas/Comment/properties/text"
+        links:
+          $ref: "#/components/schemas/Comment/properties/links"
         images:
           $ref: "#/components/schemas/Comment/properties/images"
         createdAt:
