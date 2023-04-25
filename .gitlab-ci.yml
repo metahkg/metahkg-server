@@ -159,6 +159,9 @@ code_quality:
 build:
   stage: build
   retry: 2
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      when: never
 
 apifuzzer_fuzz:
   needs: []
