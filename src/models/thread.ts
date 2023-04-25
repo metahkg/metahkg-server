@@ -32,7 +32,7 @@ export type Thread =
           lastModified: Date;
           createdAt: Date;
           slink: string;
-          images: Images;
+          images: TImages;
           pin?: Comment;
           _id?: ObjectId;
           admin?: Admin;
@@ -45,8 +45,15 @@ export type publicUserType = {
     sex: userSex;
 };
 
-export type Image = { src: string; signature: string; cid: number };
+export type Image = { src: string; signature: string };
 export type Images = Image[];
+export type TImage = Image & { cid: number };
+export type TImages = TImage[];
+
+export type Link = { url: string; signature: string };
+export type Links = Link[];
+export type TLink = Link & { cid: number };
+export type TLinks = TLink[];
 
 export type Comment =
     /** if removed */
@@ -64,7 +71,8 @@ export type Comment =
           createdAt: Date;
           /** shortened link */
           slink: string;
-          images: { src: string; signature: string }[];
+          images: Image[];
+          links: Link[];
           /** upvotes */
           U?: number;
           /** downvotes */

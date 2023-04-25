@@ -37,6 +37,7 @@ import { Link } from "../../../../models/link";
 import { RateLimitOptions } from "@fastify/rate-limit";
 import RequireCAPTCHA from "../../../../plugins/requireCaptcha";
 import { config } from "../../../../lib/config";
+import findLinks from "../../../../lib/findLinks";
 
 export default (
     fastify: FastifyInstance,
@@ -161,6 +162,7 @@ export default (
             }
 
             const imagesInComment = findImages(comment);
+            const linksInComment = findLinks(comment);
 
             await threadCl.updateOne(
                 { id },
@@ -178,6 +180,7 @@ export default (
                             text,
                             createdAt: new Date(),
                             slink: `https://${config.LINKS_DOMAIN}/${slinkId}`,
+                            links: linksInComment,
                             images: imagesInComment,
                             ...(quotedComment && { quote: quotedComment }),
                             visibility,
@@ -213,7 +216,7 @@ export default (
                                 $each: imagesInComment
                                     .filter(
                                         (item) =>
-                                            imagesData.findIndex(
+                                            imagesData?.findIndex(
                                                 (i) => i.src === item.src
                                             ) === -1
                                     )
