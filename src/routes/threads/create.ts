@@ -147,7 +147,7 @@ export default (
             const threadData: Thread = {
                 id: newThreadId,
                 count: 1,
-                visibility,
+                ...(visibility && { visibility }),
                 conversation: [
                     {
                         id: 1,
@@ -158,7 +158,7 @@ export default (
                         createdAt: date,
                         links,
                         images,
-                        visibility,
+                        ...(visibility && { visibility }),
                     },
                 ],
                 op: userData,

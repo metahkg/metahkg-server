@@ -183,7 +183,7 @@ export default (
                             links: linksInComment,
                             images: imagesInComment,
                             ...(quotedComment && { quote: quotedComment }),
-                            visibility,
+                            ...(visibility && { visibility }),
                         },
                     },
                     $currentDate: { lastModified: true },
