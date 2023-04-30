@@ -44,52 +44,6 @@
 * //gitlab.com/metahkg/metahkg-server into dev (b0aa845c)
 *  update server list (7662ddc5)
 
-#### 6.9.1 (2023-04-25)
-
-##### Chores
-
-*  set version v6.9.1 (feb75e6f)
-*  set version v6.9.0 (96e94ba0)
-*  set version v6.8.0 (7076d9ed)
-*  update CHANGELOG.md (e1410536)
-*  set version v6.7.1 (c3b30af5)
-*  v6.7.0 (dev) [release] [dev] (4d91ab76)
-* **register:**  remove frontend not implemented warning (64fac8fc)
-
-##### Continuous Integration
-
-*  fix tagging (fa3c5d2d)
-
-##### New Features
-
-*  hmac-sign links (68c93e6e)
-*  thread & comment visibility (54a375a4)
-*  automatically generate internal secrets (21291247)
-* **images:**  add hmac signature (66a71dfb)
-* **comment delete:**  delete pinned comment and quotes (to the first order only) (3bbf932f)
-* **comment edit:**  edit pinned comment and quotes (to the first order only) (2d24fc9a)
-* **server:**  add, generate, delete, get invite codes (admin only) [admin] (83acdb63)
-
-##### Bug Fixes
-
-* **migrate v6.9.0:**  check for removed (7078b1cb)
-* **findimages:**  allow http (0446464b)
-* **pin:**  return comment removed error (643264f7)
-* **unsubscribe:**  return 404 if not subscribed (ac18eb73)
-* **edit comment:**  sanitize new comment (e1fb5b69)
-* **openapi:**  fix source urls (bf4c1279)
-* **avatar upload:**
-  *  upload code should be moved outside of the try-catch (f628abbc)
-  *  delete only if old file exists (596b4634)
-* **notifications:**  duplicated notifications (b3fd687b)
-
-##### Other Changes
-
-* //gitlab.com/metahkg/metahkg-server into dev (b600de46)
-*  add v6.9.1 script (37c91042)
-* //gitlab.com/metahkg/metahkg-server into dev (b0aa845c)
-*  update server list (7662ddc5)
-
 #### 6.7.1 (2023-04-24)
 
 ##### Chores
