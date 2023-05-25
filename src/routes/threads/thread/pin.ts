@@ -79,6 +79,7 @@ export default function (
                                 id: commentId,
                             },
                         },
+                        visibility: 1,
                     },
                 }
             )) as Thread & { removed: undefined };

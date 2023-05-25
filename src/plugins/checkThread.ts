@@ -29,7 +29,7 @@ export default async function (
 
     const thread = (await threadCl.findOne(
         { id },
-        { projection: { _id: 0, id: 1, removed: 1 } }
+        { projection: { _id: 0, id: 1, removed: 1, visibility: 1 } }
     )) as Thread;
 
     if (!thread)
