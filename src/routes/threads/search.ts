@@ -88,6 +88,10 @@ export default (
                                             $text: {
                                                 $search: query,
                                             },
+                                            ...(!user && {
+                                                category: { $nin: await hiddencats() },
+                                            }),
+                                            removed: { $ne: true },
                                         },
                                     },
                                     {
