@@ -89,6 +89,13 @@ export default (
                                             $text: {
                                                 $search: query,
                                             },
+                                            ...(!user && {
+                                                category: { $nin: await hiddencats() },
+                                            }),
+                                            ...(!user && {
+                                                visibility: { $ne: "internal" },
+                                            }),
+                                            removed: { $ne: true },
                                         },
                                     },
                                     {
