@@ -99,7 +99,16 @@ export default (
 
             const thread = (await threadCl.findOne(
                 { id },
-                { projection: { count: 1, op: 1, id: 1, title: 1 } }
+                {
+                    projection: {
+                        _id: 0,
+                        count: 1,
+                        op: 1,
+                        id: 1,
+                        title: 1,
+                        visibility: 1,
+                    },
+                }
             )) as Thread;
 
             if ("removed" in thread) return;
@@ -159,6 +168,10 @@ export default (
                         visibility = "internal";
                     }
                 }
+            }
+
+            if (thread?.visibility === "internal") {
+                visibility = "internal";
             }
 
             const imagesInComment = findImages(comment);
