@@ -214,3 +214,4 @@ trigger_openapi_spec:
 include:
   - template: Auto-DevOps.gitlab-ci.yml
   - template: Security/API-Fuzzing.gitlab-ci.yml
+  - template: Security/BAS.latest.gitlab-ci.yml
