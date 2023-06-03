@@ -59,7 +59,7 @@ import MetahkgServer from "@metahkg/server";
      */
     await app.listen(3000, "0.0.0.0", (err: Error) => {
         if (err) console.log(err);
-        console.log(`listening at port ${process.env.port || 3200}`);
+        console.log(`listening at port ${process.env.port || 3000}`);
     });
 })();
 ```

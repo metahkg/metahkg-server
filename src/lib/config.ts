@@ -30,7 +30,7 @@ export const config = {
         `support@${process.env.DOMAIN || process.env.domain || ""}`,
     DOMAIN: process.env.DOMAIN || process.env.domain || "",
     LINKS_DOMAIN: process.env.LINKS_DOMAIN || "",
-    PORT: Number(process.env.PORT || 3200) || 3200,
+    PORT: Number(process.env.PORT || 3000) || 3000,
     CAPTCHA: (["recaptcha", "turnstile"].includes(process.env.CAPTCHA)
         ? process.env.CAPTCHA
         : "recaptcha") as "recaptcha" | "turnstile",
