@@ -52,7 +52,7 @@ export const config = {
     VISIBILITY: (["public", "internal"].includes(process.env.VISIBILITY)
         ? process.env.VISIBILITY
         : "public") as "public" | "internal",
-    CORS: JSON.parse(process.env.CORS || process.env.cors) || false,
+    CORS: JSON.parse(process.env.CORS || process.env.cors || "false") || false,
     VAPID_PUBLIC_KEY: process.env.VAPID_PUBLIC_KEY || se.VAPID_PUBLIC_KEY || "",
     VAPID_PRIVATE_KEY: process.env.VAPID_PRIVATE_KEY || se.VAPID_PRIVATE_KEY || "",
     GCM_API_KEY: process.env.GCM_API_KEY || "",
