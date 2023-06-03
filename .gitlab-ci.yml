@@ -36,16 +36,15 @@ lint:
   rules:
     - if: "$CI_COMMIT_TAG"
       when: never
-    - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
+    - if: "$CI_PIPELINE_SOURCE == 'merge_request_event'"
       when: never
-    - if: $CI_COMMIT_AUTHOR != "metahkg-bot <bot@metahkg.org>" && ($CI_COMMIT_BRANCH == "dev" || $CI_COMMIT_BRANCH == "master")
-
+    - if: $CI_COMMIT_AUTHOR != "metahkg-bot <bot@metahkg.org>" && ($CI_COMMIT_BRANCH
+        == "dev" || $CI_COMMIT_BRANCH == "master")
 sast:
   stage: test
   rules:
     - if: "$CI_COMMIT_TAG"
       when: never
-
 docker-build:
   image: docker:latest
   stage: build
@@ -62,14 +61,16 @@ docker-build:
     - major=$(node -e "console.log('${version}'.split('.')[0])")
     - minor=$(node -e "console.log('${version}'.split('.').slice(0, 2).join('.'))")
     - docker buildx create --use
-    - docker buildx build --push --pull -t "$CI_REGISTRY_IMAGE/$CI_COMMIT_BRANCH:latest" -t "$CI_REGISTRY_IMAGE/$CI_COMMIT_BRANCH:$CI_COMMIT_SHORT_SHA" -t "$CI_REGISTRY_IMAGE/$CI_COMMIT_BRANCH:$version"  -t "$CI_REGISTRY_IMAGE/$CI_COMMIT_BRANCH:$major" -t "$CI_REGISTRY_IMAGE/$CI_COMMIT_BRANCH:$minor" --platform linux/amd64,linux/arm64 .
+    - docker buildx build --push --pull -t "$CI_REGISTRY_IMAGE/$CI_COMMIT_BRANCH:latest"
+      -t "$CI_REGISTRY_IMAGE/$CI_COMMIT_BRANCH:$CI_COMMIT_SHORT_SHA" -t "$CI_REGISTRY_IMAGE/$CI_COMMIT_BRANCH:$version"  -t
+      "$CI_REGISTRY_IMAGE/$CI_COMMIT_BRANCH:$major" -t "$CI_REGISTRY_IMAGE/$CI_COMMIT_BRANCH:$minor"
+      --platform linux/amd64,linux/arm64 .
   rules:
-    - if: $CI_COMMIT_TAG
+    - if: "$CI_COMMIT_TAG"
       when: never
     - if: $CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "dev"
       exists:
-        - Dockerfile
-
+      - Dockerfile
 tagging:
   image: node:18-alpine
   stage: deploy
@@ -83,21 +84,13 @@ tagging:
   script:
     - tag=$(node -e "console.log(require('./package.json').version)")
     - if [ $CI_COMMIT_BRANCH = "dev" ]; then tag=${tag}-dev; fi;
-    - "if [ $CI_COMMIT_BRANCH = 'dev' ];
-       then yarn install;
-       yarn generate-changelog;
-       git add CHANGELOG.md;
-       git commit -m 'update: CHANGELOG.md'; fi;"
+    - 'if [ $CI_COMMIT_BRANCH = ''dev'' ]; then yarn install; yarn generate-changelog;
+      git add CHANGELOG.md; git commit -m ''update: CHANGELOG.md''; fi;'
     - git tag "$tag"
-    - "if [ $CI_COMMIT_BRANCH = 'dev' ]; then
-         git fetch origin $CI_COMMIT_BRANCH;
-         git checkout dev;
-         git merge -X theirs origin/$CI_COMMIT_BRANCH -m 'merge';
-         yarn generate-changelog;
-         git add CHANGELOG.md;
-         git commit -m 'update: CHANGELOG.md';
-         git push origin $CI_COMMIT_BRANCH;
-         fi;"
+    - 'if [ $CI_COMMIT_BRANCH = ''dev'' ]; then git fetch origin $CI_COMMIT_BRANCH;
+      git checkout dev; git merge -X theirs origin/$CI_COMMIT_BRANCH -m ''merge''; yarn
+      generate-changelog; git add CHANGELOG.md; git commit -m ''update: CHANGELOG.md'';
+      git push origin $CI_COMMIT_BRANCH; fi;'
   rules:
     - if: "$CI_COMMIT_TAG"
       when: never
@@ -106,7 +99,6 @@ tagging:
     - if: $CI_COMMIT_AUTHOR != "metahkg-bot <bot@metahkg.org>"
       changes:
         - package.json
-
 publish:
   image: node:18-alpine
   stage: deploy
@@ -115,23 +107,22 @@ publish:
     - yarn install
     - yarn lint
     - yarn build
-    # login to npm registry
     - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' >> .npmrc
-    # Extract a few values from package.json
     - NPM_PACKAGE_ORIGINAL_VERSION=$(node -p "require('./package.json').version")
     - NPM_PACKAGE_VERSION=$CI_COMMIT_TAG
     - sed -i "s/${NPM_PACKAGE_ORIGINAL_VERSION}/${NPM_PACKAGE_VERSION}/" package.json
-    - if [ "$CI_COMMIT_TAG" = "${NPM_PACKAGE_ORIGINAL_VERSION}-dev" ]; then npm publish --tag dev --access=public; else npm publish --access=public; fi;
+    - if [ "$CI_COMMIT_TAG" = "${NPM_PACKAGE_ORIGINAL_VERSION}-dev" ]; then npm publish
+      --tag dev --access=public; else npm publish --access=public; fi;
   rules:
     - if: "$CI_COMMIT_TAG"
-
 container_scanning:
   stage: review
-  needs: ["docker-build"]
+  needs:
+    - docker-build
   variables:
     GIT_STRATEGY: fetch
     CI_APPLICATION_REPOSITORY: "$CI_REGISTRY_IMAGE/$CI_COMMIT_BRANCH"
-    CI_APPLICATION_TAG: $CI_COMMIT_SHORT_SHA
+    CI_APPLICATION_TAG: "$CI_COMMIT_SHORT_SHA"
     CLAIR_OUTPUT: High
   artifacts:
     paths:
@@ -141,31 +132,28 @@ container_scanning:
       when: never
     - if: $CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "dev"
       exists:
-        - Dockerfile
-
+      - Dockerfile
 test:
   stage: test
   rules:
-     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-     - if: $CI_COMMIT_TAG
-     - if: $CI_COMMIT_BRANCH
-
+    - if: "$CI_PIPELINE_SOURCE == 'merge_request_event'"
+    - if: "$CI_COMMIT_TAG"
+    - if: "$CI_COMMIT_BRANCH"
 code_quality:
   stage: test
   rules:
-     - if: $CI_PIPELINE_SOURCE == 'merge_request_event'
-     - if: $CI_COMMIT_TAG
-     - if: $CI_COMMIT_BRANCH
-
+    - if: "$CI_PIPELINE_SOURCE == 'merge_request_event'"
+    - if: "$CI_COMMIT_TAG"
+    - if: "$CI_COMMIT_BRANCH"
 build:
   stage: build
   retry: 2
   rules:
-    - if: $CI_COMMIT_BRANCH
+    - if: "$CI_COMMIT_BRANCH"
       when: never
-
 apifuzzer_fuzz:
-  needs: ["docker-build"]
+  needs:
+    - docker-build
   services:
     - name: mongo:latest
       alias: mongodb
@@ -174,21 +162,20 @@ apifuzzer_fuzz:
     - name: "$CI_REGISTRY_IMAGE/$CI_COMMIT_BRANCH:$CI_COMMIT_SHORT_SHA"
       alias: metahkg-server
       variables:
-        MONGO_URI: "mongodb://mongodb:27017"
-        REDIS_HOST: "redis"
+        MONGO_URI: mongodb://mongodb:27017
+        REDIS_HOST: redis
   variables:
-    FUZZAPI_TARGET_URL: "http://metahkg-server:3000"
-    FUZZAPI_OPENAPI: ./openapi.yaml
-    FUZZAPI_PROFILE: "Quick-10"
+    FUZZAPI_TARGET_URL: http://metahkg-server:3000
+    FUZZAPI_OPENAPI: "./openapi.yaml"
+    FUZZAPI_PROFILE: Quick-10
   rules:
     - if: $CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "dev"
-
 trigger_api_generate:
   variables:
-    UPDATE: "true"
+    UPDATE: 'true'
   trigger:
-    project: $CI_PROJECT_NAMESPACE/metahkg-api
-    branch: $CI_COMMIT_BRANCH
+    project: "$CI_PROJECT_NAMESPACE/metahkg-api"
+    branch: "$CI_COMMIT_BRANCH"
   rules:
     - if: $CI_COMMIT_BRANCH != "master" && $CI_COMMIT_BRANCH != "dev"
       when: never
@@ -196,13 +183,12 @@ trigger_api_generate:
       when: never
     - changes:
       - openapi.yaml
-
 trigger_openapi_spec:
   variables:
-    UPDATE: "true"
-    branch: $CI_COMMIT_BRANCH
+    UPDATE: 'true'
+    branch: "$CI_COMMIT_BRANCH"
   trigger:
-    project: $CI_PROJECT_NAMESPACE/openapi-spec
+    project: "$CI_PROJECT_NAMESPACE/openapi-spec"
   rules:
     - if: $CI_COMMIT_BRANCH != "master" && $CI_COMMIT_BRANCH != "dev"
       when: never
@@ -210,7 +196,6 @@ trigger_openapi_spec:
       when: never
     - changes:
       - openapi.yaml
-
 include:
   - template: Auto-DevOps.gitlab-ci.yml
   - template: Security/API-Fuzzing.gitlab-ci.yml
