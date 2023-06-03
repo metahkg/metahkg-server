@@ -16,6 +16,9 @@ stages:
   - performance
   - cleanup
 
+variables:
+  FF_NETWORK_PER_BUILD: 1
+
 lint:
   stage: lint
   image: node:18-alpine
@@ -162,13 +165,23 @@ build:
       when: never
 
 apifuzzer_fuzz:
-  needs: []
-  before_script:
-    - export FUZZAPI_TARGET_URL="https://$(if [ \"$CI_COMMIT_BRANCH\" = \"dev\" ]; then echo 'dev.'; fi;)metahkg.org"
-    - export FUZZAPI_OPENAPI=./openapi.yaml
-    - export FUZZAPI_PROFILE="Quick-10"
+  needs: ["docker-build"]
+  services:
+    - name: mongo:latest
+      alias: mongodb
+    - name: redis:latest
+      alias: redis
+    - name: "$CI_REGISTRY_IMAGE/$CI_COMMIT_BRANCH:$CI_COMMIT_SHORT_SHA"
+      alias: metahkg-server
+      variables:
+        MONGO_URI: "mongodb://mongodb:27017"
+        REDIS_HOST: "redis"
+  variables:
+    FUZZAPI_TARGET_URL: "http://metahkg-server:3000"
+    FUZZAPI_OPENAPI: ./openapi.yaml
+    FUZZAPI_PROFILE: "Quick-10"
   rules:
-    - if: $CI_COMMIT_BRANCH == "master" ||$CI_COMMIT_BRANCH == "dev"
+    - if: $CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "dev"
 
 trigger_api_generate:
   variables:
