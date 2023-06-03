@@ -34,6 +34,7 @@ export const config = {
     CAPTCHA: (["recaptcha", "turnstile"].includes(process.env.CAPTCHA)
         ? process.env.CAPTCHA
         : "recaptcha") as "recaptcha" | "turnstile",
+    DISABLE_CAPTCHA: JSON.parse(process.env.DISABLE_CAPTCHA || "false") || false,
     RECAPTCHA_SECRET: process.env.RECAPTCHA_SECRET || process.env.recaptchasecret || "",
     TURNSTILE_SECRET: process.env.TURNSTILE_SECRET || "",
     REGISTER_MODE: (["normal", "none", "invite"].includes(

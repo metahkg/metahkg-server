@@ -50,7 +50,9 @@ export default (
             // check if password is a sha256 hash
             password: PasswordSchema,
             email: EmailSchema,
-            captchaToken: CaptchaTokenSchema,
+            captchaToken: config.DISABLE_CAPTCHA
+                ? Type.Optional(CaptchaTokenSchema)
+                : CaptchaTokenSchema,
             sex: SexSchema,
             inviteCode: Type.Optional(InviteCodeSchema),
         },

@@ -27,6 +27,7 @@ import { sha256 } from "../../lib/sha256";
 import { Verification } from "../../models/verification";
 import { RateLimitOptions } from "@fastify/rate-limit";
 import RequireCAPTCHA from "../../plugins/requireCaptcha";
+import { config } from "../../lib/config";
 
 dotenv.config();
 
@@ -40,7 +41,9 @@ export default (
             email: EmailSchema,
             code: CodeSchema,
             sameIp: Type.Optional(Type.Boolean()),
-            captchaToken: CaptchaTokenSchema,
+            captchaToken: config.DISABLE_CAPTCHA
+                ? Type.Optional(CaptchaTokenSchema)
+                : CaptchaTokenSchema,
         },
         { additionalProperties: false }
     );

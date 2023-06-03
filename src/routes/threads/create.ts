@@ -49,7 +49,9 @@ export default (
     const schema = Type.Object(
         {
             comment: CommentSchema,
-            captchaToken: CaptchaTokenSchema,
+            captchaToken: config.DISABLE_CAPTCHA
+                ? Type.Optional(CaptchaTokenSchema)
+                : CaptchaTokenSchema,
             title: TitleSchema,
             category: IntegerSchema,
             visibility: Type.Optional(VisibilitySchema),

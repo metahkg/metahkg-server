@@ -24,6 +24,7 @@ import { sha256 } from "../../lib/sha256";
 import { Verification } from "../../models/verification";
 import { RateLimitOptions } from "@fastify/rate-limit";
 import RequireCAPTCHA from "../../plugins/requireCaptcha";
+import { config } from "../../lib/config";
 
 export default (
     fastify: FastifyInstance,
@@ -31,7 +32,12 @@ export default (
     done: (e?: Error) => void
 ) => {
     const schema = Type.Object(
-        { email: EmailSchema, captchaToken: CaptchaTokenSchema },
+        {
+            email: EmailSchema,
+            captchaToken: config.DISABLE_CAPTCHA
+                ? Type.Optional(CaptchaTokenSchema)
+                : CaptchaTokenSchema,
+        },
         { additionalProperties: false }
     );
 

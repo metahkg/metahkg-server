@@ -34,6 +34,7 @@ import { Verification } from "../../models/verification";
 import { RateLimitOptions } from "@fastify/rate-limit";
 import RequireCAPTCHA from "../../plugins/requireCaptcha";
 import { formatDate } from "../../lib/formatDate";
+import { config } from "../../lib/config";
 
 dotenv.config();
 
@@ -48,7 +49,9 @@ export default (
             // check if password is a sha256 hash
             password: PasswordSchema,
             sameIp: Type.Optional(Type.Boolean()),
-            captchaToken: CaptchaTokenSchema,
+            captchaToken: config.DISABLE_CAPTCHA
+                ? Type.Optional(CaptchaTokenSchema)
+                : CaptchaTokenSchema,
         },
         { additionalProperties: false }
     );
