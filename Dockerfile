@@ -50,4 +50,6 @@ RUN chown node:node /app
 
 USER node
 
+EXPOSE 3000
+
 CMD if [ "${env}" = "dev" ]; then yarn dev; else yarn start; fi;
