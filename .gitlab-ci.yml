@@ -16,6 +16,9 @@ stages:
   - performance
   - cleanup
 
+variables:
+  FF_NETWORK_PER_BUILD: 1
+
 lint:
   stage: lint
   image: node:18-alpine
@@ -170,9 +173,10 @@ apifuzzer_fuzz:
       alias: redis
     - name: "$CI_REGISTRY_IMAGE/$CI_COMMIT_BRANCH:$CI_COMMIT_SHORT_SHA"
       alias: metahkg-server
+      variables:
+        MONGO_URI: "mongodb://mongodb:27017"
+        REDIS_HOST: "redis"
   variables:
-    MONGO_URI: "mongodb://mongodb:27017"
-    REDIS_HOST: "redis"
     FUZZAPI_TARGET_URL: "http://metahkg-server:3000"
     FUZZAPI_OPENAPI: ./openapi.yaml
     FUZZAPI_PROFILE: "Quick-10"
