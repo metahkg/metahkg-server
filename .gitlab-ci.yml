@@ -177,6 +177,7 @@ apifuzzer_fuzz:
         MONGO_URI: "mongodb://mongodb:27017"
         REDIS_HOST: "redis"
         DISABLE_CAPTCHA: "true"
+        DOMAIN: "metahkg.gitlab.ci"
   variables:
     FUZZAPI_TARGET_URL: "http://metahkg-server:3000"
     FUZZAPI_OPENAPI: ./openapi.yaml
