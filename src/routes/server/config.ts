@@ -17,7 +17,13 @@ export default function (
             linksDomain: config.LINKS_DOMAIN,
             vapidPublicKey: config.VAPID_PUBLIC_KEY,
             cors: config.CORS,
-            captcha: config.CAPTCHA,
+            captcha: {
+                type: config.CAPTCHA,
+                siteKey:
+                    config.CAPTCHA === "recaptcha"
+                        ? config.RECAPTCHA_SITE_KEY
+                        : config.TURNSTILE_SITE_KEY,
+            },
             branding: config.BRANDING,
         });
     });

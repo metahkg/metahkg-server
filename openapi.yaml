@@ -3978,11 +3978,21 @@ components:
           type: boolean
           description: whether cors is enabled
         captcha:
-          type: string
-          description: uses recaptcha or turnstile
-          enum:
-            - recaptcha
-            - turnstile
+          type: object
+          additionalProperties: false
+          required:
+            - type
+            - siteKey
+          properties:
+            type:
+              type: string
+              description: captcha provider
+              enum:
+                - recaptcha
+                - turnstile
+            siteKey:
+              type: string
+              description: the corresponding site key
         branding:
           type: string
           description: the branding to replace Metahkg
