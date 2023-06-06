@@ -46,7 +46,7 @@ export async function sendEmail(
 
         return await mg.messages
             .create(config.MAILGUN_DOMAIN, {
-                from: `Metahkg support <support@${config.MAILGUN_DOMAIN}>`,
+                from: `${config.BRANDING} support <support@${config.MAILGUN_DOMAIN}>`,
                 to,
                 subject,
                 html: body,
@@ -74,7 +74,7 @@ export async function sendEmail(
 
         return await transporter
             .sendMail({
-                from: `"Metahkg support" <${config.SMTP_EMAIL}>`,
+                from: `"${config.BRANDING} support" <${config.SMTP_EMAIL}>`,
                 to,
                 subject,
                 html: body,
@@ -90,7 +90,7 @@ export async function sendEmail(
 export async function sendVerifyMsg(email: string, code: string) {
     return await sendEmail(
         email,
-        "Metahkg - verify your email",
+        `${config.BRANDING} - verify your email`,
         /*html*/ `<h1>Verify your email</h1>
     <p>Click here to verify your email address:</p>
     <a href="https://${config.DOMAIN}/users/verify?code=${encodeURIComponent(
@@ -103,7 +103,7 @@ export async function sendVerifyMsg(email: string, code: string) {
 export async function sendResetMsg(email: string, code: string) {
     return await sendEmail(
         email,
-        "Metahkg - Reset Password",
+        `${config.BRANDING} - Reset Password`,
         /*html*/ `<h1>Reset Password</h1>
     <p>Click here to reset your password:</p>
     <a href="https://${config.DOMAIN}/users/reset?code=${encodeURIComponent(

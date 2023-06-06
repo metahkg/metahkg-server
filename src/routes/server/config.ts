@@ -18,6 +18,7 @@ export default function (
             vapidPublicKey: config.VAPID_PUBLIC_KEY,
             cors: config.CORS,
             captcha: config.CAPTCHA,
+            branding: config.BRANDING,
         });
     });
     done();

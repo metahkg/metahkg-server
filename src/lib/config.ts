@@ -59,4 +59,5 @@ export const config = {
     GCM_API_KEY: process.env.GCM_API_KEY || "",
     KEY_PASSPHRASE: process.env.KEY_PASSPHRASE || se.KEY_PASSPHRASE || "",
     HMAC_KEY: getHMACKey(),
+    BRANDING: process.env.BRANDING || "Metahkg",
 };
