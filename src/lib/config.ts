@@ -30,6 +30,9 @@ export const config = {
         `support@${process.env.DOMAIN || process.env.domain || ""}`,
     DOMAIN: process.env.DOMAIN || process.env.domain || "",
     LINKS_DOMAIN: process.env.LINKS_DOMAIN || "",
+    IMAGES_DOMAIN: process.env.IMAGES_DOMAIN || "",
+    RLP_PROXY_DOMAIN: process.env.RLP_PROXY_DOMAIN || "",
+    REDIRECT_DOMAIN: process.env.REDIRECT_DOMAIN || "",
     PORT: Number(process.env.PORT || 3000) || 3000,
     CAPTCHA: (["recaptcha", "turnstile"].includes(process.env.CAPTCHA)
         ? process.env.CAPTCHA

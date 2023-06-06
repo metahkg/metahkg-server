@@ -13,8 +13,14 @@ export default function (
                 mode: config.REGISTER_MODE,
                 ...(config.REGISTER_DOMAINS && { domains: config.REGISTER_DOMAINS }),
             },
+            domains: {
+                main: config.DOMAIN,
+                links: config.LINKS_DOMAIN,
+                images: config.IMAGES_DOMAIN,
+                rlpProxy: config.RLP_PROXY_DOMAIN,
+                redirect: config.REDIRECT_DOMAIN,
+            },
             domain: config.DOMAIN,
-            linksDomain: config.LINKS_DOMAIN,
             vapidPublicKey: config.VAPID_PUBLIC_KEY,
             cors: config.CORS,
             captcha: {

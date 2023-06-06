@@ -3941,6 +3941,7 @@ components:
       required:
         - visibility
         - register
+        - domains
         - domain
         - linksDomain
         - vapidPublicKey
@@ -3963,6 +3964,28 @@ components:
               items:
                 type: string
                 example: metahkg.org
+        domains:
+          type: object
+          additionalProperties: false
+          properties:
+            main:
+              $ref: "#/components/schemas/ServerConfig/properties/domain"
+            links:
+              type: string
+              description: the domain for [metahkg links](https://gitlab.com/metahkg/metahkg-links)
+              example: l.metahkg.org
+            images:
+              type: string
+              description: the domain for images ([imageproxy](https://gitlab.com/metahkg/forks/imageproxy) and [imgpush](https://gitlab.com/metahkg/forks/imgpush))
+              example: i.metahkg.org
+            rlpProxy:
+              type: string
+              description: the domain for [rlp proxy](https://gitlab.com/metahkg/rlp-proxy-rewrite)
+              example: rlp.metahkg.org
+            redirect:
+              type: string
+              description: the domain for [metahkg redirect](https://gitlab.com/metahkg/metahkg-redirect)
+              example: r.metahkg.org
         domain:
           type: string
           description: the domain this instance of metahkg is on
@@ -3996,6 +4019,7 @@ components:
         branding:
           type: string
           description: the branding to replace Metahkg
+          example: Metahkg
 
   securitySchemes:
     bearerAuth:
