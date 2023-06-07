@@ -2,140 +2,140 @@
 
 ##### Chores
 
-*  set version v6.10.0 (7e6de6e7)
-*  update CHANGELOG.md (63fe89cc)
+-   set version v6.10.0 (7e6de6e7)
+-   update CHANGELOG.md (63fe89cc)
 
 ##### Continuous Integration
 
-* **api fuzzing:**  add DOMAIN to make the token valid (2277eb34)
-*  fix fuzzing (5fcab51c)
-* **fuzzing:**  add auth (55566da4)
+-   **api fuzzing:** add DOMAIN to make the token valid (2277eb34)
+-   fix fuzzing (5fcab51c)
+-   **fuzzing:** add auth (55566da4)
 
 ##### New Features
 
-* **server config:**
-  *  add domains (a22d2af1)
-  *  add captcha site key (a0f76ea4)
-*  branding (0fc342a5)
-*  disable captcha (for testing only) (1b44b886)
+-   **server config:**
+    -   add domains (a22d2af1)
+    -   add captcha site key (a0f76ea4)
+-   branding (0fc342a5)
+-   disable captcha (for testing only) (1b44b886)
 
 ##### Bug Fixes
 
-*  change port to 3000 (9ab961a1)
-*  crash when CORS variable not provided (5321ff5d)
-* **docker:**  add EXPOSE 3000 (default port) (2fb9f59c)
-* **comment create:**  comment should be internal if thread is internal (a051347b)
-* **search:**  filter (1e819bdf)
-* **visibility:**  mongodb projection (4c3d9b4a)
+-   change port to 3000 (9ab961a1)
+-   crash when CORS variable not provided (5321ff5d)
+-   **docker:** add EXPOSE 3000 (default port) (2fb9f59c)
+-   **comment create:** comment should be internal if thread is internal (a051347b)
+-   **search:** filter (1e819bdf)
+-   **visibility:** mongodb projection (4c3d9b4a)
 
 ##### Other Changes
 
-* //gitlab.com/metahkg/metahkg-server into dev (868ad060)
-*  CHANGELOG.md (dc7665ef)
-* //gitlab.com/metahkg/metahkg-server into dev (c68980f5)
-*  CHANGELOG.md (63d96bf7)
-* //gitlab.com/metahkg/metahkg-server into dev (728e145b)
-*  CHANGELOG.md (b35fab59)
+-   //gitlab.com/metahkg/metahkg-server into dev (868ad060)
+-   CHANGELOG.md (dc7665ef)
+-   //gitlab.com/metahkg/metahkg-server into dev (c68980f5)
+-   CHANGELOG.md (63d96bf7)
+-   //gitlab.com/metahkg/metahkg-server into dev (728e145b)
+-   CHANGELOG.md (b35fab59)
 
 #### 6.9.1 (2023-06-01)
 
 ##### Chores
 
-*  update CHANGELOG.md (63fe89cc)
-*  update openapi (ee4bae6e)
-*  set version v6.9.1 (feb75e6f)
-*  set version v6.9.0 (96e94ba0)
-*  set version v6.8.0 (7076d9ed)
-*  update CHANGELOG.md (e1410536)
-*  set version v6.7.1 (c3b30af5)
+-   update CHANGELOG.md (63fe89cc)
+-   update openapi (ee4bae6e)
+-   set version v6.9.1 (feb75e6f)
+-   set version v6.9.0 (96e94ba0)
+-   set version v6.8.0 (7076d9ed)
+-   update CHANGELOG.md (e1410536)
+-   set version v6.7.1 (c3b30af5)
 
 ##### Continuous Integration
 
-*  fix tagging (fa3c5d2d)
+-   fix tagging (fa3c5d2d)
 
 ##### New Features
 
-*  hmac-sign links (68c93e6e)
-*  thread & comment visibility (54a375a4)
-* **images:**  add hmac signature (66a71dfb)
-* **comment delete:**  delete pinned comment and quotes (to the first order only) (3bbf932f)
-* **comment edit:**  edit pinned comment and quotes (to the first order only) (2d24fc9a)
+-   hmac-sign links (68c93e6e)
+-   thread & comment visibility (54a375a4)
+-   **images:** add hmac signature (66a71dfb)
+-   **comment delete:** delete pinned comment and quotes (to the first order only) (3bbf932f)
+-   **comment edit:** edit pinned comment and quotes (to the first order only) (2d24fc9a)
 
 ##### Bug Fixes
 
-* **comment create:**  comment should be internal if thread is internal (a051347b)
-* **search:**  filter (1e819bdf)
-* **visibility:**
-  *  mongodb projection (4c3d9b4a)
-  *  set visibility only if visibility is specified (2e8fc406)
-* **tsconfig.json:**  remove noImplicitUseStrict (8ed43b1b)
-* **migrate v6.9.0:**  check for removed (7078b1cb)
-* **findimages:**  allow http (0446464b)
+-   **comment create:** comment should be internal if thread is internal (a051347b)
+-   **search:** filter (1e819bdf)
+-   **visibility:**
+    -   mongodb projection (4c3d9b4a)
+    -   set visibility only if visibility is specified (2e8fc406)
+-   **tsconfig.json:** remove noImplicitUseStrict (8ed43b1b)
+-   **migrate v6.9.0:** check for removed (7078b1cb)
+-   **findimages:** allow http (0446464b)
 
 ##### Other Changes
 
-* //gitlab.com/metahkg/metahkg-server into dev (c68980f5)
-*  CHANGELOG.md (63d96bf7)
-* //gitlab.com/metahkg/metahkg-server into dev (728e145b)
-*  CHANGELOG.md (b35fab59)
-* //gitlab.com/metahkg/metahkg-server into dev (606654b2)
-*  CHANGELOG.md (c22bf640)
-*  CHANGELOG.md (2ad362aa)
-* //gitlab.com/metahkg/metahkg-server into dev (54cd583c)
-*  CHANGELOG.md (4e1a37b7)
-* //gitlab.com/metahkg/metahkg-server into dev (b600de46)
-*  add v6.9.1 script (37c91042)
-* //gitlab.com/metahkg/metahkg-server into dev (b0aa845c)
+-   //gitlab.com/metahkg/metahkg-server into dev (c68980f5)
+-   CHANGELOG.md (63d96bf7)
+-   //gitlab.com/metahkg/metahkg-server into dev (728e145b)
+-   CHANGELOG.md (b35fab59)
+-   //gitlab.com/metahkg/metahkg-server into dev (606654b2)
+-   CHANGELOG.md (c22bf640)
+-   CHANGELOG.md (2ad362aa)
+-   //gitlab.com/metahkg/metahkg-server into dev (54cd583c)
+-   CHANGELOG.md (4e1a37b7)
+-   //gitlab.com/metahkg/metahkg-server into dev (b600de46)
+-   add v6.9.1 script (37c91042)
+-   //gitlab.com/metahkg/metahkg-server into dev (b0aa845c)
 
 #### 6.9.1 (2023-05-25)
 
 ##### Chores
 
-*  update openapi (ee4bae6e)
-*  set version v6.9.1 (feb75e6f)
-*  set version v6.9.0 (96e94ba0)
-*  set version v6.8.0 (7076d9ed)
-*  update CHANGELOG.md (e1410536)
-*  set version v6.7.1 (c3b30af5)
-*  v6.7.0 (dev) [release] [dev] (4d91ab76)
-* **register:**  remove frontend not implemented warning (64fac8fc)
+-   update openapi (ee4bae6e)
+-   set version v6.9.1 (feb75e6f)
+-   set version v6.9.0 (96e94ba0)
+-   set version v6.8.0 (7076d9ed)
+-   update CHANGELOG.md (e1410536)
+-   set version v6.7.1 (c3b30af5)
+-   v6.7.0 (dev) [release] [dev] (4d91ab76)
+-   **register:** remove frontend not implemented warning (64fac8fc)
 
 ##### Continuous Integration
 
-*  fix tagging (fa3c5d2d)
+-   fix tagging (fa3c5d2d)
 
 ##### New Features
 
-*  hmac-sign links (68c93e6e)
-*  thread & comment visibility (54a375a4)
-* **images:**  add hmac signature (66a71dfb)
-* **comment delete:**  delete pinned comment and quotes (to the first order only) (3bbf932f)
-* **comment edit:**  edit pinned comment and quotes (to the first order only) (2d24fc9a)
+-   hmac-sign links (68c93e6e)
+-   thread & comment visibility (54a375a4)
+-   **images:** add hmac signature (66a71dfb)
+-   **comment delete:** delete pinned comment and quotes (to the first order only) (3bbf932f)
+-   **comment edit:** edit pinned comment and quotes (to the first order only) (2d24fc9a)
 
 ##### Bug Fixes
 
-* **visibility:**
-  *  mongodb projection (4c3d9b4a)
-  *  set visibility only if visibility is specified (2e8fc406)
-* **tsconfig.json:**  remove noImplicitUseStrict (8ed43b1b)
-* **migrate v6.9.0:**  check for removed (7078b1cb)
-* **findimages:**  allow http (0446464b)
-* **pin:**  return comment removed error (643264f7)
-* **unsubscribe:**  return 404 if not subscribed (ac18eb73)
-* **edit comment:**  sanitize new comment (e1fb5b69)
+-   **visibility:**
+    -   mongodb projection (4c3d9b4a)
+    -   set visibility only if visibility is specified (2e8fc406)
+-   **tsconfig.json:** remove noImplicitUseStrict (8ed43b1b)
+-   **migrate v6.9.0:** check for removed (7078b1cb)
+-   **findimages:** allow http (0446464b)
+-   **pin:** return comment removed error (643264f7)
+-   **unsubscribe:** return 404 if not subscribed (ac18eb73)
+-   **edit comment:** sanitize new comment (e1fb5b69)
 
 ##### Other Changes
 
-* //gitlab.com/metahkg/metahkg-server into dev (728e145b)
-*  CHANGELOG.md (b35fab59)
-* //gitlab.com/metahkg/metahkg-server into dev (606654b2)
-*  CHANGELOG.md (c22bf640)
-*  CHANGELOG.md (2ad362aa)
-* //gitlab.com/metahkg/metahkg-server into dev (54cd583c)
-*  CHANGELOG.md (4e1a37b7)
-* //gitlab.com/metahkg/metahkg-server into dev (b600de46)
-*  add v6.9.1 script (37c91042)
-* //gitlab.com/metahkg/metahkg-server into dev (b0aa845c)
+-   //gitlab.com/metahkg/metahkg-server into dev (728e145b)
+-   CHANGELOG.md (b35fab59)
+-   //gitlab.com/metahkg/metahkg-server into dev (606654b2)
+-   CHANGELOG.md (c22bf640)
+-   CHANGELOG.md (2ad362aa)
+-   //gitlab.com/metahkg/metahkg-server into dev (54cd583c)
+-   CHANGELOG.md (4e1a37b7)
+-   //gitlab.com/metahkg/metahkg-server into dev (b600de46)
+-   add v6.9.1 script (37c91042)
+-   //gitlab.com/metahkg/metahkg-server into dev (b0aa845c)
 
 #### 6.7.1 (2023-04-24)
 
