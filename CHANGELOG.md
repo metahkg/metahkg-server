@@ -1,3 +1,40 @@
+#### 6.10.0 (2023-06-08)
+
+##### Chores
+
+*  set version v6.10.0 (7e6de6e7)
+*  update CHANGELOG.md (63fe89cc)
+
+##### Continuous Integration
+
+* **api fuzzing:**  add DOMAIN to make the token valid (2277eb34)
+*  fix fuzzing (5fcab51c)
+* **fuzzing:**  add auth (55566da4)
+
+##### New Features
+
+* **server config:**
+  *  add domains (a22d2af1)
+  *  add captcha site key (a0f76ea4)
+*  branding (0fc342a5)
+*  disable captcha (for testing only) (1b44b886)
+
+##### Bug Fixes
+
+* **config:**  TURNSTILE_SITE_KEY (c380ee92)
+*  add MAIL variable (1f66c4e3)
+*  change port to 3000 (9ab961a1)
+*  crash when CORS variable not provided (5321ff5d)
+* **docker:**  add EXPOSE 3000 (default port) (2fb9f59c)
+* **comment create:**  comment should be internal if thread is internal (a051347b)
+
+##### Other Changes
+
+* //gitlab.com/metahkg/metahkg-server into dev (8a6c3d0b)
+*  CHANGELOG.md (8af19da9)
+* //gitlab.com/metahkg/metahkg-server into dev (868ad060)
+*  CHANGELOG.md (dc7665ef)
+
 #### 6.10.0 (2023-06-06)
 
 ##### Chores
