@@ -54,9 +54,14 @@ export default (
             const id = Number(req.params.id);
             const page = Number(req.query.page) || 1;
             const limit = Number(req.query.limit) || 25;
-            const start = Number(req.query.start) || (page - 1) * limit + 1;
-            const end = Number(req.query.end) || page * limit;
+            let start = Number(req.query.start);
+            let end = Number(req.query.end);
             const sort = (req.query.sort || "time") as "score" | "time" | "latest";
+
+            if (sort === "time") {
+                start = start || (page - 1) * limit + 1;
+                end = end || page * limit;
+            }
 
             if (end < start)
                 return res.code(400).send({ statusCode: 400, error: "Bad request" });
@@ -68,96 +73,84 @@ export default (
             // that are within the start and end range
             const thread = (
                 await threadCl
-                    .aggregate([
-                        { $match: { id } },
-                        {
-                            $set: {
-                                conversation: {
-                                    $filter: {
-                                        input: "$conversation",
-                                        cond: {
-                                            $and: [
-                                                { $gte: ["$$this.id", start] },
-                                                { $lte: ["$$this.id", end] },
-                                                !req.user && {
-                                                    $ne: [
-                                                        "$$this.visibility",
-                                                        "internal",
-                                                    ],
-                                                },
-                                            ].filter(Boolean),
-                                        },
+                    .aggregate(
+                        [
+                            { $match: { id } },
+                            // unwind the conversation array so we can sort it
+                            {
+                                $unwind: {
+                                    path: "$conversation",
+                                    preserveNullAndEmptyArrays: true,
+                                },
+                            },
+                            start &&
+                                end && {
+                                    $match: {
+                                        "conversation.id": { $gte: start, $lte: end },
+                                    },
+                                },
+                            // add a score field to each message
+                            {
+                                $set: {
+                                    "conversation.score": {
+                                        $subtract: [
+                                            { $ifNull: ["$conversation.U", 0] },
+                                            { $ifNull: ["$conversation.D", 0] },
+                                        ],
                                     },
                                 },
                             },
-                        },
-                        // add a score field to each message
-                        {
-                            $set: {
-                                conversation: {
-                                    $map: {
-                                        input: "$conversation",
-                                        in: {
-                                            $mergeObjects: [
-                                                "$$this",
-                                                {
-                                                    score: {
-                                                        $subtract: [
-                                                            { $ifNull: ["$$this.U", 0] },
-                                                            { $ifNull: ["$$this.D", 0] },
-                                                        ],
-                                                    },
-                                                },
-                                            ],
-                                        },
+                            // sort the conversation array
+                            {
+                                $sort: {
+                                    score: {
+                                        "conversation.score": -1,
+                                        "conversation.createdAt": 1,
                                     },
+                                    time: { "conversation.createdAt": 1 },
+                                    latest: { "conversation.createdAt": -1 },
+                                }[sort],
+                            },
+                            {
+                                $match: {
+                                    ...(!req.user && {
+                                        "conversation.visibility": { $ne: "internal" },
+                                    }),
                                 },
                             },
-                        },
-                        // unwind the conversation array so we can sort it
-                        {
-                            $unwind: {
-                                path: "$conversation",
-                                preserveNullAndEmptyArrays: true,
+                            !(start && end) && {
+                                $skip: limit * (page - 1),
                             },
-                        },
-                        // sort the conversation array
-                        {
-                            $sort: {
-                                score: {
-                                    "conversation.score": -1,
-                                    "conversation.createdAt": 1,
+                            !(start && end) && {
+                                $limit: limit,
+                            },
+                            // group the conversation array back into the thread
+                            {
+                                $group: {
+                                    _id: "$_id",
+                                    doc: { $first: "$$ROOT" },
+                                    conversation: { $push: "$conversation" },
                                 },
-                                time: { "conversation.createdAt": 1 },
-                                latest: { "conversation.createdAt": -1 },
-                            }[sort],
-                        },
-                        // group the conversation array back into the thread
-                        {
-                            $group: {
-                                _id: "$_id",
-                                doc: { $first: "$$ROOT" },
-                                conversation: { $push: "$conversation" },
                             },
-                        },
-                        // replace the root with the thread
-                        {
-                            $replaceRoot: {
-                                newRoot: {
-                                    $mergeObjects: [
-                                        "$doc",
-                                        {
-                                            conversation: {
-                                                $ifNull: ["$conversation", []],
+                            // replace the root with the thread
+                            {
+                                $replaceRoot: {
+                                    newRoot: {
+                                        $mergeObjects: [
+                                            "$doc",
+                                            {
+                                                conversation: {
+                                                    $ifNull: ["$conversation", []],
+                                                },
                                             },
-                                        },
-                                    ],
+                                        ],
+                                    },
                                 },
                             },
-                        },
-                        // remove the _id field
-                        { $project: { _id: 0 } },
-                    ])
+                            // remove the _id field
+                            { $project: { _id: 0 } },
+                        ].filter(Boolean)
+                    )
                     .toArray()
             )[0] as Thread;
 
