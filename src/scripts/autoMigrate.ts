@@ -32,7 +32,7 @@ export async function autoMigrate() {
                 console.log(jsMigrate);
                 const jsMigrateResults = jsMigrate.map((file) => {
                     const migrateVersionNum = Number(
-                        file.split("/").pop().replace(/\D/g, "")
+                        file.split("/").pop().replace(/[v\.]/g, "").replace("-", ".")
                     );
                     if (
                         migrateVersionNum > oldVersionNum &&
@@ -56,7 +56,7 @@ export async function autoMigrate() {
                 if (tsMigrate.length) {
                     const tsMigrateResults = tsMigrate.map((file) => {
                         const migrateVersionNum = Number(
-                            file.split("/").pop().replace(/\D/g, "")
+                            file.split("/").pop().replace(/[v\.]/g, "").replace("-", ".")
                         );
                         if (
                             migrateVersionNum > oldVersionNum &&
