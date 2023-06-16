@@ -154,7 +154,18 @@ export default (
                     .toArray()
             )[0] as Thread;
 
-            res.send(thread);
+            res.send(
+                thread ||
+                    (
+                        await threadCl
+                            .aggregate([
+                                { $match: { id } },
+                                { $set: { conversation: [] } },
+                                { $project: { _id: 0 } },
+                            ])
+                            .toArray()
+                    )[0]
+            );
         }
     );
     done();
