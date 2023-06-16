@@ -36,7 +36,8 @@ export async function sendEmail(
     subject: string,
     body: string
 ): Promise<boolean> {
-    if (config.MAIL === "mailgun") {
+    console.log(config.MAIL_PROVIDER);
+    if (config.MAIL_PROVIDER === "mailgun") {
         const mailgun = new Mailgun(formData);
 
         const mg = mailgun.client({

@@ -11,7 +11,7 @@ export const config = {
     REDIS_HOST: process.env.REDIS_HOST || "",
     REDIS_PASSWORD: process.env.REDIS_PASSWORD || "",
     REDIS_PORT: Number(process.env.REDIS_PORT || 6379) || 6379,
-    MAIL: process.env.MAIL || "mailgun",
+    MAIL_PROVIDER: process.env.MAIL_PROVIDER || "mailgun",
     MAILGUN_KEY: process.env.MAILGUN_KEY || process.env.mailgun_key || "",
     MAILGUN_DOMAIN:
         process.env.MAILGUN_DOMAIN ||
