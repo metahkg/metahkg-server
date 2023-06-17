@@ -59,7 +59,7 @@ export default function (
 
             const user = req.user;
             if (!user)
-                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized" });
 
             const thread = (await threadCl.findOne(
                 {
@@ -79,17 +79,16 @@ export default function (
                                 id: commentId,
                             },
                         },
+                        visibility: 1,
                     },
                 }
             )) as Thread & { removed: undefined };
 
             if (!thread)
-                return res
-                    .code(404)
-                    .send({ statusCode: 404, error: "Thread not found." });
+                return res.code(404).send({ statusCode: 404, error: "Thread not found" });
 
             if (thread?.op?.id !== user.id)
-                return res.code(403).send({ statusCode: 403, error: "Forbidden." });
+                return res.code(403).send({ statusCode: 403, error: "Forbidden" });
 
             const comment = Object.fromEntries(
                 Object.entries(thread.conversation?.[0]).filter(
@@ -100,7 +99,23 @@ export default function (
             if (!comment)
                 return res
                     .code(404)
-                    .send({ statusCode: 404, error: "Comment not found." });
+                    .send({ statusCode: 404, error: "Comment not found" });
+
+            if ("removed" in comment) {
+                return res.code(410).send({
+                    statusCode: 410,
+                    error: "Comment removed",
+                });
+            }
+
+            if (comment.visibility === "internal" && thread.visibility !== "internal") {
+                return res.code(403).send({
+                    statusCode: 403,
+                    error: "Forbidden",
+                    message:
+                        "Pinning an internal comment in a public thread is not allowed.",
+                });
+            }
 
             await threadCl.updateOne({ id: threadId }, { $set: { pin: comment } });
 

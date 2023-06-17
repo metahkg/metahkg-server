@@ -42,7 +42,7 @@ export default (
             res
         ) => {
             if (!isInteger(req.params.id))
-                return res.code(400).send({ statusCode: 400, error: "Bad request." });
+                return res.code(400).send({ statusCode: 400, error: "Bad request" });
 
             const threadId = Number(req.params.id);
             const commentId = Number(req.params.cid);
@@ -60,7 +60,7 @@ export default (
             if (!result)
                 return res
                     .code(404)
-                    .send({ statusCode: 404, error: "Thread or comment not found." });
+                    .send({ statusCode: 404, error: "Thread or comment not found" });
 
             if (!("removed" in result) && !("removed" in result?.conversation?.[0]))
                 res.send(result?.conversation?.[0]?.images);

@@ -1,16 +1,13 @@
 version = 1
 
 [[analyzers]]
+name = "javascript"
+
+[[analyzers]]
 name = "test-coverage"
 
 [[analyzers]]
 name = "docker"
 
-[[analyzers]]
-name = "go"
-
-  [analyzers.meta]
-  import_root = "gitlab.com/metahkg/imageproxy"
-
 [[transformers]]
-name = "gofmt"
+name = "prettier"

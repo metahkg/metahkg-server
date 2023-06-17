@@ -22,11 +22,11 @@ import { createToken } from "../../lib/auth/createToken";
 import User from "../../models/user";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { createSession } from "../../lib/sessions/createSession";
-import { CodeSchema, EmailSchema, RTokenSchema } from "../../lib/schemas";
+import { CodeSchema, EmailSchema, CaptchaTokenSchema } from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
 import { Verification } from "../../models/verification";
 import { RateLimitOptions } from "@fastify/rate-limit";
-import RequireReCAPTCHA from "../../plugins/requireRecaptcha";
+import RequireCAPTCHA from "../../plugins/requireCaptcha";
 
 dotenv.config();
 
@@ -40,7 +40,7 @@ export default (
             email: EmailSchema,
             code: CodeSchema,
             sameIp: Type.Optional(Type.Boolean()),
-            rtoken: RTokenSchema,
+            captchaToken: CaptchaTokenSchema,
         },
         { additionalProperties: false }
     );
@@ -57,7 +57,7 @@ export default (
                     timeWindow: 1000 * 60 * 60 * 24,
                 },
             },
-            preHandler: [RequireReCAPTCHA],
+            preHandler: [RequireCAPTCHA],
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const { email, code, sameIp } = req.body;
@@ -73,7 +73,7 @@ export default (
             if (!verificationData)
                 return res
                     .code(401)
-                    .send({ error: "Code incorrect or expired, or email not found." });
+                    .send({ error: "Code incorrect or expired, or email not found" });
 
             const { name, password, sex } = verificationData;
 
@@ -107,7 +107,7 @@ export default (
             if (!session)
                 return res
                     .code(500)
-                    .send({ statusCode: 500, error: "An error occurred." });
+                    .send({ statusCode: 500, error: "An error occurred" });
 
             res.send(session);
         }

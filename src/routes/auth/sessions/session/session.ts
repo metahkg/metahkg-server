@@ -44,7 +44,7 @@ export default function (
             if (!session)
                 return res
                     .code(404)
-                    .send({ statusCode: 404, error: "Session not found." });
+                    .send({ statusCode: 404, error: "Session not found" });
 
             return res.send(
                 objectFilter(session, (key) =>

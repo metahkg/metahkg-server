@@ -15,10 +15,18 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { ObjectId } from "mongodb";
+import { parse } from "node-html-parser";
+import validUrl from "valid-url";
+import { HMACSign } from "./hmac";
 
-export default interface Votes {
-    _id?: ObjectId;
-    id: number;
-    [id: number]: { cid: number; vote: "U" | "D" }[];
+export default function findLinks(comment: string) {
+    const parsed = parse(comment);
+    const links: { url: string; signature: string }[] = [];
+    parsed.querySelectorAll("a").forEach((item) => {
+        const url = item.getAttribute("href");
+        if (validUrl.isHttpsUri(url) || validUrl.isHttpUri(url)) {
+            links.push({ url: url, signature: HMACSign(url) });
+        }
+    });
+    return links;
 }

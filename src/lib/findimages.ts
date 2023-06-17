@@ -17,14 +17,16 @@
 
 import { parse } from "node-html-parser";
 import validUrl from "valid-url";
+import { HMACSign } from "./hmac";
+import { Image } from "../models/thread";
 
 export default function findimages(comment: string) {
     const parsed = parse(comment);
-    const images: string[] = [];
+    const images: Image[] = [];
     parsed.querySelectorAll("img").forEach((item) => {
         const src = item.getAttribute("src");
-        if (validUrl.isHttpsUri(src)) {
-            images.push(src);
+        if (validUrl.isHttpsUri(src) || validUrl.isHttpUri(src)) {
+            images.push({ src, signature: HMACSign(src) });
         }
     });
     return images;

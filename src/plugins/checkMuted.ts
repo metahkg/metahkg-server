@@ -17,6 +17,7 @@
 
 import { FastifyReply, FastifyRequest } from "fastify";
 import { usersCl } from "../lib/common";
+import { formatDate } from "../lib/formatDate";
 import User from "../models/user";
 
 export default async function checkMuted(req: FastifyRequest, res: FastifyReply) {
@@ -38,7 +39,10 @@ export default async function checkMuted(req: FastifyRequest, res: FastifyReply)
     if (mute)
         return res.code(403).send({
             statusCode: 403,
-            error: "Forbidden. You are muted by an admin.",
+            error: "Forbidden",
+            message: `You have been muted${
+                mute.exp ? ` until ${formatDate(mute.exp)}` : ""
+            }: ${mute.reason || "No reason provided"}.`,
             ...(mute.exp && { exp: mute.exp }),
         });
 

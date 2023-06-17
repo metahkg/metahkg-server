@@ -64,12 +64,12 @@ export default (
             const hiddenCats = await gethiddencats();
 
             if (!req.user && hiddenCats.includes(category))
-                return res.code(403).send({ statusCode: 403, error: "Forbidden." });
+                return res.code(403).send({ statusCode: 403, error: "Forbidden" });
 
             if (!((await categoryCl.findOne({ id: category })) as Category))
                 return res
                     .code(404)
-                    .send({ statusCode: 404, error: "Category not found." });
+                    .send({ statusCode: 404, error: "Category not found" });
 
             const viralLimit = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
 
@@ -83,6 +83,7 @@ export default (
                                 ...(sort === "viral" && {
                                     lastModified: { $gte: viralLimit },
                                 }),
+                                ...(!req.user && { visibility: { $ne: "internal" } }),
                                 removed: { $ne: true },
                             },
                         },

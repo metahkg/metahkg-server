@@ -61,7 +61,7 @@ export default (
             if (name && name !== user.name && ((await usersCl.findOne({ name })) as User))
                 return res
                     .code(409)
-                    .send({ statusCode: 409, error: "Name already taken." });
+                    .send({ statusCode: 409, error: "Name already taken" });
 
             if (
                 !(await usersCl.updateOne({ id: user.id }, { $set: req.body }))
@@ -69,7 +69,7 @@ export default (
             )
                 return res
                     .code(500)
-                    .send({ statusCode: 500, error: "An unknown error occured." });
+                    .send({ statusCode: 500, error: "An unknown error occured" });
 
             const newToken = createToken(
                 fastify.jwt,

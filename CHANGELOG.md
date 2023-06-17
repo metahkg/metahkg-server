@@ -1,3 +1,153 @@
+#### 6.9.1 (2023-05-25)
+
+##### Chores
+
+-   update openapi (ee4bae6e)
+-   set version v6.9.1 (feb75e6f)
+-   set version v6.9.0 (96e94ba0)
+-   set version v6.8.0 (7076d9ed)
+-   update CHANGELOG.md (e1410536)
+-   set version v6.7.1 (c3b30af5)
+-   v6.7.0 (dev) [release] [dev] (4d91ab76)
+-   **register:** remove frontend not implemented warning (64fac8fc)
+
+##### Continuous Integration
+
+-   fix tagging (fa3c5d2d)
+
+##### New Features
+
+-   hmac-sign links (68c93e6e)
+-   thread & comment visibility (54a375a4)
+-   **images:** add hmac signature (66a71dfb)
+-   **comment delete:** delete pinned comment and quotes (to the first order only) (3bbf932f)
+-   **comment edit:** edit pinned comment and quotes (to the first order only) (2d24fc9a)
+
+##### Bug Fixes
+
+-   **visibility:**
+    -   mongodb projection (4c3d9b4a)
+    -   set visibility only if visibility is specified (2e8fc406)
+-   **tsconfig.json:** remove noImplicitUseStrict (8ed43b1b)
+-   **migrate v6.9.0:** check for removed (7078b1cb)
+-   **findimages:** allow http (0446464b)
+-   **pin:** return comment removed error (643264f7)
+-   **unsubscribe:** return 404 if not subscribed (ac18eb73)
+-   **edit comment:** sanitize new comment (e1fb5b69)
+
+##### Other Changes
+
+-   //gitlab.com/metahkg/metahkg-server into dev (728e145b)
+-   CHANGELOG.md (b35fab59)
+-   //gitlab.com/metahkg/metahkg-server into dev (606654b2)
+-   CHANGELOG.md (c22bf640)
+-   CHANGELOG.md (2ad362aa)
+-   //gitlab.com/metahkg/metahkg-server into dev (54cd583c)
+-   CHANGELOG.md (4e1a37b7)
+-   //gitlab.com/metahkg/metahkg-server into dev (b600de46)
+-   add v6.9.1 script (37c91042)
+-   //gitlab.com/metahkg/metahkg-server into dev (b0aa845c)
+
+#### 6.7.1 (2023-04-24)
+
+##### Chores
+
+-   set version v6.7.1 (c3b30af5)
+
+##### Bug Fixes
+
+-   **unsubscribe:** return 404 if not subscribed (ac18eb73)
+-   **edit comment:** sanitize new comment (e1fb5b69)
+
+##### Other Changes
+
+-   CHANGELOG.md (f0d52a17)
+-   CHANGELOG.md (262a2128)
+
+#### 6.7.0 (2023-04-24)
+
+##### Build System / Dependencies
+
+-   **tsconfig.json:** set target to esnext (feec5d97)
+
+##### Chores
+
+-   v6.7.0 (dev) [release] [dev] (4d91ab76)
+-   v6.6.1 (4458f442)
+-   update CHANGELOG.md (0112d0d3)
+
+##### Continuous Integration
+
+-   fix tagging (7f12ab13)
+
+##### New Features
+
+-   **server:** add, generate, delete, get invite codes (admin only) [admin] (83acdb63)
+-   automatically generate internal secrets (21291247)
+-   **captcha:** add captcha mode to server config (4e0df6eb)
+
+##### Bug Fixes
+
+-   **openapi:** fix source urls (bf4c1279)
+-   **avatar upload:**
+    -   upload code should be moved outside of the try-catch (f628abbc)
+    -   delete only if old file exists (596b4634)
+-   **notifications:** duplicated notifications (b3fd687b)
+-   **captcha:**
+    -   use get request for recaptcha (b50ae621)
+    -   change wording (7e21e24f)
+-   captcha verification (5b2559d8)
+-   **auto migrate:** return if version not found (f1896155)
+-   **migrate v6.5.0:** convert id to number (a014a563)
+
+##### Other Changes
+
+-   CHANGELOG.md (262a2128)
+-   update server list (7662ddc5)
+-   CHANGELOG.md (b1d266bc)
+-   **errors:** remove full stop from error, if needed use message instead (9d178d57)
+-   **.gitignore:** add version.txt (8d49d409)
+
+#### 6.6.0 (2023-03-05)
+
+##### Chores
+
+-   v6.6.0 (16a6837c)
+
+##### Continuous Integration
+
+-   fix tagging (7f12ab13)
+
+##### New Features
+
+-   **captcha:** support turnstile [breaking] - can choose between recaptcha and turnstile via CAPTCHA env variable - rtoken in api requests changed to captchaToken (9730e03c)
+
+#### 6.5.0
+
+##### Chores
+
+-   v6.5.0 (2a875366)
+-   add turbo config (c23f76f1)
+
+##### New Features
+
+-   auto migrate (be4fb677)
+
+##### Bug Fixes
+
+-   **avatar upload:** delete the old one after uploading (90850d47)
+-   **avatar delete:** find query (3764b481)
+-   **refresh:** error message wrong property (dc5c98d5)
+
+##### Other Changes
+
+-   CHANGELOG.md (b6c1a16a)
+-   CHANGELOG.md (2f4335fa)
+-   **migrate:** 6.5.0 migrate script [migrate] (ee159711)
+-   **scripts:** use console.info (175cae20)
+-   **votes:** merge votesCl into usersCl [breaking] [migration] (e926b5e4)
+-   **avatar:** store avatars using mongodb gridfs [breaking] [migration] (4f9c0591)
+
 #### 6.4.1 (2023-03-03)
 
 ##### Chores

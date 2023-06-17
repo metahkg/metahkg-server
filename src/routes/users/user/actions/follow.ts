@@ -45,12 +45,12 @@ export default (
         ) => {
             const user = req.user;
             if (!user)
-                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized" });
 
             const userId = Number(req.params.id);
 
             if (!((await usersCl.findOne({ id: userId })) as User))
-                return res.code(404).send({ statusCode: 404, error: "User not found." });
+                return res.code(404).send({ statusCode: 404, error: "User not found" });
 
             if (
                 !(
@@ -73,7 +73,7 @@ export default (
             )
                 return res
                     .code(409)
-                    .send({ statusCode: 409, error: "User already followed." });
+                    .send({ statusCode: 409, error: "User already followed" });
 
             return res.code(204).send();
         }

@@ -53,7 +53,7 @@ export default function (
         ) {
             const user = req.user;
             if (!user)
-                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized" });
 
             const id = Number(req.params.id);
             const cid = Number(req.params.cid);

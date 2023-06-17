@@ -53,6 +53,7 @@ export default (
                 .find({
                     id: { $in: threads },
                     ...(!user && { category: { $nin: await hiddencats() } }),
+                    ...(!user && { visibility: { $ne: "internal" } }),
                     removed: { $ne: true },
                 })
                 .project({ _id: 0, conversation: 0, images: 0, pin: 0 })

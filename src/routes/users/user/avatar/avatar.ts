@@ -15,11 +15,11 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import fs from "fs";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import dotenv from "dotenv";
 import { Static, Type } from "@sinclair/typebox";
 import regex from "../../../../lib/regex";
+import { avatarBucket } from "../../../../lib/common";
 
 dotenv.config();
 
@@ -33,18 +33,28 @@ export default function (
     fastify.get(
         "/",
         { schema: { params: paramsSchema } },
-        (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
-            const filename = `images/avatars/${req.params.id}.png`;
+        async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
+            // pipe to a buffer
+            const file: Buffer | null = await new Promise<Buffer>((resolve, reject) => {
+                const buf: Buffer[] = [];
+                const stream = avatarBucket.openDownloadStreamByName(
+                    `${req.params.id}.png`
+                );
+                stream.on("data", (chunk) => buf.push(chunk));
+                stream.on("end", () => {
+                    resolve(Buffer.concat(buf));
+                });
+                stream.on("error", reject);
+            })
+                .then((v) => v)
+                .catch(() => null);
 
-            fs.stat(filename, (err) => {
-                if (err)
-                    return res
-                        .code(404)
-                        .send({ statusCode: 404, error: "User or avatar not found." });
+            if (!file)
+                return res
+                    .code(404)
+                    .send({ statusCode: 404, error: "User or avatar not found" });
 
-                const path = `${filename}`;
-                res.header("Content-Type", "image/png").send(fs.readFileSync(path));
-            });
+            res.header("Content-Type", "image/png").send(file);
         }
     );
     done();

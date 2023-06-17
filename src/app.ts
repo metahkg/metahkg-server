@@ -35,13 +35,17 @@ import { config } from "./lib/config";
 import { readFileSync } from "fs";
 import { generateCerts } from "./scripts/certs";
 import { redis } from "./lib/redis";
+import { autoMigrate } from "./scripts/autoMigrate";
+import { generateHMACKey } from "./lib/hmac";
 
 dotenv.config();
 
 export default async function MetahkgServer() {
     await client.connect();
+    await autoMigrate();
     await setupMongo();
-    await generateCerts();
+    generateCerts();
+    generateHMACKey();
     await agenda.start();
 
     [
@@ -73,7 +77,7 @@ export default async function MetahkgServer() {
         if (error.validation) {
             res.code(400).send({
                 statusCode: 400,
-                error: "Bad request.",
+                error: "Bad request",
                 message: errormsg,
             });
         }
@@ -83,7 +87,7 @@ export default async function MetahkgServer() {
                 res.code(statusCode).send({ statusCode, error: errormsg });
             } catch {}
 
-        res.code(500).send({ statusCode: 500, error: "Internal Server Error." });
+        res.code(500).send({ statusCode: 500, error: "Internal Server Error" });
     });
 
     config.CORS && fastify.register(fastifyCors);

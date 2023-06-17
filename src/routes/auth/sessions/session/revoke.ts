@@ -49,14 +49,14 @@ export default function (
             if (!currentSession || !sessionToRevoke) {
                 return res.code(404).send({
                     statusCode: 404,
-                    error: "Session not found.",
+                    error: "Session not found",
                 });
             }
 
             if (sessionToRevoke.createdAt < currentSession.createdAt) {
                 return res.code(409).send({
                     statusCode: 409,
-                    error: "Failed to revoke an older session.",
+                    error: "Failed to revoke an older session",
                 });
             }
 

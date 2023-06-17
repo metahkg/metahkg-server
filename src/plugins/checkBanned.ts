@@ -17,6 +17,7 @@
 
 import { FastifyReply, FastifyRequest } from "fastify";
 import { usersCl } from "../lib/common";
+import { formatDate } from "../lib/formatDate";
 import User from "../models/user";
 
 export default async function checkBanned(req: FastifyRequest, res: FastifyReply) {
@@ -33,7 +34,10 @@ export default async function checkBanned(req: FastifyRequest, res: FastifyReply
     if (ban)
         return res.code(403).send({
             statusCode: 403,
-            error: "Forbidden. You are banned by an admin.",
+            error: "Forbidden",
+            message: `You have been banned${
+                ban.exp ? ` until ${formatDate(ban.exp)}` : ""
+            }: ${ban.reason || "No reason provided."}`,
             ...(ban.exp && { exp: ban.exp }),
         });
 
