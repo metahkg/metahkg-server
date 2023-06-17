@@ -41,7 +41,7 @@ export default function (
             )) as Category;
 
             if (!category)
-                return res.code(404).send({ statusCode: 404, error: "Not found." });
+                return res.code(404).send({ statusCode: 404, error: "Not found" });
 
             res.send(category);
         }

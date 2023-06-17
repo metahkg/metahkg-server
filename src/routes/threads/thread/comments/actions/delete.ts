@@ -64,6 +64,7 @@ export default function (
                 {
                     projection: {
                         _id: 0,
+                        pin: 1,
                         conversation: { $elemMatch: { id: cid } },
                         index: { $indexOfArray: ["$conversation.id", cid] },
                     },
@@ -76,7 +77,7 @@ export default function (
             if (index === undefined || index === -1)
                 return res
                     .code(404)
-                    .send({ statusCode: 404, error: "Thread or comment not found." });
+                    .send({ statusCode: 404, error: "Thread or comment not found" });
 
             if ("removed" in thread) return;
 
@@ -89,7 +90,20 @@ export default function (
 
             await threadCl.updateOne(
                 { id },
-                { $set: { [`conversation.${index}`]: { id: cid, removed: true } } }
+                {
+                    $set: { [`conversation.${index}`]: { id: cid, removed: true } },
+                    // remove the pinned comment if is the removed comment
+                    ...(thread.pin?.id === cid && { $unset: { pin: 1 } }),
+                }
+            );
+
+            // remove quotes of the comment
+            // first order only
+            // TODO: remove higher orders (need to do it recursively)
+            await threadCl.updateOne(
+                { id },
+                { $unset: { "conversation.$[elem].quote": 1 } },
+                { arrayFilters: [{ "elem.quote.id": cid }] }
             );
 
             return res.code(204).send();

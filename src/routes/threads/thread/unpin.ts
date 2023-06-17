@@ -50,19 +50,17 @@ export default (
             )) as Thread;
 
             if (!thread)
-                return res
-                    .code(404)
-                    .send({ statusCode: 404, error: "Thread not found." });
+                return res.code(404).send({ statusCode: 404, error: "Thread not found" });
             if ("removed" in thread) return;
 
             const authorized = user && thread?.op?.id === user.id;
             if (!authorized)
-                return res.code(403).send({ statusCode: 403, error: "Forbidden." });
+                return res.code(403).send({ statusCode: 403, error: "Forbidden" });
 
             if (!thread.pin)
                 return res
                     .code(409)
-                    .send({ statusCode: 409, error: "No comment is pinned." });
+                    .send({ statusCode: 409, error: "No comment is pinned" });
 
             await threadCl.updateOne({ id: threadId }, { $unset: { pin: 1 } });
 

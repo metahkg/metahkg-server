@@ -1,5 +1,6 @@
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
 import config from "./config";
+import invitecodes from "./invitecodes";
 import publickey from "./publickey";
 
 export default function (
@@ -9,5 +10,6 @@ export default function (
 ) {
     fastify.register(config);
     fastify.register(publickey);
+    fastify.register(invitecodes, { prefix: "/invitecodes" });
     done();
 }

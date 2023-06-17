@@ -15,16 +15,16 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { threadCl, votesCl } from "../../../../lib/common";
+import { threadCl, usersCl } from "../../../../lib/common";
 import { Type, Static } from "@sinclair/typebox";
 
 import Thread from "../../../../models/thread";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../../lib/regex";
-import Votes from "../../../../models/votes";
 import { sendNotification } from "../../../../lib/notifications/sendNotification";
 import { VoteSchema } from "../../../../lib/schemas";
 import { config } from "../../../../lib/config";
+import User from "../../../../models/user";
 
 export default (
     fastify: FastifyInstance,
@@ -59,7 +59,7 @@ export default (
 
             const user = req.user;
             if (!user)
-                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized" });
 
             const thread = (await threadCl.findOne(
                 { id: threadId, conversation: { $elemMatch: { id: commentId } } },
@@ -76,21 +76,21 @@ export default (
             if (!thread)
                 return res
                     .code(404)
-                    .send({ statusCode: 404, error: "Thread or comment not found." });
+                    .send({ statusCode: 404, error: "Thread or comment not found" });
 
-            const votes = (await votesCl.findOne({ id: user.id })) as Votes;
+            const votes = ((await usersCl.findOne({ id: user.id })) as User)?.votes;
 
             if (!votes) {
-                await votesCl.insertOne(<Votes>{ id: user.id });
+                await usersCl.updateOne({ id: user.id }, { $set: { votes: {} } });
             } else if (votes?.[threadId]?.find((i) => i.cid === commentId)) {
                 return res
                     .code(429)
-                    .send({ statusCode: 429, error: "You have already voted." });
+                    .send({ statusCode: 429, error: "You have already voted" });
             }
 
-            await votesCl.updateOne(
+            await usersCl.updateOne(
                 { id: user.id },
-                { $push: { [`${threadId}`]: { cid: commentId, vote } } }
+                { $push: { [`votes.${threadId}`]: { cid: commentId, vote } } }
             );
 
             if ("removed" in thread || "removed" in thread.conversation[0]) return;

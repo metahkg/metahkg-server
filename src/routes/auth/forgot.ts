@@ -21,11 +21,11 @@ import { randomBytes } from "crypto";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import { usersCl, verificationCl } from "../../lib/common";
 import { sendResetMsg } from "../../lib/email";
-import { EmailSchema, RTokenSchema } from "../../lib/schemas";
+import { EmailSchema, CaptchaTokenSchema } from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
 import User from "../../models/user";
 import { Verification } from "../../models/verification";
-import RequireReCAPTCHA from "../../plugins/requireRecaptcha";
+import RequireCAPTCHA from "../../plugins/requireCaptcha";
 
 export default (
     fastify: FastifyInstance,
@@ -33,7 +33,7 @@ export default (
     done: (e?: Error) => void
 ) => {
     const schema = Type.Object(
-        { email: EmailSchema, rtoken: RTokenSchema },
+        { email: EmailSchema, captchaToken: CaptchaTokenSchema },
         { additionalProperties: false }
     );
 
@@ -55,7 +55,7 @@ export default (
                     timeWindow: 1000 * 60 * 60 * 24,
                 },
             },
-            preHandler: [RequireReCAPTCHA],
+            preHandler: [RequireCAPTCHA],
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const { email } = req.body;
@@ -63,14 +63,14 @@ export default (
 
             const userData = (await usersCl.findOne({ email: hashedEmail })) as User;
             if (!userData)
-                return res.code(404).send({ statusCode: 404, error: "User not found." });
+                return res.code(404).send({ statusCode: 404, error: "User not found" });
 
             const verificationCode = randomBytes(30).toString("hex");
 
             if (!(await sendResetMsg(email, verificationCode))) {
                 res.code(500).send({
                     statusCode: 500,
-                    error: "An error occurred while sending the email.",
+                    error: "An error occurred while sending the email",
                 });
             }
 

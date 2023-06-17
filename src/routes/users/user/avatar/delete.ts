@@ -17,7 +17,7 @@
 
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import fs from "fs";
+import { avatarBucket } from "../../../../lib/common";
 import regex from "../../../../lib/regex";
 import RequireSameUserOrAdmin from "../../../../plugins/requireSameUserOrAdmin";
 
@@ -35,15 +35,15 @@ export default function (
         { preParsing: [RequireSameUserOrAdmin], schema: { params: paramsSchema } },
         async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
             const id = Number(req.params.id);
-            const filename = `images/avatars/${id}.png`;
 
-            try {
-                fs.rmSync(filename);
-            } catch {
-                return res
-                    .code(404)
-                    .send({ statusCode: 404, error: "Avatar not found." });
+            const metadata = (
+                await avatarBucket.find({ "metadata.id": id }).toArray()
+            )[0];
+            if (!metadata) {
+                return res.code(404).send({ statusCode: 404, error: "Avatar not found" });
             }
+
+            await avatarBucket.delete(metadata._id);
 
             return res.code(204).send();
         }

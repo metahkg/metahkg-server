@@ -26,12 +26,18 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import regex from "../../../../lib/regex";
 import checkMuted from "../../../../plugins/checkMuted";
 import { sendNotification } from "../../../../lib/notifications/sendNotification";
-import { CommentSchema, IntegerSchema, RTokenSchema } from "../../../../lib/schemas";
+import {
+    CommentSchema,
+    IntegerSchema,
+    CaptchaTokenSchema,
+    VisibilitySchema,
+} from "../../../../lib/schemas";
 import { sha256 } from "../../../../lib/sha256";
 import { Link } from "../../../../models/link";
 import { RateLimitOptions } from "@fastify/rate-limit";
-import RequireReCAPTCHA from "../../../../plugins/requireRecaptcha";
+import RequireCAPTCHA from "../../../../plugins/requireCaptcha";
 import { config } from "../../../../lib/config";
+import findLinks from "../../../../lib/findLinks";
 
 export default (
     fastify: FastifyInstance,
@@ -41,8 +47,9 @@ export default (
     const schema = Type.Object(
         {
             comment: CommentSchema,
-            rtoken: RTokenSchema,
+            captchaToken: CaptchaTokenSchema,
             quote: Type.Optional(IntegerSchema),
+            visibility: Type.Optional(VisibilitySchema),
         },
         { additionalProperties: false }
     );
@@ -56,7 +63,7 @@ export default (
                 body: schema,
                 params: paramsSchema,
             },
-            preHandler: [RequireReCAPTCHA, checkMuted],
+            preHandler: [RequireCAPTCHA, checkMuted],
             config: {
                 rateLimit: <RateLimitOptions>{
                     keyGenerator: (req: FastifyRequest) => {
@@ -78,15 +85,14 @@ export default (
             const id = Number(req.params.id);
 
             const { quote } = req.body;
+            let { visibility } = req.body;
 
             const user = req.user;
             if (!user)
-                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized" });
 
             if (!((await threadCl.findOne({ id })) as Thread))
-                return res
-                    .code(404)
-                    .send({ statusCode: 404, error: "Thread not found." });
+                return res.code(404).send({ statusCode: 404, error: "Thread not found" });
 
             const comment = sanitize(req.body.comment);
             const text = htmlToText(comment, { wordwrap: false });
@@ -144,19 +150,25 @@ export default (
                                     )
                             )
                         ) as Comment) || undefined;
-                    if ("removed" in quotedComment) quotedComment = undefined;
+                    if ("removed" in quotedComment) return (quotedComment = undefined);
 
                     if (quotedComment) quoteIndex = thread?.index;
+
+                    // comment is made internal if the quoted comment is internal
+                    if (quotedComment.visibility === "internal") {
+                        visibility = "internal";
+                    }
                 }
             }
 
             const imagesInComment = findImages(comment);
+            const linksInComment = findLinks(comment);
 
             await threadCl.updateOne(
                 { id },
                 {
                     $push: {
-                        conversation: {
+                        conversation: <Comment>{
                             id: newcid,
                             user: {
                                 id: user.id,
@@ -168,8 +180,10 @@ export default (
                             text,
                             createdAt: new Date(),
                             slink: `https://${config.LINKS_DOMAIN}/${slinkId}`,
+                            links: linksInComment,
                             images: imagesInComment,
                             ...(quotedComment && { quote: quotedComment }),
+                            ...(visibility && { visibility }),
                         },
                     },
                     $currentDate: { lastModified: true },
@@ -202,12 +216,12 @@ export default (
                                 $each: imagesInComment
                                     .filter(
                                         (item) =>
-                                            imagesData.findIndex(
-                                                (i) => i.src === item
+                                            imagesData?.findIndex(
+                                                (i) => i.src === item.src
                                             ) === -1
                                     )
                                     .map((item) => {
-                                        return { src: item, cid: newcid };
+                                        return { ...item, cid: newcid };
                                     }),
                             },
                         },
@@ -215,55 +229,60 @@ export default (
                 );
             }
 
-            (
-                usersCl
-                    .find({
-                        starred: { $elemMatch: { id: thread.id } },
-                        sessions: { $elemMatch: { subscription: { $exists: true } } },
-                    })
-                    .project({ _id: 0, id: 1 })
-                    .toArray() as Promise<{ id: number }[]>
-            ).then((users) => {
-                if (!users.find((i) => i.id === thread.op.id))
-                    users.push({ id: thread.op.id });
-
-                users.forEach(({ id }) => {
-                    if (id !== user.id)
-                        sendNotification(id, {
-                            title: `New comment (${thread.title})`,
-                            createdAt: new Date(),
-                            options: {
-                                body: `${user.name} (#${user.id}): ${
-                                    text.length < 200 ? text : `${text.slice(0, 200)}...`
-                                }`,
-                                data: {
-                                    type: "comment",
-                                    threadId: thread.id,
-                                    commentId: newcid,
-                                    url: `https://${config.DOMAIN}/thread/${thread.id}?c=${newcid}`,
-                                },
-                            },
-                        });
-                });
-            });
-
-            if (quotedComment && !("removed" in quotedComment)) {
-                if (quotedComment.user.id !== user.id)
-                    sendNotification(quotedComment.user.id, {
-                        title: `New reply (${thread.title})`,
-                        createdAt: new Date(),
-                        options: {
-                            body: `${user.name} (#${user.id}): ${
-                                text.length < 200 ? text : `${text.slice(0, 200)}...`
-                            }`,
-                            data: {
-                                type: "reply",
-                                threadId: thread.id,
-                                commentId: newcid,
-                                url: `https://${config.DOMAIN}/thread/${thread.id}?c=${newcid}`,
-                            },
+            if (
+                quotedComment &&
+                !("removed" in quotedComment) &&
+                quotedComment.user.id !== user.id
+            ) {
+                sendNotification(quotedComment.user.id, {
+                    title: `New reply (${thread.title})`,
+                    createdAt: new Date(),
+                    options: {
+                        body: `${user.name} (#${user.id}): ${
+                            text.length < 200 ? text : `${text.slice(0, 200)}...`
+                        }`,
+                        data: {
+                            type: "reply",
+                            threadId: thread.id,
+                            commentId: newcid,
+                            url: `https://${config.DOMAIN}/thread/${thread.id}?c=${newcid}`,
                         },
+                    },
+                });
+            } else {
+                (
+                    usersCl
+                        .find({
+                            starred: { $elemMatch: { id: thread.id } },
+                            sessions: { $elemMatch: { subscription: { $exists: true } } },
+                        })
+                        .project({ _id: 0, id: 1 })
+                        .toArray() as Promise<{ id: number }[]>
+                ).then((users) => {
+                    if (!users.find((i) => i.id === thread.op.id))
+                        users.push({ id: thread.op.id });
+
+                    users.forEach(({ id }) => {
+                        if (id !== user.id)
+                            sendNotification(id, {
+                                title: `New comment (${thread.title})`,
+                                createdAt: new Date(),
+                                options: {
+                                    body: `${user.name} (#${user.id}): ${
+                                        text.length < 200
+                                            ? text
+                                            : `${text.slice(0, 200)}...`
+                                    }`,
+                                    data: {
+                                        type: "comment",
+                                        threadId: thread.id,
+                                        commentId: newcid,
+                                        url: `https://${config.DOMAIN}/thread/${thread.id}?c=${newcid}`,
+                                    },
+                                },
+                            });
                     });
+                });
             }
 
             res.send({ id: newcid });

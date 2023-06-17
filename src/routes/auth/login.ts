@@ -26,13 +26,14 @@ import { createSession } from "../../lib/sessions/createSession";
 import {
     EmailSchema,
     PasswordSchema,
-    RTokenSchema,
+    CaptchaTokenSchema,
     UserNameSchema,
 } from "../../lib/schemas";
 import { sha256 } from "../../lib/sha256";
 import { Verification } from "../../models/verification";
 import { RateLimitOptions } from "@fastify/rate-limit";
-import RequireReCAPTCHA from "../../plugins/requireRecaptcha";
+import RequireCAPTCHA from "../../plugins/requireCaptcha";
+import { formatDate } from "../../lib/formatDate";
 
 dotenv.config();
 
@@ -47,7 +48,7 @@ export default (
             // check if password is a sha256 hash
             password: PasswordSchema,
             sameIp: Type.Optional(Type.Boolean()),
-            rtoken: RTokenSchema,
+            captchaToken: CaptchaTokenSchema,
         },
         { additionalProperties: false }
     );
@@ -63,7 +64,7 @@ export default (
                 },
             },
             schema: { body: schema },
-            preHandler: [RequireReCAPTCHA],
+            preHandler: [RequireCAPTCHA],
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const { name, password, sameIp } = req.body;
@@ -81,19 +82,22 @@ export default (
                 if (verifyUser && (await bcrypt.compare(password, verifyUser.password)))
                     return res
                         .code(409)
-                        .send({ statusCode: 409, error: "Please verify your email." });
+                        .send({ statusCode: 409, error: "Please verify your email" });
 
-                return res.code(401).send({ statusCode: 401, error: "Login failed." });
+                return res.code(401).send({ statusCode: 401, error: "Login failed" });
             }
 
             const pwdMatch = await bcrypt.compare(password, user.password);
             if (!pwdMatch)
-                return res.code(401).send({ statusCode: 401, error: "Login failed." });
+                return res.code(401).send({ statusCode: 401, error: "Login failed" });
 
             if (user.ban) {
                 return res.code(403).send({
                     statusCode: 403,
-                    error: "Forbidden. You are banned by an admin.",
+                    error: "Forbidden",
+                    message: `You have been banned${
+                        user.ban.exp ? ` until ${formatDate(user.ban.exp)}` : ""
+                    }: ${user.ban.reason || "No reason provided"}.`,
                     ...(user.ban.exp && { exp: user.ban.exp }),
                 });
             }
@@ -111,7 +115,7 @@ export default (
             if (!session)
                 return res
                     .code(500)
-                    .send({ statusCode: 500, error: "An error occurred." });
+                    .send({ statusCode: 500, error: "An error occurred" });
 
             res.send(session);
         }

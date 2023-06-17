@@ -26,7 +26,7 @@ import {
     EmailSchema,
     UserNameSchema,
     PasswordSchema,
-    RTokenSchema,
+    CaptchaTokenSchema,
     SexSchema,
     InviteCodeSchema,
 } from "../../lib/schemas";
@@ -34,7 +34,7 @@ import { randomBytes } from "crypto";
 import { Verification } from "../../models/verification";
 import User from "../../models/user";
 import { RateLimitOptions } from "@fastify/rate-limit";
-import RequireReCAPTCHA from "../../plugins/requireRecaptcha";
+import RequireCAPTCHA from "../../plugins/requireCaptcha";
 import { config } from "../../lib/config";
 
 dotenv.config();
@@ -50,7 +50,7 @@ export default (
             // check if password is a sha256 hash
             password: PasswordSchema,
             email: EmailSchema,
-            rtoken: RTokenSchema,
+            captchaToken: CaptchaTokenSchema,
             sex: SexSchema,
             inviteCode: Type.Optional(InviteCodeSchema),
         },
@@ -69,7 +69,7 @@ export default (
                     timeWindow: 1000 * 60 * 60 * 24,
                 },
             },
-            preHandler: [RequireReCAPTCHA],
+            preHandler: [RequireCAPTCHA],
         },
         async (req: FastifyRequest<{ Body: Static<typeof schema> }>, res) => {
             const { name, password, email, sex, inviteCode } = req.body;
@@ -79,10 +79,9 @@ export default (
             if (config.REGISTER_MODE === "none") {
                 return res
                     .code(400)
-                    .send({ statusCode: 400, error: "Registration disabled." });
+                    .send({ statusCode: 400, error: "Registration disabled" });
             }
 
-            // TODO: WARNING: frontend not implemented !!!
             // check if invite code is needed, and if so check the invite code
             if (
                 config.REGISTER_MODE === "invite" &&
@@ -90,7 +89,7 @@ export default (
             ) {
                 return res
                     .code(400)
-                    .send({ statusCode: 400, error: "Invalid invite code." });
+                    .send({ statusCode: 400, error: "Invalid invite code" });
             }
 
             // check if email domain is allowed
@@ -100,7 +99,7 @@ export default (
             ) {
                 return res
                     .code(400)
-                    .send({ statusCode: 400, error: "Email domain not allowed." });
+                    .send({ statusCode: 400, error: "Email domain not allowed" });
             }
 
             // check if email / username is in use
@@ -115,7 +114,7 @@ export default (
             )
                 return res.code(409).send({
                     statusCode: 409,
-                    error: "Username or email already in use.",
+                    error: "Username or email already in use",
                 });
 
             const code = randomBytes(30).toString("hex");
@@ -123,7 +122,7 @@ export default (
             if (!(await sendVerifyMsg(email, code))) {
                 return res.code(500).send({
                     statusCode: 500,
-                    error: "An error occurred while sending the email.",
+                    error: "An error occurred while sending the email",
                 });
             }
 

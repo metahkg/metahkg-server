@@ -28,16 +28,18 @@ import checkMuted from "../../plugins/checkMuted";
 import {
     CommentSchema,
     IntegerSchema,
-    RTokenSchema,
+    CaptchaTokenSchema,
     TitleSchema,
+    VisibilitySchema,
 } from "../../lib/schemas";
 import { sendNotification } from "../../lib/notifications/sendNotification";
 import { sha256 } from "../../lib/sha256";
 import { Link } from "../../models/link";
 import Category from "../../models/category";
 import { RateLimitOptions } from "@fastify/rate-limit";
-import RequireReCAPTCHA from "../../plugins/requireRecaptcha";
+import RequireCAPTCHA from "../../plugins/requireCaptcha";
 import { config } from "../../lib/config";
+import findLinks from "../../lib/findLinks";
 
 export default (
     fastify: FastifyInstance,
@@ -47,9 +49,10 @@ export default (
     const schema = Type.Object(
         {
             comment: CommentSchema,
-            rtoken: RTokenSchema,
+            captchaToken: CaptchaTokenSchema,
             title: TitleSchema,
             category: IntegerSchema,
+            visibility: Type.Optional(VisibilitySchema),
         },
         { additionalProperties: false }
     );
@@ -57,7 +60,7 @@ export default (
     fastify.post(
         "/",
         {
-            preHandler: [RequireReCAPTCHA, checkMuted],
+            preHandler: [RequireCAPTCHA, checkMuted],
             config: {
                 rateLimit: <RateLimitOptions>{
                     keyGenerator: (req: FastifyRequest) => {
@@ -80,10 +83,11 @@ export default (
             const comment = sanitize(req.body.comment);
             const text = htmlToText(comment, { wordwrap: false });
             const title = req.body.title.trim();
+            const { visibility } = req.body;
 
             const user = req.user;
             if (!user)
-                return res.code(401).send({ statusCode: 401, error: "Unauthorized." });
+                return res.code(401).send({ statusCode: 401, error: "Unauthorized" });
 
             const category = (await categoryCl.findOne({
                 id: req.body.category,
@@ -91,12 +95,12 @@ export default (
             if (!category)
                 return res
                     .code(404)
-                    .send({ statusCode: 404, error: "Category not found." });
+                    .send({ statusCode: 404, error: "Category not found" });
 
             if ((await threadCl.findOne({ title }, { projection: { _id: 0 } })) as Thread)
                 return res
                     .code(409)
-                    .send({ statusCode: 409, error: "Title already exists." });
+                    .send({ statusCode: 409, error: "Title already exists" });
 
             const newThreadId =
                 (
@@ -138,10 +142,12 @@ export default (
             };
 
             const images = findImages(comment);
+            const links = findLinks(comment);
 
             const threadData: Thread = {
                 id: newThreadId,
                 count: 1,
+                ...(visibility && { visibility }),
                 conversation: [
                     {
                         id: 1,
@@ -150,7 +156,9 @@ export default (
                         comment,
                         text,
                         createdAt: date,
+                        links,
                         images,
+                        ...(visibility && { visibility }),
                     },
                 ],
                 op: userData,
@@ -161,7 +169,7 @@ export default (
                 lastModified: date,
                 createdAt: date,
                 images: images.map((item) => {
-                    return { src: item, cid: 1 };
+                    return { ...item, cid: 1 };
                 }),
             };
 

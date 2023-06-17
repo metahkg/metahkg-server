@@ -44,7 +44,7 @@ export default async function (
         )?.hidden;
 
         if (hidden && !req.user)
-            return res.code(403).send({ statusCode: 403, error: "Forbidden." });
+            return res.code(403).send({ statusCode: 403, error: "Forbidden" });
     }
     return;
 }

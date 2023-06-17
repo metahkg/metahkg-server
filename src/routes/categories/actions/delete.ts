@@ -60,7 +60,7 @@ export default function (
             if (!category)
                 return res
                     .code(404)
-                    .send({ statusCode: 404, error: "Category not found." });
+                    .send({ statusCode: 404, error: "Category not found" });
 
             await removedCl.insertOne({ type: "category", category });
 

@@ -39,3 +39,7 @@ package-lock.json
 
 /config.json
 /certs
+.turbo
+
+version.txt
+secrets.json

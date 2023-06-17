@@ -57,7 +57,7 @@ export default function (
             if (!(await categoryCl.updateOne({ id }, { $set: req.body })).matchedCount)
                 return res
                     .code(404)
-                    .send({ statusCode: 404, error: "Category not found." });
+                    .send({ statusCode: 404, error: "Category not found" });
 
             return res.code(204).send();
         }

@@ -21,8 +21,8 @@ import { FastifyInstance, FastifyPluginOptions } from "fastify";
 import multer from "fastify-multer"; // handle image uploads
 import { File } from "fastify-multer/lib/interfaces";
 import fs from "fs";
-import { move } from "fs-extra";
 import sharp from "sharp"; // reshape images to circle
+import { avatarBucket as bucket } from "../../../../lib/common";
 
 import RequireSameUser from "../../../../plugins/requireSameUser";
 
@@ -48,9 +48,6 @@ export default function (
             //svg circle
             `<svg><circle cx="${r}" cy="${r}" r="${r}" /></svg>`
         );
-        try {
-            fs.rmSync(`images/avatars/${id}.png`);
-        } catch {}
         //use sharp to resize
         fs.mkdirSync(`tmp/avatars`, { recursive: true });
         await sharp(filename)
@@ -64,9 +61,6 @@ export default function (
             .toFormat("png")
             .toFile(`tmp/avatars/${id}.png`)
             .catch((err) => fastify.log.error(err));
-        await move(`tmp/avatars/${id}.png`, `images/avatars/${id}.png`, {
-            overwrite: true,
-        });
     }
     /**
      * Image is saved to uploads/ upon uploading
@@ -90,7 +84,7 @@ export default function (
             try {
                 const file = req.file as unknown as File;
                 if (!file)
-                    return res.code(400).send({ statusCode: 400, error: "Bad request." });
+                    return res.code(400).send({ statusCode: 400, error: "Bad request" });
 
                 if (file?.size > maxSize) {
                     fs.rm(file?.path, (err) => {
@@ -98,7 +92,7 @@ export default function (
                     });
                     return res
                         .code(413)
-                        .send({ statusCode: 413, error: "File too large." });
+                        .send({ statusCode: 413, error: "File too large" });
                 }
                 if (!/^image\/(png|svg|jpg|jpeg|jfif|gif|webp)$/i.test(file.mimetype)) {
                     //remove the file
@@ -107,45 +101,51 @@ export default function (
                     });
                     return res
                         .code(415)
-                        .send({ statusCode: 415, error: "File type not supported." });
+                        .send({ statusCode: 415, error: "File type not supported" });
                 }
                 const user = req.user;
                 if (!user) {
                     fs.rm(`uploads/${file?.filename}`, (err) => {
                         fastify.log.error(err);
                     });
-                    return res
-                        .code(401)
-                        .send({ statusCode: 401, error: "Unauthorized." });
+                    return res.code(401).send({ statusCode: 401, error: "Unauthorized" });
                 }
 
-                //rename file to <user-id>.<extension>
-                const newFileName = `${user.id}.${file.originalname.split(".").pop()}`;
-                fs.mkdirSync("images/processing/avatars", { recursive: true });
-                fs.mkdirSync("images/avatars", { recursive: true });
-                //move file to processing folder
-                await move(`${file?.path}`, `images/processing/avatars/${newFileName}`, {
-                    overwrite: true,
-                });
                 try {
-                    //compress the file
-                    await compress(`images/processing/avatars/${newFileName}`, user.id);
-                    //fs.rmSync(`images/processing/avatars/${newFileName}`);
+                    // compress the file
+                    await compress(file.path, user.id);
                 } catch (err) {
                     fastify.log.error(err);
                     res.code(422).send({
                         statusCode: 422,
-                        error: "Could not process you file.",
+                        error: "Could not process your file",
                     });
-                    fs.rm(`images/processing/avatars/${newFileName}`, (err) => {
+                    fs.rm(file.path, (err) => {
                         fastify.log.error(err);
                     });
                     return;
                 }
+                const oldFile = (
+                    await bucket.find({ "metadata.id": user.id }).toArray()
+                )?.[0];
+                await new Promise((resolve, reject) => {
+                    const uploadStream = fs
+                        .createReadStream(`tmp/avatars/${user.id}.png`)
+                        .pipe(
+                            bucket.openUploadStream(`${user.id}.png`, {
+                                metadata: { id: user.id },
+                            })
+                        );
+                    uploadStream.on("error", reject);
+                    uploadStream.on("close", resolve);
+                });
+                if (oldFile) {
+                    await bucket.delete(oldFile._id);
+                }
                 res.code(204).send();
             } catch (err) {
                 fastify.log.error(err);
-                res.code(500).send({ statusCode: 500, error: "Internal server error." });
+                res.code(500).send({ statusCode: 500, error: "Internal server error" });
             }
         }
     );
