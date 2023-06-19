@@ -27,6 +27,8 @@ import { ReasonSchemaAdmin, CommentSchema } from "../../../../../lib/schemas";
 import { objectFilter } from "../../../../../lib/objectFilter";
 import Thread from "../../../../../models/thread";
 import sanitize from "../../../../../lib/sanitize";
+import findimages from "../../../../../lib/findimages";
+import findLinks from "../../../../../lib/findLinks";
 
 export default function (
     fastify: FastifyInstance,
@@ -85,12 +87,17 @@ export default function (
                 }
             )) as Thread & { index: number };
 
+            const imagesInComment = findimages(comment);
+            const linksInComment = findLinks(comment);
+
             await threadCl.updateOne(
-                { id },
+                { id, conversation: { $elemMatch: { id: cid } } },
                 {
                     $set: {
-                        [`conversation.${thread.index}.comment`]: comment,
-                        [`conversation.${thread.index}.text`]: text,
+                        "conversation.$.comment": comment,
+                        "conversation.$.text": text,
+                        "conversation.$.images": imagesInComment,
+                        "conversation.$.links": linksInComment,
                         ...(!("removed" in thread) &&
                             thread.pin?.id === cid && {
                                 "pin.comment": comment,
@@ -98,7 +105,7 @@ export default function (
                             }),
                     },
                     $push: {
-                        [`conversation.${thread.index}.admin.edits`]: {
+                        "conversation.$.admin.edits": {
                             admin,
                             reason,
                             date: new Date(),
