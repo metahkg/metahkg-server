@@ -56,6 +56,18 @@ function findLinks(comment: string) {
     return links;
 }
 
+export default function findImages(comment: string) {
+    const parsed = parse(comment);
+    const images: { src: string; signature: string }[] = [];
+    parsed.querySelectorAll("img").forEach((item) => {
+        const src = item.getAttribute("src");
+        if (validUrl.isHttpsUri(src) || validUrl.isHttpUri(src)) {
+            images.push({ src, signature: HMACSign(src) });
+        }
+    });
+    return images;
+}
+
 dotenv.config();
 
 async function migrate() {
@@ -80,18 +92,20 @@ async function migrate() {
                 conversation: {
                     id: number;
                     links?: { url: string; signature: string }[];
+                    images?: { src: string; signature: string }[];
                     comment: string;
                 }[];
             };
             conversation = conversation.map((c) => {
-                if (!("removed" in c) && !c.links) {
+                if (!("removed" in c)) {
                     const linksInComment = findLinks(c.comment);
+                    const imagesInComment = findImages(c.comment);
                     return {
                         ...c,
                         links: linksInComment,
+                        images: imagesInComment,
                     };
                 }
-
                 return c;
             });
             await threadCl.updateOne({ _id: v._id }, { $set: { conversation } });
