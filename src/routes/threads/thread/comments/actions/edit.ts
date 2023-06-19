@@ -27,7 +27,7 @@ import { ReasonSchemaAdmin, CommentSchema } from "../../../../../lib/schemas";
 import { objectFilter } from "../../../../../lib/objectFilter";
 import Thread from "../../../../../models/thread";
 import sanitize from "../../../../../lib/sanitize";
-import findimages from "../../../../../lib/findimages";
+import findImages from "../../../../../lib/findImages";
 import findLinks from "../../../../../lib/findLinks";
 
 export default function (
@@ -87,7 +87,7 @@ export default function (
                 }
             )) as Thread & { index: number };
 
-            const imagesInComment = findimages(comment);
+            const imagesInComment = findImages(comment);
             const linksInComment = findLinks(comment);
 
             await threadCl.updateOne(

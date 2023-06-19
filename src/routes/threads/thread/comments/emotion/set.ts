@@ -85,7 +85,7 @@ export default function (
                         },
                         {
                             $pull: {
-                                [`conversation.$.emotions`]: {
+                                "conversation.$.emotions": {
                                     user: user.id,
                                 },
                             },
@@ -98,7 +98,7 @@ export default function (
                 { id, conversation: { $elemMatch: { id: cid } } },
                 {
                     $push: {
-                        [`conversation.$.emotions`]: {
+                        "conversation.$.emotions": {
                             user: user.id,
                             emotion,
                         },

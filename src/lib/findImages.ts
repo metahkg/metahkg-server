@@ -20,7 +20,7 @@ import validUrl from "valid-url";
 import { HMACSign } from "./hmac";
 import { Image } from "../models/thread";
 
-export default function findimages(comment: string) {
+export default function findImages(comment: string) {
     const parsed = parse(comment);
     const images: Image[] = [];
     parsed.querySelectorAll("img").forEach((item) => {

@@ -16,7 +16,7 @@
  */
 
 import { categoryCl, linksCl, threadCl, usersCl } from "../../lib/common";
-import findImages from "../../lib/findimages";
+import findImages from "../../lib/findImages";
 import { Static, Type } from "@sinclair/typebox";
 import { generate } from "generate-password";
 import sanitize from "../../lib/sanitize";
