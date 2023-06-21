@@ -85,8 +85,10 @@ async function migrate() {
 
     await Promise.all(
         (
-            await threadCl.find({ removed: { $exists: false } }).toArray()
-        ).map(async (v) => {
+            await threadCl
+                .find({ id: { $exists: true }, removed: { $ne: true } })
+                .toArray()
+        )?.map(async (v) => {
             let { conversation } = v as {
                 _id: ObjectId;
                 conversation: {
@@ -110,7 +112,19 @@ async function migrate() {
             });
             await threadCl.updateOne(
                 { _id: v._id },
-                { $set: { conversation, images: conversation.flatMap((c) => c.images) } }
+                {
+                    $set: {
+                        conversation,
+                        images: conversation
+                            .flatMap(
+                                (c) =>
+                                    c.images?.map((img) => ({ ...img, cid: c.id })) || []
+                            )
+                            .filter((img, index, arr) => {
+                                return arr.findIndex((i) => i.src === img.src) === index;
+                            }),
+                    },
+                }
             );
         })
     );
