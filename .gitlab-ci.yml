@@ -16,6 +16,9 @@ stages:
   - performance
   - cleanup
 
+variables:
+  FF_NETWORK_PER_BUILD: 1
+
 lint:
   stage: lint
   image: node:18-alpine
@@ -80,6 +83,11 @@ tagging:
   script:
     - tag=$(node -e "console.log(require('./package.json').version)")
     - if [ $CI_COMMIT_BRANCH = "dev" ]; then tag=${tag}-dev; fi;
+    - git pull origin --tags
+    - if [ $(git tag -l "$tag") ]; then
+        echo "tag already exists";
+        exit 0;
+      fi;
     - "if [ $CI_COMMIT_BRANCH = 'dev' ];
        then yarn install;
        yarn generate-changelog;
@@ -162,13 +170,28 @@ build:
       when: never
 
 apifuzzer_fuzz:
-  needs: []
+  needs: ["docker-build"]
+  services:
+    - name: mongo:latest
+      alias: mongodb
+    - name: redis:latest
+      alias: redis
+    - name: "$CI_REGISTRY_IMAGE/$CI_COMMIT_BRANCH:$CI_COMMIT_SHORT_SHA"
+      alias: metahkg-server
+      variables:
+        MONGO_URI: "mongodb://mongodb:27017"
+        REDIS_HOST: "redis"
+        DISABLE_CAPTCHA: "true"
+        DOMAIN: "metahkg.gitlab.ci"
+  variables:
+    FUZZAPI_TARGET_URL: "http://metahkg-server:3000"
+    FUZZAPI_OPENAPI: ./openapi.yaml
+    FUZZAPI_PROFILE: "Quick-10"
+    FUZZAPI_OVERRIDES_FILE: "auth.json"
   before_script:
-    - export FUZZAPI_TARGET_URL="https://$(if [ \"$CI_COMMIT_BRANCH\" = \"dev\" ]; then echo 'dev.'; fi;)metahkg.org"
-    - export FUZZAPI_OPENAPI=./openapi.yaml
-    - export FUZZAPI_PROFILE="Quick-10"
+    - sh ./ci/pre-api-fuzzing.sh
   rules:
-    - if: $CI_COMMIT_BRANCH == "master" ||$CI_COMMIT_BRANCH == "dev"
+    - if: $CI_COMMIT_BRANCH == "master" || $CI_COMMIT_BRANCH == "dev"
 
 trigger_api_generate:
   variables:
@@ -201,3 +224,4 @@ trigger_openapi_spec:
 include:
   - template: Auto-DevOps.gitlab-ci.yml
   - template: Security/API-Fuzzing.gitlab-ci.yml
+  - template: Security/BAS.latest.gitlab-ci.yml
