@@ -2790,6 +2790,8 @@ paths:
       tags:
         - auth
       operationId: authSessionRefresh
+      security:
+        - bearerAuth: []
       summary: Refresh session
       description: "Refresh a session using refresh token.
         Rate limit: 5 requests / 1 day
@@ -3085,6 +3087,198 @@ paths:
           $ref: "#/components/responses/InternalServerError"
         "502":
           $ref: "#/components/responses/BadGateway"
+  /games/guess:
+    post:
+      tags:
+        - games
+      operationId: gamesGuessCreate
+      security:
+        - bearerAuth: []
+      summary: Create a guess game
+      description: "Create a guess game.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.10.0-dev/src/routes/games/guess/create.ts)"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - title
+                - options
+              properties:
+                title:
+                  $ref: "#/components/schemas/GuessGame/properties/title"
+                options:
+                  $ref: "#/components/schemas/GuessGame/properties/options"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required:
+                  - id
+                properties:
+                  id:
+                    $ref: "#/components/schemas/GameId"
+        "400":
+          $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "502":
+          $ref: "#/components/responses/BadGateway"
+  /games/guess/{id}:
+    get:
+      tags:
+        - games
+      operationId: gamesGuess
+      summary: Get game info
+      description: "Get guess game info.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.10.0-dev/src/routes/games/guess/info.ts)"
+      parameters:
+        - $ref: "#/components/parameters/GameId"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuessGame"
+        "400":
+          $ref: "#/components/responses/Invalid"
+        "404":
+          description: Game / Option not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "502":
+          $ref: "#/components/responses/BadGateway"
+  /games/guess/{id}/guess:
+    post:
+      tags:
+        - games
+      operationId: gamesGuessGuess
+      security:
+        - bearerAuth: []
+      summary: Make a guess (bet)
+      description: "Make a guess (bet).
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.10.0-dev/src/routes/games/guess/guess.ts)"
+      parameters:
+        - $ref: "#/components/schemas/GameId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - option
+                - tokens
+              properties:
+                option:
+                  type: integer
+                  minimum: 0
+                  maximum: 5
+                  description: index of option
+                tokens:
+                  type: integer
+                  minimum: 10
+                  maximum: 100
+                  description: number of tokens to bet
+      responses:
+        "204":
+          description: Success
+        "400":
+          $ref: "#/components/responses/Invalid"
+        "404":
+          description: Game / Option not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "410":
+          description: Game ended
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "502":
+          $ref: "#/components/responses/BadGateway"
+  /games/guess/{id}/answer:
+    post:
+      tags:
+        - games
+      operationId: gamesGuessAnswer
+      security:
+        - bearerAuth: []
+      summary: Release answer
+      description: "Release answer for the guess game. For host only.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.10.0-dev/src/routes/games/guess/answer.ts)"
+      parameters:
+        - $ref: "#/components/schemas/GameId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required:
+                - answer
+              properties:
+                answer:
+                  oneOf:
+                    - type: integer
+                      description: index of option
+                      minimum: 0
+                      maximum: 5
+                    - type: array
+                      items:
+                        type: integer
+                        description: index of option
+                        minimum: 0
+                        maximum: 5
+      responses:
+        "204":
+          description: Success
+        "400":
+          $ref: "#/components/responses/Invalid"
+        "404":
+          description: Game / Option not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "410":
+          description: Game ended
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "502":
+          $ref: "#/components/responses/BadGateway"
 
 components:
   parameters:
@@ -3144,6 +3338,13 @@ components:
         minimum: 1
         maximum: 50
         default: 25
+    GameId:
+      name: id
+      in: path
+      required: true
+      description: game id
+      schema:
+        $ref: "#/components/schemas/GameId"
   responses:
     NoContent:
       description: Success
@@ -3429,9 +3630,9 @@ components:
       properties:
         id:
           type: string
-          description: 30-digit random session id
-          minLength: 30
-          maxLength: 30
+          description: 60-digit random session id
+          minLength: 60
+          maxLength: 60
         createdAt:
           type: string
           format: date-time
@@ -4020,6 +4221,70 @@ components:
           type: string
           description: the branding to replace Metahkg
           example: Metahkg
+    GuessGame:
+      type: object
+      additionalProperties: false
+      required:
+        - id
+        - host
+        - createdAt
+        - type
+        - title
+        - options
+      properties:
+        id:
+          $ref: "#/components/schemas/GameId"
+        host:
+          $ref: "#/components/schemas/User"
+        createdAt:
+          type: string
+          format: datetime
+        endedAt:
+          type: string
+          format: datetime
+        type:
+          type: string
+          enum:
+            - guess
+        title:
+          type: string
+          maxLength: 1000
+        options:
+          type: array
+          items:
+            $ref: "#/components/schemas/GuessGameOption"
+          minItems: 2
+          maxItems: 6
+        tokens:
+          description: total number of tokens (pool)
+          type: number
+        answer:
+          type: array
+          items:
+            type: number
+            maximum: 5
+            minimum: 0
+          maximum: 5
+          minItems: 1
+    GameId:
+      type: string
+      minLength: 60
+      maxLength: 60
+    GuessGameOption:
+      type: object
+      additionalProperties: false
+      required:
+        - text
+      properties:
+        text:
+          type: string
+          maxLength: 1000
+        odds:
+          description: odds of the option
+          type: number
+        tokens:
+          description: number of tokens betting the option
+          type: number
 
   securitySchemes:
     bearerAuth:

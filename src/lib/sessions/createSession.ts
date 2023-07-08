@@ -44,7 +44,7 @@ export async function createSession(
     const refreshToken = randomBytes(30).toString("hex");
 
     const session: Session = {
-        id: randomBytes(15).toString("hex"),
+        id: randomBytes(30).toString("hex"),
         token: sha256(token),
         refreshToken: sha256(refreshToken),
         createdAt,
@@ -61,7 +61,7 @@ export async function createSession(
             },
         })) as User
     ) {
-        session.id = randomBytes(15).toString("hex");
+        session.id = randomBytes(30).toString("hex");
     }
 
     if (

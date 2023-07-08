@@ -22,6 +22,7 @@ import me from "./me";
 import categories from "./categories";
 import auth from "./auth";
 import server from "./server";
+import games from "./games";
 
 export default (
     fastify: FastifyInstance,
@@ -34,5 +35,6 @@ export default (
     fastify.register(categories, { prefix: "/categories" });
     fastify.register(thread, { prefix: "/threads" });
     fastify.register(server, { prefix: "/server" });
+    fastify.register(games, { prefix: "/games" });
     done();
 };

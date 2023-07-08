@@ -52,6 +52,7 @@ export default function (
                         createdAt: 1,
                         sex: 1,
                         role: 1,
+                        games: 1,
                         _id: 0,
                     },
                 }

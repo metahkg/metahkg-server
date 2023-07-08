@@ -55,7 +55,7 @@ export interface Notification {
 }
 
 export interface Session {
-    /** 30-digit random id */
+    /** 60-digit random id */
     id: string;
     /** hashed (sha256) jwt token */
     token: string;
@@ -72,6 +72,12 @@ export interface Session {
 
 export interface Votes {
     [id: number]: { cid: number; vote: "U" | "D" }[];
+}
+
+export interface UserGames {
+    guess?: {
+        tokens: number;
+    };
 }
 
 export default interface User {
@@ -92,4 +98,5 @@ export default interface User {
     mute?: { admin: AdminUser; reason: string; exp?: Date };
     ban?: { admin: AdminUser; reason: string; exp?: Date };
     votes?: Votes;
+    games?: UserGames;
 }

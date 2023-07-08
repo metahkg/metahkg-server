@@ -96,3 +96,14 @@ agenda.define(
         await revokeSessionById(userId, sessionId);
     }
 );
+
+agenda.define("weeklyTokens", async () => {
+    await usersCl.updateMany(
+        { ban: { $ne: true } },
+        {
+            $inc: {
+                "games.guess.tokens": 10,
+            },
+        }
+    );
+});

@@ -61,8 +61,9 @@ export const CodeSchema = Type.String({ minLength: 60, maxLength: 60 });
 export const CategoryNameSchema = Type.String({ maxLength: 15 });
 export const CategoryTagsSchema = Type.Array(Type.String({ maxLength: 15 }));
 
-export const SessionIdSchema = Type.String({ minLength: 30, maxLength: 30 });
+export const SessionIdSchema = Type.String({ minLength: 60, maxLength: 60 });
 export const RefreshTokenSchema = Type.String({ minLength: 60, maxLength: 60 });
+export const GameIdSchema = Type.String({ minLength: 60, maxLength: 60 });
 
 export const IntegerSchema = Type.Integer({ minimum: 1, maximum: 9999999999 });
 

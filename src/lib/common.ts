@@ -93,5 +93,6 @@ export const categoryCl = db.collection("category");
 export const linksCl = db.collection("links");
 export const inviteCl = db.collection("invite");
 export const removedCl = db.collection("removed");
+export const gamesCl = db.collection("games");
 
 export const avatarBucket = new GridFSBucket(db, { bucketName: "avatar" });

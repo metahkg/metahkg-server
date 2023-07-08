@@ -59,6 +59,7 @@ export default async function MetahkgServer() {
             await agenda.every("5 minutes", name);
         }
     });
+    await agenda.every("0 0 * * 0", "weeklyTokens");
 
     const fastify = Fastify({
         logger: true,

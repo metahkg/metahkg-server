@@ -22,6 +22,7 @@ import {
     usersCl,
     linksCl,
     inviteCl,
+    gamesCl,
 } from "../../lib/common";
 import Category from "../../models/category";
 import { categories } from "./categories";
@@ -37,6 +38,7 @@ export async function setupMongo() {
     await categoryCl.createIndex({ id: 1 }, { unique: true });
     await categoryCl.createIndex({ name: 1 }, { unique: true });
     await inviteCl.createIndex({ code: 1 }, { unique: true });
+    await gamesCl.createIndex({ id: 1 }, { unique: true });
 
     await threadCl.createIndex({ title: "text" }); // text search
     await verificationCl.createIndex({ createdAt: 1 }, { expireAfterSeconds: 300 });
