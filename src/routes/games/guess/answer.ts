@@ -9,7 +9,7 @@ import { GameIdSchema } from "../../../lib/schemas";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     const schema = Type.Object(
         {
@@ -18,7 +18,7 @@ export default function (
                 Type.Array(Type.Integer({ minimum: 0, maximum: 5 })),
             ]),
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
 
     const paramsSchema = Type.Object({
@@ -37,7 +37,7 @@ export default function (
                 Body: Static<typeof schema>;
                 Params: Static<typeof paramsSchema>;
             }>,
-            res
+            res,
         ) => {
             const answer = [req.body.answer].flat();
             const { id } = req.params;
@@ -67,7 +67,7 @@ export default function (
                         endedAt: new Date(),
                         answer,
                     },
-                }
+                },
             );
 
             const odds =
@@ -87,13 +87,13 @@ export default function (
                             $inc: {
                                 "games.guess.tokens": payout,
                             },
-                        }
+                        },
                     );
                 }
             });
 
             return res.code(204).send();
-        }
+        },
     );
     done();
 }

@@ -10,7 +10,7 @@ import { publicUserType } from "../../../models/thread";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     const schema = Type.Object(
         {
@@ -18,15 +18,15 @@ export default function (
             options: Type.Array(
                 Type.Object(
                     { text: Type.String({ maxLength: 1000 }) },
-                    { additionalProperties: false }
+                    { additionalProperties: false },
                 ),
                 {
                     maxItems: 6,
                     minItems: 2,
-                }
+                },
             ),
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
 
     fastify.post(
@@ -45,7 +45,7 @@ export default function (
                 id,
                 type: "guess",
                 host: objectFilter(user, (key: string) =>
-                    ["id", "name", "sex", "role"].includes(key)
+                    ["id", "name", "sex", "role"].includes(key),
                 ) as publicUserType,
                 title,
                 options: options.map((option) => ({ ...option, odds: 1 })),
@@ -53,7 +53,7 @@ export default function (
             });
 
             return res.send({ id });
-        }
+        },
     );
     done();
 }

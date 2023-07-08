@@ -36,7 +36,7 @@ async function migrate() {
         { "games.guess.tokens": { $exists: false } },
         {
             $set: { "games.guess.tokens": 100 },
-        }
+        },
     );
 }
 
