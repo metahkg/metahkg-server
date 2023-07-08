@@ -92,6 +92,18 @@ export default function (
                 }
             });
 
+            if (game.tokens >= 100000) {
+                // award the host
+                await usersCl.updateOne(
+                    { id: game.host.id },
+                    {
+                        $inc: {
+                            "games.guess.tokens": game.tokens * 0.1,
+                        },
+                    }
+                );
+            }
+
             return res.code(204).send();
         }
     );

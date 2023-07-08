@@ -35,7 +35,7 @@ async function migrate() {
     await usersCl.updateMany(
         { "games.guess.tokens": { $exists: false } },
         {
-            $set: { "games.guess.tokens": 100 },
+            $set: { "games.guess.tokens": 10000 },
         }
     );
 }
