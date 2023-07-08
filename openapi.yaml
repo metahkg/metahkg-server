@@ -2790,6 +2790,8 @@ paths:
       tags:
         - auth
       operationId: authSessionRefresh
+      security:
+        - bearerAuth: []
       summary: Refresh session
       description: "Refresh a session using refresh token.
         Rate limit: 5 requests / 1 day
