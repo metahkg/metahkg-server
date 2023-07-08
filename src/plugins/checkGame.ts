@@ -20,7 +20,7 @@ export async function checkGame(
         return res.code(404).send({ statusCode: 404, error: "Game not found" });
     }
 
-    const { option, answer } = req.body;
+    const { option, answer } = req.body || {};
 
     if (option && !game.options?.[option]) {
         return res.code(404).send({ statusCode: 404, error: "Option not found" });
