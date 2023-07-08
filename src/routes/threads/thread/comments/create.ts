@@ -15,7 +15,7 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { linksCl, threadCl, usersCl } from "../../../../lib/common";
+import { gamesCl, linksCl, threadCl, usersCl } from "../../../../lib/common";
 import findImages from "../../../../lib/findImages";
 import { Static, Type } from "@sinclair/typebox";
 import { generate } from "generate-password";
@@ -27,7 +27,7 @@ import regex from "../../../../lib/regex";
 import checkMuted from "../../../../plugins/checkMuted";
 import { sendNotification } from "../../../../lib/notifications/sendNotification";
 import {
-    CommentSchema,
+    CommentContentSchema,
     IntegerSchema,
     CaptchaTokenSchema,
     VisibilitySchema,
@@ -38,6 +38,7 @@ import { RateLimitOptions } from "@fastify/rate-limit";
 import RequireCAPTCHA from "../../../../plugins/requireCaptcha";
 import { config } from "../../../../lib/config";
 import findLinks from "../../../../lib/findLinks";
+import { Game } from "../../../../models/games";
 
 export default (
     fastify: FastifyInstance,
@@ -46,7 +47,7 @@ export default (
 ) => {
     const schema = Type.Object(
         {
-            comment: CommentSchema,
+            comment: CommentContentSchema,
             captchaToken: config.DISABLE_CAPTCHA
                 ? Type.Optional(CaptchaTokenSchema)
                 : CaptchaTokenSchema,
@@ -86,8 +87,9 @@ export default (
         ) => {
             const id = Number(req.params.id);
 
-            const { quote } = req.body;
+            const { quote, comment } = req.body;
             let { visibility } = req.body;
+            let text: string;
 
             const user = req.user;
             if (!user)
@@ -96,8 +98,18 @@ export default (
             if (!((await threadCl.findOne({ id })) as Thread))
                 return res.code(404).send({ statusCode: 404, error: "Thread not found" });
 
-            const comment = sanitize(req.body.comment);
-            const text = htmlToText(comment, { wordwrap: false });
+            if (comment.type === "html") {
+                comment.html = sanitize(comment.html);
+                text = htmlToText(comment.html, { wordwrap: false });
+            } else if (comment.type === "game") {
+                const game = (await gamesCl.findOne({ id: comment.gameId })) as Game;
+                if (!game) {
+                    return res
+                        .code(404)
+                        .send({ statusCode: 404, error: "Game not found" });
+                }
+                text = `${game.type} game`;
+            }
 
             const thread = (await threadCl.findOne(
                 { id },
@@ -176,8 +188,9 @@ export default (
                 visibility = "internal";
             }
 
-            const imagesInComment = findImages(comment);
-            const linksInComment = findLinks(comment);
+            const imagesInComment =
+                comment.type === "html" ? findImages(comment.html) : [];
+            const linksInComment = comment.type === "html" ? findLinks(comment.html) : [];
 
             await threadCl.updateOne(
                 { id },

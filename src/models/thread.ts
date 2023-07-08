@@ -55,6 +55,16 @@ export type Links = Link[];
 export type TLink = Link & { cid: number };
 export type TLinks = TLink[];
 
+export type CommentContentType =
+    | {
+          type: "html";
+          html: string;
+      }
+    | {
+          type: "game";
+          gameId: string;
+      };
+
 export type Comment =
     /** if removed */
     | { id: number; removed: true }
@@ -64,7 +74,7 @@ export type Comment =
           /** user id */
           user: publicUserType;
           /** html string */
-          comment: string;
+          comment: CommentContentType;
           /** comment converted to text */
           text: string;
           /** date string */

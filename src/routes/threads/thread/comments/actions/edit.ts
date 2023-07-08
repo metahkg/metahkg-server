@@ -23,7 +23,7 @@ import { threadCl } from "../../../../../lib/common";
 import regex from "../../../../../lib/regex";
 import checkComment from "../../../../../plugins/checkComment";
 import RequireAdmin from "../../../../../plugins/requireAdmin";
-import { ReasonSchemaAdmin, CommentSchema } from "../../../../../lib/schemas";
+import { ReasonSchemaAdmin, HTMLCommentSchema } from "../../../../../lib/schemas";
 import { objectFilter } from "../../../../../lib/objectFilter";
 import Thread from "../../../../../models/thread";
 import sanitize from "../../../../../lib/sanitize";
@@ -42,7 +42,7 @@ export default function (
 
     const schema = Type.Object(
         {
-            comment: CommentSchema,
+            html: HTMLCommentSchema,
             reason: ReasonSchemaAdmin,
         },
         { minProperties: 2, additionalProperties: false }
@@ -64,16 +64,7 @@ export default function (
         ) => {
             const id = Number(req.params.id);
             const cid = Number(req.params.cid);
-
-            const admin = objectFilter(req.user, (key: string) =>
-                ["id", "name", "sex", "role"].includes(key)
-            );
-
             const { reason } = req.body;
-
-            const comment = sanitize(req.body.comment);
-
-            const text = htmlToText(comment);
 
             const thread = (await threadCl.findOne(
                 { id },
@@ -81,26 +72,40 @@ export default function (
                     projection: {
                         _id: 0,
                         pin: 1,
-                        index: { $indexOfArray: ["$conversation.id", cid] },
-                        conversation: 1,
+                        conversation: { $elemMatch: { id: cid } },
                     },
                 }
-            )) as Thread & { index: number };
+            )) as Thread;
 
-            const imagesInComment = findImages(comment);
-            const linksInComment = findLinks(comment);
+            const comment = !("removed" in thread) && thread.conversation[0];
+            if (!("removed" in comment) && comment.comment.type !== "html") {
+                return res.code(409).send({
+                    statusCode: 409,
+                    error: "Only html comments can be edited",
+                });
+            }
+
+            const admin = objectFilter(req.user, (key: string) =>
+                ["id", "name", "sex", "role"].includes(key)
+            );
+
+            const html = sanitize(req.body.html);
+            const text = htmlToText(html);
+
+            const imagesInComment = findImages(html);
+            const linksInComment = findLinks(html);
 
             await threadCl.updateOne(
                 { id, conversation: { $elemMatch: { id: cid } } },
                 {
                     $set: {
-                        "conversation.$.comment": comment,
+                        "conversation.$.comment.html": html,
                         "conversation.$.text": text,
                         "conversation.$.images": imagesInComment,
                         "conversation.$.links": linksInComment,
                         ...(!("removed" in thread) &&
                             thread.pin?.id === cid && {
-                                "pin.comment": comment,
+                                "pin.comment.html": html,
                                 "pin.text": text,
                             }),
                     },
@@ -121,7 +126,7 @@ export default function (
                 { id },
                 {
                     $set: {
-                        "conversation.$[elem].quote.comment": comment,
+                        "conversation.$[elem].quote.comment.html": html,
                         "conversation.$[elem].quote.text": text,
                     },
                 },

@@ -28,8 +28,20 @@ export const ReasonSchemaAdmin = Type.String({
 
 export const CaptchaTokenSchema = Type.String({ minLength: 1, maxLength: 1000 });
 
+export const GameIdSchema = Type.String({ minLength: 60, maxLength: 60 });
+
 export const TitleSchema = Type.String({ minLength: 1, maxLength: 500 });
-export const CommentSchema = Type.String({ minLength: 1, maxLength: 50000 });
+export const HTMLCommentSchema = Type.String({ minLength: 1, maxLength: 50000 });
+export const CommentContentSchema = Type.Union([
+    Type.Object({
+        type: Type.Literal("html"),
+        html: HTMLCommentSchema,
+    }),
+    Type.Object({
+        type: Type.Literal("game"),
+        gameId: GameIdSchema,
+    }),
+]);
 export const VoteSchema = Type.Union([Type.Literal("U"), Type.Literal("D")]);
 export const VisibilitySchema = Type.Union([
     Type.Literal("public"),
@@ -61,9 +73,12 @@ export const CodeSchema = Type.String({ minLength: 60, maxLength: 60 });
 export const CategoryNameSchema = Type.String({ maxLength: 15 });
 export const CategoryTagsSchema = Type.Array(Type.String({ maxLength: 15 }));
 
-export const SessionIdSchema = Type.String({ minLength: 60, maxLength: 60 });
+export const SessionIdSchema = Type.Union([
+    Type.String({ minLength: 60, maxLength: 60 }),
+    // was 30 digits, so keep it for compatibility
+    Type.String({ minLength: 30, maxLength: 30 }),
+]);
 export const RefreshTokenSchema = Type.String({ minLength: 60, maxLength: 60 });
-export const GameIdSchema = Type.String({ minLength: 60, maxLength: 60 });
 
 export const IntegerSchema = Type.Integer({ minimum: 1, maximum: 9999999999 });
 
