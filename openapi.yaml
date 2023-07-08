@@ -3111,7 +3111,13 @@ paths:
                 title:
                   $ref: "#/components/schemas/GuessGame/properties/title"
                 options:
-                  $ref: "#/components/schemas/GuessGame/properties/options"
+                  type: array
+                  items:
+                    type: string
+                    maxLength: 1000
+                    minLength: 1
+                  maxItems: 6
+                  minItems: 2
       responses:
         "200":
           description: Success

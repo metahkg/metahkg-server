@@ -15,16 +15,10 @@ export default function (
     const schema = Type.Object(
         {
             title: Type.String({ maxLength: 1000 }),
-            options: Type.Array(
-                Type.Object(
-                    { text: Type.String({ maxLength: 1000 }) },
-                    { additionalProperties: false }
-                ),
-                {
-                    maxItems: 6,
-                    minItems: 2,
-                }
-            ),
+            options: Type.Array(Type.String({ maxLength: 1000 }), {
+                maxItems: 6,
+                minItems: 2,
+            }),
         },
         { additionalProperties: false }
     );
@@ -48,7 +42,7 @@ export default function (
                     ["id", "name", "sex", "role"].includes(key)
                 ) as publicUserType,
                 title,
-                options: options.map((option) => ({ ...option, odds: 1 })),
+                options: options.map((option) => ({ text: option, odds: 1, tokens: 0 })),
                 createdAt: new Date(),
             });
 
