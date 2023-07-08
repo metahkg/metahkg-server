@@ -29,7 +29,7 @@ agenda.define("updateVerificationCode", async () => {
             $set: { code: randomBytes(30).toString("hex") },
             // mongodb nodejs client types requires $currentDate.lastModified as Date, but it should be boolean
             $currentDate: { lastModified: true as unknown as Date },
-        }
+        },
     );
 });
 
@@ -48,7 +48,7 @@ agenda.define("unbanUser", async (job: Job) => {
 agenda.define("autoUnmuteUsers", async () => {
     await usersCl.updateMany(
         { "mute.exp": { $lte: new Date() } },
-        { $unset: { mute: 1 } }
+        { $unset: { mute: 1 } },
     );
 });
 
@@ -69,7 +69,7 @@ agenda.define("removeExpiredSessions", async () => {
                     },
                 },
             } as never,
-        }
+        },
     );
 });
 
@@ -85,7 +85,7 @@ agenda.define("removeOldNotifications", async () => {
                     },
                 } as never,
             },
-        }
+        },
     );
 });
 
@@ -94,7 +94,7 @@ agenda.define(
     async (job: Job & { attrs: { data: { userId: number; sessionId: string } } }) => {
         const { userId, sessionId } = job.attrs.data;
         await revokeSessionById(userId, sessionId);
-    }
+    },
 );
 
 agenda.define("weeklyTokens", async () => {
@@ -104,6 +104,6 @@ agenda.define("weeklyTokens", async () => {
             $inc: {
                 "games.guess.tokens": 3000,
             },
-        }
+        },
     );
 });
