@@ -3183,7 +3183,7 @@ paths:
       description: "Make a guess (bet).
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.11.2-dev/src/routes/games/guess/guess.ts)"
       parameters:
-        - $ref: "#/components/schemas/GameId"
+        - $ref: "#/components/parameters/GameId"
       requestBody:
         required: true
         content:
@@ -3239,7 +3239,7 @@ paths:
       description: "Release answer for the guess game. For host only.
         [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.11.2-dev/src/routes/games/guess/answer.ts)"
       parameters:
-        - $ref: "#/components/schemas/GameId"
+        - $ref: "#/components/parameters/GameId"
       requestBody:
         required: true
         content:
