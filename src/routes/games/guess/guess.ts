@@ -87,23 +87,20 @@ export default function (
                         tokens,
                         [`options.${option}.tokens`]: tokens,
                     },
-                    $set: {
-                        options: game.options.map((opt, index) => ({
-                            ...opt,
-                            odds:
-                                (game.tokens + tokens) /
-                                (game.options[option].tokens +
-                                    (option === index ? tokens : 0)),
-                        })),
-                    },
+                    $set: game.options.reduce((prev, curr, index) => {
+                        prev[`options.${index}.odds`] =
+                            (game.tokens + tokens) /
+                            (curr.tokens + (option === index ? tokens : 0));
+                        return prev;
+                    }, {} as { [key: string]: number }),
                 }
             );
 
             await usersCl.updateOne(
-                { id },
+                { id: user.id },
                 {
-                    $set: {
-                        "games.guess.tokens": user.games.guess.tokens - tokens,
+                    $inc: {
+                        "games.guess.tokens": -tokens,
                     },
                 }
             );
