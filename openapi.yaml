@@ -3920,11 +3920,7 @@ components:
           allOf:
             - $ref: "#/components/schemas/User"
         comment:
-          type: string
-          minLength: 1
-          maxLength: 50000
-          description: comment in stringified html
-          example: "<p>This is a comment</p>"
+          $ref: "#/components/schemas/CommentContent"
         text:
           type: string
           description: comment converted to plain text
@@ -3960,17 +3956,6 @@ components:
           allOf:
             - $ref: "#/components/schemas/CommentC"
             - description: The whole comment object of the quoted comment.
-              example:
-                id: 1
-                user:
-                  id: 1
-                  name: "John Doe"
-                  sex: "M"
-                  createdAt: "2020-01-01T00:00:00Z"
-                comment: "<p>This is a comment</p>"
-                text: "This is a comment"
-                createdAt: "2020-01-01T00:00:00Z"
-                slink: "https://l.metahkg.org/p994Nw2"
         D:
           type: integer
           format: int64
