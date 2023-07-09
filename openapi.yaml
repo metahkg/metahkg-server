@@ -3907,10 +3907,12 @@ components:
         gameId:
           $ref: "#/components/schemas/GameId"
     CommentContent:
-      allOf:
-        - oneOf:
-            - $ref: "#/components/schemas/HTMLComment"
-            - $ref: "#/components/schemas/GameComment"
+      type: object
+      description: comment content
+      additionalProperties: false
+      oneOf:
+        - $ref: "#/components/schemas/HTMLComment"
+        - $ref: "#/components/schemas/GameComment"
     Comment:
       type: object
       additionalProperties: false
