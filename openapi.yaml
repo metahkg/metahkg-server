@@ -1710,6 +1710,7 @@ paths:
                     additionalProperties: false
                     required:
                       - count
+                      - createdAt
                     properties:
                       count:
                         type: integer
@@ -1719,6 +1720,19 @@ paths:
                         type: string
                         format: date-time
                         description: Date and time when user was created
+                      games:
+                        type: object
+                        additionalProperties: false
+                        properties:
+                          guess:
+                            type: object
+                            additionalProperties: false
+                            required:
+                              - tokens
+                            properties:
+                              tokens:
+                                type: number
+                                minimum: 0
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -4284,11 +4298,11 @@ components:
           maxItems: 6
         tokens:
           description: total number of tokens (pool)
-          type: number
+          type: integer
         answer:
           type: array
           items:
-            type: number
+            type: integer
             maximum: 5
             minimum: 0
           maximum: 5
@@ -4311,7 +4325,7 @@ components:
           type: number
         tokens:
           description: number of tokens betting the option
-          type: number
+          type: integer
 
   securitySchemes:
     bearerAuth:
