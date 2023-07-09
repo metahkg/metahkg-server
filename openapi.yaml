@@ -3232,6 +3232,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+        "409":
+          description: insufficient tokens / guessing in own game
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
         "410":
           description: Game ended
           content:
