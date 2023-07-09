@@ -39,7 +39,10 @@ async function migrate() {
             thread.conversation = await Promise.all(
                 thread.conversation.map(async (comment: { comment: string }) => {
                     if (typeof comment.comment === "string") {
-                        return { ...comment, comment: { type: "html", html: comment } };
+                        return {
+                            ...comment,
+                            comment: { type: "html", html: comment.comment },
+                        };
                     }
                 })
             );
