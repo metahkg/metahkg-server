@@ -1,9 +1,9 @@
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
-import { checkGame } from "../../../plugins/checkGame";
+import { checkGame } from "../../plugins/checkGame";
 import { Type } from "@sinclair/typebox";
-import { GameIdSchema } from "../../../lib/schemas";
-import { gamesCl } from "../../../lib/common";
-import { Game } from "../../../models/games";
+import { GameIdSchema } from "../../lib/schemas";
+import { gamesCl } from "../../lib/common";
+import { Game } from "../../models/games";
 
 export default function (
     fastify: FastifyInstance,

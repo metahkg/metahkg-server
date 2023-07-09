@@ -3103,6 +3103,37 @@ paths:
           $ref: "#/components/responses/InternalServerError"
         "502":
           $ref: "#/components/responses/BadGateway"
+  /games/{id}:
+    get:
+      tags:
+        - games
+      operationId: games
+      summary: Get game info
+      description: "Get guess game info.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.11.6-dev/src/routes/games/guess/info.ts)"
+      parameters:
+        - $ref: "#/components/parameters/GameId"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GuessGame"
+        "400":
+          $ref: "#/components/responses/Invalid"
+        "404":
+          description: Game / Option not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "502":
+          $ref: "#/components/responses/BadGateway"
   /games/guess:
     post:
       tags:
@@ -3151,37 +3182,6 @@ paths:
           $ref: "#/components/responses/Invalid"
         "401":
           $ref: "#/components/responses/Unauthorized"
-        "429":
-          $ref: "#/components/responses/TooManyRequests"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
-        "502":
-          $ref: "#/components/responses/BadGateway"
-  /games/guess/{id}:
-    get:
-      tags:
-        - games
-      operationId: gamesGuess
-      summary: Get game info
-      description: "Get guess game info.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.11.6-dev/src/routes/games/guess/info.ts)"
-      parameters:
-        - $ref: "#/components/parameters/GameId"
-      responses:
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/GuessGame"
-        "400":
-          $ref: "#/components/responses/Invalid"
-        "404":
-          description: Game / Option not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
         "429":
           $ref: "#/components/responses/TooManyRequests"
         "500":
