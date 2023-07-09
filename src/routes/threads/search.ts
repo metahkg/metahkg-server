@@ -56,7 +56,12 @@ export default (
             res
         ) => {
             const page = Number(req.query.page) || 1;
-            const query = decodeURIComponent(String(req.query.q));
+            let query: string;
+            try {
+                query = decodeURIComponent(String(req.query.q));
+            } catch {
+                return res.code(400).send({ statusCode: 400, error: "Bad request" });
+            }
             const sort = req.query.sort || "relevance";
             const mode = req.query.mode || "title";
             const limit = Number(req.query.limit) || 25;
