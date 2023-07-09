@@ -94,6 +94,8 @@ tags:
     description: admin operations
   - name: server
     description: server operations
+  - name: games
+    description: game operations
 
 paths:
   /threads:
@@ -166,7 +168,7 @@ paths:
                 title:
                   $ref: "#/components/schemas/Thread/properties/title"
                 comment:
-                  $ref: "#/components/schemas/Comment/properties/comment"
+                  $ref: "#/components/schemas/CommentContent"
                 captchaToken:
                   $ref: "#/components/schemas/captchaToken"
                 category:
@@ -715,7 +717,7 @@ paths:
                 - captchaToken
               properties:
                 comment:
-                  $ref: "#/components/schemas/Comment/properties/comment"
+                  $ref: "#/components/schemas/CommentContent"
                 captchaToken:
                   $ref: "#/components/schemas/captchaToken"
                 quote:
@@ -3905,11 +3907,10 @@ components:
         gameId:
           $ref: "#/components/schemas/GameId"
     CommentContent:
-      type: object
-      additionalProperties: false
-      oneOf:
-        - $ref: "#/components/schemas/HTMLComment"
-        - $ref: "#/components/schemas/GameComment"
+      allOf:
+        - oneOf:
+            - $ref: "#/components/schemas/HTMLComment"
+            - $ref: "#/components/schemas/GameComment"
     Comment:
       type: object
       additionalProperties: false
@@ -4022,7 +4023,7 @@ components:
         user:
           $ref: "#/components/schemas/Comment/properties/user"
         comment:
-          $ref: "#/components/schemas/Comment/properties/comment"
+          $ref: "#/components/schemas/CommentContent"
         text:
           $ref: "#/components/schemas/Comment/properties/text"
         links:
