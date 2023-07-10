@@ -6,7 +6,7 @@ import { gamesCl } from "../../lib/common";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     const querySchema = Type.Object(
         {
@@ -16,11 +16,11 @@ export default function (
                     Type.Literal("latest"),
                     Type.Literal("oldest"),
                     Type.Literal("popular"),
-                ])
+                ]),
             ),
             limit: Type.Optional(Type.RegEx(regex.oneTo50)),
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
     fastify.get(
         "/",
@@ -44,7 +44,7 @@ export default function (
                 .toArray();
 
             res.send(games);
-        }
+        },
     );
     done();
 }

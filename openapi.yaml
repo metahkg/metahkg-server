@@ -1466,7 +1466,7 @@ paths:
       parameters:
         - $ref: "#/components/parameters/GameId"
       responses:
-        '200':
+        "200":
           description: Success
           content:
             application/json:
