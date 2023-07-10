@@ -6,6 +6,7 @@ export type Game = {
     id: string;
     host: publicUserType;
     createdAt: Date;
+    lastModified: Date;
     endedAt?: Date;
 } & {
     type: "guess";
@@ -20,5 +21,6 @@ export type Game = {
         option: number;
         // tokens used for gambit
         tokens: number;
+        date: Date;
     }[];
 };

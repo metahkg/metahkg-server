@@ -44,6 +44,7 @@ export default function (
                 title,
                 options: options.map((option) => ({ text: option, odds: 1, tokens: 0 })),
                 createdAt: new Date(),
+                lastModified: new Date(),
             });
 
             return res.send({ id });

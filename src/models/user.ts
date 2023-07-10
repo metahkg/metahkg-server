@@ -75,9 +75,7 @@ export interface Votes {
 }
 
 export interface UserGames {
-    guess?: {
-        tokens: number;
-    };
+    tokens?: number;
 }
 
 export default interface User {

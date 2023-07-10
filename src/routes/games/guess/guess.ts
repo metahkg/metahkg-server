@@ -64,7 +64,7 @@ export default function (
                 });
             }
 
-            if (user.games.guess.tokens < tokens) {
+            if (user.games.tokens < tokens) {
                 return res.code(409).send({
                     statusCode: 409,
                     error: "Insufficient tokens",
@@ -81,6 +81,7 @@ export default function (
                             ) as publicUserType,
                             option,
                             tokens,
+                            date: new Date(),
                         },
                     },
                     $inc: {
@@ -93,6 +94,7 @@ export default function (
                             (curr.tokens + (option === index ? tokens : 0));
                         return prev;
                     }, {} as { [key: string]: number }),
+                    $currentDate: { lastModified: 1 },
                 }
             );
 
@@ -100,7 +102,7 @@ export default function (
                 { id: user.id },
                 {
                     $inc: {
-                        "games.guess.tokens": -tokens,
+                        "games.tokens": -tokens,
                     },
                 }
             );

@@ -64,9 +64,9 @@ export default function (
                 { id },
                 {
                     $set: {
-                        endedAt: new Date(),
                         answer,
                     },
+                    $currentDate: { lastModified: 1, endedAt: 1 },
                 }
             );
 
@@ -85,7 +85,7 @@ export default function (
                         { id: guess.user.id },
                         {
                             $inc: {
-                                "games.guess.tokens": payout,
+                                "games.tokens": payout,
                             },
                         }
                     );
@@ -98,7 +98,7 @@ export default function (
                     { id: game.host.id },
                     {
                         $inc: {
-                            "games.guess.tokens": game.tokens * 0.1,
+                            "games.tokens": game.tokens * 0.1,
                         },
                     }
                 );

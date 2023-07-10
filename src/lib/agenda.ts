@@ -102,7 +102,7 @@ agenda.define("weeklyTokens", async () => {
         { ban: { $ne: true } },
         {
             $inc: {
-                "games.guess.tokens": 3000,
+                "games.tokens": 3000,
             },
         }
     );

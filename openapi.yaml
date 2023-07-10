@@ -1452,6 +1452,63 @@ paths:
           $ref: "#/components/responses/InternalServerError"
         "502":
           $ref: "#/components/responses/BadGateway"
+  /me/games/guess/{id}:
+    get:
+      tags:
+        - games
+        - me
+      operationId: meGamesGuess
+      security:
+        - bearerAuth: []
+      summary: Get user's bets
+      description: "Get user's bets in guessing game.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.11.7-dev/src/routes/me/games/guess.ts)"
+      parameters:
+        - $ref: "#/components/parameters/GameId"
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: false
+                  required:
+                    - user
+                    - option
+                    - tokens
+                    - date
+                  properties:
+                    user:
+                      $ref: "#/components/schemas/User"
+                    tokens:
+                      type: integer
+                      minimum: 10
+                    option:
+                      type: integer
+                      minimum: 0
+                      maximum: 5
+                    date:
+                      type: string
+                      format: datetime
+        "400":
+          $ref: "#/components/responses/Invalid"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          description: Game not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "502":
+          $ref: "#/components/responses/BadGateway"
   /categories:
     get:
       tags:
@@ -1725,16 +1782,12 @@ paths:
                       games:
                         type: object
                         additionalProperties: false
+                        required:
+                          - tokens
                         properties:
-                          guess:
-                            type: object
-                            additionalProperties: false
-                            required:
-                              - tokens
-                            properties:
-                              tokens:
-                                type: number
-                                minimum: 0
+                          tokens:
+                            type: number
+                            minimum: 0
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -3103,14 +3156,64 @@ paths:
           $ref: "#/components/responses/InternalServerError"
         "502":
           $ref: "#/components/responses/BadGateway"
+  /games:
+    get:
+      tags:
+        - games
+      summary: Get game list
+      description: "Get game list.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.11.7-dev/src/routes/games/games.ts)"
+      operationId: games
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+            minimum: 1
+          description: "Page number for pagination (optional, default: 1)"
+        - in: query
+          name: sort
+          schema:
+            type: string
+            enum:
+              - latest
+              - oldest
+              - popular
+          description: "Sort order for the games (optional, default: latest)"
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 50
+          description: "Maximum number of games per page (optional, default: 25)"
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Game"
+        "400":
+          $ref: "#/components/responses/Invalid"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "502":
+          $ref: "#/components/responses/BadGateway"
   /games/{id}:
     get:
       tags:
         - games
-      operationId: games
+      operationId: game
       summary: Get game info
       description: "Get guess game info.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.11.7-dev/src/routes/games/guess/info.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.11.7-dev/src/routes/games/info.ts)"
       parameters:
         - $ref: "#/components/parameters/GameId"
       responses:
@@ -3119,7 +3222,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/GuessGame"
+                $ref: "#/components/schemas/Game"
         "400":
           $ref: "#/components/responses/Invalid"
         "404":
@@ -4271,6 +4374,38 @@ components:
           type: string
           description: the branding to replace Metahkg
           example: Metahkg
+    Game:
+      type: object
+      additionalProperties: false
+      allOf:
+        - type: object
+          additionalProperties: false
+          required:
+            - id
+            - host
+            - createdAt
+            - lastModified
+            - type
+          properties:
+            id:
+              $ref: "#/components/schemas/GameId"
+            host:
+              $ref: "#/components/schemas/User"
+            createdAt:
+              type: string
+              format: datetime
+            lastModified:
+              type: string
+              format: datetime
+            endedAt:
+              type: string
+              format: datetime
+            type:
+              type: string
+              enum:
+                - guess
+        - oneOf:
+            - $ref: "#/components/schemas/GuessGame"
     GuessGame:
       type: object
       additionalProperties: false
@@ -4278,6 +4413,7 @@ components:
         - id
         - host
         - createdAt
+        - lastModified
         - type
         - title
         - options
@@ -4287,6 +4423,9 @@ components:
         host:
           $ref: "#/components/schemas/User"
         createdAt:
+          type: string
+          format: datetime
+        lastModified:
           type: string
           format: datetime
         endedAt:
@@ -4335,6 +4474,9 @@ components:
         tokens:
           description: number of tokens betting the option
           type: integer
+        date:
+          type: string
+          format: datetime
 
   securitySchemes:
     bearerAuth:
