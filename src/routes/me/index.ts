@@ -22,7 +22,7 @@ import starred from "./starred";
 import notifications from "./notifications";
 import following from "./following";
 import RequireAuth from "../../plugins/requireAuth";
-import games from "../games";
+import games from "./games";
 
 export default function (
     fastify: FastifyInstance,

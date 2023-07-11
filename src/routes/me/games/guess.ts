@@ -30,8 +30,11 @@ export default function (
                 {
                     projection: {
                         guesses: {
-                            $elemMatch: {
-                                "user.id": req.user.id,
+                            $filter: {
+                                input: "$guesses",
+                                cond: {
+                                    $eq: ["$$this.user.id", req.user.id],
+                                },
                             },
                         },
                     },
@@ -40,14 +43,7 @@ export default function (
 
             const guesses = game?.guesses;
 
-            if (!guesses?.length) {
-                return res.code(404).send({
-                    statusCode: 404,
-                    error: "No bets found",
-                });
-            }
-
-            return res.send(guesses);
+            return res.send(guesses || []);
         }
     );
     done();
