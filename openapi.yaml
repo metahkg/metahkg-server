@@ -1466,33 +1466,14 @@ paths:
       parameters:
         - $ref: "#/components/parameters/GameId"
       responses:
-        '200':
+        "200":
           description: Success
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  type: object
-                  additionalProperties: false
-                  required:
-                    - user
-                    - option
-                    - tokens
-                    - date
-                  properties:
-                    user:
-                      $ref: "#/components/schemas/User"
-                    tokens:
-                      type: integer
-                      minimum: 10
-                    option:
-                      type: integer
-                      minimum: 0
-                      maximum: 5
-                    date:
-                      type: string
-                      format: datetime
+                  $ref: "#/components/schemas/UserGuess"
         "400":
           $ref: "#/components/responses/Invalid"
         "403":
@@ -4393,13 +4374,13 @@ components:
               $ref: "#/components/schemas/User"
             createdAt:
               type: string
-              format: datetime
+              format: date-time
             lastModified:
               type: string
-              format: datetime
+              format: date-time
             endedAt:
               type: string
-              format: datetime
+              format: date-time
             type:
               type: string
               enum:
@@ -4424,13 +4405,13 @@ components:
           $ref: "#/components/schemas/User"
         createdAt:
           type: string
-          format: datetime
+          format: date-time
         lastModified:
           type: string
-          format: datetime
+          format: date-time
         endedAt:
           type: string
-          format: datetime
+          format: date-time
         type:
           type: string
           enum:
@@ -4476,7 +4457,28 @@ components:
           type: integer
         date:
           type: string
-          format: datetime
+          format: date-time
+    UserGuess:
+      type: object
+      additionalProperties: false
+      required:
+        - user
+        - option
+        - tokens
+        - date
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        tokens:
+          type: integer
+          minimum: 10
+        option:
+          type: integer
+          minimum: 0
+          maximum: 5
+        date:
+          type: string
+          format: date-time
 
   securitySchemes:
     bearerAuth:
