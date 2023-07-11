@@ -61,7 +61,7 @@ async function migrate() {
 
     await gamesCl.updateMany(
         { lastModified: { $exists: false } },
-        { $currentDate: { lastModified: 1 } as unknown as any }
+        { $currentDate: { lastModified: true } as unknown as any }
     );
 }
 

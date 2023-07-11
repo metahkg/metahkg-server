@@ -94,7 +94,7 @@ export default function (
                             (curr.tokens + (option === index ? tokens : 0));
                         return prev;
                     }, {} as { [key: string]: number }),
-                    $currentDate: { lastModified: 1 },
+                    $currentDate: { lastModified: true },
                 }
             );
 

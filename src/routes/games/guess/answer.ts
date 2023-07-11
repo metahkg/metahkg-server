@@ -66,7 +66,7 @@ export default function (
                     $set: {
                         answer,
                     },
-                    $currentDate: { lastModified: 1, endedAt: 1 },
+                    $currentDate: { lastModified: true, endedAt: true },
                 }
             );
 
