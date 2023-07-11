@@ -3168,6 +3168,13 @@ paths:
             minimum: 1
             maximum: 50
           description: "Maximum number of games per page (optional, default: 25)"
+        - in: query
+          name: type
+          schema:
+            type: string
+            enum:
+              - guess
+          description: type of game
       responses:
         "200":
           description: Success

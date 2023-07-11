@@ -19,6 +19,7 @@ export default function (
                 ])
             ),
             limit: Type.Optional(Type.RegEx(regex.oneTo50)),
+            type: Type.Optional(Type.Union([Type.Literal("guess"), Type.Literal("any")])),
         },
         { additionalProperties: false }
     );
@@ -29,6 +30,7 @@ export default function (
             const page = Number(req.query.page || 1);
             const sort = req.query.sort || "latest";
             const limit = Number(req.query.limit || 25);
+            const type = req.query.type || "any";
 
             const games = await gamesCl
                 .find({
@@ -36,6 +38,9 @@ export default function (
                         lastModified: {
                             $gt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7),
                         },
+                    }),
+                    ...(type !== "any" && {
+                        type,
                     }),
                 })
                 .sort(sort === "oldest" ? { lastModified: 1 } : { lastModified: -1 })
