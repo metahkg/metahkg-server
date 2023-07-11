@@ -37,31 +37,31 @@ async function migrate() {
         { "games.tokens": { $exists: false } },
         {
             $rename: { "games.guess.tokens": "games.tokens" },
-        }
+        },
     );
 
     await Promise.all(
-        (
-            await gamesCl.find({ guesses: { $exists: true } }).toArray()
-        ).map(async (game) => {
-            game.guesses = await Promise.all(
-                game.guesses.map(async (guess: { date?: Date }) => {
-                    if (!guess.date) {
-                        guess.date = new Date();
-                    }
-                    return guess;
-                })
-            );
-            await gamesCl.updateOne(
-                { _id: game._id },
-                { $set: { guesses: game.guesses } }
-            );
-        })
+        (await gamesCl.find({ guesses: { $exists: true } }).toArray()).map(
+            async (game) => {
+                game.guesses = await Promise.all(
+                    game.guesses.map(async (guess: { date?: Date }) => {
+                        if (!guess.date) {
+                            guess.date = new Date();
+                        }
+                        return guess;
+                    }),
+                );
+                await gamesCl.updateOne(
+                    { _id: game._id },
+                    { $set: { guesses: game.guesses } },
+                );
+            },
+        ),
     );
 
     await gamesCl.updateMany(
         { lastModified: { $exists: false } },
-        { $currentDate: { lastModified: true } as unknown as any }
+        { $currentDate: { lastModified: true } as unknown as any },
     );
 }
 
