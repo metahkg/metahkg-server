@@ -3364,17 +3364,12 @@ paths:
                 - answer
               properties:
                 answer:
-                  oneOf:
-                    - type: integer
-                      description: index of option
-                      minimum: 0
-                      maximum: 5
-                    - type: array
-                      items:
-                        type: integer
-                        description: index of option
-                        minimum: 0
-                        maximum: 5
+                  type: array
+                  items:
+                    type: integer
+                    description: index of option
+                    minimum: 0
+                    maximum: 5
       responses:
         "204":
           description: Success
