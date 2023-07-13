@@ -78,7 +78,7 @@ export default function (
                         return prev + (curr.tokens || 0);
                     }, 0);
 
-            game.guesses.forEach(async (guess) => {
+            game.guesses?.forEach(async (guess) => {
                 if (answer.includes(guess.option)) {
                     const payout = guess.tokens * odds;
                     await usersCl.updateOne(
