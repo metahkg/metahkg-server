@@ -56,7 +56,13 @@ export default (
                     ...(!user && { visibility: { $ne: "internal" } }),
                     removed: { $ne: true },
                 })
-                .project({ _id: 0, conversation: 0, images: 0, pin: 0 })
+                .project({
+                    _id: 0,
+                    conversation: 0,
+                    images: 0,
+                    links: 0,
+                    pin: 0,
+                })
                 .toArray()) as Thread[];
 
             res.send(

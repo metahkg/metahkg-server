@@ -124,6 +124,7 @@ export default (
                                 conversation: 0,
                                 newComments: 0,
                                 images: 0,
+                                links: 0,
                                 pin: 0,
                             },
                         },
