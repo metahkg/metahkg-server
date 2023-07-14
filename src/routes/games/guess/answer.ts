@@ -9,7 +9,7 @@ import { GameIdSchema } from "../../../lib/schemas";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     const schema = Type.Object(
         {
@@ -21,7 +21,7 @@ export default function (
                 }),
             ]),
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
 
     const paramsSchema = Type.Object({
@@ -40,7 +40,7 @@ export default function (
                 Body: Static<typeof schema>;
                 Params: Static<typeof paramsSchema>;
             }>,
-            res
+            res,
         ) => {
             const answer = [req.body.answer]
                 .flat()
@@ -73,7 +73,7 @@ export default function (
                         answer,
                     },
                     $currentDate: { lastModified: true, endedAt: true },
-                }
+                },
             );
 
             const odds =
@@ -93,7 +93,7 @@ export default function (
                             $inc: {
                                 "games.tokens": payout,
                             },
-                        }
+                        },
                     );
                 }
             });
@@ -106,12 +106,12 @@ export default function (
                         $inc: {
                             "games.tokens": game.tokens * 0.1,
                         },
-                    }
+                    },
                 );
             }
 
             return res.code(204).send();
-        }
+        },
     );
     done();
 }
