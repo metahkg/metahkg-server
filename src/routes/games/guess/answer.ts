@@ -15,7 +15,10 @@ export default function (
         {
             answer: Type.Union([
                 Type.Integer({ minimum: 0, maximum: 5 }),
-                Type.Array(Type.Integer({ minimum: 0, maximum: 5 })),
+                Type.Array(Type.Integer({ minimum: 0, maximum: 5 }), {
+                    minItems: 1,
+                    maxItems: 6,
+                }),
             ]),
         },
         { additionalProperties: false }
@@ -39,7 +42,10 @@ export default function (
             }>,
             res
         ) => {
-            const answer = [req.body.answer].flat();
+            const answer = [req.body.answer]
+                .flat()
+                .sort((a, b) => a - b)
+                .filter((v, i, arr) => arr.indexOf(v) === i);
             const { id } = req.params;
 
             const game = (await gamesCl.findOne({
