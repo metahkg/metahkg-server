@@ -18,7 +18,10 @@
 import { GridFSBucket, MongoClient } from "mongodb";
 import { config } from "./config";
 
-export const client = new MongoClient(config.MONGO_URI);
+export const client = new MongoClient(config.MONGO_URI, {
+    connectTimeoutMS: 100000,
+    socketTimeoutMS: 100000,
+});
 /**
  * get difference in seconds between now and a time string
  */
