@@ -36,7 +36,6 @@ export async function sendEmail(
     subject: string,
     body: string
 ): Promise<boolean> {
-    console.log(config.MAIL_PROVIDER);
     if (config.MAIL_PROVIDER === "mailgun") {
         const mailgun = new Mailgun(formData);
 
@@ -75,7 +74,7 @@ export async function sendEmail(
 
         return await transporter
             .sendMail({
-                from: `"${config.BRANDING} support" <${config.SMTP_EMAIL}>`,
+                from: `${config.BRANDING} support <${config.SMTP_EMAIL}>`,
                 to,
                 subject,
                 html: body,
