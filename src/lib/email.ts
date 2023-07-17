@@ -74,7 +74,7 @@ export async function sendEmail(
 
         return await transporter
             .sendMail({
-                from: `"Metahkg support" <${config.SMTP_EMAIL}>`,
+                from: `Metahkg support <${config.SMTP_EMAIL}>`,
                 to,
                 subject,
                 html: body,
