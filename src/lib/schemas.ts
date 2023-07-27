@@ -26,7 +26,7 @@ export const ReasonSchemaAdmin = Type.String({
     maxLength: 100,
 });
 
-export const CaptchaTokenSchema = Type.String({ minLength: 1, maxLength: 1000 });
+export const CaptchaTokenSchema = Type.String({ minLength: 1, maxLength: 5000 });
 
 export const GameIdSchema = Type.String({ minLength: 60, maxLength: 60 });
 
