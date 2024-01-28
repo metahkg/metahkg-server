@@ -26,7 +26,7 @@ import User from "./models/user";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     fastify.get(
         "/sitemap.xml",
@@ -48,7 +48,7 @@ export default function (
                     <loc>https://${config.DOMAIN}/${path}</loc>
                     <changefreq>daily</changefreq>
                     <priority>1.0</priority>
-                </url>`
+                </url>`,
             )}
             ${(
                 (await categoryCl
@@ -61,13 +61,13 @@ export default function (
                     <loc>https://${config.DOMAIN}/category/${category.id}</loc>
                     <changefreq>daily</changefreq>
                     <priority>1.0</priority>
-                </url>`
+                </url>`,
             )}
             ${["login", "register", "verify", "resend"].map(
                 (path) => /*xml*/ `<url>
                     <loc>https://${config.DOMAIN}/users/${path}</loc>
                     <priority>1.0</priority>
-                </url>`
+                </url>`,
             )}
             ${(
                 (await threadCl
@@ -84,7 +84,7 @@ export default function (
                     <changefreq>daily</changefreq>
                     <lastmod>${thread.lastModified.toISOString()}</lastmod>
                     <priority>0.8</priority>
-                </url>`
+                </url>`,
                 )
                 .filter((x) => x)}
             ${(
@@ -98,10 +98,10 @@ export default function (
                     <loc>https://${config.DOMAIN}/profile/${user.id}</loc>
                     <changefreq>daily</changefreq>
                     <priority>0.8</priority>
-                </url>`
+                </url>`,
             )}
         </urlset>`);
-        }
+        },
     );
     done();
 }

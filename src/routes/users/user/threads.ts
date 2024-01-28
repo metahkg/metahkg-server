@@ -27,17 +27,17 @@ import { hiddencats } from "../../../lib/hiddencats";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) => {
     const querySchema = Type.Object(
         {
             sort: Type.Optional(
-                Type.Union([Type.Literal("created"), Type.Literal("lastcomment")])
+                Type.Union([Type.Literal("created"), Type.Literal("lastcomment")]),
             ),
             page: Type.Optional(Type.RegEx(regex.integer)),
             limit: Type.Optional(Type.RegEx(regex.oneTo50)),
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
 
     const paramsSchema = Type.Object({
@@ -52,7 +52,7 @@ export default (
                 Querystring: Static<typeof querySchema>;
                 Params: Static<typeof paramsSchema>;
             }>,
-            res
+            res,
         ) => {
             const id = Number(req.params.id) || req.params.id;
             const page = Number(req.query.page) || 1;
@@ -88,7 +88,7 @@ export default (
                 .toArray()) as Thread[];
 
             res.send(history);
-        }
+        },
     );
     done();
 };

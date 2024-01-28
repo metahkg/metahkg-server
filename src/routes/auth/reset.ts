@@ -37,7 +37,7 @@ import { config } from "../../lib/config";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) => {
     const schema = Type.Object(
         {
@@ -49,7 +49,7 @@ export default (
                 ? Type.Optional(CaptchaTokenSchema)
                 : CaptchaTokenSchema,
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
 
     fastify.post(
@@ -89,7 +89,7 @@ export default (
 
             await usersCl.updateOne(
                 { email: hashedEmail },
-                { $set: { password: bcrypt.hashSync(password, 10) } }
+                { $set: { password: bcrypt.hashSync(password, 10) } },
             );
 
             await verificationCl.deleteOne({
@@ -105,7 +105,7 @@ export default (
                 token,
                 req.headers["user-agent"],
                 req.ip,
-                sameIp
+                sameIp,
             );
 
             if (!session)
@@ -114,7 +114,7 @@ export default (
                     .send({ statusCode: 500, error: "An error occurred" });
 
             return res.send(session);
-        }
+        },
     );
     done();
 };

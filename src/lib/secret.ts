@@ -11,7 +11,7 @@ interface Secrets {
 export function secrets(): Secrets {
     try {
         const parsedSecrets = JSON.parse(
-            readFileSync("secrets.json").toString()
+            readFileSync("secrets.json").toString(),
         ) as Secrets;
         if (
             parsedSecrets.VAPID_PUBLIC_KEY &&

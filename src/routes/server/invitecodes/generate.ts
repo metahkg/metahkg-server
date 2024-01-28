@@ -6,13 +6,13 @@ import { inviteCl } from "../../../lib/common";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     const schema = Type.Object(
         {
             description: Type.Optional(Type.String()),
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
 
     fastify.post(
@@ -44,7 +44,7 @@ export default function (
             return res.send({
                 code: inviteCode,
             });
-        }
+        },
     );
     done();
 }

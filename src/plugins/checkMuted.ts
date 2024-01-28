@@ -32,7 +32,7 @@ export default async function checkMuted(req: FastifyRequest, res: FastifyReply)
                     _id: 0,
                     mute: 1,
                 },
-            }
+            },
         )) as User
     )?.mute;
 
