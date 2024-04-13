@@ -33,9 +33,7 @@ async function migrate() {
     const usersCl = db.collection("users");
 
     await Promise.all(
-        (
-            await usersCl.find().toArray()
-        ).map(async (data) => {
+        (await usersCl.find().toArray()).map(async (data) => {
             if (
                 data.blocked &&
                 data.blocked.every((i: number) => typeof i === "number")
@@ -52,10 +50,10 @@ async function migrate() {
                                 id: i,
                             })),
                         },
-                    }
+                    },
                 );
             }
-        })
+        }),
     );
 }
 

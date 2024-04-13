@@ -6,13 +6,13 @@ import { InviteCodeSchema } from "../../../lib/schemas";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     const paramsSchema = Type.Object(
         {
             code: InviteCodeSchema,
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
     fastify.delete(
         "/:code",
@@ -28,7 +28,7 @@ export default function (
             }
 
             return res.status(204).send();
-        }
+        },
     );
     done();
 }

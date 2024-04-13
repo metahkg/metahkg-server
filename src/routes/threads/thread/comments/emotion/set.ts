@@ -27,7 +27,7 @@ import Thread from "../../../../../models/thread";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) {
     const paramsSchema = Type.Object({
         id: Type.RegEx(regex.integer),
@@ -38,7 +38,7 @@ export default function (
         {
             emotion: Type.RegEx(regex.emoji),
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
 
     fastify.post(
@@ -49,7 +49,7 @@ export default function (
                 Params: Static<typeof paramsSchema>;
                 Body: Static<typeof schema>;
             }>,
-            res
+            res,
         ) {
             const user = req.user;
             if (!user)
@@ -72,7 +72,7 @@ export default function (
                         title: 1,
                         conversation: { $elemMatch: { id: cid } },
                     },
-                }
+                },
             )) as Thread;
 
             // remove previous value first
@@ -89,9 +89,9 @@ export default function (
                                     user: user.id,
                                 },
                             },
-                        }
+                        },
                     )
-                ).modifiedCount
+                ).modifiedCount,
             );
 
             await threadCl.updateOne(
@@ -103,7 +103,7 @@ export default function (
                             emotion,
                         },
                     },
-                }
+                },
             );
 
             if (
@@ -129,7 +129,7 @@ export default function (
                 });
 
             return res.code(204).send();
-        }
+        },
     );
 
     done();

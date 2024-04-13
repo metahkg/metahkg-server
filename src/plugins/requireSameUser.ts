@@ -21,7 +21,7 @@ export default function RequireSameUser(
     req: FastifyRequest<{ Params: { id: string } }>,
     res: FastifyReply,
     done: RequestPayload | ((err?: Error) => void),
-    done_preparsing?: (err?: Error) => void
+    done_preparsing?: (err?: Error) => void,
 ) {
     const userId = Number(req.params.id);
     const user = req.user;

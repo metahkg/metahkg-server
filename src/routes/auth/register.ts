@@ -42,7 +42,7 @@ dotenv.config();
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) => {
     const schema = Type.Object(
         {
@@ -56,7 +56,7 @@ export default (
             sex: SexSchema,
             inviteCode: Type.Optional(InviteCodeSchema),
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
 
     fastify.post(
@@ -140,7 +140,7 @@ export default (
             });
 
             res.code(204).send();
-        }
+        },
     );
     done();
 };

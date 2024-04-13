@@ -24,7 +24,7 @@ import regex from "../../../../lib/regex";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) => {
     const paramsSchema = Type.Object({
         id: Type.RegEx(regex.integer),
@@ -44,14 +44,14 @@ export default (
                 !(
                     await usersCl.updateOne(
                         { id: user.id, blocked: { $elemMatch: { id: userId } } },
-                        { $pull: { blocked: { id: userId } } }
+                        { $pull: { blocked: { id: userId } } },
                     )
                 ).matchedCount
             )
                 return res.code(409).send({ statusCode: 409, error: "User not blocked" });
 
             return res.code(204).send();
-        }
+        },
     );
     done();
 };

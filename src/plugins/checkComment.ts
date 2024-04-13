@@ -21,7 +21,7 @@ import Thread from "../models/thread";
 
 export default async function (
     req: FastifyRequest<{ Params: { id: string; cid: string } }>,
-    res: FastifyReply
+    res: FastifyReply,
 ) {
     const id = Number(req.params.id);
     const cid = Number(req.params.cid);
@@ -33,7 +33,7 @@ export default async function (
             id,
             conversation: { $elemMatch: { id: cid } },
         },
-        { projection: { _id: 0, conversation: { $elemMatch: { id: cid } } } }
+        { projection: { _id: 0, conversation: { $elemMatch: { id: cid } } } },
     )) as Thread | null;
 
     if (!thread)

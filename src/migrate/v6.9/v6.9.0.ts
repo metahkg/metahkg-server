@@ -66,7 +66,7 @@ async function migrate() {
             let { images, conversation } = v;
             if (
                 images?.every(
-                    (i: { src: string; cid: number }) => i && !("signature" in i)
+                    (i: { src: string; cid: number }) => i && !("signature" in i),
                 )
             ) {
                 images = images.map((i: { src: string; cid: number }) => {
@@ -83,7 +83,7 @@ async function migrate() {
                 if (
                     !("removed" in c) &&
                     c.images?.every(
-                        (i: any) => i && (typeof i === "string" || !("signature" in i))
+                        (i: any) => i && (typeof i === "string" || !("signature" in i)),
                     )
                 ) {
                     return {
@@ -99,7 +99,7 @@ async function migrate() {
                 return c;
             });
             await threadCl.updateOne({ _id: v._id }, { $set: { images, conversation } });
-        })
+        }),
     );
 }
 

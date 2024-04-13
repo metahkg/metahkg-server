@@ -23,7 +23,7 @@ import unsubscribe from "./unsubscribe";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     fastify.register(subscribe);
     fastify.register(unsubscribe);

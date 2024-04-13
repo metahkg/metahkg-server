@@ -26,7 +26,7 @@ import RequireAdmin from "../../../../plugins/requireAdmin";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     const paramsSchema = Type.Object({
         id: Type.RegEx(regex.integer),
@@ -51,7 +51,7 @@ export default function (
             await agenda.cancel({ name: "unbanUser", data: { userId: id } });
 
             return res.code(204).send();
-        }
+        },
     );
     done();
 }

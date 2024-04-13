@@ -22,7 +22,7 @@ import { sha256 } from "../sha256";
 export function getSessionByToken(
     userId: number,
     sessionId: string,
-    includeUser: true
+    includeUser: true,
 ): Promise<
     | (Session & {
           user: User;
@@ -32,17 +32,17 @@ export function getSessionByToken(
 export function getSessionByToken(
     userId: number,
     sessionId: string,
-    includeUser: false
+    includeUser: false,
 ): Promise<Session | null>;
 export function getSessionByToken(
     userId: number,
-    sessionId: string
+    sessionId: string,
 ): Promise<Session | null>;
 
 export async function getSessionByToken(
     userId: number,
     token: string,
-    includeUser?: boolean
+    includeUser?: boolean,
 ) {
     const hashedToken = sha256(token);
     const user = (await usersCl.findOne({
@@ -64,7 +64,7 @@ export async function getSessionByToken(
 export function getSessionById(
     userId: number,
     sessionId: string,
-    includeUser: true
+    includeUser: true,
 ): Promise<
     | (Session & {
           user: User;
@@ -74,17 +74,17 @@ export function getSessionById(
 export function getSessionById(
     userId: number,
     sessionId: string,
-    includeUser: false
+    includeUser: false,
 ): Promise<Session | null>;
 export function getSessionById(
     userId: number,
-    sessionId: string
+    sessionId: string,
 ): Promise<Session | null>;
 
 export async function getSessionById(
     userId: number,
     sessionId: string,
-    includeUser?: boolean
+    includeUser?: boolean,
 ) {
     const user = (await usersCl.findOne({
         id: userId,
@@ -106,7 +106,7 @@ export async function getSessionById(
 
 export function getSessionByIdOnly(
     sessionId: string,
-    includeUser: true
+    includeUser: true,
 ): Promise<
     | (Session & {
           user: User;
@@ -115,7 +115,7 @@ export function getSessionByIdOnly(
 >;
 export function getSessionByIdOnly(
     sessionId: string,
-    includeUser: false
+    includeUser: false,
 ): Promise<Session | null>;
 export function getSessionByIdOnly(sessionId: string): Promise<Session | null>;
 

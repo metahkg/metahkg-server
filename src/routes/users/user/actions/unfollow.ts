@@ -24,7 +24,7 @@ import regex from "../../../../lib/regex";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) => {
     const paramsSchema = Type.Object({
         id: Type.RegEx(regex.integer),
@@ -44,7 +44,7 @@ export default (
                 !(
                     await usersCl.updateOne(
                         { id: user.id, following: { $elemMatch: { id: userId } } },
-                        { $pull: { following: { id: userId } } }
+                        { $pull: { following: { id: userId } } },
                     )
                 ).matchedCount
             )
@@ -53,7 +53,7 @@ export default (
                     .send({ statusCode: 409, error: "User not followed" });
 
             return res.code(204).send();
-        }
+        },
     );
     done();
 };

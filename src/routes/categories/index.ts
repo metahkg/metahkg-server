@@ -28,7 +28,7 @@ import RequireAuth from "../../plugins/requireAuth";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     if (config.VISIBILITY === "internal") {
         fastify.addHook("preParsing", RequireAuth);

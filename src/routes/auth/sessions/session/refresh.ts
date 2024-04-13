@@ -26,7 +26,7 @@ import { RateLimitOptions } from "@fastify/rate-limit";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     const paramsSchema = Type.Object({
         id: SessionIdSchema,
@@ -36,7 +36,7 @@ export default function (
         {
             refreshToken: RefreshTokenSchema,
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
 
     fastify.post(
@@ -59,7 +59,7 @@ export default function (
                 Params: Static<typeof paramsSchema>;
                 Body: Static<typeof schema>;
             }>,
-            res
+            res,
         ) => {
             const { refreshToken } = req.body;
             const { id: sessionId } = req.params;
@@ -96,7 +96,7 @@ export default function (
             }
 
             return res.send(refresh);
-        }
+        },
     );
     done();
 }

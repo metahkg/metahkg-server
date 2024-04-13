@@ -24,7 +24,7 @@ import regex from "../../../../lib/regex";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) => {
     const paramsSchema = Type.Object({
         id: Type.RegEx(regex.integer),
@@ -49,7 +49,7 @@ export default (
                             },
                         },
                     },
-                }
+                },
             )) as Thread | null;
 
             if (!thread)
@@ -62,7 +62,7 @@ export default (
             const comment = thread?.conversation?.[0];
 
             res.send(comment);
-        }
+        },
     );
     done();
 };

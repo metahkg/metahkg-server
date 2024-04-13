@@ -22,7 +22,7 @@ import Thread from "../models/thread";
 
 export default async function (
     req: FastifyRequest<{ Params: { id?: string } }>,
-    res: FastifyReply
+    res: FastifyReply,
 ) {
     if (req.params.id) {
         const id = Number(req.params.id);
@@ -31,7 +31,7 @@ export default async function (
         const category = (
             (await threadCl.findOne(
                 { id },
-                { projection: { _id: 0, category: 1 } }
+                { projection: { _id: 0, category: 1 } },
             )) as Thread & { removed: undefined }
         )?.category;
 

@@ -33,24 +33,24 @@ async function migrate() {
     const threadCl = db.collection("thread");
 
     await Promise.all(
-        (
-            await threadCl.find({ removed: { $exists: false } }).toArray()
-        ).map(async (thread) => {
-            thread.conversation = await Promise.all(
-                thread.conversation.map(async (comment: { comment: string }) => {
-                    if (typeof comment.comment === "string") {
-                        return {
-                            ...comment,
-                            comment: { type: "html", html: comment.comment },
-                        };
-                    }
-                })
-            );
-            await threadCl.updateOne(
-                { _id: thread._id },
-                { $set: { conversation: thread.conversation } }
-            );
-        })
+        (await threadCl.find({ removed: { $exists: false } }).toArray()).map(
+            async (thread) => {
+                thread.conversation = await Promise.all(
+                    thread.conversation.map(async (comment: { comment: string }) => {
+                        if (typeof comment.comment === "string") {
+                            return {
+                                ...comment,
+                                comment: { type: "html", html: comment.comment },
+                            };
+                        }
+                    }),
+                );
+                await threadCl.updateOne(
+                    { _id: thread._id },
+                    { $set: { conversation: thread.conversation } },
+                );
+            },
+        ),
     );
 }
 
