@@ -40,7 +40,7 @@ export async function verifyCaptcha(token: string) {
                       secret: config.TURNSTILE_SECRET,
                       response: token,
                   }
-                : undefined,
+                : undefined
         );
         return data.success;
     } catch {

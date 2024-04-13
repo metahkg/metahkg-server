@@ -29,13 +29,13 @@ import User from "../../../../models/user";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void,
+    done: (e?: Error) => void
 ) => {
     const schema = Type.Object(
         {
             vote: VoteSchema,
         },
-        { additionalProperties: false },
+        { additionalProperties: false }
     );
 
     const paramsSchema = Type.Object({
@@ -51,7 +51,7 @@ export default (
                 Body: Static<typeof schema>;
                 Params: Static<typeof paramsSchema>;
             }>,
-            res,
+            res
         ) => {
             const threadId = Number(req.params.id);
             const commentId = Number(req.params.cid);
@@ -70,7 +70,7 @@ export default (
                             $elemMatch: { id: commentId },
                         },
                     },
-                },
+                }
             )) as Thread;
 
             if (!thread)
@@ -90,7 +90,7 @@ export default (
 
             await usersCl.updateOne(
                 { id: user.id },
-                { $push: { [`votes.${threadId}`]: { cid: commentId, vote } } },
+                { $push: { [`votes.${threadId}`]: { cid: commentId, vote } } }
             );
 
             if ("removed" in thread || "removed" in thread.conversation[0]) return;
@@ -98,26 +98,26 @@ export default (
             if (!thread.conversation[0]?.[vote]) {
                 await threadCl.updateOne(
                     { id: threadId, conversation: { $elemMatch: { id: commentId } } },
-                    { $set: { [`conversation.$.${req.body.vote}`]: 0 } },
+                    { $set: { [`conversation.$.${req.body.vote}`]: 0 } }
                 );
             }
 
             await threadCl.updateOne(
                 { id: threadId, conversation: { $elemMatch: { id: commentId } } },
-                { $inc: { [`conversation.$.${req.body.vote}`]: 1 } },
+                { $inc: { [`conversation.$.${req.body.vote}`]: 1 } }
             );
 
             if (commentId === 1) {
                 await threadCl.updateOne(
                     { id: threadId },
-                    { $inc: { score: { U: 1, D: -1 }[req.body.vote] } },
+                    { $inc: { score: { U: 1, D: -1 }[req.body.vote] } }
                 );
             }
 
             if (
                 vote === "U" &&
                 [5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000].includes(
-                    thread.conversation[0]?.[vote] + 1,
+                    thread.conversation[0]?.[vote] + 1
                 )
             ) {
                 sendNotification(thread.conversation[0]?.user?.id, {
@@ -142,7 +142,7 @@ export default (
             }
 
             res.code(204).send();
-        },
+        }
     );
     done();
 };

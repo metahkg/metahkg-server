@@ -23,7 +23,7 @@ import { jwtTokenType } from "../../types/jwt";
 export async function updateSessionById(
     userId: number,
     sessionId: string,
-    newToken: string,
+    newToken: string
 ) {
     // jwt exp is in seconds
     const decode = createDecoder();
@@ -39,7 +39,7 @@ export async function updateSessionById(
                         "sessions.$.exp": new Date(newExp),
                         "sessions.$.token": sha256(newToken),
                     },
-                },
+                }
             )
         ).matchedCount
     )
@@ -51,7 +51,7 @@ export async function updateSessionById(
 export async function updateSessionByToken(
     userId: number,
     token: string,
-    newToken: string,
+    newToken: string
 ) {
     // jwt exp is in seconds
     const decode = createDecoder();
@@ -68,7 +68,7 @@ export async function updateSessionByToken(
                         "sessions.$.exp": new Date(newExp),
                         "sessions.$.token": sha256(newToken),
                     },
-                },
+                }
             )
         ).matchedCount
     )

@@ -31,7 +31,7 @@ export async function refreshSession(
         sex: userSex;
         role: userRole;
     },
-    sessionId: string,
+    sessionId: string
 ) {
     const token = createToken(fastifyJWT, user);
     const refreshToken = randomBytes(30).toString("hex");
@@ -48,7 +48,7 @@ export async function refreshSession(
                         "sessions.$.refreshToken": sha256(refreshToken),
                         "sessions.$.exp": exp,
                     },
-                },
+                }
             )
         ).modifiedCount
     )

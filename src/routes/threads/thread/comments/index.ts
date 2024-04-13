@@ -31,7 +31,7 @@ import checkComment from "../../../../plugins/checkComment";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void,
+    done: (e?: Error) => void
 ) {
     fastify.register(create);
     fastify.addHook("preHandler", checkComment);

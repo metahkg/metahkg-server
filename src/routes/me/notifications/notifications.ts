@@ -23,7 +23,7 @@ import User from "../../../models/user";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void,
+    done: (e?: Error) => void
 ) => {
     fastify.get("/", async (req: FastifyRequest, res) => {
         const user = req.user;
@@ -36,7 +36,7 @@ export default (
                         _id: 0,
                         notifications: 1,
                     },
-                },
+                }
             )) as User
         )?.notifications;
 

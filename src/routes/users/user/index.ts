@@ -33,7 +33,7 @@ import unfollow from "./actions/unfollow";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void,
+    done: (err?: Error) => void
 ) {
     fastify.register(avatar, { prefix: "/avatar" });
     fastify.register(profile);

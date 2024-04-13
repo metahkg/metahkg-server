@@ -25,7 +25,7 @@ import { hiddencats } from "../../lib/hiddencats";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void,
+    done: (e?: Error) => void
 ) => {
     const querySchema = Type.Object(
         {
@@ -33,13 +33,13 @@ export default (
             q: Type.String({ maxLength: 200, minLength: 1 }),
             sort: Type.Optional(
                 Type.Union(
-                    ["relevance", "created", "lastcomment"].map((x) => Type.Literal(x)),
-                ),
+                    ["relevance", "created", "lastcomment"].map((x) => Type.Literal(x))
+                )
             ),
             mode: Type.Optional(Type.Union(["title", "op"].map((x) => Type.Literal(x)))),
             limit: Type.Optional(Type.RegEx(regex.oneTo50)),
         },
-        { additionalProperties: false },
+        { additionalProperties: false }
     );
 
     fastify.get(
@@ -53,7 +53,7 @@ export default (
             req: FastifyRequest<{
                 Querystring: Static<typeof querySchema>;
             }>,
-            res,
+            res
         ) => {
             const page = Number(req.query.page) || 1;
             let query: string;
@@ -69,7 +69,7 @@ export default (
 
             const regex = new RegExp(
                 query.replace(/[-\/\\^$*+?.()|[\]{}]/g, "\\$&"),
-                "i",
+                "i"
             );
 
             const data = (await threadCl
@@ -132,12 +132,12 @@ export default (
                                 pin: 0,
                             },
                         },
-                    ].filter((x) => x),
+                    ].filter((x) => x)
                 )
                 .toArray()) as Thread[];
 
             res.send(data);
-        },
+        }
     );
     done();
 };

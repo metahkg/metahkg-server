@@ -24,7 +24,7 @@ import regex from "../../../../lib/regex";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void,
+    done: (e?: Error) => void
 ) => {
     const paramsSchema = Type.Object({
         id: Type.RegEx(regex.integer),
@@ -47,7 +47,7 @@ export default (
                         _id: 0,
                         conversation: { $elemMatch: { id: cid } },
                     },
-                },
+                }
             )) as Thread;
 
             if (!thread)
@@ -84,12 +84,12 @@ export default (
                                 },
                             },
                         },
-                    },
+                    }
                 )) as Thread & { removed: undefined }
             )?.conversation;
 
             res.send(replies);
-        },
+        }
     );
     done();
 };

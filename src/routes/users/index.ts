@@ -23,7 +23,7 @@ import user from "./user";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void,
+    done: (e?: Error) => void
 ) => {
     if (config.VISIBILITY === "internal") {
         fastify.addHook("preParsing", RequireAuth);

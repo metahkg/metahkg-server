@@ -7,13 +7,13 @@ import { Invite } from "../../../models/invite";
 export default function (
     fastify: FastifyInstance,
     _opt: FastifyPluginOptions,
-    done: (err?: Error) => void,
+    done: (err?: Error) => void
 ) {
     const paramsSchema = Type.Object(
         {
             code: InviteCodeSchema,
         },
-        { additionalProperties: false },
+        { additionalProperties: false }
     );
     fastify.get(
         "/:code",
@@ -23,14 +23,14 @@ export default function (
 
             const invite = (await inviteCl.findOne(
                 { code },
-                { projection: { _id: 0 } },
+                { projection: { _id: 0 } }
             )) as Invite;
             if (!invite) {
                 return res.status(404).send({ statusCode: 404, error: "Not found" });
             }
 
             return res.status(200).send(invite);
-        },
+        }
     );
     done();
 }

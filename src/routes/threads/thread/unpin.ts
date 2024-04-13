@@ -25,7 +25,7 @@ import regex from "../../../lib/regex";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void,
+    done: (e?: Error) => void
 ) => {
     const paramsSchema = Type.Object({
         id: Type.RegEx(regex.integer),
@@ -38,7 +38,7 @@ export default (
             req: FastifyRequest<{
                 Params: Static<typeof paramsSchema>;
             }>,
-            res,
+            res
         ) => {
             const threadId = Number(req.params.id);
 
@@ -46,7 +46,7 @@ export default (
 
             const thread = (await threadCl.findOne(
                 { id: threadId },
-                { projection: { _id: 0, op: 1, pin: 1 } },
+                { projection: { _id: 0, op: 1, pin: 1 } }
             )) as Thread;
 
             if (!thread)
@@ -65,7 +65,7 @@ export default (
             await threadCl.updateOne({ id: threadId }, { $unset: { pin: 1 } });
 
             return res.code(204).send();
-        },
+        }
     );
     done();
 };

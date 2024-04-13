@@ -24,7 +24,7 @@ import RequireAuth from "../../../plugins/requireAuth";
 export default function sessions(
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void,
+    done: (err?: Error) => void
 ) {
     fastify.get("/", { preParsing: [RequireAuth] }, async (req: FastifyRequest, res) => {
         const user = req.user;
@@ -43,7 +43,7 @@ export default function sessions(
                             userAgent: 1,
                         },
                     },
-                },
+                }
             )) as User
         )?.sessions;
 

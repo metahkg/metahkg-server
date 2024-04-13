@@ -35,11 +35,11 @@ async function migrate() {
 
     await usersCl.updateMany(
         { pwd: { $exists: true } },
-        { $rename: { pwd: "password" } },
+        { $rename: { pwd: "password" } }
     );
     await verificationCl.updateMany(
         { pwd: { $exists: true } },
-        { $rename: { pwd: "password" } },
+        { $rename: { pwd: "password" } }
     );
 }
 

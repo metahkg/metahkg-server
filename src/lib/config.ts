@@ -44,7 +44,7 @@ export const config = {
     TURNSTILE_SITE_KEY: process.env.TURNSTILE_SITE_KEY || "",
     TURNSTILE_SECRET: process.env.TURNSTILE_SECRET || "",
     REGISTER_MODE: (["normal", "none", "invite"].includes(
-        process.env.REGISTER_MODE || process.env.register,
+        process.env.REGISTER_MODE || process.env.register
     )
         ? process.env.REGISTER_MODE || process.env.register
         : "normal") as "normal" | "none" | "invite",

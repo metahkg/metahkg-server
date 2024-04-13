@@ -25,7 +25,7 @@ export async function sendNotification(userId: number, data: Notification) {
     webPush.setVapidDetails(
         `https://${config.DOMAIN}`,
         config.VAPID_PUBLIC_KEY,
-        config.VAPID_PRIVATE_KEY,
+        config.VAPID_PRIVATE_KEY
     );
     const sessions = (
         (await usersCl.findOne(
@@ -43,7 +43,7 @@ export async function sendNotification(userId: number, data: Notification) {
                         },
                     },
                 },
-            },
+            }
         )) as User
     )?.sessions;
 

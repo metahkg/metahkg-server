@@ -25,7 +25,7 @@ import Thread from "../../../../models/thread";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void,
+    done: (err?: Error) => void
 ) {
     const paramsSchema = Type.Object({
         id: Type.RegEx(regex.integer),
@@ -48,7 +48,7 @@ export default function (
                 !(
                     await usersCl.updateOne(
                         { id: user.id, starred: { $elemMatch: { id: threadId } } },
-                        { $pull: { starred: { id: threadId } } },
+                        { $pull: { starred: { id: threadId } } }
                     )
                 ).matchedCount
             )
@@ -57,7 +57,7 @@ export default function (
                     .send({ statusCode: 409, error: "Thread not starred" });
 
             return res.code(204).send();
-        },
+        }
     );
     done();
 }

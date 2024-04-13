@@ -33,7 +33,7 @@ import findLinks from "../../../../../lib/findLinks";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void,
+    done: (err?: Error) => void
 ) {
     const paramsSchema = Type.Object({
         id: Type.RegEx(regex.integer),
@@ -45,7 +45,7 @@ export default function (
             html: HTMLCommentSchema,
             reason: ReasonSchemaAdmin,
         },
-        { minProperties: 2, additionalProperties: false },
+        { minProperties: 2, additionalProperties: false }
     );
 
     fastify.patch(
@@ -60,7 +60,7 @@ export default function (
                 Params: Static<typeof paramsSchema>;
                 Body: Static<typeof schema>;
             }>,
-            res,
+            res
         ) => {
             const id = Number(req.params.id);
             const cid = Number(req.params.cid);
@@ -74,7 +74,7 @@ export default function (
                         pin: 1,
                         conversation: { $elemMatch: { id: cid } },
                     },
-                },
+                }
             )) as Thread;
 
             const comment = !("removed" in thread) && thread.conversation[0];
@@ -86,7 +86,7 @@ export default function (
             }
 
             const admin = objectFilter(req.user, (key: string) =>
-                ["id", "name", "sex", "role"].includes(key),
+                ["id", "name", "sex", "role"].includes(key)
             );
 
             const html = sanitize(req.body.html);
@@ -116,7 +116,7 @@ export default function (
                             date: new Date(),
                         },
                     },
-                },
+                }
             );
 
             // edit quotes of the comment
@@ -130,11 +130,11 @@ export default function (
                         "conversation.$[elem].quote.text": text,
                     },
                 },
-                { arrayFilters: [{ "elem.quote.id": cid }] },
+                { arrayFilters: [{ "elem.quote.id": cid }] }
             );
 
             res.code(204).send();
-        },
+        }
     );
     done();
 }

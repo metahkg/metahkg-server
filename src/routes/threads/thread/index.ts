@@ -32,7 +32,7 @@ import unpin from "./unpin";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void,
+    done: (e?: Error) => void
 ) => {
     fastify.addHook("preHandler", checkHidden);
     fastify.addHook("preHandler", checkThread);

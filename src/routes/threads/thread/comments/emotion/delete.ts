@@ -25,7 +25,7 @@ import Thread from "../../../../../models/thread";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void,
+    done: (err?: Error) => void
 ) {
     const paramsSchema = Type.Object({
         id: Type.RegEx(regex.integer),
@@ -59,7 +59,7 @@ export default function (
                             $indexOfArray: ["$conversation.id", cid],
                         },
                     },
-                },
+                }
             )) as Thread & { index: number };
 
             const index = thread?.index;
@@ -83,7 +83,7 @@ export default function (
                             $pull: {
                                 [`conversation.${index}.emotions`]: { user: user.id },
                             },
-                        },
+                        }
                     )
                 ).matchedCount
             )
@@ -92,7 +92,7 @@ export default function (
                     .send({ statusCode: 409, error: "Emotion doesn't exist" });
 
             return res.code(204).send();
-        },
+        }
     );
     done();
 }

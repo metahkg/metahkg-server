@@ -22,7 +22,7 @@ import Category from "../../models/category";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void,
+    done: (e?: Error) => void
 ) {
     fastify.get("/", async (_req, res) => {
         res.send(
@@ -30,7 +30,7 @@ export default function (
                 .find()
                 .project({ _id: 0 })
                 .sort({ id: 1 })
-                .toArray()) as Category[],
+                .toArray()) as Category[]
         );
     });
     done();

@@ -4,7 +4,7 @@ import { readFileSync } from "fs";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void,
+    done: (err?: Error) => void
 ) {
     fastify.get("/publickey", (_req, res) => {
         res.type("text/plain").send(readFileSync("certs/public.pem"));

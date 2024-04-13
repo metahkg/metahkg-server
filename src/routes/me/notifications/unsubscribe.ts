@@ -22,7 +22,7 @@ import { unSubscribeByToken } from "../../../lib/notifications/unsubscribe";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void,
+    done: (err?: Error) => void
 ) {
     fastify.post("/unsubscribe", async (req, res) => {
         const user = req.user;

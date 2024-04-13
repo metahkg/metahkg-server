@@ -45,10 +45,10 @@ async function migrate() {
             if (EmailValidator.validate(doc.email)) {
                 await verificationCl.updateOne(
                     { _id: doc._id },
-                    { $set: { email: sha256().update(doc.email).digest("hex") } },
+                    { $set: { email: sha256().update(doc.email).digest("hex") } }
                 );
             }
-        }),
+        })
     );
 
     await db.collection("limit").drop();

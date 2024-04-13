@@ -25,7 +25,7 @@ import RequireAdmin from "../../plugins/requireAdmin";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void,
+    done: (err?: Error) => void
 ) {
     const schema = Type.Object(
         {
@@ -35,7 +35,7 @@ export default function (
             hidden: Type.Optional(Type.Boolean()),
             nsfw: Type.Optional(Type.Boolean()),
         },
-        { additionalProperties: false },
+        { additionalProperties: false }
     );
 
     fastify.post(
@@ -62,7 +62,7 @@ export default function (
             await categoryCl.insertOne(<Category>{ id, ...req.body });
 
             return res.code(204).send();
-        },
+        }
     );
     done();
 }

@@ -27,7 +27,7 @@ export async function revokeAllSessions(userId: number): Promise<null | true> {
                     $set: {
                         sessions: [],
                     },
-                },
+                }
             )
         ).matchedCount
     ) {
@@ -38,7 +38,7 @@ export async function revokeAllSessions(userId: number): Promise<null | true> {
 
 export async function revokeAllSessionsExceptId(
     userId: number,
-    sessionId: string,
+    sessionId: string
 ): Promise<null | true> {
     if (
         !(
@@ -50,7 +50,7 @@ export async function revokeAllSessionsExceptId(
                             id: { $ne: sessionId },
                         },
                     },
-                },
+                }
             )
         ).matchedCount
     ) {
@@ -61,7 +61,7 @@ export async function revokeAllSessionsExceptId(
 
 export async function revokeAllSessionsExceptToken(
     userId: number,
-    token: string,
+    token: string
 ): Promise<null | true> {
     if (
         !(
@@ -73,7 +73,7 @@ export async function revokeAllSessionsExceptToken(
                             token: { $ne: sha256(token) },
                         },
                     },
-                },
+                }
             )
         ).matchedCount
     ) {

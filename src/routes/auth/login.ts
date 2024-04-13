@@ -41,7 +41,7 @@ dotenv.config();
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void,
+    done: (e?: Error) => void
 ) => {
     const schema = Type.Object(
         {
@@ -53,7 +53,7 @@ export default (
                 ? Type.Optional(CaptchaTokenSchema)
                 : CaptchaTokenSchema,
         },
-        { additionalProperties: false },
+        { additionalProperties: false }
     );
 
     fastify.post(
@@ -112,7 +112,7 @@ export default (
                 token,
                 req.headers["user-agent"],
                 req.ip,
-                sameIp,
+                sameIp
             );
 
             if (!session)
@@ -121,7 +121,7 @@ export default (
                     .send({ statusCode: 500, error: "An error occurred" });
 
             res.send(session);
-        },
+        }
     );
     done();
 };

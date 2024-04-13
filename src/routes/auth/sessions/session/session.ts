@@ -26,7 +26,7 @@ import RequireAuth from "../../../../plugins/requireAuth";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void,
+    done: (err?: Error) => void
 ) {
     const paramsSchema = Type.Object({
         id: SessionIdSchema,
@@ -48,10 +48,10 @@ export default function (
 
             return res.send(
                 objectFilter(session, (key) =>
-                    ["id", "createdAt", "exp", "sameIp", "userAgent"].includes(key),
-                ),
+                    ["id", "createdAt", "exp", "sameIp", "userAgent"].includes(key)
+                )
             );
-        },
+        }
     );
     done();
 }

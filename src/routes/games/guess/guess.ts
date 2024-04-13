@@ -12,14 +12,14 @@ import { GameIdSchema } from "../../../lib/schemas";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void,
+    done: (err?: Error) => void
 ) {
     const schema = Type.Object(
         {
             option: Type.Integer({ minimum: 0, maximum: 5 }),
             tokens: Type.Integer({ minimum: 10 }),
         },
-        { additionalProperties: false },
+        { additionalProperties: false }
     );
 
     const paramsSchema = Type.Object({
@@ -38,7 +38,7 @@ export default function (
                 Body: Static<typeof schema>;
                 Params: Static<typeof paramsSchema>;
             }>,
-            res,
+            res
         ) => {
             const { option, tokens } = req.body;
             const { id } = req.params;
@@ -77,7 +77,7 @@ export default function (
                     $push: {
                         guesses: {
                             user: objectFilter(req.user, (key: string) =>
-                                ["id", "name", "sex", "role"].includes(key),
+                                ["id", "name", "sex", "role"].includes(key)
                             ) as publicUserType,
                             option,
                             tokens,
@@ -88,17 +88,14 @@ export default function (
                         tokens,
                         [`options.${option}.tokens`]: tokens,
                     },
-                    $set: game.options.reduce(
-                        (prev, curr, index) => {
-                            prev[`options.${index}.odds`] =
-                                (game.tokens + tokens) /
-                                (curr.tokens + (option === index ? tokens : 0));
-                            return prev;
-                        },
-                        {} as { [key: string]: number },
-                    ),
+                    $set: game.options.reduce((prev, curr, index) => {
+                        prev[`options.${index}.odds`] =
+                            (game.tokens + tokens) /
+                            (curr.tokens + (option === index ? tokens : 0));
+                        return prev;
+                    }, {} as { [key: string]: number }),
                     $currentDate: { lastModified: true },
-                },
+                }
             );
 
             await usersCl.updateOne(
@@ -107,11 +104,11 @@ export default function (
                     $inc: {
                         "games.tokens": -tokens,
                     },
-                },
+                }
             );
 
             return res.code(204).send();
-        },
+        }
     );
     done();
 }

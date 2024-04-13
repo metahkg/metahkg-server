@@ -25,7 +25,7 @@ import User from "../../../models/user";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void,
+    done: (e?: Error) => void
 ) => {
     const paramsSchema = Type.Object({
         id: Type.RegEx(regex.integer),
@@ -46,12 +46,12 @@ export default (
             const votes = (
                 (await usersCl.findOne(
                     { id: user.id },
-                    { projection: { [`votes.${threadId}`]: 1, _id: 0 } },
+                    { projection: { [`votes.${threadId}`]: 1, _id: 0 } }
                 )) as User
             )?.votes;
 
             res.send(votes?.[threadId] || []);
-        },
+        }
     );
     done();
 };

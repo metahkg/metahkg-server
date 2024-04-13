@@ -19,7 +19,7 @@ import { FastifyRequest, FastifyReply } from "fastify";
 
 export default async function RequireSameUserOrAdmin(
     req: FastifyRequest<{ Params: { id: string } }>,
-    res: FastifyReply,
+    res: FastifyReply
 ) {
     const userId = Number(req.params.id);
     const user = req.user;

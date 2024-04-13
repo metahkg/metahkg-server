@@ -4,7 +4,7 @@ import { config } from "../lib/config";
 
 export default async function RequireCAPTCHA(
     req: FastifyRequest<{ Body: { captchaToken: string } }>,
-    res: FastifyReply,
+    res: FastifyReply
 ) {
     if (config.DISABLE_CAPTCHA) return;
     const { captchaToken } = req.body;

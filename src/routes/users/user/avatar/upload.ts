@@ -31,7 +31,7 @@ dotenv.config();
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: () => void,
+    done: () => void
 ) {
     const maxSize = 1048576;
     const upload = multer({ dest: "uploads/", limits: { fileSize: maxSize } });
@@ -46,7 +46,7 @@ export default function (
         const r = width / 2;
         const circleShape = Buffer.from(
             //svg circle
-            `<svg><circle cx="${r}" cy="${r}" r="${r}" /></svg>`,
+            `<svg><circle cx="${r}" cy="${r}" r="${r}" /></svg>`
         );
         //use sharp to resize
         fs.mkdirSync(`tmp/avatars`, { recursive: true });
@@ -134,7 +134,7 @@ export default function (
                         .pipe(
                             bucket.openUploadStream(`${user.id}.png`, {
                                 metadata: { id: user.id },
-                            }),
+                            })
                         );
                     uploadStream.on("error", reject);
                     uploadStream.on("close", resolve);
@@ -147,7 +147,7 @@ export default function (
                 fastify.log.error(err);
                 res.code(500).send({ statusCode: 500, error: "Internal server error" });
             }
-        },
+        }
     );
     done();
 }

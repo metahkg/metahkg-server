@@ -34,7 +34,7 @@ dotenv.config();
 export async function sendEmail(
     to: string,
     subject: string,
-    body: string,
+    body: string
 ): Promise<boolean> {
     if (config.MAIL_PROVIDER === "mailgun") {
         const mailgun = new Mailgun(formData);
@@ -94,9 +94,9 @@ export async function sendVerifyMsg(email: string, code: string) {
         /*html*/ `<h1>Verify your email</h1>
     <p>Click here to verify your email address:</p>
     <a href="https://${config.DOMAIN}/users/verify?code=${encodeURIComponent(
-        code,
-    )}&email=${encodeURIComponent(email)}">Verify</a>
-    <p>Please ignore this email if you did not register at ${config.DOMAIN}.</p>`,
+            code
+        )}&email=${encodeURIComponent(email)}">Verify</a>
+    <p>Please ignore this email if you did not register at ${config.DOMAIN}.</p>`
     );
 }
 
@@ -107,8 +107,8 @@ export async function sendResetMsg(email: string, code: string) {
         /*html*/ `<h1>Reset Password</h1>
     <p>Click here to reset your password:</p>
     <a href="https://${config.DOMAIN}/users/reset?code=${encodeURIComponent(
-        code,
-    )}&email=${encodeURIComponent(email)}">Reset</a>
-    <p>Please ignore this email if you did not request to reset your password.</p>`,
+            code
+        )}&email=${encodeURIComponent(email)}">Reset</a>
+    <p>Please ignore this email if you did not request to reset your password.</p>`
     );
 }

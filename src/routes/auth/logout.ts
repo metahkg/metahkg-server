@@ -23,7 +23,7 @@ import RequireAuth from "../../plugins/requireAuth";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void,
+    done: (err?: Error) => void
 ) {
     fastify.post("/logout", { preParsing: [RequireAuth] }, async (req, res) => {
         const user = req.user;

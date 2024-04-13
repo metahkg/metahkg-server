@@ -6,7 +6,7 @@ import answer from "./answer";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void,
+    done: (err?: Error) => void
 ) {
     fastify.register(create);
     fastify.register(guess);

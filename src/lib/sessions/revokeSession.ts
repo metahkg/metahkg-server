@@ -20,7 +20,7 @@ import { sha256 } from "../sha256";
 
 export async function revokeSessionByToken(
     userId: number,
-    token: string,
+    token: string
 ): Promise<null | true> {
     if (
         !(
@@ -32,7 +32,7 @@ export async function revokeSessionByToken(
                             token: sha256(token),
                         },
                     },
-                },
+                }
             )
         ).matchedCount
     ) {
@@ -43,7 +43,7 @@ export async function revokeSessionByToken(
 
 export async function revokeSessionById(
     userId: number,
-    sessionId: string,
+    sessionId: string
 ): Promise<null | true> {
     if (
         !(
@@ -55,7 +55,7 @@ export async function revokeSessionById(
                             id: sessionId,
                         },
                     },
-                },
+                }
             )
         ).matchedCount
     ) {
