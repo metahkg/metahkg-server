@@ -41,7 +41,7 @@
     "is-sn-integer": "^0.3.0",
     "isomorphic-dompurify": "^0.26.0",
     "mailgun.js": "^8.1.0",
-    "mongodb": "^4.13.0",
+    "mongodb": "^6.0.0",
     "node-html-parser": "^6.1.4",
     "nodemailer": "^6.9.0",
     "rimraf": "^4.1.0",
