@@ -74,10 +74,6 @@ export interface Votes {
     [id: number]: { cid: number; vote: "U" | "D" }[];
 }
 
-export interface UserGames {
-    tokens?: number;
-}
-
 export default interface User {
     _id?: ObjectId;
     id: number;
@@ -96,5 +92,4 @@ export default interface User {
     mute?: { admin: AdminUser; reason: string; exp?: Date };
     ban?: { admin: AdminUser; reason: string; exp?: Date };
     votes?: Votes;
-    games?: UserGames;
 }

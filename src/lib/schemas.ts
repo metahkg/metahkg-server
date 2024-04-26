@@ -28,7 +28,7 @@ export const ReasonSchemaAdmin = Type.String({
 
 export const CaptchaTokenSchema = Type.String({ minLength: 1, maxLength: 5000 });
 
-export const GameIdSchema = Type.String({ minLength: 60, maxLength: 60 });
+export const PollIdSchema = Type.String({ minLength: 60, maxLength: 60 });
 
 export const TitleSchema = Type.String({ minLength: 1, maxLength: 500 });
 export const HTMLCommentSchema = Type.String({ minLength: 1, maxLength: 50000 });
@@ -38,8 +38,8 @@ export const CommentContentSchema = Type.Union([
         html: HTMLCommentSchema,
     }),
     Type.Object({
-        type: Type.Literal("game"),
-        gameId: GameIdSchema,
+        type: Type.Literal("poll"),
+        pollId: PollIdSchema,
     }),
 ]);
 export const VoteSchema = Type.Union([Type.Literal("U"), Type.Literal("D")]);

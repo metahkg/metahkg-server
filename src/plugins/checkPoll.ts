@@ -1,8 +1,8 @@
 import { FastifyReply, FastifyRequest } from "fastify";
-import { gamesCl } from "../lib/common";
-import { Game } from "../models/games";
+import { pollsCl } from "../lib/common";
+import { Poll } from "../models/polls";
 
-export async function checkGame(
+export async function checkPoll(
     req: FastifyRequest<{
         Params: { id: string };
         Body: { option?: number; answer: number | number[] };
@@ -11,24 +11,23 @@ export async function checkGame(
 ) {
     const { id } = req.params;
 
-    const game = (await gamesCl.findOne({
+    const poll = (await pollsCl.findOne({
         id,
-        type: "guess",
-    })) as Game;
+    })) as Poll;
 
-    if (!game) {
-        return res.code(404).send({ statusCode: 404, error: "Game not found" });
+    if (!poll) {
+        return res.code(404).send({ statusCode: 404, error: "Poll not found" });
     }
 
     const { option, answer } = req.body || {};
 
-    if (option && !game.options?.[option]) {
+    if (option && !poll.options?.[option]) {
         return res.code(404).send({ statusCode: 404, error: "Option not found" });
     }
 
     if (answer) {
         const answer = [req.body.answer].flat();
-        if (!answer.every((a) => game.options[a])) {
+        if (!answer.every((a) => poll.options[a])) {
             return res.code(404).send({ statusCode: 404, error: "Option not found" });
         }
     }

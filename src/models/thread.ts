@@ -61,8 +61,8 @@ export type CommentContentType =
           html: string;
       }
     | {
-          type: "game";
-          gameId: string;
+          type: "poll";
+          pollId: string;
       };
 
 export type Comment =

@@ -1,9 +1,9 @@
 import { Static, Type } from "@sinclair/typebox";
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
-import { GameIdSchema } from "../../../lib/schemas";
-import { checkGame } from "../../../plugins/checkGame";
-import { gamesCl } from "../../../lib/common";
-import { Game } from "../../../models/games";
+import { PollIdSchema } from "../../../lib/schemas";
+import { checkPoll } from "../../../plugins/checkPoll";
+import { pollsCl } from "../../../lib/common";
+import { Poll } from "../../../models/polls";
 
 export default function (
     fastify: FastifyInstance,
@@ -11,17 +11,17 @@ export default function (
     done: (err?: Error) => void
 ) {
     const paramsSchema = Type.Object({
-        id: GameIdSchema,
+        id: PollIdSchema,
     });
     fastify.get(
-        "/guess/:id",
-        { schema: { params: paramsSchema }, preParsing: [checkGame] },
+        "/polls/:id",
+        { schema: { params: paramsSchema }, preParsing: [checkPoll] },
         async (req: FastifyRequest<{ Params: Static<typeof paramsSchema> }>, res) => {
             const { id } = req.params;
-            const game = (await gamesCl.findOne(
+            const poll = (await pollsCl.findOne(
                 {
                     id,
-                    guesses: {
+                    votes: {
                         $elemMatch: {
                             "user.id": req.user.id,
                         },
@@ -29,9 +29,9 @@ export default function (
                 },
                 {
                     projection: {
-                        guesses: {
+                        votes: {
                             $filter: {
-                                input: "$guesses",
+                                input: "$votes",
                                 cond: {
                                     $eq: ["$$this.user.id", req.user.id],
                                 },
@@ -39,11 +39,15 @@ export default function (
                         },
                     },
                 }
-            )) as Game | null;
+            )) as Poll | null;
 
-            const guesses = game?.guesses;
+            const vote = poll?.votes?.[0];
 
-            return res.send(guesses || []);
+            if (!vote) {
+                return res.code(404).send({ statusCode: 404, error: "Vote not found." });
+            }
+
+            return res.send({ vote });
         }
     );
     done();

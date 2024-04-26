@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
+import info from "./info";
 import create from "./create";
-import guess from "./guess";
-import answer from "./answer";
+import vote from "./vote";
 
 export default function (
     fastify: FastifyInstance,
@@ -9,7 +9,7 @@ export default function (
     done: (err?: Error) => void
 ) {
     fastify.register(create);
-    fastify.register(guess);
-    fastify.register(answer);
+    fastify.register(info);
+    fastify.register(vote);
     done();
 }

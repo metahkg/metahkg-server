@@ -94,8 +94,8 @@ tags:
     description: admin operations
   - name: server
     description: server operations
-  - name: games
-    description: game operations
+  - name: polls
+    description: polls operations
 
 paths:
   /threads:
@@ -1452,34 +1452,40 @@ paths:
           $ref: "#/components/responses/InternalServerError"
         "502":
           $ref: "#/components/responses/BadGateway"
-  /me/games/guess/{id}:
+  /me/votes/polls/{id}:
     get:
       tags:
-        - games
+        - polls
         - me
-      operationId: meGamesGuess
+      operationId: mePollsVote
       security:
         - bearerAuth: []
-      summary: Get user's bets
-      description: "Get user's bets in guessing game.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.11.9-1-dev/src/routes/me/games/guess.ts)"
+      summary: Get user's vote
+      description: "Get user's vote in a poll.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.11.9-1-dev/src/routes/me/votes/polls.ts)"
       parameters:
-        - $ref: "#/components/parameters/GameId"
+        - $ref: "#/components/parameters/PollId"
       responses:
         "200":
           description: Success
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/UserGuess"
+                type: object
+                required:
+                  - vote
+                additionalProperties: false
+                properties:
+                  vote:
+                    type: integer
+                    minimum: 0
+                    maximum: 5
         "400":
           $ref: "#/components/responses/Invalid"
         "403":
           $ref: "#/components/responses/Forbidden"
         "404":
-          description: Game not found
+          description: Vote not found
           content:
             application/json:
               schema:
@@ -1760,15 +1766,6 @@ paths:
                         type: string
                         format: date-time
                         description: Date and time when user was created
-                      games:
-                        type: object
-                        additionalProperties: false
-                        required:
-                          - tokens
-                        properties:
-                          tokens:
-                            type: number
-                            minimum: 0
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -3137,84 +3134,27 @@ paths:
           $ref: "#/components/responses/InternalServerError"
         "502":
           $ref: "#/components/responses/BadGateway"
-  /games:
+  /polls/{id}:
     get:
       tags:
-        - games
-      summary: Get game list
-      description: "Get game list.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.11.9-1-dev/src/routes/games/games.ts)"
-      operationId: games
+        - polls
+      operationId: pollsInfo
+      summary: Get poll info
+      description: "Get poll info.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.11.9-1-dev/src/routes/polls/info.ts)"
       parameters:
-        - in: query
-          name: page
-          schema:
-            type: integer
-            minimum: 1
-          description: "Page number for pagination (optional, default: 1)"
-        - in: query
-          name: sort
-          schema:
-            type: string
-            enum:
-              - latest
-              - oldest
-              - popular
-          description: "Sort order for the games (optional, default: latest)"
-        - in: query
-          name: limit
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 50
-          description: "Maximum number of games per page (optional, default: 25)"
-        - in: query
-          name: type
-          schema:
-            type: string
-            enum:
-              - guess
-          description: type of game
+        - $ref: "#/components/parameters/PollId"
       responses:
         "200":
           description: Success
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Game"
-        "400":
-          $ref: "#/components/responses/Invalid"
-        "403":
-          $ref: "#/components/responses/Forbidden"
-        "429":
-          $ref: "#/components/responses/TooManyRequests"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
-        "502":
-          $ref: "#/components/responses/BadGateway"
-  /games/{id}:
-    get:
-      tags:
-        - games
-      operationId: game
-      summary: Get game info
-      description: "Get guess game info.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.11.9-1-dev/src/routes/games/info.ts)"
-      parameters:
-        - $ref: "#/components/parameters/GameId"
-      responses:
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Game"
+                $ref: "#/components/schemas/Poll"
         "400":
           $ref: "#/components/responses/Invalid"
         "404":
-          description: Game / Option not found
+          description: Poll / Option not found
           content:
             application/json:
               schema:
@@ -3225,16 +3165,16 @@ paths:
           $ref: "#/components/responses/InternalServerError"
         "502":
           $ref: "#/components/responses/BadGateway"
-  /games/guess:
+  /polls:
     post:
       tags:
-        - games
-      operationId: gamesGuessCreate
+        - polls
+      operationId: pollsCreate
       security:
         - bearerAuth: []
-      summary: Create a guess game
-      description: "Create a guess game.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.11.9-1-dev/src/routes/games/guess/create.ts)"
+      summary: Create a poll
+      description: "Create a poll.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.11.9-1-dev/src/routes/polls/create.ts)"
       requestBody:
         required: true
         content:
@@ -3247,7 +3187,7 @@ paths:
                 - options
               properties:
                 title:
-                  $ref: "#/components/schemas/GuessGame/properties/title"
+                  $ref: "#/components/schemas/Poll/properties/title"
                 options:
                   type: array
                   items:
@@ -3256,6 +3196,9 @@ paths:
                     minLength: 1
                   maxItems: 6
                   minItems: 2
+                endsAt:
+                  type: string
+                  format: date-time
       responses:
         "200":
           description: Success
@@ -3268,7 +3211,7 @@ paths:
                   - id
                 properties:
                   id:
-                    $ref: "#/components/schemas/GameId"
+                    $ref: "#/components/schemas/PollId"
         "400":
           $ref: "#/components/responses/Invalid"
         "401":
@@ -3279,18 +3222,18 @@ paths:
           $ref: "#/components/responses/InternalServerError"
         "502":
           $ref: "#/components/responses/BadGateway"
-  /games/guess/{id}/guess:
+  /polls/{id}/vote:
     post:
       tags:
-        - games
-      operationId: gamesGuessGuess
+        - polls
+      operationId: pollsVote
       security:
         - bearerAuth: []
-      summary: Make a guess (bet)
-      description: "Make a guess (bet).
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.11.9-1-dev/src/routes/games/guess/guess.ts)"
+      summary: Make a vote
+      description: "Make a vote.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.11.9-1-dev/src/routes/polls/vote.ts)"
       parameters:
-        - $ref: "#/components/parameters/GameId"
+        - $ref: "#/components/parameters/PollId"
       requestBody:
         required: true
         content:
@@ -3300,89 +3243,25 @@ paths:
               additionalProperties: false
               required:
                 - option
-                - tokens
               properties:
                 option:
                   type: integer
                   minimum: 0
                   maximum: 5
                   description: index of option
-                tokens:
-                  type: integer
-                  minimum: 10
-                  maximum: 100
-                  description: number of tokens to bet
       responses:
         "204":
           description: Success
         "400":
           $ref: "#/components/responses/Invalid"
         "404":
-          description: Game / Option not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-        "409":
-          description: insufficient tokens / guessing in own game
+          description: Poll / Option not found
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
         "410":
-          description: Game ended
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-        "429":
-          $ref: "#/components/responses/TooManyRequests"
-        "500":
-          $ref: "#/components/responses/InternalServerError"
-        "502":
-          $ref: "#/components/responses/BadGateway"
-  /games/guess/{id}/answer:
-    post:
-      tags:
-        - games
-      operationId: gamesGuessAnswer
-      security:
-        - bearerAuth: []
-      summary: Release answer
-      description: "Release answer for the guess game. For host only.
-        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.11.9-1-dev/src/routes/games/guess/answer.ts)"
-      parameters:
-        - $ref: "#/components/parameters/GameId"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              additionalProperties: false
-              required:
-                - answer
-              properties:
-                answer:
-                  type: array
-                  items:
-                    type: integer
-                    description: index of option
-                    minimum: 0
-                    maximum: 5
-      responses:
-        "204":
-          description: Success
-        "400":
-          $ref: "#/components/responses/Invalid"
-        "404":
-          description: Game / Option not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
-        "410":
-          description: Game ended
+          description: Poll ended
           content:
             application/json:
               schema:
@@ -3452,13 +3331,13 @@ components:
         minimum: 1
         maximum: 50
         default: 25
-    GameId:
+    PollId:
       name: id
       in: path
       required: true
-      description: game id
+      description: poll id
       schema:
-        $ref: "#/components/schemas/GameId"
+        $ref: "#/components/schemas/PollId"
   responses:
     NoContent:
       description: Success
@@ -3985,26 +3864,21 @@ components:
           maxLength: 50000
           description: comment in stringified html
           example: "<p>This is a comment</p>"
-    GameComment:
+    PollComment:
       type: object
       additionalProperties: false
       required:
-        - type
-        - gameId
+        - pollId
       properties:
-        type:
-          type: string
-          enum:
-            - game
-        gameId:
-          $ref: "#/components/schemas/GameId"
+        pollId:
+          $ref: "#/components/schemas/PollId"
     CommentContent:
       type: object
       description: comment content
       additionalProperties: false
       oneOf:
         - $ref: "#/components/schemas/HTMLComment"
-        - $ref: "#/components/schemas/GameComment"
+        - $ref: "#/components/schemas/PollComment"
     Comment:
       type: object
       additionalProperties: false
@@ -4357,53 +4231,20 @@ components:
           type: string
           description: the branding to replace Metahkg
           example: Metahkg
-    Game:
-      type: object
-      additionalProperties: false
-      allOf:
-        - type: object
-          additionalProperties: false
-          required:
-            - id
-            - host
-            - createdAt
-            - lastModified
-            - type
-          properties:
-            id:
-              $ref: "#/components/schemas/GameId"
-            host:
-              $ref: "#/components/schemas/User"
-            createdAt:
-              type: string
-              format: date-time
-            lastModified:
-              type: string
-              format: date-time
-            endedAt:
-              type: string
-              format: date-time
-            type:
-              type: string
-              enum:
-                - guess
-        - oneOf:
-            - $ref: "#/components/schemas/GuessGame"
-    GuessGame:
+    Poll:
       type: object
       additionalProperties: false
       required:
         - id
-        - host
+        - user
         - createdAt
         - lastModified
-        - type
         - title
         - options
       properties:
         id:
-          $ref: "#/components/schemas/GameId"
-        host:
+          $ref: "#/components/schemas/PollId"
+        user:
           $ref: "#/components/schemas/User"
         createdAt:
           type: string
@@ -4411,69 +4252,45 @@ components:
         lastModified:
           type: string
           format: date-time
-        endedAt:
+        endsAt:
           type: string
           format: date-time
-        type:
-          type: string
-          enum:
-            - guess
         title:
           type: string
           maxLength: 1000
         options:
           type: array
           items:
-            $ref: "#/components/schemas/GuessGameOption"
+            $ref: "#/components/schemas/PollOption"
           minItems: 2
           maxItems: 6
-        tokens:
-          description: total number of tokens (pool)
-          type: integer
-        answer:
-          type: array
-          items:
-            type: integer
-            maximum: 5
-            minimum: 0
-          maximum: 5
-          minItems: 1
-    GameId:
+    PollId:
       type: string
       minLength: 60
       maxLength: 60
-    GuessGameOption:
+    PollOption:
       type: object
       additionalProperties: false
       required:
         - text
+        - votes
       properties:
         text:
           type: string
           maxLength: 1000
-        odds:
-          description: odds of the option
-          type: number
-        tokens:
-          description: number of tokens betting the option
+        votes:
           type: integer
-        date:
-          type: string
-          format: date-time
-    UserGuess:
+          minimum: 0
+    UserVote:
       type: object
       additionalProperties: false
       required:
         - user
         - option
-        - tokens
         - date
       properties:
         user:
           $ref: "#/components/schemas/User"
-        tokens:
-          type: integer
-          minimum: 10
         option:
           type: integer
           minimum: 0

@@ -17,6 +17,7 @@
 
 import { FastifyInstance, FastifyPluginOptions } from "fastify";
 import thread from "./thread";
+import polls from "./polls";
 
 export default function (
     fastify: FastifyInstance,
@@ -24,5 +25,6 @@ export default function (
     done: (e?: Error) => void
 ) {
     fastify.register(thread);
+    fastify.register(polls);
     done();
 }

@@ -22,7 +22,6 @@ import starred from "./starred";
 import notifications from "./notifications";
 import following from "./following";
 import RequireAuth from "../../plugins/requireAuth";
-import games from "./games";
 
 export default function (
     fastify: FastifyInstance,
@@ -31,7 +30,6 @@ export default function (
 ) {
     fastify.addHook("preParsing", RequireAuth);
     fastify.register(votes, { prefix: "/votes" });
-    fastify.register(games, { prefix: "/games" });
     fastify.register(blocked);
     fastify.register(starred);
     fastify.register(following);

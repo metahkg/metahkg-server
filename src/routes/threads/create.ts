@@ -15,7 +15,7 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { categoryCl, gamesCl, linksCl, threadCl, usersCl } from "../../lib/common";
+import { categoryCl, pollsCl, linksCl, threadCl, usersCl } from "../../lib/common";
 import findImages from "../../lib/findImages";
 import { Static, Type } from "@sinclair/typebox";
 import { generate } from "generate-password";
@@ -40,7 +40,7 @@ import { RateLimitOptions } from "@fastify/rate-limit";
 import RequireCAPTCHA from "../../plugins/requireCaptcha";
 import { config } from "../../lib/config";
 import findLinks from "../../lib/findLinks";
-import { Game } from "../../models/games";
+import { Poll } from "../../models/polls";
 
 export default (
     fastify: FastifyInstance,
@@ -89,14 +89,14 @@ export default (
             if (comment.type === "html") {
                 comment.html = sanitize(comment.html);
                 text = htmlToText(comment.html, { wordwrap: false });
-            } else if (comment.type === "game") {
-                const game = (await gamesCl.findOne({ id: comment.gameId })) as Game;
-                if (!game) {
+            } else if (comment.type === "poll") {
+                const poll = (await pollsCl.findOne({ id: comment.pollId })) as Poll;
+                if (!poll) {
                     return res
                         .code(404)
-                        .send({ statusCode: 404, error: "Game not found" });
+                        .send({ statusCode: 404, error: "Poll not found" });
                 }
-                text = `${game.type} game`;
+                text = `Poll: ${poll.title}`;
             }
 
             const title = req.body.title.trim();
