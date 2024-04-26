@@ -3874,7 +3874,7 @@ components:
         type:
           type: string
           enum:
-            - html
+            - poll
         pollId:
           $ref: "#/components/schemas/PollId"
     CommentContent:
