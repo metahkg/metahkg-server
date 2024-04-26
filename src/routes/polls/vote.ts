@@ -45,7 +45,7 @@ export default function (
                 id,
             })) as Poll;
 
-            if (poll.endsAt.getTime() < new Date().getTime()) {
+            if (poll.endsAt && new Date(poll.endsAt).getTime() < new Date().getTime()) {
                 return res.code(410).send({
                     statusCode: 410,
                     error: "Poll ended",
