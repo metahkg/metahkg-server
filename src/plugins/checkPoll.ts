@@ -7,7 +7,7 @@ export async function checkPoll(
         Params: { id: string };
         Body: { option?: number; answer: number | number[] };
     }>,
-    res: FastifyReply
+    res: FastifyReply,
 ) {
     const { id } = req.params;
 

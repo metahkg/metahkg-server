@@ -26,7 +26,7 @@ import RequireAuth from "../../plugins/requireAuth";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) {
     fastify.addHook("preParsing", RequireAuth);
     fastify.register(votes, { prefix: "/votes" });

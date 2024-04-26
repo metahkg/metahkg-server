@@ -10,7 +10,7 @@ import { publicUserType } from "../../models/thread";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     const schema = Type.Object(
         {
@@ -21,7 +21,7 @@ export default function (
             }),
             endsAt: Type.Optional(Type.String({ format: "date-time" })),
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
 
     fastify.post(
@@ -39,7 +39,7 @@ export default function (
             await pollsCl.insertOne(<Poll>{
                 id,
                 user: objectFilter(user, (key: string) =>
-                    ["id", "name", "sex", "role"].includes(key)
+                    ["id", "name", "sex", "role"].includes(key),
                 ) as publicUserType,
                 title,
                 options: options.map((option) => ({ title: option, votes: 0 })),
@@ -49,7 +49,7 @@ export default function (
             });
 
             return res.send({ id });
-        }
+        },
     );
     done();
 }

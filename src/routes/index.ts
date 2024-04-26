@@ -27,7 +27,7 @@ import polls from "./polls";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) => {
     fastify.register(auth, { prefix: "/auth" });
     fastify.register(users, { prefix: "/users" });

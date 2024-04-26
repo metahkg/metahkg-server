@@ -24,7 +24,7 @@ import regex from "../../../lib/regex";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) {
     const paramsSchema = Type.Object({ id: Type.RegEx(regex.integer) });
 
@@ -39,7 +39,7 @@ export default function (
             req: FastifyRequest<{
                 Params: Static<typeof paramsSchema>;
             }>,
-            res
+            res,
         ) => {
             const id = Number(req.params.id);
 
@@ -54,7 +54,7 @@ export default function (
                         role: 1,
                         _id: 0,
                     },
-                }
+                },
             )) as User;
 
             if (!requestedUser)
@@ -65,7 +65,7 @@ export default function (
             });
 
             res.send({ ...requestedUser, count });
-        }
+        },
     );
     done();
 }
