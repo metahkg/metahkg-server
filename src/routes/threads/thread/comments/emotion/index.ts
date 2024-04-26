@@ -23,7 +23,7 @@ import users from "./users";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     fastify.register(deleteEmotion);
     fastify.register(set);

@@ -28,7 +28,7 @@ import { objectFilter } from "../../../../lib/objectFilter";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     const paramsSchema = Type.Object({
         id: Type.RegEx(regex.integer),
@@ -38,7 +38,7 @@ export default function (
         {
             reason: ReasonSchemaAdmin,
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
 
     fastify.delete(
@@ -49,17 +49,17 @@ export default function (
                 Params: Static<typeof paramsSchema>;
                 Body: Static<typeof schema>;
             }>,
-            res
+            res,
         ) => {
             const id = Number(req.params.id);
             const { reason } = req.body;
             const admin = objectFilter(req.user, (key: string) =>
-                ["id", "name", "sex", "role"].includes(key)
+                ["id", "name", "sex", "role"].includes(key),
             );
 
             const thread = (await threadCl.findOne(
                 { id },
-                { projection: { _id: 0 } }
+                { projection: { _id: 0 } },
             )) as Thread;
             if (!thread)
                 return res.code(404).send({ statusCode: 404, error: "Thread not found" });
@@ -69,7 +69,7 @@ export default function (
             await threadCl.replaceOne({ id }, { id, removed: true });
 
             return res.code(204).send();
-        }
+        },
     );
     done();
 }

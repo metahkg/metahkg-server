@@ -27,7 +27,7 @@ export default async function checkBanned(req: FastifyRequest, res: FastifyReply
     const ban = (
         (await usersCl.findOne(
             { id: user.id, ban: { $exists: true } },
-            { projection: { _id: 0, ban: 1 } }
+            { projection: { _id: 0, ban: 1 } },
         )) as User
     )?.ban;
 

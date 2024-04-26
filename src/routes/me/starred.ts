@@ -24,7 +24,7 @@ import User from "../../models/user";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     fastify.get(
         "/starred",
@@ -39,12 +39,12 @@ export default function (
             const starred = (
                 (await usersCl.findOne(
                     { id: user.id },
-                    { projection: { starred: 1, _id: 0 } }
+                    { projection: { starred: 1, _id: 0 } },
                 )) as User
             )?.starred;
 
             return res.send(starred || []);
-        }
+        },
     );
     done();
 }

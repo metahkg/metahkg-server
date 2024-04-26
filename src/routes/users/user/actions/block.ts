@@ -26,7 +26,7 @@ import User from "../../../../models/user";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) => {
     const paramsSchema = Type.Object({
         id: Type.RegEx(regex.integer),
@@ -36,7 +36,7 @@ export default (
         {
             reason: ReasonSchemaUser,
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
 
     fastify.post(
@@ -52,7 +52,7 @@ export default (
                 Params: Static<typeof paramsSchema>;
                 Body: Static<typeof schema>;
             }>,
-            res
+            res,
         ) => {
             const user = req.user;
             if (!user)
@@ -79,7 +79,7 @@ export default (
                             $push: {
                                 blocked: { id: userId, date: new Date(), reason },
                             },
-                        }
+                        },
                     )
                 ).matchedCount
             )
@@ -88,7 +88,7 @@ export default (
                     .send({ statusCode: 409, error: "User already blocked" });
 
             return res.code(204).send();
-        }
+        },
     );
     done();
 };

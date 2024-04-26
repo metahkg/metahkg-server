@@ -23,7 +23,7 @@ export async function unSubscribeById(userId: number, sessionId: string) {
         !(
             await usersCl.updateOne(
                 { id: userId, sessions: { $elemMatch: { id: sessionId } } },
-                { $unset: { "sessions.$.subscription": 1 } }
+                { $unset: { "sessions.$.subscription": 1 } },
             )
         ).matchedCount
     ) {
@@ -39,7 +39,7 @@ export async function unSubscribeByToken(userId: number, token: string) {
         !(
             await usersCl.updateOne(
                 { id: userId, sessions: { $elemMatch: { token: hashedToken } } },
-                { $unset: { "sessions.$.subscription": 1 } }
+                { $unset: { "sessions.$.subscription": 1 } },
             )
         ).matchedCount
     ) {

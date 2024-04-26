@@ -29,7 +29,7 @@ import { config } from "../../lib/config";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) => {
     const schema = Type.Object(
         {
@@ -38,7 +38,7 @@ export default (
                 ? Type.Optional(CaptchaTokenSchema)
                 : CaptchaTokenSchema,
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
 
     fastify.post(
@@ -52,7 +52,7 @@ export default (
                     // one day
                     timeWindow: 1000 * 60 * 60 * 24,
                     keyGenerator: (
-                        req: FastifyRequest<{ Body: Static<typeof schema> }>
+                        req: FastifyRequest<{ Body: Static<typeof schema> }>,
                     ) => {
                         return sha256(req.body?.email);
                     },
@@ -81,7 +81,7 @@ export default (
             }
 
             res.code(204).send();
-        }
+        },
     );
     done();
 };

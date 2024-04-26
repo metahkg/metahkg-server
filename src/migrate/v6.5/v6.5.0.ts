@@ -35,14 +35,12 @@ async function migrate() {
     const votesCl = db.collection("votes");
 
     await Promise.all(
-        (
-            await votesCl.find({}).project({ _id: 0 }).toArray()
-        ).map(async (v) => {
+        (await votesCl.find({}).project({ _id: 0 }).toArray()).map(async (v) => {
             const id = v.id;
             delete v.id;
             await usersCl.updateOne({ id }, { $set: { votes: v } });
             await votesCl.deleteOne({ id });
-        })
+        }),
     );
 
     const avatarBucket = new GridFSBucket(db, { bucketName: "avatar" });
@@ -55,13 +53,13 @@ async function migrate() {
                 const stream = createReadStream(`./images/avatars/${file}`).pipe(
                     avatarBucket.openUploadStream(file, {
                         metadata: { id: Number(file[0]) },
-                    })
+                    }),
                 );
                 stream.on("finish", resolve);
                 stream.on("error", reject);
             });
             rmSync(`./images/avatars/${file}`);
-        })
+        }),
     );
 }
 

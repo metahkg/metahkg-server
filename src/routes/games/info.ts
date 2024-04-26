@@ -8,7 +8,7 @@ import { Game } from "../../models/games";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     const paramsSchema = Type.Object({
         id: GameIdSchema,
@@ -33,7 +33,7 @@ export default function (
                         tokens: 1,
                         answer: 1,
                     },
-                }
+                },
             )) as Game;
 
             if (!game) {
@@ -41,7 +41,7 @@ export default function (
             }
 
             return res.send(game);
-        }
+        },
     );
     done();
 }

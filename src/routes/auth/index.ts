@@ -29,7 +29,7 @@ import session from "./session";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) => {
     fastify.register(sessions, { prefix: "/sessions" });
     fastify.register(session);
