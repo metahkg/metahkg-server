@@ -11,13 +11,13 @@ import { PollIdSchema } from "../../lib/schemas";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     const schema = Type.Object(
         {
             option: Type.Integer({ minimum: 0, maximum: 5 }),
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
 
     const paramsSchema = Type.Object({
@@ -36,7 +36,7 @@ export default function (
                 Body: Static<typeof schema>;
                 Params: Static<typeof paramsSchema>;
             }>,
-            res
+            res,
         ) => {
             const { option } = req.body;
             const { id } = req.params;
@@ -65,7 +65,7 @@ export default function (
                     $push: {
                         votes: {
                             user: objectFilter(req.user, (key: string) =>
-                                ["id", "name", "sex", "role"].includes(key)
+                                ["id", "name", "sex", "role"].includes(key),
                             ) as publicUserType,
                             option,
                             date: new Date(),
@@ -75,11 +75,11 @@ export default function (
                         [`options.${option}.votes`]: 1,
                     },
                     $currentDate: { lastModified: true },
-                }
+                },
             );
 
             return res.code(204).send();
-        }
+        },
     );
     done();
 }
