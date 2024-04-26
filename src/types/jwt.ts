@@ -29,7 +29,7 @@ export const jwtTokenDataSchema = Type.Object(
         sex: SexSchema,
         role: UserRoleSchema,
     },
-    { additionalProperties: false }
+    { additionalProperties: false },
 );
 
 export const jwtTokenSchema = Type.Intersect(
@@ -46,12 +46,12 @@ export const jwtTokenSchema = Type.Intersect(
                 /** expiration date in seconds */
                 exp: Type.Integer({ minimum: 0 }),
             },
-            { additionalProperties: false }
+            { additionalProperties: false },
         ),
     ],
     {
         additionalProperties: false,
-    }
+    },
 );
 
 export type jwtTokenType = Static<typeof jwtTokenSchema> | null;

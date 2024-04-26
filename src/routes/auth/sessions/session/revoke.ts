@@ -26,7 +26,7 @@ import RequireAuth from "../../../../plugins/requireAuth";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     const paramsSchema = Type.Object({
         id: SessionIdSchema,
@@ -42,7 +42,7 @@ export default function (
 
             const currentSession = await getSessionByToken(
                 user.id,
-                req.headers.authorization?.slice(7)
+                req.headers.authorization?.slice(7),
             );
             const sessionToRevoke = await getSessionById(user.id, sessionId);
 
@@ -62,7 +62,7 @@ export default function (
 
             await revokeSessionById(user.id, sessionId);
             return res.code(204).send();
-        }
+        },
     );
     done();
 }

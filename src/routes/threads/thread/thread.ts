@@ -24,7 +24,7 @@ import regex from "../../../lib/regex";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) => {
     const querySchema = Type.Object(
         {
@@ -34,7 +34,7 @@ export default (
             sort: Type.Optional(Type.RegEx(/^(score|time|latest)$/)),
             limit: Type.Optional(Type.RegEx(regex.oneTo50)),
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
 
     const paramsSchema = Type.Object({
@@ -49,7 +49,7 @@ export default (
                 Params: Static<typeof paramsSchema>;
                 Querystring: Static<typeof querySchema>;
             }>,
-            res
+            res,
         ) => {
             const id = Number(req.params.id);
             const page = Number(req.query.page) || 1;
@@ -149,7 +149,7 @@ export default (
                             },
                             // remove the _id field
                             { $project: { _id: 0 } },
-                        ].filter(Boolean)
+                        ].filter(Boolean),
                     )
                     .toArray()
             )[0] as Thread;
@@ -164,9 +164,9 @@ export default (
                                 { $project: { _id: 0 } },
                             ])
                             .toArray()
-                    )[0]
+                    )[0],
             );
-        }
+        },
     );
     done();
 };

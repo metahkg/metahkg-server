@@ -28,7 +28,7 @@ export async function createSession(
     userAgent: string,
     ip: string,
     sameIp?: boolean,
-    createdAt: Date = new Date()
+    createdAt: Date = new Date(),
 ): Promise<
     Session & {
         /** jwt token (unhashed) */
@@ -72,7 +72,7 @@ export async function createSession(
                     $push: {
                         sessions: session,
                     },
-                }
+                },
             )
         ).modifiedCount
     )

@@ -45,7 +45,7 @@ import { Game } from "../../models/games";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) => {
     const schema = Type.Object(
         {
@@ -57,7 +57,7 @@ export default (
             category: IntegerSchema,
             visibility: Type.Optional(VisibilitySchema),
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
 
     fastify.post(
@@ -81,7 +81,7 @@ export default (
                 Body: Static<typeof schema>;
                 headers: { authorization?: string };
             }>,
-            res
+            res,
         ) => {
             const { comment } = req.body;
             let text: string;
@@ -227,7 +227,7 @@ export default (
             });
 
             res.send({ id: newThreadId });
-        }
+        },
     );
     done();
 };

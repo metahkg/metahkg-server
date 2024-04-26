@@ -6,14 +6,14 @@ import { InviteCodeSchema } from "../../../lib/schemas";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     const schema = Type.Object(
         {
             code: InviteCodeSchema,
             description: Type.Optional(Type.String()),
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
     fastify.post(
         "/",
@@ -32,7 +32,7 @@ export default function (
                 createdAt: new Date(),
             });
             res.code(204).send();
-        }
+        },
     );
     done();
 }

@@ -6,7 +6,7 @@ import games from "./games";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     fastify.register(guess, { prefix: "/guess" });
     fastify.register(info);

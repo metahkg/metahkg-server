@@ -38,7 +38,7 @@ export function createToken(
      If you use a string be sure you provide the time units (days, hours, etc.), otherwise milliseconds unit is used by default ("120" is equal to "120ms").
      This will override any existing value in the claim.
      */
-    expiresIn?: string | number
+    expiresIn?: string | number,
 ) {
     const { id, name, sex, role } = user;
     const jsonData: jwtTokenDataType = {

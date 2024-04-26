@@ -118,15 +118,15 @@ async function migrate() {
                         images: conversation
                             .flatMap(
                                 (c) =>
-                                    c.images?.map((img) => ({ ...img, cid: c.id })) || []
+                                    c.images?.map((img) => ({ ...img, cid: c.id })) || [],
                             )
                             .filter((img, index, arr) => {
                                 return arr.findIndex((i) => i.src === img.src) === index;
                             }),
                     },
-                }
+                },
             );
-        })
+        }),
     );
 }
 

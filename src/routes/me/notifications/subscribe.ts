@@ -23,7 +23,7 @@ import { subscribeByToken } from "../../../lib/notifications/subscribe";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     const schema = Type.Object(
         {
@@ -33,10 +33,10 @@ export default function (
                     auth: Type.String({ minLength: 22, maxLength: 22 }),
                     p256dh: Type.String({ minLength: 87, maxLength: 87 }),
                 },
-                { additionalProperties: false }
+                { additionalProperties: false },
             ),
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
     fastify.post(
         "/subscribe",
@@ -47,11 +47,11 @@ export default function (
             await subscribeByToken(
                 user.id,
                 req.headers.authorization?.slice(7),
-                req.body
+                req.body,
             );
 
             return res.code(204).send();
-        }
+        },
     );
     done();
 }

@@ -7,7 +7,7 @@ export function generateCerts() {
     const privateExists = existsSync("certs/private.pem");
     if (publicExists && privateExists) {
         return console.info(
-            "Public and private keys exist. Not generating a new key pair."
+            "Public and private keys exist. Not generating a new key pair.",
         );
     }
     if (publicExists && !privateExists) {
@@ -18,7 +18,7 @@ export function generateCerts() {
     }
 
     console.info(
-        "Public and private key not found. Generating a new ed25519 key pair..."
+        "Public and private key not found. Generating a new ed25519 key pair...",
     );
     const { publicKey, privateKey } = generateKeyPairSync("ed25519", {
         publicKeyEncoding: {

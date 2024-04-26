@@ -23,20 +23,20 @@ import requireAuth from "../../plugins/requireAuth";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) => {
     fastify.get("/session", { preParsing: [requireAuth] }, async (req, res) => {
         const user = req.user;
 
         const session = await getSessionByToken(
             user.id,
-            req.headers.authorization?.slice(7)
+            req.headers.authorization?.slice(7),
         );
 
         res.send(
             objectFilter(session, (key) =>
-                ["id", "createdAt", "exp", "sameIp", "userAgent"].includes(key)
-            )
+                ["id", "createdAt", "exp", "sameIp", "userAgent"].includes(key),
+            ),
         );
     });
     done();

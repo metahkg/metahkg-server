@@ -4,7 +4,7 @@ import { config } from "../../lib/config";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     fastify.get("/config", (_req, res) => {
         res.send({

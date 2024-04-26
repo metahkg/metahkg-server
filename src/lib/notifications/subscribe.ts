@@ -22,13 +22,13 @@ import { sha256 } from "../sha256";
 export async function subscribeById(
     userId: number,
     sessionId: string,
-    subscription: Subscription
+    subscription: Subscription,
 ) {
     if (
         !(
             await usersCl.updateOne(
                 { id: userId, sessions: { $elemMatch: { id: sessionId } } },
-                { $set: { "sessions.$.subscription": subscription } }
+                { $set: { "sessions.$.subscription": subscription } },
             )
         ).matchedCount
     ) {
@@ -41,14 +41,14 @@ export async function subscribeById(
 export async function subscribeByToken(
     userId: number,
     token: string,
-    subscription: Subscription
+    subscription: Subscription,
 ) {
     const hashedToken = sha256(token);
     if (
         !(
             await usersCl.updateOne(
                 { id: userId, sessions: { $elemMatch: { token: hashedToken } } },
-                { $set: { "sessions.$.subscription": subscription } }
+                { $set: { "sessions.$.subscription": subscription } },
             )
         ).matchedCount
     ) {

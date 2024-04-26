@@ -25,7 +25,7 @@ import Thread from "../../../../models/thread";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) => {
     const paramsSchema = Type.Object({
         id: Type.RegEx(regex.integer),
@@ -39,7 +39,7 @@ export default (
             req: FastifyRequest<{
                 Params: Static<typeof paramsSchema>;
             }>,
-            res
+            res,
         ) => {
             if (!isInteger(req.params.id))
                 return res.code(400).send({ statusCode: 400, error: "Bad request" });
@@ -54,7 +54,7 @@ export default (
                         _id: 0,
                         conversation: { $elemMatch: { id: commentId } },
                     },
-                }
+                },
             )) as Thread;
 
             if (!result)
@@ -64,7 +64,7 @@ export default (
 
             if (!("removed" in result) && !("removed" in result?.conversation?.[0]))
                 res.send(result?.conversation?.[0]?.images);
-        }
+        },
     );
     done();
 };

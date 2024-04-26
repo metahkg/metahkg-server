@@ -26,7 +26,7 @@ import { IntegerSchema } from "../../../lib/schemas";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) {
     const paramsSchema = Type.Object({
         id: Type.RegEx(regex.integer),
@@ -36,7 +36,7 @@ export default function (
         {
             cid: IntegerSchema,
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
 
     fastify.put(
@@ -52,7 +52,7 @@ export default function (
                 Params: Static<typeof paramsSchema>;
                 Body: Static<typeof schema>;
             }>,
-            res
+            res,
         ) => {
             const threadId = Number(req.params.id);
             const { cid: commentId } = req.body;
@@ -81,7 +81,7 @@ export default function (
                         },
                         visibility: 1,
                     },
-                }
+                },
             )) as Thread & { removed: undefined };
 
             if (!thread)
@@ -92,8 +92,8 @@ export default function (
 
             const comment = Object.fromEntries(
                 Object.entries(thread.conversation?.[0]).filter(
-                    (i) => !["replies", "U", "D", "admin"].includes(i[0])
-                )
+                    (i) => !["replies", "U", "D", "admin"].includes(i[0]),
+                ),
             ) as Comment;
 
             if (!comment)
@@ -120,7 +120,7 @@ export default function (
             await threadCl.updateOne({ id: threadId }, { $set: { pin: comment } });
 
             res.code(204).send();
-        }
+        },
     );
     done();
 }
