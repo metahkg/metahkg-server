@@ -47,7 +47,7 @@ export default function (
                 return res.code(404).send({ statusCode: 404, error: "Vote not found." });
             }
 
-            return res.send({ vote });
+            return res.send(vote);
         }
     );
     done();

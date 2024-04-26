@@ -1471,15 +1471,7 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                required:
-                  - vote
-                additionalProperties: false
-                properties:
-                  vote:
-                    type: integer
-                    minimum: 0
-                    maximum: 5
+                $ref: "#/components/schemas/UserVote"
         "400":
           $ref: "#/components/responses/Invalid"
         "403":
