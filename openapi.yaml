@@ -3260,6 +3260,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+        "409":
+          description: Already voted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
         "410":
           description: Poll ended
           content:

@@ -52,6 +52,13 @@ export default function (
                 });
             }
 
+            if (poll.votes?.find((v) => v.user.id === req.user.id)) {
+                return res.code(409).send({
+                    statusCode: 409,
+                    error: "You have already voted",
+                });
+            }
+
             await pollsCl.updateOne(
                 { id },
                 {
