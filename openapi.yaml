@@ -15,7 +15,7 @@
 
 openapi: 3.0.0
 info:
-  version: "6.12.0-dev"
+  version: "6.12.0-1-dev"
   title: Metahkg Api
   description: "# Introduction
 
@@ -1457,7 +1457,7 @@ paths:
       tags:
         - polls
         - me
-      operationId: mePollsVote
+      operationId: meVotesPolls
       security:
         - bearerAuth: []
       summary: Get user's vote
@@ -3868,8 +3868,13 @@ components:
       type: object
       additionalProperties: false
       required:
+        - type
         - pollId
       properties:
+        type:
+          type: string
+          enum:
+            - html
         pollId:
           $ref: "#/components/schemas/PollId"
     CommentContent:
