@@ -4277,10 +4277,10 @@ components:
       type: object
       additionalProperties: false
       required:
-        - text
+        - title
         - votes
       properties:
-        text:
+        title:
           type: string
           maxLength: 1000
         votes:
