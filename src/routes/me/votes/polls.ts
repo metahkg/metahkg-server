@@ -8,7 +8,7 @@ import { Poll } from "../../../models/polls";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     const paramsSchema = Type.Object({
         id: PollIdSchema,
@@ -38,7 +38,7 @@ export default function (
                             },
                         },
                     },
-                }
+                },
             )) as Poll | null;
 
             const vote = poll?.votes?.[0];
@@ -48,7 +48,7 @@ export default function (
             }
 
             return res.send({ vote });
-        }
+        },
     );
     done();
 }
