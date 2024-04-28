@@ -1726,6 +1726,144 @@ paths:
           $ref: "#/components/responses/InternalServerError"
         "502":
           $ref: "#/components/responses/BadGateway"
+  /users:
+    get:
+      tags:
+        - user
+        - admin
+      operationId: users
+      security:
+        - bearerAuth: []
+      summary: Search users
+      description: "Search users and get detailed profile. Admin privileges required.
+          [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.12.4-dev/src/routes/users/users.ts)"
+      parameters:
+        - name: id
+          in: query
+          description: user id
+          schema:
+            $ref: "#/components/schemas/User/properties/id"
+        - name: name
+          in: query
+          description: user name
+          schema:
+            $ref: "#/components/schemas/User/properties/name"
+        - name: email
+          in: query
+          description: email of the user
+          schema:
+            $ref: "#/components/schemas/email"
+        - name: sex
+          in: query
+          description: gender of the user
+          schema:
+            $ref: "#/components/schemas/User/properties/sex"
+        - name: role
+          in: query
+          description: role of the user
+          schema:
+            $ref: "#/components/schemas/User/properties/role"
+        - name: muted
+          in: query
+          description: whether the user is muted
+          schema:
+            type: string
+            enum:
+              - true
+              - false
+        - name: banned
+          in: query
+          description: whether the user is banned
+          schema:
+            type: string
+            enum:
+              - true
+              - false
+        - name: page
+          in: query
+          description: page number
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - name: limit
+          in: query
+          description: limit of each page
+          schema:
+            type: integer
+            minimum: 1
+            default: 25
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  additionalProperties: false
+                  required:
+                    - id
+                    - createdAt
+                    - name
+                    - sex
+                    - role
+                  properties:
+                    id:
+                      $ref: "#/components/schemas/User/properties/id"
+                    createdAt:
+                      type: string
+                      format: date-time
+                    name:
+                      $ref: "#/components/schemas/User/properties/name"
+                    sex:
+                      $ref: "#/components/schemas/User/properties/sex"
+                    role:
+                      $ref: "#/components/schemas/User/properties/role"
+                    mute:
+                      type: object
+                      additionalProperties: false
+                      required:
+                        - admin
+                        - reason
+                      properties:
+                        admin:
+                          $ref: "#/components/schemas/User"
+                        reason:
+                          type: string
+                        exp:
+                          type: string
+                          format: date-time
+                    ban:
+                      type: object
+                      additionalProperties: false
+                      required:
+                        - admin
+                        - reason
+                      properties:
+                        admin:
+                          $ref: "#/components/schemas/User"
+                        reason:
+                          type: string
+                        exp:
+                          type: string
+                          format: date-time
+        "400":
+          $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "502":
+          $ref: "#/components/responses/BadGateway"
+
+
+
   /users/{id}:
     get:
       tags:
@@ -3599,7 +3737,6 @@ components:
           example: "wcyat"
           minLength: 1
           maxLength: 15
-          pattern: /[a-zA-Z0-9\u0370-\u03ff\u1f00-\u1fff\u3000-\u303F\u3400-\u4DBF\u4E00-\u9FFF一-龯\p{Emoji}\p{Emoji_Presentation}\p{Extended_Pictographic}~!#$%^&*_\-=+\(\)\[\]\{\}\|\\\.,\/\?"'':<>]{1,15}/
         sex:
           type: string
           enum:
