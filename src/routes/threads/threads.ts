@@ -26,7 +26,7 @@ import regex from "../../lib/regex";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) => {
     const querySchema = Type.Object(
         {
@@ -34,10 +34,10 @@ export default (
                 Type.Union([
                     Type.Array(Type.RegExp(regex.integer), { maxItems: 50 }),
                     Type.RegExp(regex.integer),
-                ])
+                ]),
             ),
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
 
     fastify.get(
@@ -66,9 +66,9 @@ export default (
                 .toArray()) as Thread[];
 
             res.send(
-                threads.map((tid) => result.find((i) => i.id === tid)).filter((i) => i)
+                threads.map((tid) => result.find((i) => i.id === tid)).filter((i) => i),
             );
-        }
+        },
     );
     done();
 };

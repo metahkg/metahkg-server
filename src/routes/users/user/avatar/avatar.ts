@@ -26,7 +26,7 @@ dotenv.config();
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: () => void
+    done: () => void,
 ) {
     const paramsSchema = Type.Object({ id: Type.RegExp(regex.integer) });
 
@@ -38,7 +38,7 @@ export default function (
             const file: Buffer | null = await new Promise<Buffer>((resolve, reject) => {
                 const buf: Buffer[] = [];
                 const stream = avatarBucket.openDownloadStreamByName(
-                    `${req.params.id}.png`
+                    `${req.params.id}.png`,
                 );
                 stream.on("data", (chunk) => buf.push(chunk));
                 stream.on("end", () => {
@@ -55,7 +55,7 @@ export default function (
                     .send({ statusCode: 404, error: "User or avatar not found" });
 
             res.header("Content-Type", "image/png").send(file);
-        }
+        },
     );
     done();
 }

@@ -6,7 +6,7 @@ export async function autoMigrate() {
     const newVersion = JSON.parse(readFileSync("package.json", "utf8")).version;
     if (
         !(await new Promise((resolve) =>
-            stat("version.txt", (err, stats) => resolve(err ? null : stats))
+            stat("version.txt", (err, stats) => resolve(err ? null : stats)),
         ))
     ) {
         console.warn("version.txt not found, not migrating!");
@@ -36,7 +36,7 @@ export async function autoMigrate() {
                             .split("/")
                             .pop()
                             .replace(/[^\d\-]/g, "")
-                            .replace("-", ".")
+                            .replace("-", "."),
                     );
                     if (
                         migrateVersionNum > oldVersionNum &&
@@ -64,7 +64,7 @@ export async function autoMigrate() {
                                 .split("/")
                                 .pop()
                                 .replace(/[^\d\-]/g, "")
-                                .replace("-", ".")
+                                .replace("-", "."),
                         );
                         if (
                             migrateVersionNum > oldVersionNum &&

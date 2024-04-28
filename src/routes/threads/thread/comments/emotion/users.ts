@@ -25,7 +25,7 @@ import User from "../../../../../models/user";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) {
     const paramsSchema = Type.Object({
         id: Type.RegExp(regex.integer),
@@ -93,7 +93,7 @@ export default function (
                 .toArray()) as User[];
 
             res.send(users);
-        }
+        },
     );
     done();
 }
