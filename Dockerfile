@@ -33,8 +33,6 @@ COPY ./src ./src
 
 RUN if [ "${env}" = "dev" ]; then mkdir -p dist; else yarn build; fi;
 
-RUN if [ "${env}" != "dev" ]; then npm prune --production; fi;
-
 FROM node:20-alpine
 
 ARG env
@@ -45,7 +43,8 @@ WORKDIR /app
 COPY ./package.json ./yarn.lock ./tsconfig.json ./tsconfig.build.json ./
 
 COPY --from=build /app/dist ./dist
-COPY --from=build /app/node_modules ./node_modules
+
+RUN if [ "${env}" != "dev" ]; then yarn install --production; else yarn install; fi;
 
 RUN chown node:node /app
 
