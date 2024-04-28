@@ -88,7 +88,6 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand --passWithNoTests",
     "test:e2e": "jest --config ./test/jest-e2e.json --passWithNoTests",
     "start:api": "yarn run start",
-    "lint": "eslint --fix src && (prettier --check src || prettier --write src)",
     "deploy": "yarn run build && yarn run start",
     "dev": "nodemon ./src/main.ts --project ./tsconfig.json",
     "prepare": "husky",
