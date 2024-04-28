@@ -24,7 +24,7 @@ import Category from "../../models/category";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) {
     const paramsSchema = Type.Object({
         id: Type.RegExp(regex.integer),
@@ -37,14 +37,14 @@ export default function (
 
             const category = (await categoryCl.findOne(
                 { id },
-                { projection: { _id: 0 } }
+                { projection: { _id: 0 } },
             )) as Category;
 
             if (!category)
                 return res.code(404).send({ statusCode: 404, error: "Not found" });
 
             res.send(category);
-        }
+        },
     );
     done();
 }

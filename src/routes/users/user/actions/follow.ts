@@ -24,7 +24,7 @@ import User from "../../../../models/user";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) => {
     const paramsSchema = Type.Object({
         id: Type.RegExp(regex.integer),
@@ -41,7 +41,7 @@ export default (
             req: FastifyRequest<{
                 Params: Static<typeof paramsSchema>;
             }>,
-            res
+            res,
         ) => {
             const user = req.user;
             if (!user)
@@ -67,7 +67,7 @@ export default (
                             $push: {
                                 following: { id: userId, date: new Date() },
                             } as never,
-                        }
+                        },
                     )
                 ).matchedCount
             )
@@ -76,7 +76,7 @@ export default (
                     .send({ statusCode: 409, error: "User already followed" });
 
             return res.code(204).send();
-        }
+        },
     );
     done();
 };

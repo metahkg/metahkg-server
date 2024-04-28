@@ -28,7 +28,7 @@ import { objectFilter } from "../../../../../lib/objectFilter";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     const paramsSchema = Type.Object({
         id: Type.RegExp(regex.integer),
@@ -39,7 +39,7 @@ export default function (
         {
             reason: ReasonSchemaAdmin,
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
 
     fastify.delete(
@@ -50,13 +50,13 @@ export default function (
                 Params: Static<typeof paramsSchema>;
                 Body: Static<typeof schema>;
             }>,
-            res
+            res,
         ) => {
             const id = Number(req.params.id);
             const cid = Number(req.params.cid);
             const { reason } = req.body;
             const admin = objectFilter(req.user, (key: string) =>
-                ["id", "name", "sex", "role"].includes(key)
+                ["id", "name", "sex", "role"].includes(key),
             );
 
             const thread = (await threadCl.findOne(
@@ -68,7 +68,7 @@ export default function (
                         conversation: { $elemMatch: { id: cid } },
                         index: { $indexOfArray: ["$conversation.id", cid] },
                     },
-                }
+                },
             )) as Thread & { index: number };
 
             const index = thread?.index;
@@ -94,7 +94,7 @@ export default function (
                     $set: { [`conversation.${index}`]: { id: cid, removed: true } },
                     // remove the pinned comment if is the removed comment
                     ...(thread.pin?.id === cid && { $unset: { pin: 1 } }),
-                }
+                },
             );
 
             // remove quotes of the comment
@@ -103,11 +103,11 @@ export default function (
             await threadCl.updateOne(
                 { id },
                 { $unset: { "conversation.$[elem].quote": 1 } },
-                { arrayFilters: [{ "elem.quote.id": cid }] }
+                { arrayFilters: [{ "elem.quote.id": cid }] },
             );
 
             return res.code(204).send();
-        }
+        },
     );
     done();
 }

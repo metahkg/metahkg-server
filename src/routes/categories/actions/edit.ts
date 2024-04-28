@@ -25,7 +25,7 @@ import RequireAdmin from "../../../plugins/requireAdmin";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     const paramsSchema = Type.Object({
         id: Type.RegExp(regex.integer),
@@ -39,7 +39,7 @@ export default function (
             hidden: Type.Optional(Type.Boolean()),
             nsfw: Type.Optional(Type.Boolean()),
         },
-        { additionalProperties: false, minProperties: 1 }
+        { additionalProperties: false, minProperties: 1 },
     );
 
     fastify.patch(
@@ -50,7 +50,7 @@ export default function (
                 Params: Static<typeof paramsSchema>;
                 Body: Static<typeof schema>;
             }>,
-            res
+            res,
         ) => {
             const id = Number(req.params.id);
 
@@ -60,7 +60,7 @@ export default function (
                     .send({ statusCode: 404, error: "Category not found" });
 
             return res.code(204).send();
-        }
+        },
     );
     done();
 }

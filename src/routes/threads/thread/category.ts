@@ -25,7 +25,7 @@ import Thread from "../../../models/thread";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     const paramsSchema = Type.Object({
         id: Type.RegExp(regex.integer),
@@ -43,7 +43,7 @@ export default function (
                         {
                             id,
                         },
-                        { projection: { _id: 0, id: 1 } }
+                        { projection: { _id: 0, id: 1 } },
                     )) as Thread
                 ).id,
             })) as Category;
@@ -51,7 +51,7 @@ export default function (
             if (!category) return res.send("Not found.");
 
             res.send(category);
-        }
+        },
     );
     done();
 }

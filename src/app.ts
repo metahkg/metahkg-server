@@ -36,8 +36,11 @@ import { generateCerts } from "./scripts/certs";
 import { redis } from "./lib/redis";
 import { autoMigrate } from "./scripts/autoMigrate";
 import { generateHMACKey } from "./lib/hmac";
-import { TypeBoxTypeProvider, TypeBoxValidatorCompiler } from '@fastify/type-provider-typebox'
-import { TypeCompiler } from '@sinclair/typebox/compiler'
+import {
+    TypeBoxTypeProvider,
+    TypeBoxValidatorCompiler,
+} from "@fastify/type-provider-typebox";
+import { TypeCompiler } from "@sinclair/typebox/compiler";
 
 dotenv.config();
 
@@ -68,7 +71,9 @@ export default async function MetahkgServer() {
         maxParamLength: 100,
         // 1 MB
         bodyLimit: 1024 * 1024,
-    }).withTypeProvider<TypeBoxTypeProvider>().setValidatorCompiler(TypeBoxValidatorCompiler);
+    })
+        .withTypeProvider<TypeBoxTypeProvider>()
+        .setValidatorCompiler(TypeBoxValidatorCompiler);
 
     fastify.setErrorHandler((error, _request, res) => {
         fastify.log.error(error);
@@ -126,14 +131,17 @@ export default async function MetahkgServer() {
         },
         trusted: async (req, decodedToken) => {
             // validate with jwt token schema
-            if (!decodedToken || !TypeCompiler.Compile(jwtTokenSchema).Check(decodedToken))
+            if (
+                !decodedToken ||
+                !TypeCompiler.Compile(jwtTokenSchema).Check(decodedToken)
+            )
                 return false;
 
             // check if session exists
             const session = await getSessionByToken(
                 decodedToken?.id,
                 req.headers.authorization?.slice(7),
-                true
+                true,
             );
             if (!session) return false;
 

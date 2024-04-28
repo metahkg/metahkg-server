@@ -24,7 +24,7 @@ import RequireSameUserOrAdmin from "../../../../plugins/requireSameUserOrAdmin";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     const paramsSchema = Type.Object({
         id: Type.RegExp(regex.integer),
@@ -46,7 +46,7 @@ export default function (
             await avatarBucket.delete(metadata._id);
 
             return res.code(204).send();
-        }
+        },
     );
     done();
 }

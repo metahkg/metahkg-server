@@ -25,7 +25,7 @@ import Thread from "../../../models/thread";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) => {
     const paramsSchema = Type.Object({
         id: Type.RegExp(regex.integer),
@@ -38,7 +38,7 @@ export default (
             req: FastifyRequest<{
                 Params: Static<typeof paramsSchema>;
             }>,
-            res
+            res,
         ) => {
             if (!isInteger(req.params.id))
                 return res.code(400).send({ statusCode: 400, error: "Bad request" });
@@ -47,7 +47,7 @@ export default (
 
             const result = (await threadCl.findOne(
                 { id },
-                { projection: { _id: 0, images: 1 } }
+                { projection: { _id: 0, images: 1 } },
             )) as Thread;
 
             if (!result)
@@ -55,7 +55,7 @@ export default (
             if ("removed" in result) return;
 
             res.send(result.images);
-        }
+        },
     );
     done();
 };

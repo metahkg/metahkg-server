@@ -24,7 +24,7 @@ import Thread from "../../../../models/thread";
 export default function emotions(
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) {
     const paramsSchema = Type.Object({
         id: Type.RegExp(regex.integer),
@@ -48,7 +48,7 @@ export default function emotions(
                         _id: 1,
                         conversation: { $elemMatch: { id: cid } },
                     },
-                }
+                },
             )) as Thread;
 
             if (!thread)
@@ -65,7 +65,7 @@ export default function emotions(
             const { U, D } = comment;
 
             res.send({ U, D });
-        }
+        },
     );
     done();
 }

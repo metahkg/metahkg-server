@@ -29,14 +29,14 @@ import requireSameUser from "../../../../plugins/requireSameUser";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) => {
     const schema = Type.Object(
         {
             name: Type.Optional(UserNameSchema),
             sex: Type.Optional(SexSchema),
         },
-        { additionalProperties: false, minProperties: 1 }
+        { additionalProperties: false, minProperties: 1 },
     );
 
     const paramsSchema = Type.Object({ id: Type.RegExp(regex.integer) });
@@ -52,7 +52,7 @@ export default (
                 Body: Static<typeof schema>;
                 Params: Static<typeof paramsSchema>;
             }>,
-            res
+            res,
         ) => {
             const user = req.user;
 
@@ -78,19 +78,19 @@ export default (
                     ...(name && { name }),
                     ...(sex && { sex }),
                 },
-                req.user.exp - new Date().getTime() / 1000
+                req.user.exp - new Date().getTime() / 1000,
             );
 
             await updateSessionByToken(
                 user.id,
                 req.headers.authorization?.slice(7),
-                newToken
+                newToken,
             );
 
             res.send({
                 token: newToken,
             });
-        }
+        },
     );
     done();
 };
