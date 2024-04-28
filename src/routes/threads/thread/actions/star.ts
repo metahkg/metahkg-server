@@ -28,7 +28,7 @@ export default function (
     done: (err?: Error) => void
 ) {
     const paramsSchema = Type.Object({
-        id: Type.RegEx(regex.integer),
+        id: Type.RegExp(regex.integer),
     });
 
     fastify.post(
@@ -60,7 +60,7 @@ export default function (
                                 starred: {
                                     $each: [{ id: threadId, date: new Date() }],
                                     $position: 0,
-                                },
+                                } as never,
                             },
                         }
                     )

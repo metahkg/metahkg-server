@@ -29,7 +29,7 @@ export default (
 ) => {
     const querySchema = Type.Object(
         {
-            page: Type.Optional(Type.RegEx(regex.integer)),
+            page: Type.Optional(Type.RegExp(regex.integer)),
             q: Type.String({ maxLength: 200, minLength: 1 }),
             sort: Type.Optional(
                 Type.Union(
@@ -37,7 +37,7 @@ export default (
                 )
             ),
             mode: Type.Optional(Type.Union(["title", "op"].map((x) => Type.Literal(x)))),
-            limit: Type.Optional(Type.RegEx(regex.oneTo50)),
+            limit: Type.Optional(Type.RegExp(regex.oneTo50)),
         },
         { additionalProperties: false }
     );

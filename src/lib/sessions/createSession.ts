@@ -70,7 +70,7 @@ export async function createSession(
                 { id: userId },
                 {
                     $push: {
-                        sessions: session,
+                        sessions: session as never,
                     },
                 }
             )

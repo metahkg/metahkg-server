@@ -57,7 +57,7 @@ export default (
         { additionalProperties: false }
     );
 
-    const paramsSchema = Type.Object({ id: Type.RegEx(regex.integer) });
+    const paramsSchema = Type.Object({ id: Type.RegExp(regex.integer) });
 
     fastify.post(
         "/",
@@ -212,9 +212,9 @@ export default (
                             images: imagesInComment,
                             ...(quotedComment && { quote: quotedComment }),
                             ...(visibility && { visibility }),
-                        },
+                        } as never,
                     },
-                    $currentDate: { lastModified: true },
+                    $currentDate: { lastModified: true as never },
                     $inc: { count: 1 },
                 }
             );
@@ -222,7 +222,7 @@ export default (
             if (quotedComment) {
                 await threadCl.updateOne(
                     { id },
-                    { $push: { [`conversation.${quoteIndex}.replies`]: newcid } }
+                    { $push: { [`conversation.${quoteIndex}.replies`]: newcid } as never }
                 );
             }
 

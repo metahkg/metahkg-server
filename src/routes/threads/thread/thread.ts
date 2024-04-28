@@ -28,17 +28,17 @@ export default (
 ) => {
     const querySchema = Type.Object(
         {
-            page: Type.Optional(Type.RegEx(regex.integer)),
-            start: Type.Optional(Type.RegEx(regex.integer)),
-            end: Type.Optional(Type.RegEx(regex.integer)),
-            sort: Type.Optional(Type.RegEx(/^(score|time|latest)$/)),
-            limit: Type.Optional(Type.RegEx(regex.oneTo50)),
+            page: Type.Optional(Type.RegExp(regex.integer)),
+            start: Type.Optional(Type.RegExp(regex.integer)),
+            end: Type.Optional(Type.RegExp(regex.integer)),
+            sort: Type.Optional(Type.RegExp(/^(score|time|latest)$/)),
+            limit: Type.Optional(Type.RegExp(regex.oneTo50)),
         },
         { additionalProperties: false }
     );
 
     const paramsSchema = Type.Object({
-        id: Type.RegEx(regex.integer),
+        id: Type.RegExp(regex.integer),
     });
 
     fastify.get(

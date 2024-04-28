@@ -24,7 +24,6 @@ import { agenda } from "./lib/agenda";
 import multipart from "@fastify/multipart";
 import fastifyRateLimit from "@fastify/rate-limit";
 import fastifyCors from "@fastify/cors";
-import { ajv } from "./lib/ajv";
 import sitemap from "./sitemap";
 import authenticate from "./plugins/authenticate";
 import { jwtTokenSchema } from "./types/jwt";
@@ -37,6 +36,8 @@ import { generateCerts } from "./scripts/certs";
 import { redis } from "./lib/redis";
 import { autoMigrate } from "./scripts/autoMigrate";
 import { generateHMACKey } from "./lib/hmac";
+import { TypeBoxTypeProvider, TypeBoxValidatorCompiler } from '@fastify/type-provider-typebox'
+import { TypeCompiler } from '@sinclair/typebox/compiler'
 
 dotenv.config();
 
@@ -67,9 +68,7 @@ export default async function MetahkgServer() {
         maxParamLength: 100,
         // 1 MB
         bodyLimit: 1024 * 1024,
-    });
-
-    fastify.setValidatorCompiler((opt) => ajv.compile(opt.schema));
+    }).withTypeProvider<TypeBoxTypeProvider>().setValidatorCompiler(TypeBoxValidatorCompiler);
 
     fastify.setErrorHandler((error, _request, res) => {
         fastify.log.error(error);
@@ -127,7 +126,7 @@ export default async function MetahkgServer() {
         },
         trusted: async (req, decodedToken) => {
             // validate with jwt token schema
-            if (!decodedToken || !ajv.validate(jwtTokenSchema, decodedToken))
+            if (!decodedToken || !TypeCompiler.Compile(jwtTokenSchema).Check(decodedToken))
                 return false;
 
             // check if session exists

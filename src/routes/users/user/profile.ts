@@ -26,7 +26,7 @@ export default function (
     _opts: FastifyPluginOptions,
     done: (e?: Error) => void
 ) {
-    const paramsSchema = Type.Object({ id: Type.RegEx(regex.integer) });
+    const paramsSchema = Type.Object({ id: Type.RegExp(regex.integer) });
 
     fastify.get(
         "/",

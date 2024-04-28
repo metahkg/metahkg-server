@@ -34,14 +34,14 @@ export default (
             sort: Type.Optional(
                 Type.Union([Type.Literal("created"), Type.Literal("lastcomment")])
             ),
-            page: Type.Optional(Type.RegEx(regex.integer)),
-            limit: Type.Optional(Type.RegEx(regex.oneTo50)),
+            page: Type.Optional(Type.RegExp(regex.integer)),
+            limit: Type.Optional(Type.RegExp(regex.oneTo50)),
         },
         { additionalProperties: false }
     );
 
     const paramsSchema = Type.Object({
-        id: Type.RegEx(regex.integer),
+        id: Type.RegExp(regex.integer),
     });
 
     fastify.get(

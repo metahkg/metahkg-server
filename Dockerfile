@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-FROM node:18-alpine AS build
+FROM node:20-alpine AS build
 
 WORKDIR /app
 
@@ -27,14 +27,15 @@ RUN chown -Rf node:node /app
 USER node
 
 RUN yarn install --frozen-lockfile --network-timeout 1000000
+RUN yarn add sharp --ignore-engines
 
 COPY ./src ./src
 
 RUN if [ "${env}" = "dev" ]; then mkdir -p dist; else yarn build; fi;
 
-RUN if [ "${env}" != "dev" ]; then yarn install --production --frozen-lockfile --network-timeout 1000000; fi;
+RUN if [ "${env}" != "dev" ]; then npm prune --production; fi;
 
-FROM node:18-alpine
+FROM node:20-alpine
 
 ARG env
 ENV env $env

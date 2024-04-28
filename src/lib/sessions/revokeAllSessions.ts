@@ -48,7 +48,7 @@ export async function revokeAllSessionsExceptId(
                     $pullAll: {
                         sessions: {
                             id: { $ne: sessionId },
-                        },
+                        } as never,
                     },
                 }
             )
@@ -71,7 +71,7 @@ export async function revokeAllSessionsExceptToken(
                     $pullAll: {
                         sessions: {
                             token: { $ne: sha256(token) },
-                        },
+                        } as never,
                     },
                 }
             )

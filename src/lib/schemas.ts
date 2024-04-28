@@ -48,7 +48,7 @@ export const VisibilitySchema = Type.Union([
     Type.Literal("internal"),
 ]);
 
-export const UserNameSchema = Type.RegEx(
+export const UserNameSchema = Type.RegExp(
     // allows:
     //   - a-z
     //   - A-Z
@@ -67,7 +67,7 @@ export const UserRoleSchema = Type.Union([Type.Literal("user"), Type.Literal("ad
 
 export const DateSchema = Type.String({ format: "date-time" });
 
-export const PasswordSchema = Type.RegEx(/^[a-f0-9]{64}$/i);
+export const PasswordSchema = Type.RegExp(/^[a-f0-9]{64}$/i);
 export const CodeSchema = Type.String({ minLength: 60, maxLength: 60 });
 
 export const CategoryNameSchema = Type.String({ maxLength: 15 });
@@ -82,4 +82,4 @@ export const RefreshTokenSchema = Type.String({ minLength: 60, maxLength: 60 });
 
 export const IntegerSchema = Type.Integer({ minimum: 1, maximum: 9999999999 });
 
-export const InviteCodeSchema = Type.RegEx(/^[a-zA-Z0-9]{10}$/);
+export const InviteCodeSchema = Type.RegExp(/^[a-zA-Z0-9]{10}$/);

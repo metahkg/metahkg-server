@@ -32,7 +32,7 @@ export default function (
     done: (err?: Error) => void
 ) {
     const paramsSchema = Type.Object({
-        id: Type.RegEx(regex.integer),
+        id: Type.RegExp(regex.integer),
     });
 
     const schema = Type.Object(
@@ -82,7 +82,7 @@ export default function (
                             ),
                             reason,
                             date: new Date(),
-                        },
+                        } as never,
                     },
                 }
             );

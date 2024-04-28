@@ -39,8 +39,8 @@ export default (
     );
 
     const paramsSchema = Type.Object({
-        id: Type.RegEx(regex.integer),
-        cid: Type.RegEx(regex.integer),
+        id: Type.RegExp(regex.integer),
+        cid: Type.RegExp(regex.integer),
     });
 
     fastify.post(
@@ -90,7 +90,7 @@ export default (
 
             await usersCl.updateOne(
                 { id: user.id },
-                { $push: { [`votes.${threadId}`]: { cid: commentId, vote } } }
+                { $push: { [`votes.${threadId}`]: { cid: commentId, vote } } as never }
             );
 
             if ("removed" in thread || "removed" in thread.conversation[0]) return;

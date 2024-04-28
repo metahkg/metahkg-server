@@ -13,15 +13,15 @@ export default function (
 ) {
     const querySchema = Type.Object(
         {
-            id: Type.Optional(Type.RegEx(regex.integer)),
+            id: Type.Optional(Type.RegExp(regex.integer)),
             name: Type.Optional(UserNameSchema),
             email: Type.Optional(Type.String({ format: "email" })),
             sex: Type.Optional(SexSchema),
             role: Type.Optional(UserRoleSchema),
-            muted: Type.Optional(Type.RegEx(regex.boolean)),
-            banned: Type.Optional(Type.RegEx(regex.boolean)),
-            page: Type.Optional(Type.RegEx(regex.integer)),
-            limit: Type.Optional(Type.RegEx(regex.integer)),
+            muted: Type.Optional(Type.RegExp(regex.boolean)),
+            banned: Type.Optional(Type.RegExp(regex.boolean)),
+            page: Type.Optional(Type.RegExp(regex.integer)),
+            limit: Type.Optional(Type.RegExp(regex.integer)),
         },
         { additionalProperties: false }
     );

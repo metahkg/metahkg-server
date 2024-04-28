@@ -32,8 +32,8 @@ export default (
         {
             id: Type.Optional(
                 Type.Union([
-                    Type.Array(Type.RegEx(regex.integer), { maxItems: 50 }),
-                    Type.RegEx(regex.integer),
+                    Type.Array(Type.RegExp(regex.integer), { maxItems: 50 }),
+                    Type.RegExp(regex.integer),
                 ])
             ),
         },

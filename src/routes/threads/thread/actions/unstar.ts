@@ -28,7 +28,7 @@ export default function (
     done: (err?: Error) => void
 ) {
     const paramsSchema = Type.Object({
-        id: Type.RegEx(regex.integer),
+        id: Type.RegExp(regex.integer),
     });
 
     fastify.post(
@@ -48,7 +48,7 @@ export default function (
                 !(
                     await usersCl.updateOne(
                         { id: user.id, starred: { $elemMatch: { id: threadId } } },
-                        { $pull: { starred: { id: threadId } } }
+                        { $pull: { starred: { id: threadId } } as never }
                     )
                 ).matchedCount
             )

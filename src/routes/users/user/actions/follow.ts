@@ -27,7 +27,7 @@ export default (
     done: (e?: Error) => void
 ) => {
     const paramsSchema = Type.Object({
-        id: Type.RegEx(regex.integer),
+        id: Type.RegExp(regex.integer),
     });
 
     fastify.post(
@@ -66,7 +66,7 @@ export default (
                         {
                             $push: {
                                 following: { id: userId, date: new Date() },
-                            },
+                            } as never,
                         }
                     )
                 ).matchedCount

@@ -39,7 +39,7 @@ export default (
         { additionalProperties: false, minProperties: 1 }
     );
 
-    const paramsSchema = Type.Object({ id: Type.RegEx(regex.integer) });
+    const paramsSchema = Type.Object({ id: Type.RegExp(regex.integer) });
 
     fastify.patch(
         "/",

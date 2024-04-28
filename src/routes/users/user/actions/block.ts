@@ -29,7 +29,7 @@ export default (
     done: (e?: Error) => void
 ) => {
     const paramsSchema = Type.Object({
-        id: Type.RegEx(regex.integer),
+        id: Type.RegExp(regex.integer),
     });
 
     const schema = Type.Object(
@@ -78,7 +78,7 @@ export default (
                         {
                             $push: {
                                 blocked: { id: userId, date: new Date(), reason },
-                            },
+                            } as never,
                         }
                     )
                 ).matchedCount

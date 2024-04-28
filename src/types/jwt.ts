@@ -32,27 +32,24 @@ export const jwtTokenDataSchema = Type.Object(
     { additionalProperties: false }
 );
 
-export const jwtTokenSchema = Type.Intersect(
-    [
-        jwtTokenDataSchema,
-        Type.Object(
-            {
-                /** issuer (your domain) */
-                iss: Type.Literal(config.DOMAIN),
-                /** auditor (your domain) */
-                aud: Type.Literal(config.DOMAIN),
-                /** issue date in seconds */
-                iat: Type.Integer({ minimum: 0 }),
-                /** expiration date in seconds */
-                exp: Type.Integer({ minimum: 0 }),
-            },
-            { additionalProperties: false }
-        ),
-    ],
+export const jwtTokenSchema = Type.Object(
     {
-        additionalProperties: false,
-    }
+        id: Type.Integer({ minimum: 1 }),
+        name: UserNameSchema,
+        sex: SexSchema,
+        role: UserRoleSchema,
+        /** issuer (your domain) */
+        iss: Type.Literal(config.DOMAIN),
+        /** auditor (your domain) */
+        aud: Type.Literal(config.DOMAIN),
+        /** issue date in seconds */
+        iat: Type.Integer({ minimum: 0 }),
+        /** expiration date in seconds */
+        exp: Type.Integer({ minimum: 0 }),
+    },
+    { additionalProperties: false }
 );
+
 
 export type jwtTokenType = Static<typeof jwtTokenSchema> | null;
 export type jwtTokenDataType = Static<typeof jwtTokenDataSchema> | null;

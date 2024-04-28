@@ -1,6 +1,6 @@
 import { execSync } from "child_process";
 import { readFileSync, stat, writeFileSync } from "fs";
-import glob from "glob";
+import { glob } from "glob";
 
 export async function autoMigrate() {
     const newVersion = JSON.parse(readFileSync("package.json", "utf8")).version;

@@ -30,13 +30,13 @@ export default function (
     done: (e?: Error) => void
 ) {
     const paramsSchema = Type.Object({
-        id: Type.RegEx(regex.integer),
-        cid: Type.RegEx(regex.integer),
+        id: Type.RegExp(regex.integer),
+        cid: Type.RegExp(regex.integer),
     });
 
     const schema = Type.Object(
         {
-            emotion: Type.RegEx(regex.emoji),
+            emotion: Type.RegExp(regex.emoji),
         },
         { additionalProperties: false }
     );
@@ -87,7 +87,7 @@ export default function (
                             $pull: {
                                 "conversation.$.emotions": {
                                     user: user.id,
-                                },
+                                } as never,
                             },
                         }
                     )
@@ -101,7 +101,7 @@ export default function (
                         "conversation.$.emotions": {
                             user: user.id,
                             emotion,
-                        },
+                        } as never,
                     },
                 }
             );

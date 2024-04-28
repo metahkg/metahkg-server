@@ -49,7 +49,7 @@ export async function sendNotification(userId: number, data: Notification) {
 
     if (!sessions?.length) return null;
 
-    await usersCl.updateOne({ id: userId }, { $push: { notifications: data } });
+    await usersCl.updateOne({ id: userId }, { $push: { notifications: data as never } });
 
     sessions.forEach(async (session) => {
         try {

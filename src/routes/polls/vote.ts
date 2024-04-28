@@ -69,12 +69,12 @@ export default function (
                             ) as publicUserType,
                             option,
                             date: new Date(),
-                        },
+                        } as never,
                     },
                     $inc: {
                         [`options.${option}.votes`]: 1,
                     },
-                    $currentDate: { lastModified: true },
+                    $currentDate: { lastModified: true as never },
                 }
             );
 

@@ -30,7 +30,7 @@ export async function revokeSessionByToken(
                     $pull: {
                         sessions: {
                             token: sha256(token),
-                        },
+                        } as never,
                     },
                 }
             )
@@ -53,7 +53,7 @@ export async function revokeSessionById(
                     $pull: {
                         sessions: {
                             id: sessionId,
-                        },
+                        } as never,
                     },
                 }
             )

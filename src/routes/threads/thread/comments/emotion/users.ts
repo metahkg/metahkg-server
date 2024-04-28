@@ -28,9 +28,9 @@ export default function (
     done: (e?: Error) => void
 ) {
     const paramsSchema = Type.Object({
-        id: Type.RegEx(regex.integer),
-        cid: Type.RegEx(regex.integer),
-        emotion: Type.RegEx(regex.emoji),
+        id: Type.RegExp(regex.integer),
+        cid: Type.RegExp(regex.integer),
+        emotion: Type.RegExp(regex.emoji),
     });
 
     fastify.get(
