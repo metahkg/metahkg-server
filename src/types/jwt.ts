@@ -50,6 +50,5 @@ export const jwtTokenSchema = Type.Object(
     { additionalProperties: false }
 );
 
-
 export type jwtTokenType = Static<typeof jwtTokenSchema> | null;
 export type jwtTokenDataType = Static<typeof jwtTokenDataSchema> | null;

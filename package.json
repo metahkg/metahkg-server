@@ -78,7 +78,7 @@
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "tsc",
-    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "format": "prettier --write \"src/**/*.ts\"",
     "start": "node dist/main",
     "start:dev": "yarn dev",
     "start:prod": "yarn start",

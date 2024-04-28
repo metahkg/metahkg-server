@@ -196,7 +196,7 @@ export default (
                 { id },
                 {
                     $push: {
-                        conversation: <Comment>{
+                        conversation: (<Comment>{
                             id: newcid,
                             user: {
                                 id: user.id,
@@ -212,7 +212,7 @@ export default (
                             images: imagesInComment,
                             ...(quotedComment && { quote: quotedComment }),
                             ...(visibility && { visibility }),
-                        } as never,
+                        }) as never,
                     },
                     $currentDate: { lastModified: true as never },
                     $inc: { count: 1 },
