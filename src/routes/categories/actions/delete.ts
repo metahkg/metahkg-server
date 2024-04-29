@@ -32,21 +32,12 @@ export default function (
         id: Type.RegExp(regex.integer),
     });
 
-    const schema = Type.Object(
-        {
-            name: Type.Optional(CategoryNameSchema),
-            tags: Type.Optional(CategoryTagsSchema),
-        },
-        { additionalProperties: false }
-    );
-
     fastify.delete(
         "/:id",
-        { schema: { params: paramsSchema, body: schema }, preHandler: [RequireAdmin] },
+        { schema: { params: paramsSchema }, preHandler: [RequireAdmin] },
         async (
             req: FastifyRequest<{
                 Params: Static<typeof paramsSchema>;
-                Body: Static<typeof schema>;
             }>,
             res
         ) => {
