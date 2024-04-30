@@ -27,7 +27,13 @@ export async function autoMigrate() {
         if (oldVersion !== newVersion) {
             console.info(`Auto-migrating from version ${oldVersion} to ${newVersion}...`);
             // js mode
-            const jsMigrate = await glob("dist/migrate/*/*.js");
+            const jsMigrate = (await glob("dist/migrate/*/*.js")).sort((a, b) => Number(a.split("/")
+                .pop()
+                .replace(/[^\d\-]/g, "")
+                .replace("-", ".")) - Number(b.split("/")
+                    .pop()
+                    .replace(/[^\d\-]/g, "")
+                    .replace("-", ".")));
             if (jsMigrate.length) {
                 console.log(jsMigrate);
                 const jsMigrateResults = jsMigrate.map((file) => {
@@ -56,7 +62,13 @@ export async function autoMigrate() {
                 }
             } else {
                 // ts mode
-                const tsMigrate = await glob("src/migrate/*/*.ts");
+                const tsMigrate = (await glob("src/migrate/*/*.ts")).sort((a, b) => Number(a.split("/")
+                    .pop()
+                    .replace(/[^\d\-]/g, "")
+                    .replace("-", ".")) - Number(b.split("/")
+                        .pop()
+                        .replace(/[^\d\-]/g, "")
+                        .replace("-", ".")));
                 if (tsMigrate.length) {
                     const tsMigrateResults = tsMigrate.map((file) => {
                         const migrateVersionNum = Number(
