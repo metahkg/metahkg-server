@@ -2,7 +2,7 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import RequireAdmin from "../../plugins/requireAdmin";
 import { Static, Type } from "@sinclair/typebox";
 import regex from "../../lib/regex";
-import { SexSchema, UserNameSchema, UserRoleSchema } from "../../lib/schemas";
+import { EmailSchema, SexSchema, UserNameSchema, UserRoleSchema } from "../../lib/schemas";
 import { usersCl } from "../../lib/common";
 import { sha256 } from "../../lib/sha256";
 
@@ -15,7 +15,7 @@ export default function (
         {
             id: Type.Optional(Type.RegExp(regex.integer)),
             name: Type.Optional(UserNameSchema),
-            email: Type.Optional(Type.String({ format: "email" })),
+            email: Type.Optional(EmailSchema),
             sex: Type.Optional(SexSchema),
             role: Type.Optional(UserRoleSchema),
             muted: Type.Optional(Type.RegExp(regex.boolean)),
