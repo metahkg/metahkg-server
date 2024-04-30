@@ -37,10 +37,12 @@ import { redis } from "./lib/redis";
 import { autoMigrate } from "./scripts/autoMigrate";
 import { generateHMACKey } from "./lib/hmac";
 import {
+    FormatRegistry,
     TypeBoxTypeProvider,
     TypeBoxValidatorCompiler,
 } from "@fastify/type-provider-typebox";
 import { TypeCompiler } from "@sinclair/typebox/compiler";
+import * as Formats from './lib/formats'
 
 dotenv.config();
 
@@ -64,6 +66,15 @@ export default async function MetahkgServer() {
         }
     });
     await agenda.every("0 0 * * 0", "weeklyTokens");
+
+    FormatRegistry.Set('email', Formats.IsEmail)
+    FormatRegistry.Set('date', Formats.IsDate)
+    FormatRegistry.Set('date-time', Formats.IsDateTime)
+    FormatRegistry.Set('ipv4', Formats.IsIPv4)
+    FormatRegistry.Set('ipv6', Formats.IsIPv6)
+    FormatRegistry.Set('uri', Formats.IsUrl)
+    FormatRegistry.Set('time', Formats.IsTime)
+    FormatRegistry.Set('uuid', Formats.IsUuid)
 
     const fastify = Fastify({
         logger: true,
