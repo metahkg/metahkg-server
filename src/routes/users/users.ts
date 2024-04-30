@@ -49,20 +49,24 @@ export default function (
             const { name, email, sex, role } = req.query;
             const emailHash = email ? sha256(email) : undefined;
 
+            const query = {
+                ...(id && { id }),
+                ...(name && { name }),
+                ...(emailHash && { email: emailHash }),
+                ...(sex && { sex }),
+                ...(role && { role }),
+                ...(muted && {
+                    mute: { $exists: true },
+                }),
+                ...(banned && {
+                    ban: { $exists: true },
+                }),
+            }
+
+            const count = await usersCl.countDocuments(query);
+
             const users = await usersCl
-                .find({
-                    ...(id && { id }),
-                    ...(name && { name }),
-                    ...(emailHash && { email: emailHash }),
-                    ...(sex && { sex }),
-                    ...(role && { role }),
-                    ...(muted && {
-                        mute: { $exists: true },
-                    }),
-                    ...(banned && {
-                        ban: { $exists: true },
-                    }),
-                })
+                .find(query)
                 .project({
                     _id: 0,
                     id: 1,
@@ -77,7 +81,7 @@ export default function (
                 .limit(limit)
                 .toArray();
 
-            return res.send(users);
+            return res.send({ count, users });
         }
     );
 
