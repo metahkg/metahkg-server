@@ -43,7 +43,7 @@ import { Poll } from "../../../../models/polls";
 export default (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (e?: Error) => void
+    done: (e?: Error) => void,
 ) => {
     const schema = Type.Object(
         {
@@ -54,7 +54,7 @@ export default (
             quote: Type.Optional(IntegerSchema),
             visibility: Type.Optional(VisibilitySchema),
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
 
     const paramsSchema = Type.Object({ id: Type.RegExp(regex.integer) });
@@ -83,7 +83,7 @@ export default (
                 Params: Static<typeof paramsSchema>;
                 Body: Static<typeof schema>;
             }>,
-            res
+            res,
         ) => {
             const id = Number(req.params.id);
 
@@ -122,7 +122,7 @@ export default (
                         title: 1,
                         visibility: 1,
                     },
-                }
+                },
             )) as Thread;
 
             if ("removed" in thread) return;
@@ -160,7 +160,7 @@ export default (
                             conversation: { $elemMatch: { id: quote } },
                             index: { $indexOfArray: ["$conversation.id", quote] },
                         },
-                    }
+                    },
                 )) as (Thread & { index: number }) | null;
 
                 if (thread && !("removed" in thread)) {
@@ -169,9 +169,9 @@ export default (
                             Object.entries(thread.conversation[0]).filter(
                                 (i) =>
                                     !["emotions", "replies", "U", "D", "admin"].includes(
-                                        i[0]
-                                    )
-                            )
+                                        i[0],
+                                    ),
+                            ),
                         ) as Comment) || undefined;
                     if ("removed" in quotedComment) return (quotedComment = undefined);
 
@@ -216,20 +216,24 @@ export default (
                     },
                     $currentDate: { lastModified: true as never },
                     $inc: { count: 1 },
-                }
+                },
             );
 
             if (quotedComment) {
                 await threadCl.updateOne(
                     { id },
-                    { $push: { [`conversation.${quoteIndex}.replies`]: newcid } as never }
+                    {
+                        $push: {
+                            [`conversation.${quoteIndex}.replies`]: newcid,
+                        } as never,
+                    },
                 );
             }
 
             if (imagesInComment.length) {
                 const thread = (await threadCl.findOne(
                     { id },
-                    { projection: { _id: 0, images: 1 } }
+                    { projection: { _id: 0, images: 1 } },
                 )) as Thread;
 
                 if ("removed" in thread) return;
@@ -245,15 +249,15 @@ export default (
                                     .filter(
                                         (item) =>
                                             imagesData?.findIndex(
-                                                (i) => i.src === item.src
-                                            ) === -1
+                                                (i) => i.src === item.src,
+                                            ) === -1,
                                     )
                                     .map((item) => {
                                         return { ...item, cid: newcid };
                                     }),
                             },
                         },
-                    }
+                    },
                 );
             }
 
@@ -314,7 +318,7 @@ export default (
             }
 
             res.send({ id: newcid });
-        }
+        },
     );
     done();
 };
