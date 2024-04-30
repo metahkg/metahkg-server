@@ -8,6 +8,46 @@
 *  upgrade node to v20 & upgrade dependencies (afb9a770)
 *  set version 6.12.4 (3ef78930)
 *  set version 6.12.3 (4431f22c)
+
+##### Continuous Integration
+
+*  remove lint (88f98f3a)
+
+##### New Features
+
+*  search users (admin only) (b01dc4c3)
+
+##### Bug Fixes
+
+* **autoMigrate:**  sort from old migrates to new migrates (ce7d0f16)
+* **dependencies:**  downgrade sharp to 0.32.6 (2c010303)
+* **openapi:**
+  *  use boolean instead of enum of true and false (a3a998b6)
+  *  poll option is title not text (5e90a982)
+* **category delete:**  remove body schema (c3e1917b)
+* **docker:**  yarn install --production (80c72054)
+* **tsconfig:**  skip libcheck (1cc7d0b5)
+* **ci:**  tagging (9db24657)
+* **meVotesPolls:**  fix schema (e1a58f8a)
+* **poll vote:**
+  *  disallow more than one votes (daae7807)
+  *  date.getTime (5c08802f)
+
+##### Other Changes
+
+* //gitlab.com/metahkg/metahkg-server into dev (c6944bf7)
+*  CHANGELOG.md (bd6a3a9e)
+
+#### 6.13.1 (2024-04-30)
+
+##### Chores
+
+*  set version 6.13.1 (1336ce44)
+*  format code (f8ca68f5)
+*  set version 6.13.0 (1a1f5cc7)
+*  upgrade node to v20 & upgrade dependencies (afb9a770)
+*  set version 6.12.4 (3ef78930)
+*  set version 6.12.3 (4431f22c)
 *  set version 6.12.2 (18f24571)
 *  set version 6.12.0 (611d753b)
 
