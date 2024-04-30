@@ -42,7 +42,7 @@ import {
     TypeBoxValidatorCompiler,
 } from "@fastify/type-provider-typebox";
 import { TypeCompiler } from "@sinclair/typebox/compiler";
-import * as Formats from './lib/formats'
+import * as Formats from "./lib/formats";
 
 dotenv.config();
 
@@ -67,14 +67,14 @@ export default async function MetahkgServer() {
     });
     await agenda.every("0 0 * * 0", "weeklyTokens");
 
-    FormatRegistry.Set('email', Formats.IsEmail)
-    FormatRegistry.Set('date', Formats.IsDate)
-    FormatRegistry.Set('date-time', Formats.IsDateTime)
-    FormatRegistry.Set('ipv4', Formats.IsIPv4)
-    FormatRegistry.Set('ipv6', Formats.IsIPv6)
-    FormatRegistry.Set('uri', Formats.IsUrl)
-    FormatRegistry.Set('time', Formats.IsTime)
-    FormatRegistry.Set('uuid', Formats.IsUuid)
+    FormatRegistry.Set("email", Formats.IsEmail);
+    FormatRegistry.Set("date", Formats.IsDate);
+    FormatRegistry.Set("date-time", Formats.IsDateTime);
+    FormatRegistry.Set("ipv4", Formats.IsIPv4);
+    FormatRegistry.Set("ipv6", Formats.IsIPv6);
+    FormatRegistry.Set("uri", Formats.IsUrl);
+    FormatRegistry.Set("time", Formats.IsTime);
+    FormatRegistry.Set("uuid", Formats.IsUuid);
 
     const fastify = Fastify({
         logger: true,
@@ -152,7 +152,7 @@ export default async function MetahkgServer() {
             const session = await getSessionByToken(
                 decodedToken?.id,
                 req.headers.authorization?.slice(7),
-                true
+                true,
             );
             if (!session) return false;
 

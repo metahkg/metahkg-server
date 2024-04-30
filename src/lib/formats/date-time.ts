@@ -24,16 +24,20 @@ THE SOFTWARE.
 
 ---------------------------------------------------------------------------*/
 
-import { IsDate } from './date'
-import { IsTime } from './time'
+import { IsDate } from "./date";
+import { IsTime } from "./time";
 
-const DATE_TIME_SEPARATOR = /t|\s/i
+const DATE_TIME_SEPARATOR = /t|\s/i;
 
 /**
  * `[ajv-formats]` ISO8601 DateTime
  * @example `2020-12-12T20:20:40+00:00`
  */
 export function IsDateTime(value: string, strictTimeZone?: boolean): boolean {
-  const dateTime: string[] = value.split(DATE_TIME_SEPARATOR)
-  return dateTime.length === 2 && IsDate(dateTime[0]) && IsTime(dateTime[1], strictTimeZone)
+    const dateTime: string[] = value.split(DATE_TIME_SEPARATOR);
+    return (
+        dateTime.length === 2 &&
+        IsDate(dateTime[0]) &&
+        IsTime(dateTime[1], strictTimeZone)
+    );
 }

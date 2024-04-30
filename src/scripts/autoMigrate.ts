@@ -6,7 +6,7 @@ export async function autoMigrate() {
     const newVersion = JSON.parse(readFileSync("package.json", "utf8")).version;
     if (
         !(await new Promise((resolve) =>
-            stat("version.txt", (err, stats) => resolve(err ? null : stats))
+            stat("version.txt", (err, stats) => resolve(err ? null : stats)),
         ))
     ) {
         console.warn("version.txt not found, not migrating!");
@@ -27,13 +27,23 @@ export async function autoMigrate() {
         if (oldVersion !== newVersion) {
             console.info(`Auto-migrating from version ${oldVersion} to ${newVersion}...`);
             // js mode
-            const jsMigrate = (await glob("dist/migrate/*/*.js")).sort((a, b) => Number(a.split("/")
-                .pop()
-                .replace(/[^\d\-]/g, "")
-                .replace("-", ".")) - Number(b.split("/")
-                    .pop()
-                    .replace(/[^\d\-]/g, "")
-                    .replace("-", ".")));
+            const jsMigrate = (await glob("dist/migrate/*/*.js")).sort(
+                (a, b) =>
+                    Number(
+                        a
+                            .split("/")
+                            .pop()
+                            .replace(/[^\d\-]/g, "")
+                            .replace("-", "."),
+                    ) -
+                    Number(
+                        b
+                            .split("/")
+                            .pop()
+                            .replace(/[^\d\-]/g, "")
+                            .replace("-", "."),
+                    ),
+            );
             if (jsMigrate.length) {
                 console.log(jsMigrate);
                 const jsMigrateResults = jsMigrate.map((file) => {
@@ -42,7 +52,7 @@ export async function autoMigrate() {
                             .split("/")
                             .pop()
                             .replace(/[^\d\-]/g, "")
-                            .replace("-", ".")
+                            .replace("-", "."),
                     );
                     if (
                         migrateVersionNum > oldVersionNum &&
@@ -62,13 +72,23 @@ export async function autoMigrate() {
                 }
             } else {
                 // ts mode
-                const tsMigrate = (await glob("src/migrate/*/*.ts")).sort((a, b) => Number(a.split("/")
-                    .pop()
-                    .replace(/[^\d\-]/g, "")
-                    .replace("-", ".")) - Number(b.split("/")
-                        .pop()
-                        .replace(/[^\d\-]/g, "")
-                        .replace("-", ".")));
+                const tsMigrate = (await glob("src/migrate/*/*.ts")).sort(
+                    (a, b) =>
+                        Number(
+                            a
+                                .split("/")
+                                .pop()
+                                .replace(/[^\d\-]/g, "")
+                                .replace("-", "."),
+                        ) -
+                        Number(
+                            b
+                                .split("/")
+                                .pop()
+                                .replace(/[^\d\-]/g, "")
+                                .replace("-", "."),
+                        ),
+                );
                 if (tsMigrate.length) {
                     const tsMigrateResults = tsMigrate.map((file) => {
                         const migrateVersionNum = Number(
@@ -76,7 +96,7 @@ export async function autoMigrate() {
                                 .split("/")
                                 .pop()
                                 .replace(/[^\d\-]/g, "")
-                                .replace("-", ".")
+                                .replace("-", "."),
                         );
                         if (
                             migrateVersionNum > oldVersionNum &&
