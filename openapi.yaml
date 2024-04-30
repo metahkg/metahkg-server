@@ -1736,7 +1736,7 @@ paths:
         - bearerAuth: []
       summary: Search users
       description: "Search users and get detailed profile. Admin privileges required.
-          [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.13.2-dev/src/routes/users/users.ts)"
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/6.13.2-dev/src/routes/users/users.ts)"
       parameters:
         - name: id
           in: query
@@ -1855,8 +1855,6 @@ paths:
           $ref: "#/components/responses/InternalServerError"
         "502":
           $ref: "#/components/responses/BadGateway"
-
-
 
   /users/{id}:
     get:

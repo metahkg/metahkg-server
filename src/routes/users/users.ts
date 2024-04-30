@@ -2,14 +2,19 @@ import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from "fastify";
 import RequireAdmin from "../../plugins/requireAdmin";
 import { Static, Type } from "@sinclair/typebox";
 import regex from "../../lib/regex";
-import { EmailSchema, SexSchema, UserNameSchema, UserRoleSchema } from "../../lib/schemas";
+import {
+    EmailSchema,
+    SexSchema,
+    UserNameSchema,
+    UserRoleSchema,
+} from "../../lib/schemas";
 import { usersCl } from "../../lib/common";
 import { sha256 } from "../../lib/sha256";
 
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     const querySchema = Type.Object(
         {
@@ -23,7 +28,7 @@ export default function (
             page: Type.Optional(Type.RegExp(regex.integer)),
             limit: Type.Optional(Type.RegExp(regex.integer)),
         },
-        { additionalProperties: false }
+        { additionalProperties: false },
     );
 
     fastify.get(
@@ -33,7 +38,7 @@ export default function (
             req: FastifyRequest<{
                 Querystring: Static<typeof querySchema>;
             }>,
-            res
+            res,
         ) => {
             const id = Number(req.query.id);
             const page = Number(req.query.page || "1") || 1;
@@ -78,7 +83,7 @@ export default function (
                 .toArray();
 
             return res.send(users);
-        }
+        },
     );
 
     done();
