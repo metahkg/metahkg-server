@@ -141,7 +141,7 @@ export default async function MetahkgServer() {
             const session = await getSessionByToken(
                 decodedToken?.id,
                 req.headers.authorization?.slice(7),
-                true
+                true,
             );
             if (!session) return false;
 

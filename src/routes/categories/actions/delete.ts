@@ -26,7 +26,7 @@ import RequireAdmin from "../../../plugins/requireAdmin";
 export default function (
     fastify: FastifyInstance,
     _opts: FastifyPluginOptions,
-    done: (err?: Error) => void
+    done: (err?: Error) => void,
 ) {
     const paramsSchema = Type.Object({
         id: Type.RegExp(regex.integer),
@@ -39,13 +39,13 @@ export default function (
             req: FastifyRequest<{
                 Params: Static<typeof paramsSchema>;
             }>,
-            res
+            res,
         ) => {
             const id = Number(req.params.id);
 
             const category = (await categoryCl.findOne(
                 { id },
-                { projection: { _id: 0 } }
+                { projection: { _id: 0 } },
             )) as Category;
 
             if (!category)
@@ -58,7 +58,7 @@ export default function (
             await categoryCl.deleteOne({ id });
 
             return res.code(204).send();
-        }
+        },
     );
     done();
 }
