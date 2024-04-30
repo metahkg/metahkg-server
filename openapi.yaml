@@ -1767,18 +1767,12 @@ paths:
           in: query
           description: whether the user is muted
           schema:
-            type: string
-            enum:
-              - true
-              - false
+            type: boolean
         - name: banned
           in: query
           description: whether the user is banned
           schema:
-            type: string
-            enum:
-              - true
-              - false
+            type: boolean
         - name: page
           in: query
           description: page number
