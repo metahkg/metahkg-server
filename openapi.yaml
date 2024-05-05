@@ -272,6 +272,51 @@ paths:
           $ref: "#/components/responses/InternalServerError"
         "502":
           $ref: "#/components/responses/BadGateway"
+  /threads/following:
+    get:
+      security:
+         - bearerAuth: []
+      tags:
+        - threads
+        - me
+      operationId: threadsFollowing
+      summary: Get threads from followed users
+      description: "Get threads from followed users.
+        [Source](https://gitlab.com/metahkg/metahkg-server/-/blob/main/src/routes/threads/followingThreads.ts)"
+      parameters:
+        - $ref: "#/components/parameters/ThreadsPage"
+        - $ref: "#/components/parameters/ThreadsLimit"
+        - in: query
+          name: sort
+          description: "Sort threads by created or lastcomment"
+          required: false
+          schema:
+            type: string
+            enum:
+              - created
+              - lastcomment
+            default: created
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ThreadMeta"
+        "400":
+          $ref: "#/components/responses/Invalid"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+        "502":
+          $ref: "#/components/responses/BadGateway"
   /threads/{id}:
     get:
       security:

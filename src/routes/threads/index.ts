@@ -19,6 +19,7 @@ import { FastifyInstance, FastifyPluginOptions } from "fastify";
 import create from "./create";
 import threads from "./threads";
 import search from "./search";
+import following from "./following";
 import thread from "./thread";
 import { config } from "../../lib/config";
 import RequireAuth from "../../plugins/requireAuth";
@@ -33,6 +34,7 @@ export default (
     }
     fastify.register(threads);
     fastify.register(search);
+    fastify.register(following)
     fastify.register(create);
     fastify.register(thread, { prefix: "/:id" });
     done();
