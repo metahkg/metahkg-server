@@ -8,6 +8,3 @@ name = "test-coverage"
 
 [[analyzers]]
 name = "docker"
-
-[[transformers]]
-name = "prettier"
