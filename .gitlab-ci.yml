@@ -62,7 +62,7 @@ tagging:
     - tag=$(node -e "console.log(require('./package.json').version)")
     - if [ $CI_COMMIT_BRANCH = "dev" ]; then tag=${tag}-dev; fi;
     - git pull origin ${CI_COMMIT_BRANCH} --tags
-    - git checkout $CI_COMMIT_AUTHOR
+    - git checkout $CI_COMMIT_BRANCH
     - if [ $(git tag -l "$tag") ]; then
         echo "tag already exists";
         exit 0;
