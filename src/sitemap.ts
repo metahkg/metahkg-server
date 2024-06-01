@@ -47,7 +47,11 @@ export default function (
             if (config.VISIBILITY == "internal") {
                 return res.code(404).send({ statusCode: 404, error: "Sitemap not available." })
             }
-            res.send(`<?xml version="1.0" encoding="UTF-8"?>
+            let sitemapXML = await redis?.get?.("sitemap");
+            if (sitemapXML) {
+                return res.send(sitemapXML)
+            }
+            sitemapXML = /*xml*/ `<?xml version="1.0" encoding="UTF-8"?>
             <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
                 ${["", "create", "search", "recall"].map(
                 (path) => /*xml*/ `<url>
@@ -106,7 +110,9 @@ export default function (
                         <priority>0.8</priority>
                     </url>`
                 )}
-            </urlset>`);
+            </urlset>`
+            redis?.set?.("sitemap", sitemapXML, "EX", 60)
+            res.send(sitemapXML);
         }
     );
     done();
