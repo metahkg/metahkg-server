@@ -44,11 +44,10 @@ export default function (
         async (req, res) => {
             const hiddenCats = await hiddencats();
             res.type("application/xml");
-            let sitemapXML = await redis.get("sitemap");
-            if (sitemapXML) {
-                return res.send(sitemapXML)
+            if (config.VISIBILITY == "internal") {
+                return res.code(404).send({ statusCode: 404, error: "Sitemap not available." })
             }
-            sitemapXML = /*xml*/ `<?xml version="1.0" encoding="UTF-8"?>
+            res.send(`<?xml version="1.0" encoding="UTF-8"?>
             <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
                 ${["", "create", "search", "recall"].map(
                 (path) => /*xml*/ `<url>
@@ -107,9 +106,7 @@ export default function (
                         <priority>0.8</priority>
                     </url>`
                 )}
-            </urlset>`
-            redis.set("sitemap", sitemapXML, "EX", 60)
-            res.send(sitemapXML);
+            </urlset>`);
         }
     );
     done();
