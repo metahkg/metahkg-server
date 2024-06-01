@@ -15,7 +15,7 @@
  along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { categoryCl, pollsCl, linksCl, threadCl, usersCl } from "../../lib/common";
+import { categoryCl, pollsCl, linksCl, threadCl, usersCl, systemCl } from "../../lib/common";
 import findImages from "../../lib/findImages";
 import { Static, Type } from "@sinclair/typebox";
 import { generate } from "generate-password";
@@ -41,6 +41,7 @@ import RequireCAPTCHA from "../../plugins/requireCaptcha";
 import { config } from "../../lib/config";
 import findLinks from "../../lib/findLinks";
 import { Poll } from "../../models/polls";
+import { System } from "../../models/system";
 
 export default (
     fastify: FastifyInstance,
@@ -119,15 +120,9 @@ export default (
                     .code(409)
                     .send({ statusCode: 409, error: "Title already exists" });
 
-            const newThreadId =
-                (
-                    (await threadCl
-                        .find()
-                        .project({ id: 1, _id: 0 })
-                        .sort({ id: -1 })
-                        .limit(1)
-                        .toArray()) as Thread[]
-                )[0]?.id + 1 || 1;
+            const newThreadId = (((await systemCl
+                .findOneAndUpdate({}, { $inc: { lastThreadId: 1 } }, { upsert: true })
+            )).value?.lastThreadId + 1) || 1;
 
             const date = new Date();
 

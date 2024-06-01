@@ -16,7 +16,7 @@
  */
 
 import dotenv from "dotenv";
-import { usersCl, verificationCl } from "../../lib/common";
+import { systemCl, usersCl, verificationCl } from "../../lib/common";
 import { Static, Type } from "@sinclair/typebox";
 import { createToken } from "../../lib/auth/createToken";
 import User from "../../models/user";
@@ -28,6 +28,7 @@ import { Verification } from "../../models/verification";
 import { RateLimitOptions } from "@fastify/rate-limit";
 import RequireCAPTCHA from "../../plugins/requireCaptcha";
 import { config } from "../../lib/config";
+import { System } from "../../models/system";
 
 dotenv.config();
 
@@ -81,8 +82,9 @@ export default (
             const { name, password, sex } = verificationData;
 
             const newUserId =
-                ((await usersCl.find().sort({ id: -1 }).limit(1).toArray()) as User[])[0]
-                    ?.id + 1 || 1;
+                ((await systemCl.findOneAndUpdate({}, {
+                    $inc: { lastUserId: 1 }
+                }, { upsert: true })).value?.lastUserId + 1) || 1;
 
             const newUser: User = {
                 name,
