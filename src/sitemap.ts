@@ -22,6 +22,8 @@ import { config } from "./lib/config";
 import Category from "./models/category";
 import Thread from "./models/thread";
 import User from "./models/user";
+import { hiddencats } from "./lib/hiddencats";
+import { redis } from "./lib/redis";
 
 export default function (
     fastify: FastifyInstance,
@@ -40,67 +42,74 @@ export default function (
             },
         },
         async (req, res) => {
+            const hiddenCats = await hiddencats();
             res.type("application/xml");
-            res.send(/*xml*/ `<?xml version="1.0" encoding="UTF-8"?>
-        <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-            ${["", "create", "search", "recall"].map(
+            let sitemapXML = await redis.get("sitemap");
+            if (sitemapXML) {
+                return res.send(sitemapXML)
+            }
+            sitemapXML = /*xml*/ `<?xml version="1.0" encoding="UTF-8"?>
+            <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+                ${["", "create", "search", "recall"].map(
                 (path) => /*xml*/ `<url>
-                    <loc>https://${config.DOMAIN}/${path}</loc>
-                    <changefreq>daily</changefreq>
-                    <priority>1.0</priority>
-                </url>`
+                        <loc>https://${config.DOMAIN}/${path}</loc>
+                        <changefreq>daily</changefreq>
+                        <priority>1.0</priority>
+                    </url>`
             )}
-            ${(
-                (await categoryCl
-                    .find()
-                    .sort({ id: 1 })
-                    .project({ _id: 0, id: 1 })
-                    .toArray()) as Category[]
-            ).map(
-                (category) => /*xml*/ `<url>
-                    <loc>https://${config.DOMAIN}/category/${category.id}</loc>
-                    <changefreq>daily</changefreq>
-                    <priority>1.0</priority>
-                </url>`
-            )}
-            ${["login", "register", "verify", "resend"].map(
-                (path) => /*xml*/ `<url>
-                    <loc>https://${config.DOMAIN}/users/${path}</loc>
-                    <priority>1.0</priority>
-                </url>`
-            )}
-            ${(
-                (await threadCl
-                    .find({ removed: { $exists: false } })
-                    .sort({ id: 1 })
-                    .project({ _id: 0, id: 1, lastModified: 1 })
-                    .toArray()) as Thread[]
-            )
-                .map(
-                    (thread) =>
-                        !("removed" in thread) &&
-                        /*xml*/ `<url>
-                    <loc>https://${config.DOMAIN}/thread/${thread.id}</loc>
-                    <changefreq>daily</changefreq>
-                    <lastmod>${thread.lastModified.toISOString()}</lastmod>
-                    <priority>0.8</priority>
-                </url>`
+                ${(
+                    (await categoryCl
+                        .find({ hidden: { $ne: true }, nsfw: { $ne: true } })
+                        .sort({ id: 1 })
+                        .project({ _id: 0, id: 1 })
+                        .toArray()) as Category[]
+                ).map(
+                    (category) => /*xml*/ `<url>
+                        <loc>https://${config.DOMAIN}/category/${category.id}</loc>
+                        <changefreq>daily</changefreq>
+                        <priority>1.0</priority>
+                    </url>`
+                )}
+                ${["login", "register", "verify", "resend"].map(
+                    (path) => /*xml*/ `<url>
+                        <loc>https://${config.DOMAIN}/users/${path}</loc>
+                        <priority>1.0</priority>
+                    </url>`
+                )}
+                ${(
+                    (await threadCl
+                        .find({ removed: { $exists: false }, category: { $not: { $in: hiddenCats } } })
+                        .sort({ id: 1 })
+                        .project({ _id: 0, id: 1, lastModified: 1 })
+                        .toArray()) as Thread[]
                 )
-                .filter((x) => x)}
-            ${(
-                (await usersCl
-                    .find()
-                    .sort({ id: 1 })
-                    .project({ _id: 0, id: 1 })
-                    .toArray()) as User[]
-            ).map(
-                (user) => /*xml*/ `<url>
-                    <loc>https://${config.DOMAIN}/profile/${user.id}</loc>
-                    <changefreq>daily</changefreq>
-                    <priority>0.8</priority>
-                </url>`
-            )}
-        </urlset>`);
+                    .map(
+                        (thread) =>
+                            !("removed" in thread) &&
+                            /*xml*/ `<url>
+                        <loc>https://${config.DOMAIN}/thread/${thread.id}</loc>
+                        <changefreq>daily</changefreq>
+                        <lastmod>${thread.lastModified.toISOString()}</lastmod>
+                        <priority>0.8</priority>
+                    </url>`
+                    )
+                    .filter((x) => x)}
+                ${(
+                    (await usersCl
+                        .find()
+                        .sort({ id: 1 })
+                        .project({ _id: 0, id: 1 })
+                        .toArray()) as User[]
+                ).map(
+                    (user) => /*xml*/ `<url>
+                        <loc>https://${config.DOMAIN}/profile/${user.id}</loc>
+                        <changefreq>daily</changefreq>
+                        <priority>0.8</priority>
+                    </url>`
+                )}
+            </urlset>`
+            redis.set("sitemap", sitemapXML, "EX", 60)
+            res.send(sitemapXML);
         }
     );
     done();
