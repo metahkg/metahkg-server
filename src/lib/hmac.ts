@@ -3,7 +3,7 @@ import { existsSync, readFileSync, writeFileSync } from "fs";
 
 export function generateHMACKey() {
     if (existsSync("certs/hmac.key")) {
-        return console.info("HMAC key exists. Not generating a new hmac key.");
+        return console.info("HMAC key exists. Not generating a new HMAC key.");
     }
     console.info("Generating a new HMAC key...");
     writeFileSync("certs/hmac.key", randomBytes(256).toString("hex"), { flag: "w" });
