@@ -1,3 +1,18 @@
+#### 6.15.0 (2024-06-12)
+
+##### Chores
+
+*  set version 6.15.0 (7d59ec0d)
+*  update .gitignore (e63915a3)
+
+##### New Features
+
+*  health endpoint (6e72ea43)
+
+##### Bug Fixes
+
+* **sitemap:**  return 404 before setting type as xml (38647c64)
+
 #### 6.13.1 (2024-04-30)
 
 ##### Chores
