@@ -1,3 +1,17 @@
+#### 6.15.1 (2024-06-12)
+
+##### Chores
+
+*  set version 6.15.1 (d7d47613)
+
+##### Bug Fixes
+
+* **openapi:**  error for /health should be of text/plain (fd611091)
+
+##### Other Changes
+
+* //gitlab.com/metahkg/metahkg-server into dev (789fb07d)
+
 #### 6.15.0 (2024-06-12)
 
 ##### Chores
