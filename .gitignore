@@ -32,6 +32,7 @@ yarn-error.log*
 # internal
 deploy.sh
 .lh/
+.history/
 package-lock.json
 
 # eslint
