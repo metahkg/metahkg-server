@@ -3097,25 +3097,29 @@ paths:
                     enum:
                       - OK
         "400":
-          $ref: "#/components/responses/Invalid"
+          description: Unknown 400 bad request
+          content:
+            text/plain:
+              schema:
+                type: string
         "401":
           description: Unknown 401 unauthorized error
           content:
-            application/json:
+            text/plain:
               schema:
-                $ref: "#/components/schemas/Error"
+                type: string
         "403":
           description: Unknown 403 forbidden error
           content:
-            application/json:
+            text/plain:
               schema:
-                $ref: "#/components/schemas/Error"
+                type: string
         "404":
           description: Unknown 404 not found error
           content:
-            application/json:
+            text/plain:
               schema:
-                $ref: "#/components/schemas/Error"
+                type: string
         "429":
           $ref: "#/components/responses/TooManyRequests"
         "500":
