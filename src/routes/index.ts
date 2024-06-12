@@ -23,6 +23,7 @@ import categories from "./categories";
 import auth from "./auth";
 import server from "./server";
 import polls from "./polls";
+import health from "./health";
 
 export default (
     fastify: FastifyInstance,
@@ -36,5 +37,6 @@ export default (
     fastify.register(thread, { prefix: "/threads" });
     fastify.register(server, { prefix: "/server" });
     fastify.register(polls, { prefix: "/polls" });
+    fastify.register(health)
     done();
 };
