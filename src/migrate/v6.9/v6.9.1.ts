@@ -89,24 +89,42 @@ async function migrate() {
                 .find({ id: { $exists: true }, removed: { $ne: true } })
                 .toArray()
         )?.map(async (v) => {
+            interface Comment {
+                quote?: Comment;
+                id: number;
+                links?: { url: string; signature: string }[];
+                images?: { src: string; signature: string }[];
+                comment: string;
+            }
             let { conversation } = v as {
                 _id: ObjectId;
-                conversation: {
-                    id: number;
-                    links?: { url: string; signature: string }[];
-                    images?: { src: string; signature: string }[];
-                    comment: string;
-                }[];
+                pin?: Comment;
+                conversation: Comment[];
             };
+            if (v.pin) {
+                const linksInComment = findLinks(v.pin.comment);
+                const imagesInComment = findImages(v.pin.comment);
+                v.pin = {
+                    ...v.pin,
+                    links: linksInComment,
+                    images: imagesInComment,
+                };
+            }
             conversation = conversation.map((c) => {
+                if (!c) return c;
                 if (!("removed" in c)) {
-                    const linksInComment = findLinks(c.comment);
-                    const imagesInComment = findImages(c.comment);
-                    return {
-                        ...c,
-                        links: linksInComment,
-                        images: imagesInComment,
-                    };
+                    c.links = findLinks(c.comment);
+                    c.images = findImages(c.comment);
+
+                    let quotedComment = c.quote;
+                    while (quotedComment) {
+                        if ("removed" in quotedComment) break;
+                        quotedComment.links = findLinks(quotedComment.comment);
+                        quotedComment.images = findImages(quotedComment.comment);
+                        quotedComment = quotedComment.quote;
+                    }
+
+                    return c;
                 }
                 return c;
             });
@@ -115,10 +133,11 @@ async function migrate() {
                 {
                     $set: {
                         conversation,
+                        ...(v.pin && { pin: v.pin }),
                         images: conversation
                             .flatMap(
                                 (c) =>
-                                    c.images?.map((img) => ({ ...img, cid: c.id })) || []
+                                    c?.images?.map((img) => ({ ...img, cid: c.id })) || []
                             )
                             .filter((img, index, arr) => {
                                 return arr.findIndex((i) => i.src === img.src) === index;
