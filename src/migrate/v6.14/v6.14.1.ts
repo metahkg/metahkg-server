@@ -49,6 +49,27 @@ async function migrate() {
             )[0]?.id || 0
         } as System)
     }
+
+    await Promise.all(
+        (
+            await threadCl.find({ removed: { $exists: false } }).toArray()
+        ).map(async (thread) => {
+            thread.conversation = await Promise.all(
+                thread.conversation.map(async (comment: { comment: string }) => {
+                    if (typeof comment.comment === "string") {
+                        return {
+                            ...comment,
+                            comment: { type: "html", html: comment.comment },
+                        };
+                    }
+                })
+            );
+            await threadCl.updateOne(
+                { _id: thread._id },
+                { $set: { conversation: thread.conversation } }
+            );
+        })
+    );
 }
 
 migrate().then(() => {
