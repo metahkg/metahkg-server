@@ -60,6 +60,7 @@ async function migrate() {
                 }
                 thread.conversation = await Promise.all(
                     thread.conversation.map(async (comment) => {
+                        if (!comment) return comment;
                         if ("removed" in comment) return comment;
                         if (typeof comment.comment === "string") {
                             comment.comment = { type: "html", html: comment.comment }
