@@ -52,22 +52,34 @@ async function migrate() {
 
     await Promise.all(
         (
-            await threadCl.find({ removed: { $exists: false } }).toArray()
+            await threadCl.find({ removed: { $exists: false } }).toArray() as Thread[]
         ).map(async (thread) => {
-            thread.conversation = await Promise.all(
-                thread.conversation.map(async (comment: { comment: string }) => {
-                    if (typeof comment.comment === "string") {
-                        return {
-                            ...comment,
-                            comment: { type: "html", html: comment.comment },
-                        };
-                    }
-                })
-            );
-            await threadCl.updateOne(
-                { _id: thread._id },
-                { $set: { conversation: thread.conversation } }
-            );
+            if (!("removed" in thread)) {
+                if (thread.pin && !("removed" in thread.pin) && typeof thread.pin.comment === "string") {
+                    thread.pin.comment = { type: "html", html: thread.pin.comment };
+                }
+                thread.conversation = await Promise.all(
+                    thread.conversation.map(async (comment) => {
+                        if ("removed" in comment) return comment;
+                        if (typeof comment.comment === "string") {
+                            comment.comment = { type: "html", html: comment.comment }
+                        }
+                        let quotedComment = comment.quote;
+                        while (quotedComment) {
+                            if ("removed" in quotedComment) break;
+                            if (typeof quotedComment.comment === "string") {
+                                quotedComment.comment = { type: "html", html: quotedComment.comment };
+                            }
+                            quotedComment = quotedComment.quote;
+                        }
+                        return comment;
+                    })
+                );
+                await threadCl.updateOne(
+                    { _id: thread._id },
+                    { $set: { conversation: thread.conversation, pin: thread.pin } }
+                );
+            }
         })
     );
 }
