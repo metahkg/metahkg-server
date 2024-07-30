@@ -65,7 +65,6 @@ export default async function MetahkgServer() {
             await agenda.every("5 minutes", name);
         }
     });
-    await agenda.every("0 0 * * 0", "weeklyTokens");
 
     FormatRegistry.Set('email', Formats.IsEmail)
     FormatRegistry.Set('date', Formats.IsDate)
