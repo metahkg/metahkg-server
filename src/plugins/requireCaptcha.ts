@@ -8,6 +8,7 @@ export default async function RequireCAPTCHA(
 ) {
     if (config.DISABLE_CAPTCHA) return;
     const { captchaToken } = req.body;
+    if (config.CAPTCHA_BYPASS_CODE && captchaToken === config.CAPTCHA_BYPASS_CODE) return;
     if (!(await verifyCaptcha(captchaToken)))
         return res.code(429).send({ statusCode: 429, error: "Captcha token invalid" });
 }

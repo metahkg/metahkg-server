@@ -43,6 +43,7 @@ export const config = {
     RECAPTCHA_SECRET: process.env.RECAPTCHA_SECRET || process.env.recaptchasecret || "",
     TURNSTILE_SITE_KEY: process.env.TURNSTILE_SITE_KEY || "",
     TURNSTILE_SECRET: process.env.TURNSTILE_SECRET || "",
+    CAPTCHA_BYPASS_CODE: process.env.CAPTCHA_BYPASS_CODE || undefined,
     REGISTER_MODE: (["normal", "none", "invite"].includes(
         process.env.REGISTER_MODE || process.env.register
     )
